@@ -1,0 +1,43 @@
+.transaction-list {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    margin-top: 8px;
+    overflow-y: auto;
+    height: 300px;
+}
+
+
+.transaction-list-item {
+    box-sizing: border-box;
+    min-height: 70px;
+}
+
+
+
+.transaction-list-item-action {
+    text-transform: capitalize;
+    
+}
+
+.transaction-list-item-value {
+    text-transform: capitalize;
+    
+}
+
+.transaction-list-item-date {
+    font-size: .75rem;
+
+}
+
+
+
+.transaction-status-confirmed {
+    background-color: #eafad7;
+    color: #609a1c;
+}
+
+.transaction-status-not-confirmed {
+    background-color: #eafad7;
+    color: #ffee00;
+}

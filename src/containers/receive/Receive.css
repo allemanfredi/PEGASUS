@@ -1,0 +1,12 @@
+.settings {
+    margin-bottom: 70px;
+}
+
+.btn-back {
+    background-color: #ffffff; 
+    border: none; 
+    color: blue; 
+    padding: 0px 0px;
+    font-size: 30px; 
+    cursor: pointer; 
+}

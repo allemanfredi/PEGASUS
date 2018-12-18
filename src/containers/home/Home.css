@@ -1,0 +1,35 @@
+.settings {
+
+    margin-bottom: 70px;
+}
+
+.info {
+    margin-bottom: 30px;
+}
+
+.transactions{
+    font-size: 8px;
+}
+
+.align-center{
+    text-align: center;
+}
+
+.btn-send{
+    width: 120px;
+}
+
+.btn-receive{
+    width: 120px;
+}
+
+.btn-settings, .btn-marker {
+    background-color: #ffffff; 
+    border: none; 
+    color: blue; 
+    padding: 0px 0px;
+    font-size: 30px; 
+    cursor: pointer; 
+    z-index: 2;
+}
+
