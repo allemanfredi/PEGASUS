@@ -19,12 +19,14 @@
     text-transform: capitalize;
     
 }
-
+.transaction-list-item-details {
+    text-transform: capitalize;
+    
+}
 .transaction-list-item-value {
     text-transform: capitalize;
     
 }
-
 .transaction-list-item-date {
     font-size: .75rem;
 

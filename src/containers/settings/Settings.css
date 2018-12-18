@@ -102,22 +102,3 @@
     background: none;
   }
 
-
-.container-current-account{
-    margin-top:19%;
-    bottom : 75%;
-    position: absolute;
-}
-.container-all-account{
-    bottom:35%;
-    position: absolute;
-    display: block;
-    width: 100%;
-    height: 206px;
-    overflow: auto;
-}
-.container-menu{
-    margin-top:10%;
-    position: absolute;
-    bottom: 25%;
-}

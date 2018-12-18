@@ -1,0 +1,31 @@
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width:100%;
+    height: 100%;
+    display: block;
+    background: rgba(0, 0, 0, 0.6);
+    margin-top: 9%
+}
+
+.container-info{
+    background: #fff;
+    width: 93%;
+    height: 90%;
+    margin-left: 3.5%;
+    margin-top: 5%;
+    transition: all 0.4s ease 0s;
+}
+
+.detail-hash{
+    font-size: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+}
+.detail-value{
+    font-weight: bold;
+    font-size: 12px;
+    text-align: right;
+}

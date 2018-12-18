@@ -8,7 +8,9 @@ class Transactions extends Component {
 
     constructor(props, context) {
         super(props, context);
-    
+        
+        this.goDetails = this.goDetails.bind(this);
+
         this.state = {
             transactions : []
         }
@@ -64,12 +66,14 @@ class Transactions extends Component {
                 value = -transfer[0].value;
             }
 
+
             let obj = {
                 timestamp : transfer[0].attachmentTimestamp,
                 value : value,
                 status : transfer[0].persistence,
                 bundle : transfer[0].bundle,
-                index : transfer[0].currentIndex
+                index : transfer[0].currentIndex,
+                transfer : transfer
             }
 
             //remove double bundle (reattachemen txs)
@@ -88,6 +92,10 @@ class Transactions extends Component {
         this.setState({transactions: arr});
     }
 
+    async goDetails(transfer){
+        this.props.goDetails(transfer);
+    } 
+
     
     render() {
       return (
@@ -103,6 +111,11 @@ class Transactions extends Component {
                     ) : (
                     <div class="transaction-status-not-confirmed">pending</div>
                     )}
+                    <div class="transaction-list-item-details">
+                        <a href="#" onClick={() => this.goDetails(transaction.transfer)} data-scroll>
+                            <span>show details</span>
+                        </a>
+                    </div>
                 </div>        
                 );
             })}

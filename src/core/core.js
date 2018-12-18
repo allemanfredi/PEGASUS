@@ -68,7 +68,7 @@ const prepareTransfer = async (transfer,ret) => {
 
     // Difficulty of Proof-of-Work required to attach transaction to tangle.
     // Minimum value on mainnet & spamnet is `14`, `9` on devnet and other testnets.
-    const minWeightMagnitude = 9
+    const minWeightMagnitude = transfer.difficulty;
 
     const inputs = await iota.getInputs(transfer.seed);
     try{
@@ -123,6 +123,66 @@ const getBundle = async (transaction) => {
     })
 }
 
+/*Remember to reattach transactions once every 30 minutes that they remain pending. 
+After 5 reattachments, contact the sender to make sure the transaction wasn't double spent.*/
+const replayBundle = async (tail) => {
+    console.log(tail);
+    return new Promise((resolve,reject) => {
+        iota.replayBundle(tail,3, 14)
+            .then(transactions => {
+                console.log(transactions)
+                resolve(transactions);
+            })
+            .catch(err => {
+                reject(err);
+            })
+    })
+}
+
+const promoteTransaction = async (hash) => {
+
+    const spamTransfer = [{address: '9'.repeat(81), value: 0, message: '', tag: ''}]
+    iota.promoteTransaction(hash, 3, 9, spamTransfer, {interrupt: false, delay: 0});
+}
+
+/*const promoteTransaction = async(hash) => {
+    // We need to monitor inclusion states of all tail transactions (original tail & reattachments
+    
+    return new Promise ((resolve,reject) => {
+        const tails = [hash]
+
+        iota.getLatestInclusion(tails)
+        .then(states => {
+            // Check if none of transactions confirmed
+            if (states.indexOf(true) === -1) {
+                const tail = tails[tails.length - 1] // Get latest tail hash
+    
+                iota.isPromotable(tail)
+                    .then(isPromotable => {
+                        if ( isPromotable ){
+                            //iota.promoteTransaction(tail, 3, 14)
+                            console.log("promote transactio");
+                            resolve();
+                        }else{
+                            iota.replayBundle(tail, 3, 14)
+                                .then(([reattachedTail]) => {
+                                    const newTailHash = reattachedTail.hash;
+                                    // Keeping track of all tail hashes to check confirmation
+                                    tails.push(newTailHash);
+                                    resolve (newTailHash);
+                                })
+                        }
+                    }).catch(err => {
+                        console.log(err);
+                        resolve(err);
+                    })
+            }
+        }).catch(err => {
+            // ...
+        })
+    })
+}*/
+
 
 export {getNewAddress, 
         getNodeInfo,
@@ -132,4 +192,6 @@ export {getNewAddress,
         prepareTransfer,
         getLatestInclusion,
         getAccountData,
-        getBundle};
+        getBundle,
+        replayBundle,
+        promoteTransaction};

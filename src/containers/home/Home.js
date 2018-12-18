@@ -1,5 +1,5 @@
 import React , { Component } from 'react';
-import {getAccountData,getLatestInclusion,getBalance} from '../../core/core';
+import {getAccountData,promoteTransaction,replayBundle,getLatestInclusion,getBalance} from '../../core/core';
 import {startSession} from '../../utils/utils';
 import {setCurrentAddress,setCurrentAccount,getCurrentAccount,generateSeed,updateDataAccount,addAccount,getKey,getCurrentNewtwork} from '../../wallet/wallet'
 import Transactions from '../transactions/Transactions';
@@ -8,6 +8,7 @@ import {aes256decrypt,aes256encrypt} from '../../utils/crypto';
 import Send from '../send/Send';
 import Receive from '../receive/Receive';
 import Settings from '../settings/Settings';
+import Details from '../details/Details';
 
 import './Home.css'
 
@@ -25,18 +26,21 @@ class Home extends Component {
       this.onCloseSettings = this.onCloseSettings.bind(this);
       this.onClickReceive = this.onClickReceive.bind(this);
       this.onBack = this.onBack.bind(this);      
-      this.onSwitchAccount = this.onSwitchAccount.bind(this);      
+      this.onSwitchAccount = this.onSwitchAccount.bind(this);  
+      this.onGoDetails = this.onGoDetails.bind(this);    
 
       this.state = {
         error: '',
         account : {},
         network: {},
+        details : {}, //transaction selected from the table 
         decryptedSeed : '',
         isLoading : false,
         showSend : false,
         showHome : true,
         showReceive : false,
         showSettings : false,
+        showDetails : false,
       };
 
       startSession();
@@ -48,14 +52,17 @@ class Home extends Component {
         const network = await getCurrentNewtwork();
         this.setState({network : network});
         const account = await getCurrentAccount(network);
-        console.log(account);
 
         const key = await getKey();
         const dseed = aes256decrypt(account.seed,key);
         this.setState({decryptedSeed : dseed});
 
-        //check account data after 30 seconds in order to receive the transaction
+        //check account data after 50 seconds in order to receive the transaction
         setInterval(() => this.getData(), 20000);
+
+        //reattachment every 30 minute and during the acces
+        /*this.reattachBundles(account.data.transactions)
+        setInterval(() => this.reattachBundles(account.data.transactions), (60000 * 30));*/
         
         //set the current address in the chrome local storage
         setCurrentAddress(account.data.latestAddress,this.state.network);
@@ -108,6 +115,17 @@ class Home extends Component {
       return account;
     }
 
+    async getData(){
+      const data = await getAccountData(this.state.decryptedSeed);
+      
+      //update table
+      const newAccount = await updateDataAccount(data,this.state.network);         
+      this.setState({account : newAccount});
+      if ( this.state.showHome && !this.state.showSettings )
+        this.transactions.current.updateData();
+    }
+
+
     async onSwitchAccount(account){
       console.log("switch to");
       console.log(account);
@@ -130,6 +148,7 @@ class Home extends Component {
     onBack(){
       this.setState({showSend : false});
       this.setState({showReceive : false});
+      this.setState({showDetails : false});
       this.setState({showHome : true});
     }
 
@@ -142,14 +161,9 @@ class Home extends Component {
     onClickSettings(){
       this.setState({showSettings:true});
     }
-
-
-    async getData(){
-      const data = await getAccountData(this.state.decryptedSeed)
-      const newAccount = await updateDataAccount(data,this.state.network);         
-      this.setState({account : newAccount});
-      if ( this.state.showHome && !this.state.showSettings )
-        this.transactions.current.updateData();
+    onGoDetails(transfer){
+      this.setState({details:transfer});
+      this.setState({showDetails:true});
     }
 
 
@@ -174,6 +188,7 @@ class Home extends Component {
               { this.state.showSettings ? ( <Settings switchAccount={this.onSwitchAccount} currentNetwork={this.state.network} currentAccount={this.state.account} close={this.onCloseSettings}/> ) : ''}
               { this.state.showSend ?     ( <Send account={this.state.account} network={this.state.network} onBack={this.onBack} /> ) : ''}
               { this.state.showReceive ?  ( <Receive  account={this.state.account} network={this.state.network} onBack={this.onBack}/> ) : '' }
+              { this.state.showDetails ?  ( <Details  details={this.state.details} onBack={this.onBack}/> ) : '' }
               { this.state.showHome ? (
                 <div>
                   <div class="container info">
@@ -196,7 +211,7 @@ class Home extends Component {
                     </div> 
                 </div>
                 <div class="transactions">
-                  <Transactions ref={this.transactions} transfers={this.state.account.data.transfers}/>
+                  <Transactions ref={this.transactions} goDetails={this.onGoDetails} transfers={this.state.account.data.transfers}/>
                 </div>
               </div>
               ) : '' }

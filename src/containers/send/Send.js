@@ -1,6 +1,6 @@
 import React , { Component } from 'react';
 import {prepareTransfer} from '../../core/core';
-import {getCurrentAccount,getKey} from '../../wallet/wallet';
+import {getCurrentAccount,getKey,getCurrentNewtwork} from '../../wallet/wallet';
 import history from '../../components/history'
 import {aes256decrypt} from '../../utils/crypto';
 
@@ -64,7 +64,8 @@ class Send extends Component {
         seed : seed,
         to : this.state.dstAddress,
         value : this.state.value,
-        message : this.state.message
+        message : this.state.message,
+        difficulty : getCurrentNewtwork().type === "mainnet" ? 14 : 9
       }
       prepareTransfer( transfer , (bundle,error) => {
 
