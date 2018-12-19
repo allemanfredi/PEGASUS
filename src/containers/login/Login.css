@@ -1,0 +1,16 @@
+.container-center{
+    margin: 0;
+    background : #f6f6f6;
+    width: 300px;
+    border-radius: 10px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%)
+}
+
+.input-psw {
+    margin-top: 10px;
+    width: 100% !important;
+}

@@ -1,8 +1,9 @@
 import React , { Component } from 'react';
-import {Button,ControlLabel,HelpBlock,FormControl} from 'react-bootstrap';
 import {checkPsw} from '../../wallet/wallet'
 import {startSession} from '../../utils/utils'
 import history from '../../components/history';
+
+import './Login.css'
 
 class InitPsw extends Component {
 
@@ -14,33 +15,56 @@ class InitPsw extends Component {
 
       this.state = {
         psw: '',
-        error: ''
+        error: '',
+        showError : false
       };
     }
 
-
     clickLogin(){
     
-        if ( checkPsw(this.state.psw ) ){
+        if ( checkPsw(this.state.psw)){
             if ( startSession() ) history.push('/home');
+        }else{
+          this.setState({showError : false})
+          this.setState({error : 'Wrong Password'})
         }
     }
 
     handleChangePsw(e) {
+      this.setState({showError : false})
       this.setState({ psw: e.target.value });
     }
 
 
     render() {
       return (
-       <div>
-            <ControlLabel>Please insert the psw</ControlLabel>
-            <FormControl type="text" value={this.state.psw} placeholder="psw" onChange={this.handleChangePsw}/> 
-            <FormControl.Feedback />
-            <HelpBlock>Enter the pasword </HelpBlock>
-            <Button bsStyle="primary" onClick={this.clickLogin}>Log In</Button>
-            {this.state.error}
-        </div>
+        <div>
+            <div class="container-center">
+              <div class="row">
+                  <div class="col-2"></div>
+                  <div class="col-8">
+                      <form>
+                          <div class="form-group">
+                              <input onChange={this.handleChangePsw} type="password" class="form-control input-psw" placeholder="Insert your password"/>
+                          </div>
+                      </form>
+                  </div>
+                  <div class="col-2"></div>
+              </div>
+              <div class="row">
+                  <div class="col-2"></div>
+                  <div class="col-8 text-center">
+                      <button onClick={this.clickLogin} type="submit" class="btn btn-password">Log In <span class="fa fa-arrow-right"></span></button>
+                  </div>
+                  <div class="col-2"></div>
+              </div>
+          </div>
+          {this.state.showError ? 
+              <div class="alert alert-danger" role="alert">
+                  <strong>Error</strong> {this.state.error}
+              </div>
+          : ''}
+          </div>
       );
     }
   }

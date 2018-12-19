@@ -1,5 +1,5 @@
 {
-  "name": "Pegasus",
+  "name": "pegasus",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -9,7 +9,6 @@
     "keytar": "^4.3.0",
     "qrcode.react": "^0.8.0",
     "react": "^16.6.3",
-    "react-bootstrap": "^0.32.3",
     "react-dom": "^16.4.2",
     "react-map-gl": "^3.3.6",
     "react-native": "^0.56.0",
