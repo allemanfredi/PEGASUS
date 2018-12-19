@@ -68,6 +68,7 @@ class Home extends Component {
         setCurrentAddress(account.data.latestAddress,this.state.network);
         this.setState({account : account});
 
+
       }catch(err){
           this.setState({ error: err.error });
           console.log(err);

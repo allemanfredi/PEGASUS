@@ -21,6 +21,7 @@ class Main extends Component {
     if ( isWalletSetup() ){
       if (checkSession() ) {
         history.push("/home");
+        this.props.showHeader(true);
       }
       else history.push("/login");
     }

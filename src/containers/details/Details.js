@@ -30,7 +30,13 @@ class Details extends Component {
                 bundle details
                 <ul class="list-group">
                     <li class="list-group-item">
-                        <a class="text-center" >hash: {this.props.details[0].bundle}</a>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="detail-bundle">
+                                    bundle {this.props.details[0].bundle}
+                                </div>
+                            </div>
+                        </div>
                     </li>
                     {this.props.details.map( detail => {
                         return (<li class="list-group-item">
@@ -40,7 +46,7 @@ class Details extends Component {
                                         </div>
                                         <div class="col-2">
                                             <div class="detail-value">
-                                                {detail.value > 99999 || detail.value < -99999  ? detail.value / 1000000 + " Ti" : (detail.value > 999 || detail.value < -999 ?  detail.value / 1000 + " Gi"  :  detail.value + "Mi" )}
+                                                {detail.value > 99999 || detail.value < -99999  ? (detail.value / 1000000).toFixed(2) + " Ti" : (detail.value > 999 || detail.value < -999 ?  (detail.value / 1000).toFixed(2) + " Gi"  :  detail.value + "Mi" )}
                                             </div>
                                         </div>
                                     </div>

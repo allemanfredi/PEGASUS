@@ -2,11 +2,12 @@ import React , { Component } from 'react';
 import {storePsw} from '../../wallet/wallet'
 import history from '../../components/history';
 import {aes256encrypt,sha256} from '../../utils/crypto'
-import {Button,ControlLabel,HelpBlock,FormControl,Row,Col} from 'react-bootstrap';
 import {getAccountData} from '../../core/core';
 import {generateSeed,addAccount,setupWallet,setCurrentNetwork} from '../../wallet/wallet';
 
 import options from '../../options/options';
+
+import './Init.css';
 
 class Init extends Component {
 
@@ -16,9 +17,13 @@ class Init extends Component {
       this.handleChangePsw = this.handleChangePsw.bind(this);
       this.handleChangeRePsw = this.handleChangeRePsw.bind(this);
       this.handleChangeName = this.handleChangeName.bind(this);
-      this.clickCreatePassword = this.clickCreatePassword.bind(this);
-      this.clickGenerateNewAddres = this.clickGenerateNewAddres.bind(this);
+      this.clickGoToCreatePsw = this.clickGoToCreatePsw.bind(this);
+      this.clickGoToCreateSeed = this.clickGoToCreateSeed.bind(this);
+
       this.clickGenerateSeed = this.clickGenerateSeed.bind(this);
+      this.clickCreateWallet = this.clickCreateWallet.bind(this);
+
+      this.copySeed = this.copySeed.bind(this);
 
       this.state = {
         psw: '',
@@ -26,30 +31,76 @@ class Init extends Component {
         error: '',
         name : '',
         isLoading : '',
-        showPsw: true,
-        showSeed: false
+        showGeneratePsw: false,
+        showGenerateSeed: false,
+        showGenerateName: true,
+        showError: false
       };
     }
 
-
-    clickCreatePassword(){
-      if ( this.state.psw === this.state.repsw ){
-        
-        if ( storePsw(this.state.psw)){
-          this.setState({showPsw:false});
-          this.setState({showSeed:true});
+    clickGoToCreatePsw(){
+        if ( this.state.name.length !== 0 ){
+            this.setState({error : false});
+            this.setState({showGenerateName : false});
+            this.setState({showGeneratePsw : true});
+        }else{
+            this.setState({showError : true});
+            this.setState({error : 'Please insert a valid name.'});
         }
-      }
-      else{
-          this.setState({error : 'passwords not equal'});
-      }
+    }
+
+    clickGoToCreateSeed(){
+        if ( this.state.psw.length === 0  ){
+            this.setState({showError : true});
+            this.setState({error : 'Please insert a valid password.'});
+            return;
+        }
+        if ( this.state.psw === this.state.repsw  ){
+            if ( storePsw(this.state.psw)){
+                this.setState({showError : false});
+                this.setState({showGeneratePsw : false});
+                this.setState({showGenerateSeed : true});
+            }else{
+                this.setState({showError : true});
+                this.setState({error : 'Impossible to store the password.'});
+            }
+        }else{
+            this.setState({showError : true});
+            this.setState({error : 'Password do not match.'});
+        }
     }
 
     clickGenerateSeed(){
-        this.setState({ seed: generateSeed() });
+        this.setState({seed: generateSeed() });
+    }
+
+    handleChangePsw(e) {
+        this.setState({showError : false});
+        this.setState({ psw: e.target.value });
+    }
+
+    handleChangeRePsw(e) {
+        this.setState({showError : false});
+        this.setState({ repsw: e.target.value });
+    }
+
+    handleChangeName(e) {
+        this.setState({showError : false});
+        this.setState({ name: e.target.value });
+    }
+
+    copySeed(){
+        console.log("copy to do");
     }
   
-    async clickGenerateNewAddres() {
+
+    async clickCreateWallet() {
+        if ( !this.state.seed){
+            this.setState({showError : true});
+            this.setState({error : 'Please first generate a seed'});
+            return;
+        }
+
         this.setState({isLoading : true});
 
         try{
@@ -62,16 +113,18 @@ class Init extends Component {
                 const eseed = aes256encrypt(this.state.seed,pswHash);
 
                 //get all account data
-                let data = await getAccountData(this.state.seed);
+                console.log("get account data " + this.state.seed );
+                const data = await getAccountData(this.state.seed);
                 
-                let account = {
+                const account = {
                     name : this.state.name,
                     seed : eseed,
                     data : data,
                     network : options.network[0] //TESTNET = 0  MAINNET = 1 PER ADESSO GENERO SULLA TESTNET
                 }
                 await addAccount(account);
-                await setCurrentNetwork(options.network[0])
+                await setCurrentNetwork(options.network[0]);
+
                 history.push('/home');
             }
         }catch(err){
@@ -80,49 +133,106 @@ class Init extends Component {
         }
     }
 
-    handleChangePsw(e) {
-        this.setState({ psw: e.target.value });
-    }
-
-    handleChangeRePsw(e) {
-        this.setState({ repsw: e.target.value });
-    }
-    handleChangeName(e) {
-        this.setState({ name: e.target.value });
-    }
-
     
     render() {
       return (
        <div>
-           { this.state.isLoading ? ('Creating account....' )  : (
-               <div>
-                    <ControlLabel>Please insert the passphrase</ControlLabel>
-                    <FormControl type="text" value={this.state.value} placeholder="Enter password"    onChange={this.handleChangePsw}/> 
-                    <FormControl type="text" value={this.state.value} placeholder="Re-Enter password" onChange={this.handleChangeRePsw}/> 
-                    <FormControl type="text" value={this.state.name}  placeholder="Enter name       " onChange={this.handleChangeName}/> 
-                    <FormControl.Feedback />
-                    <HelpBlock>Enter the pasword </HelpBlock>
-                    <Button bsStyle="primary" onClick={this.clickCreatePassword}>Next</Button>
-                    {this.state.error}
+           { this.state.isLoading ? 
+                <div class="container-loader"><div class="loader"></div></div>
+            : (<div>
+                   {this.state.showGenerateName ?  
+                        <div class="container-center">
+                            <div class="row">
+                                <div class="col-2"></div>
+                                <div class="col-8">
+                                    <form>
+                                        <div class="form-group">
+                                            <input onChange={this.handleChangeName} type="text" class="form-control input-name" placeholder="Insert your name"/>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col-2"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-2"></div>
+                                <div class="col-8 text-center">
+                                    <button onClick={this.clickGoToCreatePsw} type="submit" class="btn btn-name">Create Password <span class="fa fa-arrow-right"></span></button>
+                                </div>
+                                <div class="col-2"></div>
+                            </div>
+                        </div>
+                   : ''}
 
+                   {this.state.showGeneratePsw ? 
+                        <div class="container-center">
+                            <div class="row">
+                                <div class="col-2"></div>
+                                <div class="col-8">
+                                    <form>
+                                        <div class="form-group">
+                                            <input onChange={this.handleChangePsw} type="password" class="form-control input-psw" placeholder="Insert your password"/>
+                                            <input onChange={this.handleChangeRePsw} type="password" class="form-control input-psw" placeholder="Re-Insert your password"/>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col-2"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-2"></div>
+                                <div class="col-8 text-center">
+                                    <button onClick={this.clickGoToCreateSeed} type="submit" class="btn btn-password">Create Seed <span class="fa fa-arrow-right"></span></button>
+                                </div>
+                                <div class="col-2"></div>
+                            </div>
+                        </div>
+                    : ''}
 
-                    <Row className="show-grid">
-                    <Col xs={6} md={4}>
-                        <Button bsStyle="primary" onClick={this.clickGenerateSeed}>Generate a seed</Button>
-                    </Col>
-                    <Col xs={12} md={8}>
-                        {this.state.seed}
-                    </Col>
-                    </Row>
-                    <Row className="show-grid">
-                    <Col xs={6} md={4}>
-                        <Button bsStyle="primary" onClick={this.clickGenerateNewAddres}>Create Wallet</Button>
-                    </Col>
-                    <Col xs={12} md={8}>
-                        {this.state.address}
-                    </Col>
-                    </Row>
+                   {this.state.showGenerateSeed ? 
+                        
+                        <div class="container-center">
+                            <div class="row">
+                                <div class="col-2"></div>
+                                <div class="col-8 text-center">
+                                    <button onClick={this.clickGenerateSeed} type="submit" class="btn btn-generate-seed">Generate Seed </button>
+                                </div>
+                                <div class="col-2"></div>
+                            </div>
+
+                            { this.state.seed ? 
+                                <div>
+                                    <div class="row">
+                                        <div class="col-2"></div>
+                                        <div class="col-8 ">
+                                            <label class="label-seed" >{this.state.seed}</label>
+                                        </div>
+                                        <div class="col-2"></div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-2"></div>
+                                            <div class="col-8 text-center">
+                                            <button onClick={this.copySeed} type="submit" class="btn btn-copy-seed"><span class="fa fa-bookmark"></span></button>
+                                            </div>
+                                        <div class="col-2"></div>
+                                    </div>
+                                </div>
+                            : ''}
+
+                            <div class="row">
+                                <div class="col-2"></div>
+                                <div class="col-8 text-center">
+                                    <button onClick={this.clickCreateWallet} type="submit" class="btn btn-create-wallet">Create wallet </button>
+                                </div>
+                                <div class="col-2"></div>
+                            </div>
+                        </div>  
+                    : ''}
+
+                    {this.state.showError ? 
+                        <div class="alert alert-danger" role="alert">
+                            <strong>Error</strong> {this.state.error}
+                        </div>
+                    : ''}
+                
                 </div>
            )}
        </div>

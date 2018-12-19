@@ -10,7 +10,7 @@ class Header extends Component {
     this.onChangeOption = this.onChangeOption.bind(this);
 
     this.state = {
-      value:''
+      value:'',
     }
   }
 
@@ -34,7 +34,6 @@ class Header extends Component {
               {options.network.map( (option,index) => {return(<option value={index}>{option.provider}</option>)} )}
             </select>
           </form>   
-         
         </header>
     );
   }

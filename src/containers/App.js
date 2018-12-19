@@ -15,11 +15,13 @@ class App extends Component {
     this.main = React.createRef();
     
     this.onHandleLogin = this.onHandleLogin.bind(this);
+    this.onShowHeader = this.onShowHeader.bind(this);
     this.onHandleNetworkChanging = this.onHandleNetworkChanging.bind(this);
 
     this.state = {
       isLogged : false,
-      network : {}
+      network : {},
+      showHeader : false
     }
   }
 
@@ -42,11 +44,12 @@ class App extends Component {
   onHandleLogin(value){
     this.setState({isLogged : value});
   }
-
+  onShowHeader(value){
+    this.setState({showHeader : value});
+  }
   async onHandleNetworkChanging(network){
     await iotaInit(network.provider);
     await setCurrentNetwork(network);
-    //this.setState({network : network});
 
     this.main.current.changeNetwork(network);
   }
@@ -55,8 +58,8 @@ class App extends Component {
   render() {
     return (
       <div class="app">
-        <Header isLogged={this.state.isLogged} changeNetwork={this.onHandleNetworkChanging}/>
-        <Main   ref={this.main} currentNetwork={this.state.network}/>
+        {this.state.showHeader ? <Header isLogged={this.state.isLogged} changeNetwork={this.onHandleNetworkChanging}/> : '' }
+        <Main   showHeader={this.onShowHeader} ref={this.main} currentNetwork={this.state.network}/>
       </div>
     );
   }
