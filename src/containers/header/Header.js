@@ -3,6 +3,8 @@ import {getCurrentNewtwork} from '../../wallet/wallet';
 
 import options from '../../options/options'
 
+import './Header.css'
+
 class Header extends Component {
   constructor(props, context) {
     super(props, context);
@@ -28,12 +30,17 @@ class Header extends Component {
     return (
 
         <header>
-          <form>
-            <select onChange={this.onChangeOption}>
-              <option value="default" selected disabled hidden>{this.state.network? this.state.network.provider : ''}</option>
-              {options.network.map( (option,index) => {return(<option value={index}>{option.provider}</option>)} )}
-            </select>
-          </form>   
+          <div class="container-header">
+            <form>
+              <div class="container-selection">
+                <select onChange={this.onChangeOption}>
+                  <option value="default" selected disabled hidden>{this.state.network? this.state.network.provider : ''}</option>
+                  {options.network.map( (option,index) => {return(<option value={index}>{option.provider}</option>)} )}
+                </select>
+              </div>
+            </form> 
+          </div>
+            
         </header>
     );
   }
