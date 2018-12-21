@@ -2,6 +2,8 @@ import React , { Component } from 'react';
 import Map from '../../components/map/Map'
 import history from '../../components/history'
 
+import './Interact.css'
+
 class Interact extends Component {
 
     constructor(props, context) {
@@ -17,8 +19,8 @@ class Interact extends Component {
     render() {
       return (
         <div>
-          <div class="container settings">
-            <div class="row">
+          <div class="container-settings">
+            <div class="row text-center">
               <div class="col-2">
                 <button onClick={this.goBack} class="btn btn-back"><i class="fa fa-arrow-left"></i></button>
               </div>
