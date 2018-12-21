@@ -9,6 +9,7 @@ import Send from '../send/Send';
 import Receive from '../receive/Receive';
 import Settings from '../settings/Settings';
 import Details from '../details/Details';
+import Loader from '../../components/loader/Loader'
 
 import './Home.css'
 
@@ -172,19 +173,19 @@ class Home extends Component {
       return (
         <div>
           { this.state.showHome ? (
-            <div class="container settings">
-              <div class="row">
+            <div class="container-settings">
+              <div class="row text-center">
                 <div class="col-2">
                   <button onClick={this.onClickSettings} class="btn btn-settings"><i class="fa fa-bars"></i></button>
                 </div>
                 <div class="col-8"></div>
                 <div class="col-2">
-                <button onClick={this.onClickMap} class="btn btn-marker"><i class="fa fa-map-marker"></i></button> 
+                  <button onClick={this.onClickMap} class="btn btn-marker"><i class="fa fa-map-marker"></i></button> 
                 </div>
               </div>
             </div>
           ) : ''}
-          { !(Object.keys(this.state.account).length === 0 && this.state.account.constructor === Object) ? (
+          { !(Object.keys(this.state.account).length === 0 && this.state.account.constructor === Object) ? ( //!
             <div>
               { this.state.showSettings ? ( <Settings switchAccount={this.onSwitchAccount} currentNetwork={this.state.network} currentAccount={this.state.account} close={this.onCloseSettings}/> ) : ''}
               { this.state.showSend ?     ( <Send account={this.state.account} network={this.state.network} onBack={this.onBack} /> ) : ''}
@@ -218,12 +219,9 @@ class Home extends Component {
               ) : '' }
               
           </div> ) : (
-            'loading....' 
+             <Loader/>
           )}
-          
         </div>
-
-        
       );
     }
   }

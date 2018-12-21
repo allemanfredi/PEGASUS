@@ -58,7 +58,7 @@ class App extends Component {
   render() {
     return (
       <div class="app">
-        {!this.state.showHeader ? <Header isLogged={this.state.isLogged} changeNetwork={this.onHandleNetworkChanging}/> : '' }
+        {this.state.showHeader ? <Header isLogged={this.state.isLogged} changeNetwork={this.onHandleNetworkChanging}/> : '' }
         <Main   showHeader={this.onShowHeader} ref={this.main} currentNetwork={this.state.network}/>
       </div>
     );

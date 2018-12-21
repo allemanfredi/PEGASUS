@@ -2,9 +2,10 @@ import React , { Component } from 'react';
 import {storePsw} from '../../wallet/wallet'
 import history from '../../components/history';
 import {aes256encrypt,sha256} from '../../utils/crypto'
-import {getAccountData} from '../../core/core';
+import {getNodeInfo,getAccountData, getAccountDataSync} from '../../core/core';
 import {generateSeed,addAccount,setupWallet,setCurrentNetwork} from '../../wallet/wallet';
 
+import Loader from '../../components/loader/Loader'
 import options from '../../options/options';
 
 import './Init.css';
@@ -19,10 +20,8 @@ class Init extends Component {
       this.handleChangeName = this.handleChangeName.bind(this);
       this.clickGoToCreatePsw = this.clickGoToCreatePsw.bind(this);
       this.clickGoToCreateSeed = this.clickGoToCreateSeed.bind(this);
-
       this.clickGenerateSeed = this.clickGenerateSeed.bind(this);
       this.clickCreateWallet = this.clickCreateWallet.bind(this);
-
       this.copySeed = this.copySeed.bind(this);
 
       this.state = {
@@ -114,7 +113,10 @@ class Init extends Component {
 
                 //get all account data
                 console.log("get account data " + this.state.seed );
-                const data = await getAccountData(this.state.seed);
+                const info = await getNodeInfo();
+                console.log(info);
+                const data = await getAccountDataSync("BE9NICE9TO9OTHERS9AND9DO9NOT9TAKE9MORE9THAN9TEN9PERCENT9OF9THE9REMAINING9BALANCE9");
+                console.log(data);
                 
                 const account = {
                     name : this.state.name,
@@ -128,8 +130,9 @@ class Init extends Component {
                 history.push('/home');
             }
         }catch(err){
-            console.log(err.error);
-            this.setState({isLoading : true});
+            console.log("error");
+            console.log(err);
+            this.setState({isLoading : false});
         }
     }
 
@@ -138,7 +141,7 @@ class Init extends Component {
       return (
        <div>
            { this.state.isLoading ? 
-                <div class="container-loader"><div class="loader"></div></div>
+                <Loader/>
             : (<div>
                    {this.state.showGenerateName ?  
                         <div class="container-center">

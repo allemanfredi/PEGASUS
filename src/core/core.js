@@ -103,13 +103,33 @@ const getAccountData = async (seed) => {
     return new Promise ((resolve,reject) => {
         iota.getAccountData(seed, {start: 0,security: 2})
            .then(accountData => {
+             console.log(accountData);
              resolve(accountData);
            })
            .catch(err => {
+            console.log(err);
             reject(err);
            })
     })
 }
+
+
+const getAccountDataSync = (seed) => {
+    
+ 
+        iota.getAccountData(seed, {start: 0,security: 2})
+           .then(accountData => {
+             console.log(accountData);
+            return accountData;
+           })
+           .catch(err => {
+            console.log(err);
+            return err;
+           })
+    
+}
+
+
 
 const getBundle = async (transaction) => {
     return new Promise ((resolve,reject) => {
@@ -194,4 +214,5 @@ export {getNewAddress,
         getAccountData,
         getBundle,
         replayBundle,
-        promoteTransaction};
+        promoteTransaction,
+        getAccountDataSync};

@@ -45,6 +45,7 @@ class Settings extends Component {
     render() {
         return (
             <div class="modal">
+
                  <div id="sidebar-wrapper">
                     <nav id="spy">
                         <ul class="sidebar-nav nav">
@@ -77,6 +78,7 @@ class Settings extends Component {
                         </ul>
                     </nav>
                 </div>
+
             </div>
         );
     }

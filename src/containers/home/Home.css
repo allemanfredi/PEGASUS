@@ -1,6 +1,6 @@
-.settings {
-
-    margin-bottom: 70px;
+.container-settings {
+    margin-top: 17%;
+    background: darkblue;
 }
 
 .info {
@@ -24,9 +24,9 @@
 }
 
 .btn-settings, .btn-marker {
-    background-color: #ffffff; 
+    background-color: darkblue; 
     border: none; 
-    color: blue; 
+    color: white; 
     padding: 0px 0px;
     font-size: 30px; 
     cursor: pointer; 
