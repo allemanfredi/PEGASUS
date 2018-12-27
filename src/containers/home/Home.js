@@ -231,7 +231,7 @@ class Home extends Component {
                     </div>  
                     <div class="row">
                       <div class="col-6 text-center">
-                        <button onClick={this.onClickSend} class="btn btn-send"><i class="fa fa-upload icon"></i></button>
+                        <button onClick={this.onClickSend} class="btn btn-send"><i class="fa fa-paper-plane icon"></i></button>
                       </div>
                       <div class="col-6 text-center">
                         <button onClick={this.onClickReceive}  class="btn btn-receive"><i class="fa fa-download icon" ></i></button>

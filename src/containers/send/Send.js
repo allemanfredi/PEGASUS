@@ -1,9 +1,8 @@
 import React , { Component } from 'react';
 import {prepareTransfer} from '../../core/core';
-import {getCurrentAccount,getKey,getCurrentNewtwork} from '../../wallet/wallet';
-import history from '../../components/history'
+import {getKey,getCurrentNewtwork} from '../../wallet/wallet';
 import {aes256decrypt} from '../../utils/crypto';
-
+import Loader from '../../components/loader/Loader'
 
 import './Send.css'
 
@@ -16,15 +15,18 @@ class Send extends Component {
       this.handleChangeDstAddress = this.handleChangeDstAddress.bind(this);
       this.handleChangeValue = this.handleChangeValue.bind(this);
       this.handleChangeMessage = this.handleChangeMessage.bind(this);
+      this.closeError = this.closeError.bind(this);
   
       this.state = {
         address : '',
         seed : '',
         dstAddress: '',
-        value : 0,
+        value : '',
         message: '',
-        status: '',
+        error: '',
+        showError : false,
         success: '',
+        isLoading : false
       };
     }
 
@@ -44,9 +46,22 @@ class Send extends Component {
       this.setState({ message: e.target.value });
     } 
 
+    closeError(){
+      this.setState({showError:false});
+    }
+
 
     async clickTransfer(){
       
+      //check input parameters
+      if ( this.state.address === '' ){
+        this.setState({error : 'invalid input'});
+        this.setState({showError : true});
+        return;
+      }
+
+      this.setState({isLoading:true});
+
       //get user seed in order to complete the transfer
       let account = this.props.account;
 
@@ -72,49 +87,80 @@ class Send extends Component {
         }
         if (error){
           console.log(error);
-          this.setState({status : error.message});
+          this.setState({error : error.message});
+          this.setState({showError : true});
           this.setState({success : false});
 
         }
+        this.setState({isLoading:false});
       });
     }
 
     render() {
       return (
+
         <div>
-          IETGETEQSAAJUCCKDVBBGPUNQVUFNTHNMZYUCXXBFXYOOOQOHC9PTMP9RRIMIOQRDPATHPVQXBRXIKFDDRDPQDBWTY 
-          <div class="container">
-            <div class="row justify-content-md-center">
-              <div class="col col-lg-2"></div>
-              <div class="col-md-auto">
-                <input type="text" value={this.state.dstAddress} onChange={this.handleChangeDstAddress} placeholder="address"/>
+          { !this.state.isLoading ?   
+          <div class="container-send"> 
+
+            <div class="row">
+              <div class="col-1"></div>
+              <div class="col-10">
+                <label for="inp-address" class="inp">
+                      <input value={this.state.dstAddress} onChange={this.handleChangeDstAddress}  type="text" id="inp-address" placeholder="&nbsp;"/>
+                      <span class="label">address</span>
+                      <span class="border"></span>
+                </label>
               </div>
-              <div class="col col-lg-2"></div>
+              <div class="col-1"></div>
             </div>
-            <div class="row justify-content-md-center">
-              <div class="col col-lg-2"></div>
-              <div class="col-md-auto">
-                <input type="text" value={this.state.value} onChange={this.handleChangeValue} placeholder="value"/>
+
+            <div class="row">
+              <div class="col-1"></div>
+                <div class="col-10">
+                  <label for="inp-value" class="inp">
+                      <input value={this.state.value} onChange={this.handleChangeValue} type="text" id="inp-value" placeholder="&nbsp;"/>
+                      <span class="label">value</span>
+                      <span class="border"></span>
+                  </label>
+                </div>
+              <div class="col-1"></div>
+            </div>
+
+            <div class="row">
+              <div class="col-1"></div>
+                <div class="col-10">
+                  <label for="inp-message" class="inp">
+                      <input value={this.state.message} onChange={this.handleChangeMessage} type="text" id="inp-message" placeholder="&nbsp;"/>
+                      <span class="label">message</span>
+                      <span class="border"></span>
+                  </label>
+                </div>
+              <div class="col-1"></div>
+            </div>
+
+            <div class="row">
+              <div class="col-1"></div>
+                <div class="col-10 text-center">
+                  <button onClick={this.clickTransfer} class="btn btn-transfer"><i class="fa fa-paper-plane icon" ><strong>  send</strong></i></button>
+                </div>
+              <div class="col-1"></div>
+            </div>
+            
+            {this.state.showError ? 
+              <div class="container-error">
+                <div class="alert alert-danger" role="alert">
+                  <button onClick={this.closeError} type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+                  <strong>Error</strong> {this.state.error}
+                </div>
               </div>
-              <div class="col col-lg-2"></div>
-            </div>
-            <div class="row justify-content-md-center">
-              <div class="col col-lg-2"></div>
-              <div class="col-md-auto">
-                <input type="text" value={this.state.message} onChange={this.handleChangeMessage} placeholder="message"/>
-              </div>
-              <div class="col col-lg-2"></div>
-            </div>
-            <div class="row justify-content-md-center">
-              <div class="col col-lg-2"></div>
-              <div class="col-md-auto">
-                <button onClick={this.clickTransfer} class="btn btn-primary">Send</button>
-              </div>
-              <div class="col col-lg-2"></div>
-            </div>
-          </div>
-          {this.state.status}
-        </div> 
+            : ''}
+          </div>  
+          
+          : <Loader/>}
+        </div>
       );
     }
   }
