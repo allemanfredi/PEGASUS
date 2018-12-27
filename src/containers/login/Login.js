@@ -38,23 +38,29 @@ class InitPsw extends Component {
 
     render() {
       return (
-        <div>
+        <div class="container-login">
+            <div class="container-logo">
+                <img src="./material/logo/pegasus-128.png" height="80" width="80"/>
+            </div>
+            <div class="container-title">
+                Pegasus
+            </div>
             <div class="container-center">
               <div class="row">
                   <div class="col-2"></div>
                   <div class="col-8">
-                      <form>
-                          <div class="form-group">
-                              <input onChange={this.handleChangePsw} type="password" class="form-control input-psw" placeholder="Insert your password"/>
-                          </div>
-                      </form>
+                    <label for="inp-psw" class="inp">
+                        <input onChange={this.handleChangePsw} type="password" id="inp-psw" placeholder="&nbsp;"/>
+                        <span class="label">password</span>
+                        <span class="border"></span>
+                    </label>
                   </div>
                   <div class="col-2"></div>
               </div>
               <div class="row">
                   <div class="col-2"></div>
                   <div class="col-8 text-center">
-                      <button onClick={this.clickLogin} type="submit" class="btn btn-password">Log In <span class="fa fa-arrow-right"></span></button>
+                      <button onClick={this.clickLogin} type="submit" class="btn btn-password">Login <span class="fa fa-arrow-right"></span></button>
                   </div>
                   <div class="col-2"></div>
               </div>

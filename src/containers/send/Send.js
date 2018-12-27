@@ -54,7 +54,7 @@ class Send extends Component {
     async clickTransfer(){
       
       //check input parameters
-      if ( this.state.address === '' ){
+      if ( this.state.dstAddress === '' ){
         this.setState({error : 'invalid input'});
         this.setState({showError : true});
         return;
