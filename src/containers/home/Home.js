@@ -1,6 +1,5 @@
 import React , { Component } from 'react';
 import {getAccountData} from '../../core/core';
-import {startSession,deleteSession} from '../../utils/utils';
 import {setCurrentAddress,setCurrentAccount,getCurrentAccount,generateSeed,updateDataAccount,addAccount,getKey,getCurrentNewtwork} from '../../wallet/wallet'
 import {aes256decrypt,aes256encrypt} from '../../utils/crypto';
 import history from '../../components/history';
@@ -35,7 +34,7 @@ class Home extends Component {
       this.onSwitchAccount = this.onSwitchAccount.bind(this);  
       this.onAddAccount = this.onAddAccount.bind(this);
       this.onGoDetails = this.onGoDetails.bind(this);  
-      this.onLogOut = this.onLogOut.bind(this);  
+      this.onLogout = this.onLogout.bind(this);  
       this.onChangeAccount = this.onChangeAccount.bind(this);  
 
       this.state = {
@@ -53,7 +52,6 @@ class Home extends Component {
         showAdd : false,
       };
 
-      startSession();
     }
 
     async componentDidMount(){
@@ -88,7 +86,6 @@ class Home extends Component {
     async componentWillReceiveProps(nextProps) {
       //controllare se è cambiata la rete (testnet/mainnet);
       const network = await getCurrentNewtwork();
-      console.log(network);
       if ( JSON.stringify(network) !== JSON.stringify(this.state.network) ){
         this.setState({network : network});
 
@@ -192,9 +189,8 @@ class Home extends Component {
       this.setState({account:account});
     }
 
-    onLogOut(){
-      deleteSession();
-      history.push('/login');
+    onLogout(){
+      this.props.onLogout();
     }
 
 
@@ -214,7 +210,7 @@ class Home extends Component {
                                                       currentAccount={this.state.account} 
                                                       onAddAccount={this.onAddAccount} 
                                                       onSwitchAccount={this.onSwitchAccount}
-                                                      onLogOut={this.onLogOut}
+                                                      onLogout={this.onLogout}
                                                       onClose={this.onCloseSettings}/> ) 
               : ''}
               { this.state.showSend ?     ( <Send     account={this.state.account} network={this.state.network} /> ) : ''}

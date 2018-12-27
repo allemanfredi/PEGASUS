@@ -23,9 +23,9 @@ class InitPsw extends Component {
     clickLogin(){
     
         if ( checkPsw(this.state.psw)){
-            if ( startSession() ) history.push('/home');
+            if ( startSession() ) this.props.onSuccess();//history.push('/home');
         }else{
-          this.setState({showError : false})
+          this.setState({showError : true})
           this.setState({error : 'Wrong Password'})
         }
     }

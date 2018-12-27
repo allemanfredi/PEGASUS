@@ -12,7 +12,7 @@ class Settings extends Component {
         super(props,context);
         
         this.close = this.close.bind(this);
-        this.logOut = this.logOut.bind(this);
+        this.logout = this.logout.bind(this);
         this.addAccount = this.addAccount.bind(this);
         this.switchAccount = this.switchAccount.bind(this);
 
@@ -24,8 +24,8 @@ class Settings extends Component {
     close(){
         this.props.onClose();
     }
-    logOut(){
-        this.props.onLogOut();
+    logout(){
+        this.props.onLogout();
     }
     addAccount(){
         //history.push('/add');
@@ -80,7 +80,7 @@ class Settings extends Component {
                                 </a>
                             </li>
                             <li class="sidebar-brand-logout">   
-                                <a href="#"  onClick={this.logOut} data-scroll>
+                                <a href="#"  onClick={this.logout} data-scroll>
                                     <span class="fa fa-sign-out">logout</span>
                                 </a>  
                             </li>

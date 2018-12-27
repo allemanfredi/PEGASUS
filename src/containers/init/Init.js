@@ -123,7 +123,7 @@ class Init extends Component {
                 await addAccount(account);
                 await setCurrentNetwork(options.network[0]);
                 
-                history.push('/home');
+                this.props.onSuccess();
             }
         }catch(err){
             console.log(err);

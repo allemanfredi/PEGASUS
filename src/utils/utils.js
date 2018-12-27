@@ -20,7 +20,7 @@ const checkSession = () => {
         const time = localStorage.getItem('session') 
         const date = new Date();
         const currentTime = date.getTime();
-        if ( currentTime - time > 3600000 ) 
+        if ( currentTime - time > 3600000 ) //greather than 1 our
             return false;
         
         return true;

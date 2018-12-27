@@ -31,3 +31,11 @@
 }
 
 
+.btn-back {
+    background-color: transparent; 
+    border: none; 
+    color: white; 
+    padding: 0px 0px;
+    font-size: 30px; 
+    cursor: pointer; 
+}
