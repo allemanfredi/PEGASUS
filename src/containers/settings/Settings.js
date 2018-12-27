@@ -22,17 +22,18 @@ class Settings extends Component {
     }
 
     close(){
-        this.props.close();
+        this.props.onClose();
     }
     logOut(){
         console.log("log out");
     }
     addAccount(){
-        history.push('/add')
+        //history.push('/add');
+        this.props.onAddAccount();
     }
 
     switchAccount(account){
-        this.props.switchAccount(account);
+        this.props.onSwitchAccount(account);
     }
 
     async componentWillMount(){
@@ -72,6 +73,13 @@ class Settings extends Component {
                                 <li>
                                     <a href="#"  onClick={this.addAccount} data-scroll>
                                         <span class="fa fa-plus">add account</span>
+                                    </a>
+                                </li>
+                            </li>
+                            <li class="sidebar-brand">
+                                <li>
+                                    <a href="#"  onClick={this.logOut} data-scroll>
+                                        <span class="fa fa-sign-out">logout</span>
                                     </a>
                                 </li>
                             </li>

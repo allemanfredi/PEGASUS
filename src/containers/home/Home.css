@@ -1,13 +1,11 @@
-.container-settings {
-    margin-top: 17%;
-    background: darkblue;
-}
 
-.info {
+
+.container-info {
+    margin-top: 20%;
     margin-bottom: 30px;
 }
 
-.transactions{
+.container-transactions{
     font-size: 8px;
 }
 
@@ -15,21 +13,21 @@
     text-align: center;
 }
 
-.btn-send{
-    width: 120px;
+.btn-send,.btn-receive{
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    border: 1px solid lightskyblue;
+    background: darkblue;
 }
 
-.btn-receive{
-    width: 120px;
+/*.btn-send:hover , .btn-receive:hover{ 
+    height: 60px;
+    width: 60px;
+}*/
+
+.icon{
+    color: white;
 }
 
-.btn-settings, .btn-marker {
-    background-color: darkblue; 
-    border: none; 
-    color: white; 
-    padding: 0px 0px;
-    font-size: 30px; 
-    cursor: pointer; 
-    z-index: 2;
-}
 

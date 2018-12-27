@@ -53,41 +53,40 @@ class Transactions extends Component {
         let doubleBundle = [];
         this.setState({transactions: []});
         this.props.transfers.forEach(transfer => {
-            //https://domschiener.gitbooks.io/iota-guide/content/chapter1/bundles.html
-            //da gestire le meta tx
+        //https://domschiener.gitbooks.io/iota-guide/content/chapter1/bundles.html
+        //da gestire le meta tx
 
-            if ( transfer.length === 0 )
-                return;
+        if ( transfer.length === 0 )
+            return;
 
-            let value;
-            if ( transfer[0].value < 0 ){ //RECEIVED
-                value = -(transfer[0].value + transfer[3].value);
-            }else{ //SENT
-                value = -transfer[0].value;
-            }
+        let value;
+        if ( transfer[0].value < 0 ){ //RECEIVED
+            value = -(transfer[0].value + transfer[3].value);
+        }else{ //SENT
+            value = -transfer[0].value;
+        }
 
+        let obj = {
+            timestamp : transfer[0].attachmentTimestamp,
+            value : value,
+            status : transfer[0].persistence,
+            bundle : transfer[0].bundle,
+            index : transfer[0].currentIndex,
+            transfer : transfer
+        }
 
-            let obj = {
-                timestamp : transfer[0].attachmentTimestamp,
-                value : value,
-                status : transfer[0].persistence,
-                bundle : transfer[0].bundle,
-                index : transfer[0].currentIndex,
-                transfer : transfer
-            }
-
-            //remove double bundle (reattachemen txs)
-            //arr = arr.filter ( item => item.bundle != obj.bundle );
-            //in questo modo prendo la prima transazione con stesso bundle 
-            //cosi da escludere le reattachment transaction
-            let add = true;
-            for ( let tx of doubleBundle )
-                if ( tx.bundle === obj.bundle )
-                    add = false;
-            if ( add ){
-                arr.push(obj);
-                doubleBundle.push(obj);
-            }
+        //remove double bundle (reattachemen txs)
+        //arr = arr.filter ( item => item.bundle != obj.bundle );
+        //in questo modo prendo la prima transazione con stesso bundle 
+        //cosi da escludere le reattachment transaction
+        let add = true;
+        for ( let tx of doubleBundle )
+            if ( tx.bundle === obj.bundle )
+                add = false;
+        if ( add ){
+            arr.push(obj);
+            doubleBundle.push(obj);
+        }
         });
         this.setState({transactions: arr});
     }
@@ -99,8 +98,19 @@ class Transactions extends Component {
     
     render() {
       return (
-        <div class="transaction-list">
-            {this.state.transactions.map(transaction => {
+        <div class="container-transactions">
+            <div class="transactions-header">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="transactions-name">
+                            transactions
+                        </div>
+                    </div>
+                </div>
+                <hr/>
+            </div>
+            <div class="transaction-list">
+            {this.state.transactions.lenght > 0 ? this.state.transactions.map(transaction => {
                 return (
                 <div class="transaction-list-item" >
                     <div class="transaction-list-item-action">{transaction.value > 0 ? 'RECEIVED ' : 'SENT'}</div>
@@ -118,8 +128,18 @@ class Transactions extends Component {
                     </div>
                 </div>        
                 );
-            })}
+            }) : 
+                <div class="container-no-transactions">
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <div class="text-no-transactions">No Transactions</div>
+                        </div>
+                    </div>
+                </div>
+            }
+            </div>
         </div>
+        
       );
     }
   }

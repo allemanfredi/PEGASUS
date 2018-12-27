@@ -1,15 +1,20 @@
 import React , { Component } from 'react';
-import {getAccountData,promoteTransaction,replayBundle,getLatestInclusion,getBalance} from '../../core/core';
+import {getAccountData} from '../../core/core';
 import {startSession} from '../../utils/utils';
 import {setCurrentAddress,setCurrentAccount,getCurrentAccount,generateSeed,updateDataAccount,addAccount,getKey,getCurrentNewtwork} from '../../wallet/wallet'
-import Transactions from '../transactions/Transactions';
-import history from '../../components/history';
 import {aes256decrypt,aes256encrypt} from '../../utils/crypto';
+import history from '../../components/history';
+
 import Send from '../send/Send';
 import Receive from '../receive/Receive';
 import Settings from '../settings/Settings';
 import Details from '../details/Details';
+import Transactions from '../transactions/Transactions';
+import Add from '../add/Add';
+
 import Loader from '../../components/loader/Loader'
+import Navbar from '../../components/navbar/Navbar'
+
 
 import './Home.css'
 
@@ -28,7 +33,9 @@ class Home extends Component {
       this.onClickReceive = this.onClickReceive.bind(this);
       this.onBack = this.onBack.bind(this);      
       this.onSwitchAccount = this.onSwitchAccount.bind(this);  
-      this.onGoDetails = this.onGoDetails.bind(this);    
+      this.onAddAccount = this.onAddAccount.bind(this);
+      this.onGoDetails = this.onGoDetails.bind(this);  
+      this.onChangeAccount = this.onChangeAccount.bind(this);  
 
       this.state = {
         error: '',
@@ -42,6 +49,7 @@ class Home extends Component {
         showReceive : false,
         showSettings : false,
         showDetails : false,
+        showAdd : false,
       };
 
       startSession();
@@ -69,7 +77,6 @@ class Home extends Component {
         setCurrentAddress(account.data.latestAddress,this.state.network);
         this.setState({account : account});
 
-
       }catch(err){
           this.setState({ error: err.error });
           console.log(err);
@@ -80,41 +87,46 @@ class Home extends Component {
     async componentWillReceiveProps(nextProps) {
       //controllare se è cambiata la rete (testnet/mainnet);
       const network = await getCurrentNewtwork();
-      this.setState({network : network});
+      console.log(network);
+      if ( JSON.stringify(network) !== JSON.stringify(this.state.network) ){
+        this.setState({network : network});
 
-      let account = await getCurrentAccount(network);
-      if (!account) //se non esiste un account x questa net
-        account = await this.createAccount(network);
-      
-      //store the encrypted seed
-      const key = await getKey();
-      const dseed = aes256decrypt(account.seed,key);
-      this.setState({decryptedSeed : dseed});
-      
-      setCurrentAddress(account.data.latestAddress,this.state.network);
-      this.setState({account : account});
+        let account = await getCurrentAccount(network);
+        if (!account){ //se non esiste un account x questa net
+          account = await this.createAccount(network,'net-no-name');
+        }
+        
+        //store the encrypted seed
+        const key = await getKey();
+        const dseed = aes256decrypt(account.seed,key);
+        this.setState({decryptedSeed : dseed});
+        
+        this.setState({account : account});
 
-      if ( this.state.showHome )
-        this.transactions.current.updateData();
+        if ( this.state.showHome )
+          this.transactions.current.updateData();
+      }
     }
 
 
-    async createAccount (network) {
+    async createAccount (network,name) {
       //generate new seed
-      const newSeed = generateSeed();
-      const key = await getKey();
-      const eseed = aes256encrypt(newSeed,key);
-      
-      //get all account data
-      let data = await getAccountData(newSeed);
-      let account = {
-          name : 'name',
-          seed : eseed,
-          data : data,
-          network : network //NUOVA NETWORK
-      }
-      await addAccount (account);
-      return account;
+      return new Promise( async (resolve,reject) => {
+        const newSeed = generateSeed();
+        const key = await getKey();
+        const eseed = aes256encrypt(newSeed,key);
+        
+        //get all account data
+        const data = await getAccountData(newSeed);
+        const account = {
+            name : name ,
+            seed : eseed,
+            data : data,
+            network : network //NUOVA NETWORK
+        }
+        await addAccount (account);
+        resolve(account);
+      })
     }
 
     async getData(){
@@ -129,10 +141,6 @@ class Home extends Component {
 
 
     async onSwitchAccount(account){
-      console.log("switch to");
-      console.log(account);
-      
-      //switch account
       this.setState({showSettings : false});
       this.setState({account : account});
       await setCurrentAccount(account,this.state.network);
@@ -142,7 +150,6 @@ class Home extends Component {
       this.setState({showSend : true});
       this.setState({showHome : false});
     }
-
     onClickReceive(){
       this.setState({showReceive : true});
       this.setState({showHome : false});
@@ -151,49 +158,57 @@ class Home extends Component {
       this.setState({showSend : false});
       this.setState({showReceive : false});
       this.setState({showDetails : false});
+      this.setState({showAdd : false});
       this.setState({showHome : true});
     }
-
     onClickMap(){
       history.push('/interact')
-    }
-    onCloseSettings(){
-      this.setState({showSettings:false});
     }
     onClickSettings(){
       this.setState({showSettings:true});
     }
+    onCloseSettings(){
+      this.setState({showSettings:false});
+    }
     onGoDetails(transfer){
       this.setState({details:transfer});
       this.setState({showDetails:true});
+    }
+    onAddAccount(){
+      this.setState({showAdd:true});
+      this.setState({showHome : false});
+      this.setState({showSettings : false});
+    }
+    onChangeAccount(account){
+      this.setState({account:account});
     }
 
 
     render() {
       return (
         <div>
-          { this.state.showHome ? (
-            <div class="container-settings">
-              <div class="row text-center">
-                <div class="col-2">
-                  <button onClick={this.onClickSettings} class="btn btn-settings"><i class="fa fa-bars"></i></button>
-                </div>
-                <div class="col-8"></div>
-                <div class="col-2">
-                  <button onClick={this.onClickMap} class="btn btn-marker"><i class="fa fa-map-marker"></i></button> 
-                </div>
-              </div>
-            </div>
-          ) : ''}
+          <Navbar showBtnSettings={this.state.showHome} 
+                  showBtnMarker={this.state.showHome} 
+                  showBtnBack={!this.state.showHome} 
+                  onClickSettings={this.onClickSettings}
+                  onBack={this.onBack}>
+          </Navbar>
+          
           { !(Object.keys(this.state.account).length === 0 && this.state.account.constructor === Object) ? ( //!
             <div>
-              { this.state.showSettings ? ( <Settings switchAccount={this.onSwitchAccount} currentNetwork={this.state.network} currentAccount={this.state.account} close={this.onCloseSettings}/> ) : ''}
-              { this.state.showSend ?     ( <Send account={this.state.account} network={this.state.network} onBack={this.onBack} /> ) : ''}
-              { this.state.showReceive ?  ( <Receive  account={this.state.account} network={this.state.network} onBack={this.onBack}/> ) : '' }
-              { this.state.showDetails ?  ( <Details  details={this.state.details} onBack={this.onBack}/> ) : '' }
+              { this.state.showSettings ? ( <Settings currentNetwork={this.state.network} 
+                                                      currentAccount={this.state.account} 
+                                                      onAddAccount={this.onAddAccount} 
+                                                      onSwitchAccount={this.onSwitchAccount}
+                                                      onClose={this.onCloseSettings}/> ) 
+              : ''}
+              { this.state.showSend ?     ( <Send     account={this.state.account} network={this.state.network} /> ) : ''}
+              { this.state.showReceive ?  ( <Receive  account={this.state.account} network={this.state.network} /> ) : '' }
+              { this.state.showDetails ?  ( <Details  details={this.state.details} /> ) : '' }
+              { this.state.showAdd ?      ( <Add      onChangeAccount={this.onChangeAccount}></Add>) : ''}
               { this.state.showHome ? (
                 <div>
-                  <div class="container info">
+                  <div class="container-info">
                     <div class="row ">
                       <div class="col align-center">
                         <div>
@@ -204,15 +219,15 @@ class Home extends Component {
                       </div>
                     </div>  
                     <div class="row">
-                      <div class="col-6 align-center">
-                        <button onClick={this.onClickSend} type="button" class="btn btn-primary btn-send">send</button>
+                      <div class="col-6 text-center">
+                        <button onClick={this.onClickSend} class="btn btn-send"><i class="fa fa-upload icon"></i></button>
                       </div>
-                      <div class="col-6 align-center">
-                        <button onClick={this.onClickReceive} type="button" class="btn btn-primary btn-receive">receive</button>
+                      <div class="col-6 text-center">
+                        <button onClick={this.onClickReceive}  class="btn btn-receive"><i class="fa fa-download icon" ></i></button>
                       </div>
                     </div> 
                 </div>
-                <div class="transactions">
+                <div class="container-transactions">
                   <Transactions ref={this.transactions} goDetails={this.onGoDetails} transfers={this.state.account.data.transfers}/>
                 </div>
               </div>

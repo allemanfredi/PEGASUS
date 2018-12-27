@@ -1,0 +1,14 @@
+.container-bar {
+    margin-top: 17%;
+    background: darkblue;
+}
+
+.btn-settings, .btn-marker {
+    background-color: darkblue; 
+    border: none; 
+    color: white; 
+    padding: 0px 0px;
+    font-size: 30px; 
+    cursor: pointer; 
+    z-index: 2;
+}

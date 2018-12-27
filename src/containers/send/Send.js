@@ -11,8 +11,7 @@ class Send extends Component {
 
     constructor(props, context) {
       super(props, context);
-      
-      this.goBack = this.goBack.bind(this);
+  
       this.clickTransfer = this.clickTransfer.bind(this);
       this.handleChangeDstAddress = this.handleChangeDstAddress.bind(this);
       this.handleChangeValue = this.handleChangeValue.bind(this);
@@ -32,10 +31,7 @@ class Send extends Component {
     async componentDidMount(){ 
     }
 
-    goBack(){
-        this.props.onBack(); 
-    }
-
+    
     handleChangeDstAddress(e) {
         this.setState({ dstAddress: e.target.value });
     }
@@ -86,17 +82,7 @@ class Send extends Component {
     render() {
       return (
         <div>
-          <div class="container settings">
-            <div class="row">
-              <div class="col-2">
-                <button onClick={this.goBack} class="btn btn-back"><i class="fa fa-arrow-left"></i></button>
-              </div>
-              <div class="col-8"></div>
-              <div class="col-2"></div>
-            </div>
-          </div>
-          IETGETEQSAAJUCCKDVBBGPUNQVUFNTHNMZYUCXXBFXYOOOQOHC9PTMP9RRIMIOQRDPATHPVQXBRXIKFDDRDPQDBWTY
-          
+          IETGETEQSAAJUCCKDVBBGPUNQVUFNTHNMZYUCXXBFXYOOOQOHC9PTMP9RRIMIOQRDPATHPVQXBRXIKFDDRDPQDBWTY 
           <div class="container">
             <div class="row justify-content-md-center">
               <div class="col col-lg-2"></div>

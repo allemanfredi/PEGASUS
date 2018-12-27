@@ -2,7 +2,6 @@ import { composeAPI } from '@iota/core'
 import { asciiToTrytes } from '@iota/converter'
 
 
-
 let iota;
 
 const iotaInit = async (provider) => { 
@@ -20,7 +19,6 @@ const iotaInit = async (provider) => {
 }
 
 const getNodeInfo = async () => {
-
     return new Promise ((resolve , reject ) => {
         iota.getNodeInfo()
         .then(info =>  resolve(info))
@@ -29,7 +27,6 @@ const getNodeInfo = async () => {
 }
 
 const getNewAddress = async (seed) => {
-
     return new Promise ((resolve , reject ) => {
         iota.getNewAddress(seed)
             .then(address => resolve(address))
@@ -38,7 +35,6 @@ const getNewAddress = async (seed) => {
 }
 
 const getBalance = async (address) => {
-
     return new Promise ((resolve , reject) => {
         iota.getBalances([address], 100)
             .then(res => resolve(res.balances[0]))
@@ -47,7 +43,6 @@ const getBalance = async (address) => {
 }
 
 const getAllTransactions = async (addresses) => {
-    
     return new Promise ((resolve,reject) => {
         iota.findTransactionObjects({ addresses: addresses})
             .then( transactions => resolve(transactions))
@@ -89,7 +84,6 @@ const prepareTransfer = async (transfer,ret) => {
 }
 
 const getLatestInclusion = async (hashes) => {
-    
     return new Promise (async (resolve,reject) => {
         iota.getLatestInclusion(hashes)
         .then(states => resolve(states))
@@ -99,7 +93,6 @@ const getLatestInclusion = async (hashes) => {
 
 
 const getAccountData = async (seed) => {
-    
     return new Promise ((resolve,reject) => {
         iota.getAccountData(seed, {start: 0,security: 2})
            .then(accountData => {
@@ -115,18 +108,15 @@ const getAccountData = async (seed) => {
 
 
 const getAccountDataSync = (seed) => {
-    
- 
-        iota.getAccountData(seed, {start: 0,security: 2})
-           .then(accountData => {
-             console.log(accountData);
-            return accountData;
-           })
-           .catch(err => {
-            console.log(err);
-            return err;
-           })
-    
+    iota.getAccountData(seed, {start: 0,security: 2})
+        .then(accountData => {
+            console.log(accountData);
+        return accountData;
+        })
+        .catch(err => {
+        console.log(err);
+        return err;
+        })
 }
 
 

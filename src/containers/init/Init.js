@@ -112,11 +112,7 @@ class Init extends Component {
                 const eseed = aes256encrypt(this.state.seed,pswHash);
 
                 //get all account data
-                console.log("get account data " + this.state.seed );
-                const info = await getNodeInfo();
-                console.log(info);
-                const data = await getAccountDataSync("BE9NICE9TO9OTHERS9AND9DO9NOT9TAKE9MORE9THAN9TEN9PERCENT9OF9THE9REMAINING9BALANCE9");
-                console.log(data);
+                const data = await getAccountData(this.state.seed);
                 
                 const account = {
                     name : this.state.name,
@@ -126,11 +122,10 @@ class Init extends Component {
                 }
                 await addAccount(account);
                 await setCurrentNetwork(options.network[0]);
-
+                
                 history.push('/home');
             }
         }catch(err){
-            console.log("error");
             console.log(err);
             this.setState({isLoading : false});
         }

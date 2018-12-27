@@ -13,7 +13,7 @@ class Main extends Component {
     super(props,context);
 
     this.state = {
-      childProps : {}
+      childProps : {},
     }
   }
 
@@ -25,7 +25,9 @@ class Main extends Component {
       }
       else history.push("/login");
     }
-    else history.push('/init');
+    else {
+      history.push('/init');
+    }
   }
 
   //called by App.js component in order to reload-data
@@ -37,7 +39,7 @@ class Main extends Component {
 
     return (
       <main class="main" >
-        <Routes childProps={this.state.childProps} />
+        <Routes childProps={this.state.network} />
       </main>
     );
   }
