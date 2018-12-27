@@ -25,7 +25,7 @@ class Settings extends Component {
         this.props.onClose();
     }
     logOut(){
-        console.log("log out");
+        this.props.onLogOut();
     }
     addAccount(){
         //history.push('/add');
@@ -48,41 +48,43 @@ class Settings extends Component {
             <div class="modal">
 
                  <div id="sidebar-wrapper">
+                    
+                    <div class="container-sidebar-header">
+                         <div class="container-close float-left">
+                            <button onClick={this.close} type="button" class="close" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>  
+                    </div>
+                    
+
                     <nav id="spy">
-                        <ul class="sidebar-nav nav">
-                            <li class="sidebar-brand">
-                                <div class="section-close float-left">
-                                    <button onClick={this.close} type="button" class="close" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                 </div>
+                        <ul class="sidebar-nav nav">  
+
+                            <li class="sidebar-header">
+                                {this.props.currentAccount.name}
                             </li>
-                            <li class="sidebar-brand">
-                                <a class="text-center" >{this.props.currentAccount.name}</a>
-                            </li>
-                            
+
                             {this.state.accounts.map( account => {
-                                return (<li>
+                                return (<li class="sidebar-brand">
                                             <a href="#" onClick={() => this.switchAccount(account)} data-scroll>
                                                 <span class="fa fa-user">{account.name}</span>
                                             </a>
                                         </li>);
                             })}
+                            
+                            <hr/>
+                            <li class="sidebar-brand-add-account">
+                                <a href="#"  onClick={this.addAccount} data-scroll>
+                                    <span class="fa fa-plus">add account</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-brand-logout">   
+                                <a href="#"  onClick={this.logOut} data-scroll>
+                                    <span class="fa fa-sign-out">logout</span>
+                                </a>  
+                            </li>
 
-                            <li class="sidebar-brand">
-                                <li>
-                                    <a href="#"  onClick={this.addAccount} data-scroll>
-                                        <span class="fa fa-plus">add account</span>
-                                    </a>
-                                </li>
-                            </li>
-                            <li class="sidebar-brand">
-                                <li>
-                                    <a href="#"  onClick={this.logOut} data-scroll>
-                                        <span class="fa fa-sign-out">logout</span>
-                                    </a>
-                                </li>
-                            </li>
                         </ul>
                     </nav>
                 </div>

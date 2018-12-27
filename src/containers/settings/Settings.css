@@ -6,6 +6,7 @@
     height: 100%;
     display: block;
     background: rgba(0,0,0,.6);
+
 }
 
 .display-block {
@@ -20,7 +21,7 @@
   margin-left: -250px;
   left: 250px;
   width: 250px;
-  background: #f6f6f6;
+  background: white;
   position: fixed;
   height: 100%;
   overflow-y: auto;
@@ -42,25 +43,23 @@
   
   
 .sidebar-nav {
-  position: absolute;
-  top: 0;
   width: 250px;
   list-style: none;
   margin: 0;
   padding: 0;
+  display: block;
 }
 
 .sidebar-nav li {
   line-height: 40px;
-  text-indent: 20px;
+  text-indent: 4px;
   width: 100%;
 }
   
 .sidebar-nav li a {
-  color: #999999;
   display: block;
   text-decoration: none;
-  padding-left: 60px;
+  padding-left: 28px;
 }
 
 .sidebar-nav li a span:before {
@@ -85,16 +84,57 @@
 }
 
 .sidebar-nav > .sidebar-brand {
-  line-height: 60px;
-  font-size: 20px;
+  /*line-height: 60px;*/
+  font-size: 17px;
+}
+.sidebar-nav > .sidebar-brand-add-account a{
+  /*line-height: 60px;*/
+  color: black;
+  font-size: 18px;
+}
+.sidebar-nav > .sidebar-brand-logout a{
+  /*line-height: 60px;*/
+  color: black;
+  font-size: 18px;
 }
 
 .sidebar-nav > .sidebar-brand a {
-  color: #999999;
+  color: black;
+  font-size: 18px;
 }
 
 .sidebar-nav > .sidebar-brand a:hover {
-  color: #fff;
+  color: darkblue;
   background: none;
+}
+.sidebar-nav > .sidebar-brand-add-account a:hover {
+  color: darkblue;
+  background: none;
+}
+.sidebar-nav > .sidebar-brand-logout a:hover {
+  color: darkblue;
+  background: none;
+}
+
+.container-sidebar-header{
+  margin-bottom: 20%;
+}
+.sidebar-header{
+  color: black;
+  text-align: center;
+  font-size: 25px;
+  margin-bottom: 20%;
+  margin-left: -4px;
+}
+
+.container-close{
+  text-indent: 10px;
+}
+
+hr {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  border: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 

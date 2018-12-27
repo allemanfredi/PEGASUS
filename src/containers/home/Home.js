@@ -1,6 +1,6 @@
 import React , { Component } from 'react';
 import {getAccountData} from '../../core/core';
-import {startSession} from '../../utils/utils';
+import {startSession,deleteSession} from '../../utils/utils';
 import {setCurrentAddress,setCurrentAccount,getCurrentAccount,generateSeed,updateDataAccount,addAccount,getKey,getCurrentNewtwork} from '../../wallet/wallet'
 import {aes256decrypt,aes256encrypt} from '../../utils/crypto';
 import history from '../../components/history';
@@ -35,6 +35,7 @@ class Home extends Component {
       this.onSwitchAccount = this.onSwitchAccount.bind(this);  
       this.onAddAccount = this.onAddAccount.bind(this);
       this.onGoDetails = this.onGoDetails.bind(this);  
+      this.onLogOut = this.onLogOut.bind(this);  
       this.onChangeAccount = this.onChangeAccount.bind(this);  
 
       this.state = {
@@ -150,10 +151,12 @@ class Home extends Component {
       this.setState({showSend : true});
       this.setState({showHome : false});
     }
+    
     onClickReceive(){
       this.setState({showReceive : true});
       this.setState({showHome : false});
     }
+
     onBack(){
       this.setState({showSend : false});
       this.setState({showReceive : false});
@@ -161,26 +164,37 @@ class Home extends Component {
       this.setState({showAdd : false});
       this.setState({showHome : true});
     }
+
     onClickMap(){
       history.push('/interact')
     }
+
     onClickSettings(){
       this.setState({showSettings:true});
     }
+
     onCloseSettings(){
       this.setState({showSettings:false});
     }
+
     onGoDetails(transfer){
       this.setState({details:transfer});
       this.setState({showDetails:true});
     }
+
     onAddAccount(){
       this.setState({showAdd:true});
       this.setState({showHome : false});
       this.setState({showSettings : false});
     }
+
     onChangeAccount(account){
       this.setState({account:account});
+    }
+
+    onLogOut(){
+      deleteSession();
+      history.push('/login');
     }
 
 
@@ -200,6 +214,7 @@ class Home extends Component {
                                                       currentAccount={this.state.account} 
                                                       onAddAccount={this.onAddAccount} 
                                                       onSwitchAccount={this.onSwitchAccount}
+                                                      onLogOut={this.onLogOut}
                                                       onClose={this.onCloseSettings}/> ) 
               : ''}
               { this.state.showSend ?     ( <Send     account={this.state.account} network={this.state.network} /> ) : ''}
