@@ -87,3 +87,12 @@ input {
 .container-error{
     margin-top: 42%;
 }
+
+.btn-transfer{
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    border: 1px solid lightskyblue;
+    background: darkblue;
+    margin-top:14%;
+}

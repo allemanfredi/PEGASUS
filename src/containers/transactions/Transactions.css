@@ -8,7 +8,6 @@
 
 .transactions-name{
     font-size: 17px;
-    font-weight: bold;
     color : #adadad;
     margin-left: 5px;
 }
@@ -61,7 +60,6 @@
 }
 
 .text-no-transactions{
-    font-weight: bold;
     font-size: 14px;
 }
 

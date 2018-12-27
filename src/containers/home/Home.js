@@ -141,6 +141,12 @@ class Home extends Component {
     async onSwitchAccount(account){
       this.setState({showSettings : false});
       this.setState({account : account});
+
+      //store the encrypted seed
+      const key = await getKey();
+      const dseed = aes256decrypt(account.seed,key);
+      this.setState({decryptedSeed : dseed});
+
       await setCurrentAccount(account,this.state.network);
     }
 
@@ -186,6 +192,7 @@ class Home extends Component {
     }
 
     onChangeAccount(account){
+      console.log(account);
       this.setState({account:account});
     }
 
@@ -222,9 +229,7 @@ class Home extends Component {
                   <div class="container-info">
                     <div class="row ">
                       <div class="col align-center">
-                        <div>
-                          img
-                        </div>
+                        <img src="./material/logo/iota-logo.png" height="60" width="60"/>
                         <h1>dollari</h1>
                         <h2>{this.state.account.data.balance} IOTA</h2>
                       </div>

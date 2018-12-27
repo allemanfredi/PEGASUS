@@ -1,4 +1,17 @@
-.settings {
-    margin-bottom: 70px;
+
+.container-address{
+}
+
+.container-qr-code{
+    margin-top:40%;
+}
+
+.label-address{
+    margin-top: 5%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+    font-size: 15px;
+    max-width: 30ch;
 }
 

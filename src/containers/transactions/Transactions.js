@@ -103,7 +103,7 @@ class Transactions extends Component {
                 <div class="row">
                     <div class="col-12">
                         <div class="transactions-name">
-                            transactions
+                            Transactions
                         </div>
                     </div>
                 </div>
