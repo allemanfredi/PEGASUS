@@ -12,3 +12,9 @@
     cursor: pointer; 
     z-index: 2;
 }
+
+.account-name{
+    background: transparent;
+    color: white;
+    font-size: 28px;
+}

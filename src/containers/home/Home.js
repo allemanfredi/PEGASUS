@@ -207,6 +207,7 @@ class Home extends Component {
           <Navbar showBtnSettings={this.state.showHome} 
                   showBtnMarker={this.state.showHome} 
                   showBtnBack={!this.state.showHome} 
+                  currentAccount={this.state.account}
                   onClickSettings={this.onClickSettings}
                   onBack={this.onBack}>
           </Navbar>

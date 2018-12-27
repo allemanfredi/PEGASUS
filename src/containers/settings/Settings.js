@@ -19,6 +19,8 @@ class Settings extends Component {
         this.state = {
             accounts : []
         }
+
+        console.log(this.props.currentAccount);
     }
 
     close(){
@@ -62,7 +64,13 @@ class Settings extends Component {
                         <ul class="sidebar-nav nav">  
 
                             <li class="sidebar-header">
-                                {this.props.currentAccount.name}
+                                <div class="current-account">
+                                    {this.props.currentAccount.name}
+                                </div>
+                                <div class="current-balance">
+                                    {this.props.currentAccount.data.balance}
+                                </div>
+                                
                             </li>
 
                             {this.state.accounts.map( account => {

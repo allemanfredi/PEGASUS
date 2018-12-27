@@ -35,7 +35,9 @@ export default class Navbar extends Component {
                     <button onClick={this.back} class="btn btn-back"><i class="fa fa-arrow-left"></i></button>
                 </div>
             : ''}
-                <div class="col-8"></div>
+                <div class="col-8 text-center">
+                    <div class="account-name">{this.props.currentAccount.name}</div>
+                </div>
             { this.props.showBtnMarker ? 
                 <div class="col-2">
                     <button onClick={this.onClickMap} class="btn btn-marker"><i class="fa fa-map-marker"></i></button> 
