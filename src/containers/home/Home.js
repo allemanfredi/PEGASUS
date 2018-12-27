@@ -207,7 +207,7 @@ class Home extends Component {
           <Navbar showBtnSettings={this.state.showHome} 
                   showBtnMarker={this.state.showHome} 
                   showBtnBack={!this.state.showHome} 
-                  currentAccount={this.state.account}
+                  text={this.state.showHome ? this.state.account.name : (this.state.showSend ? 'Send' : (this.state.showReceive ? 'Receive' : ''))}
                   onClickSettings={this.onClickSettings}
                   onBack={this.onBack}>
           </Navbar>

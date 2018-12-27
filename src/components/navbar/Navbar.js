@@ -36,7 +36,7 @@ export default class Navbar extends Component {
                 </div>
             : ''}
                 <div class="col-8 text-center">
-                    <div class="account-name">{this.props.currentAccount.name}</div>
+                    <div class="account-name">{this.props.text}</div>
                 </div>
             { this.props.showBtnMarker ? 
                 <div class="col-2">
