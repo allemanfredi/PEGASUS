@@ -54,11 +54,26 @@ class Add extends Component {
         return (
             <div>
                 { this.state.isLoading ? <Loader></Loader> : (
-                <div >
-                    <form>
-                        <input value={this.state.name} onChange={this.handleChangeName} type="text" class="form-control"  placeholder="Account name"/>
-                        <button onClick={this.onClickAddAccount} type="button" class="btn btn-primary">Add Account</button>
-                    </form>
+                <div class="container-add-account">
+                    <div class="row">
+                        <div class="col-1"></div>
+                        <div class="col-10 text-center">
+                            <label for="inp-name" class="inp">
+                                <input value={this.state.name} onChange={this.handleChangeName} type="text" id="inp-name" placeholder="&nbsp;"/>
+                                <span class="label">name</span>
+                                <span class="border"></span>
+                            </label>
+                        </div>
+                        <div class="col-1"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-1"></div>
+                        <div class="col-10 text-center">
+                            <button onClick={this.onClickAddAccount} type="button" class="btn btn-add"><i class="fa fa-plus icon" ></i></button>
+                        </div>
+                        <div class="col-1"></div>
+                    </div>
+
                 </div>
                 )}
             </div>
