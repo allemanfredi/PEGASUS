@@ -1,6 +1,4 @@
-.container-transactions{
 
-}
 
 .transactions-header{
     background: white;
@@ -9,51 +7,42 @@
 .transactions-name{
     font-size: 17px;
     color : #adadad;
-    margin-left: 5px;
 }
 
 .transaction-list {
     display: flex;
     flex-direction: column;
     flex: 1;
-    margin-top: 8px;
     overflow-y: auto;
-    height: 300px;
+    height: 233px;
+    margin-top: -18px;
 }
-
 
 .transaction-list-item {
     box-sizing: border-box;
-    min-height: 70px;
+    background: #f6f6f6;
+    min-height: 15px;
+    margin-top: 2%;
+    margin-bottom: 2%;
+    cursor : pointer;
+}
+.transaction-list-item:hover {
+    opacity: 0.5;
 }
 
-.transaction-list-item-action {
+.transaction-list-item-action,.transaction-list-item-value {
     text-transform: capitalize;
-    
+    background: inherit;
 }
-.transaction-list-item-details {
-    text-transform: capitalize;
-    
-}
-.transaction-list-item-value {
-    text-transform: capitalize;
-    
-}
+
 .transaction-list-item-date {
     font-size: .75rem;
-
 }
 
-
-.transaction-status-confirmed {
-    background-color: #eafad7;
-    color: #609a1c;
+.transaction-status {
+    color: darkblue;
 }
 
-.transaction-status-not-confirmed {
-    background-color: #eafad7;
-    color: #ffee00;
-}
 
 .container-no-transactions{
     margin-top: 26%;

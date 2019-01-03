@@ -6,7 +6,13 @@
 }
 
 .container-transactions{
-    font-size: 8px;
+    font-size: 17px;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+.container-balance{
+    margin-top: 2%;
+    font-size: 36px;
 }
 
 .align-center{

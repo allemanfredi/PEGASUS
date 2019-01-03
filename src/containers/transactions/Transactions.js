@@ -1,6 +1,4 @@
 import React , { Component } from 'react';
-import {getAllTransactions,getLatestInclusion,getBundle} from '../../core/core'
-import {timestampToDate} from '../../utils/helpers'
 
 import './Transactions.css'
 
@@ -53,41 +51,61 @@ class Transactions extends Component {
         let doubleBundle = [];
         this.setState({transactions: []});
         this.props.transfers.forEach(transfer => {
-        //https://domschiener.gitbooks.io/iota-guide/content/chapter1/bundles.html
-        //da gestire le meta tx
+            //https://domschiener.gitbooks.io/iota-guide/content/chapter1/bundles.html
+            //da gestire le meta tx
 
-        if ( transfer.length === 0 )
-            return;
+            if ( transfer.length === 0 )
+                return;
 
-        let value;
-        if ( transfer[0].value < 0 ){ //RECEIVED
-            value = -(transfer[0].value + transfer[3].value);
-        }else{ //SENT
-            value = -transfer[0].value;
-        }
+            let value;
+            if ( transfer[0].value < 0 ){ //RECEIVED
+                value = -(transfer[0].value + transfer[3].value);
+            }else{ //SENT
+                value = -transfer[0].value;
+            }
 
-        let obj = {
-            timestamp : transfer[0].attachmentTimestamp,
-            value : value,
-            status : transfer[0].persistence,
-            bundle : transfer[0].bundle,
-            index : transfer[0].currentIndex,
-            transfer : transfer
-        }
+            const obj = {
+                timestamp : transfer[0].attachmentTimestamp,
+                value : value,
+                status : transfer[0].persistence,
+                bundle : transfer[0].bundle,
+                index : transfer[0].currentIndex,
+                transfer : transfer
+            }
 
-        //remove double bundle (reattachemen txs)
-        //arr = arr.filter ( item => item.bundle != obj.bundle );
-        //in questo modo prendo la prima transazione con stesso bundle 
-        //cosi da escludere le reattachment transaction
-        let add = true;
-        for ( let tx of doubleBundle )
-            if ( tx.bundle === obj.bundle )
-                add = false;
-        if ( add ){
-            arr.push(obj);
-            doubleBundle.push(obj);
-        }
+            //remove double bundle (reattachemen txs)
+            //arr = arr.filter ( item => item.bundle != obj.bundle );
+            //in questo modo prendo la prima transazione con stesso bundle 
+            //cosi da escludere le reattachment transaction
+            let add = true;
+            for ( let tx of doubleBundle )
+                if ( tx.bundle === obj.bundle )
+                    add = false;
+            if ( add ){
+                arr.push(obj);
+                doubleBundle.push(obj);
+            }
         });
+        const obj = {
+            timestamp : 123456,
+            value : 10,
+            status : true,
+            bundle : "jdhfjirdhfeif",
+            index : 0,
+            transfer : []
+        }
+        const obj2 = {
+            timestamp : 333,
+            value : 10,
+            status : false,
+            bundle : "jfhvif",
+            index : 1,
+            transfer : []
+        }
+        arr.push(obj);
+        arr.push(obj2);
+        arr.push(obj);
+        arr.push(obj2);
         this.setState({transactions: arr});
     }
 
@@ -110,23 +128,21 @@ class Transactions extends Component {
                 <hr/>
             </div>
             <div class="transaction-list">
-            {this.state.transactions.lenght > 0 ? this.state.transactions.map(transaction => {
+            {this.state.transactions.length > 0 ? this.state.transactions.map(transaction => {
                 return (
-                <div class="transaction-list-item" >
-                    <div class="transaction-list-item-action">{transaction.value > 0 ? 'RECEIVED ' : 'SENT'}</div>
-                    <div class="transaction-list-item-date">{timestampToDate(transaction.timestamp)}</div>
-                    <div class="transaction-list-item-value">{transaction.value}</div>
-                    {transaction.status ? (
-                    <div class="transaction-status-confirmed">confirmed</div>
-                    ) : (
-                    <div class="transaction-status-not-confirmed">pending</div>
-                    )}
-                    <div class="transaction-list-item-details">
-                        <a href="#" onClick={() => this.goDetails(transaction.transfer)} data-scroll>
-                            <span>show details</span>
-                        </a>
-                    </div>
-                </div>        
+                    <div onClick={() => this.goDetails(transaction.transfer)} class="transaction-list-item" >
+                        <div class="row">
+                            <div class="col-4 text-left">
+                                <div class="transaction-list-item-action">{transaction.value > 0 ? 'Received ' : 'Sent'}</div>
+                            </div>
+                            <div class="col-4 text-center">
+                                <div class="transaction-list-item-value"><strong>{transaction.value}</strong></div>
+                            </div>
+                            <div class="col-4 text-right">
+                                <div class="transaction-status">{transaction.status ? 'Confirmed' : 'Pending'}</div>
+                            </div>
+                        </div>
+                    </div>        
                 );
             }) : 
                 <div class="container-no-transactions">

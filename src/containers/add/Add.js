@@ -69,7 +69,7 @@ class Add extends Component {
                     <div class="row">
                         <div class="col-1"></div>
                         <div class="col-10 text-center">
-                            <button onClick={this.onClickAddAccount} type="button" class="btn btn-add"><i class="fa fa-plus icon" ></i></button>
+                            <button disabled={this.state.name.length > 0 ? false : true} onClick={this.onClickAddAccount} type="button" class="btn btn-add"><i class="fa fa-plus icon" ></i></button>
                         </div>
                         <div class="col-1"></div>
                     </div>

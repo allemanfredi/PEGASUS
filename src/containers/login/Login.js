@@ -60,7 +60,7 @@ class InitPsw extends Component {
               <div class="row">
                   <div class="col-2"></div>
                   <div class="col-8 text-center">
-                      <button onClick={this.clickLogin} type="submit" class="btn btn-password">LOGIN</button>
+                      <button disabled={this.state.psw.length > 0 ? false : true} onClick={this.clickLogin} type="submit" class="btn btn-password">LOGIN</button>
                   </div>
                   <div class="col-2"></div>
               </div>

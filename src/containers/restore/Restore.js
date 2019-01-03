@@ -48,6 +48,13 @@ class Restore extends Component {
                         </div>
                         <div class="col-1"></div>
                     </div>
+                    <div class="row">
+                        <div class="col-1"></div>
+                        <div class="col-10 text-center">
+                            <button onClick={e => {this.props.onBack()}} type="submit" class="btn btn-login-back">return to login</button>
+                        </div>
+                        <div class="col-1"></div>
+                    </div>
 
                 </div>
                 )}

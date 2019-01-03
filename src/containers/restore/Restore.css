@@ -12,3 +12,16 @@
 .icon{
     color: white;
 }
+.btn-login-back{
+    background: white;
+    color: darkblue;
+    text-decoration: underline;
+    border: none;
+    outline: none;
+    margin-top: 3%;
+}
+.btn-login-back:hover{
+    background: white;
+    color: lightblue;
+    text-decoration: underline;
+}

@@ -18,6 +18,7 @@ class Main extends Component {
     this.onSuccess = this.onSuccess.bind(this);
     this.onLogout = this.onLogout.bind(this);
     this.onRestore = this.onRestore.bind(this);
+    this.onBack = this.onBack.bind(this);
 
     this.state = {
       network : {},
@@ -63,6 +64,11 @@ class Main extends Component {
     this.setState({showRestore:true});
   }
 
+  onBack(){
+    this.setState({showRestore:false});
+    this.setState({showLogin:true});
+  }
+
   //called by App.js component in order to reload-data
   changeNetwork(network){
     this.setState({network : network});
@@ -75,7 +81,7 @@ class Main extends Component {
         { this.state.showHome ?     <Home network={this.state.network} onLogout={this.onLogout}> </Home> : '' }
         { this.state.showInit ?     <Init onSuccess={this.onSuccess}> </Init> : '' }
         { this.state.showLogin ?    <Login onSuccess={this.onSuccess} onRestore={this.onRestore}> </Login> : '' }
-        { this.state.showRestore ?  <Restore onSuccess={this.onSuccess}> </Restore> : '' }
+        { this.state.showRestore ?  <Restore onSuccess={this.onSuccess} onBack={this.onBack}> </Restore> : '' }
       </main>
     );
   }
