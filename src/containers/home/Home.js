@@ -231,8 +231,7 @@ class Home extends Component {
                     <div class="row ">
                       <div class="col align-center">
                         <img src="./material/logo/iota-logo.png" height="60" width="60"/>
-                        <h1>dollari</h1>
-                        <h2>{this.state.account.data.balance} IOTA</h2>
+                        <h1>{this.state.account.data.balance} IOTA</h1>
                       </div>
                     </div>  
                     <div class="row">

@@ -15,9 +15,6 @@ class Init extends Component {
     constructor(props, context) {
       super(props, context);
 
-      this.handleChangePsw = this.handleChangePsw.bind(this);
-      this.handleChangeRePsw = this.handleChangeRePsw.bind(this);
-      this.handleChangeName = this.handleChangeName.bind(this);
       this.clickGoToCreatePsw = this.clickGoToCreatePsw.bind(this);
       this.clickGoToCreateSeed = this.clickGoToCreateSeed.bind(this);
       this.clickGenerateSeed = this.clickGenerateSeed.bind(this);
@@ -27,65 +24,33 @@ class Init extends Component {
       this.state = {
         psw: '',
         repsw: '',
-        error: '',
         name : '',
-        isLoading : '',
+        seed : '',
+        isLoading : false,
         showGeneratePsw: false,
         showGenerateSeed: false,
         showGenerateName: true,
-        showError: false
       };
     }
 
     clickGoToCreatePsw(){
         if ( this.state.name.length !== 0 ){
-            this.setState({error : false});
             this.setState({showGenerateName : false});
             this.setState({showGeneratePsw : true});
         }else{
-            this.setState({showError : true});
-            this.setState({error : 'Please insert a valid name.'});
         }
     }
 
     clickGoToCreateSeed(){
-        if ( this.state.psw.length === 0  ){
-            this.setState({showError : true});
-            this.setState({error : 'Please insert a valid password.'});
-            return;
-        }
-        if ( this.state.psw === this.state.repsw  ){
-            if ( storePsw(this.state.psw)){
-                this.setState({showError : false});
-                this.setState({showGeneratePsw : false});
-                this.setState({showGenerateSeed : true});
-            }else{
-                this.setState({showError : true});
-                this.setState({error : 'Impossible to store the password.'});
-            }
+        if ( storePsw(this.state.psw)){
+            this.setState({showGeneratePsw : false});
+            this.setState({showGenerateSeed : true});
         }else{
-            this.setState({showError : true});
-            this.setState({error : 'Password do not match.'});
         }
     }
 
     clickGenerateSeed(){
         this.setState({seed: generateSeed() });
-    }
-
-    handleChangePsw(e) {
-        this.setState({showError : false});
-        this.setState({ psw: e.target.value });
-    }
-
-    handleChangeRePsw(e) {
-        this.setState({showError : false});
-        this.setState({ repsw: e.target.value });
-    }
-
-    handleChangeName(e) {
-        this.setState({showError : false});
-        this.setState({ name: e.target.value });
     }
 
     copySeed(){
@@ -94,12 +59,6 @@ class Init extends Component {
   
 
     async clickCreateWallet() {
-        if ( !this.state.seed){
-            this.setState({showError : true});
-            this.setState({error : 'Please first generate a seed'});
-            return;
-        }
-
         this.setState({isLoading : true});
 
         try{
@@ -138,25 +97,30 @@ class Init extends Component {
            { this.state.isLoading ? 
                 <Loader/>
             : (<div>
+                    <div class="container-logo">
+                        <img src="./material/logo/pegasus-128.png" height="80" width="80"/>
+                    </div>
                    {this.state.showGenerateName ?  
                         <div class="container-center">
                             <div class="row">
-                                <div class="col-2"></div>
-                                <div class="col-8">
+                                <div class="col-1"></div>
+                                <div class="col-10">
                                     <form>
-                                        <div class="form-group">
-                                            <input onChange={this.handleChangeName} type="text" class="form-control input-name" placeholder="Insert your name"/>
-                                        </div>
+                                        <label for="inp-name" class="inp">
+                                            <input onChange={e => {this.setState({name: e.target.value})}} type="text" id="inp-name" placeholder="&nbsp;"/>
+                                            <span class="label">name</span>
+                                            <span class="border"></span>
+                                        </label>
                                     </form>
                                 </div>
-                                <div class="col-2"></div>
+                                <div class="col-1"></div>
                             </div>
                             <div class="row">
-                                <div class="col-2"></div>
-                                <div class="col-8 text-center">
-                                    <button onClick={this.clickGoToCreatePsw} type="submit" class="btn btn-name">Create Password <span class="fa fa-arrow-right"></span></button>
+                                <div class="col-1"></div>
+                                <div class="col-10 text-center">
+                                    <button disabled={this.state.name.length === 0 ? true : false} onClick={this.clickGoToCreatePsw} type="submit" class="btn btn-name">CREATE PASSWORD <span class="fa fa-arrow-right"></span></button>
                                 </div>
-                                <div class="col-2"></div>
+                                <div class="col-1"></div>
                             </div>
                         </div>
                    : ''}
@@ -164,23 +128,33 @@ class Init extends Component {
                    {this.state.showGeneratePsw ? 
                         <div class="container-center">
                             <div class="row">
-                                <div class="col-2"></div>
-                                <div class="col-8">
-                                    <form>
-                                        <div class="form-group">
-                                            <input onChange={this.handleChangePsw} type="password" class="form-control input-psw" placeholder="Insert your password"/>
-                                            <input onChange={this.handleChangeRePsw} type="password" class="form-control input-psw" placeholder="Re-Insert your password"/>
-                                        </div>
-                                    </form>
+                                <div class="col-1"></div>
+                                <div class="col-10">
+                                    <label for="inp-password" class="inp">
+                                        <input onChange={e => {this.setState({psw: e.target.value})}}  type="password" id="inp-password" placeholder="&nbsp;"/>
+                                        <span class="label">password</span>
+                                        <span class="border"></span>
+                                    </label>
                                 </div>
-                                <div class="col-2"></div>
+                                <div class="col-1"></div>
                             </div>
                             <div class="row">
-                                <div class="col-2"></div>
-                                <div class="col-8 text-center">
-                                    <button onClick={this.clickGoToCreateSeed} type="submit" class="btn btn-password">Create Seed <span class="fa fa-arrow-right"></span></button>
+                                <div class="col-1"></div>
+                                <div class="col-10">
+                                    <label for="inp-re-password" class="inp">
+                                        <input onChange={e => {this.setState({repsw: e.target.value})}} type="password" id="inp-re-password" placeholder="&nbsp;"/>
+                                        <span class="label">re-password</span>
+                                        <span class="border"></span>
+                                    </label>
                                 </div>
-                                <div class="col-2"></div>
+                                <div class="col-1"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-1"></div>
+                                <div class="col-10 text-center">
+                                    <button disabled={this.state.psw.length !== 0 && (this.state.psw === this.state.repsw) ? false : true} onClick={this.clickGoToCreateSeed} type="submit" class="btn btn-password">CREATE SEED <span class="fa fa-arrow-right"></span></button>
+                                </div>
+                                <div class="col-1"></div>
                             </div>
                         </div>
                     : ''}
@@ -189,47 +163,42 @@ class Init extends Component {
                         
                         <div class="container-center">
                             <div class="row">
-                                <div class="col-2"></div>
-                                <div class="col-8 text-center">
-                                    <button onClick={this.clickGenerateSeed} type="submit" class="btn btn-generate-seed">Generate Seed </button>
+                                <div class="col-1"></div>
+                                <div class="col-10 text-center">
+                                    <button onClick={this.clickGenerateSeed} type="submit" class="btn btn-generate-seed">GENERATE SEED</button>
                                 </div>
-                                <div class="col-2"></div>
+                                <div class="col-1"></div>
                             </div>
 
                             { this.state.seed ? 
                                 <div>
                                     <div class="row">
-                                        <div class="col-2"></div>
-                                        <div class="col-8 ">
+                                        <div class="col-1"></div>
+                                        <div class="col-10 ">
                                             <label class="label-seed" >{this.state.seed}</label>
                                         </div>
-                                        <div class="col-2"></div>
+                                        <div class="col-1"></div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-2"></div>
-                                            <div class="col-8 text-center">
+                                        <div class="col-1"></div>
+                                            <div class="col-10 text-center">
                                             <button onClick={this.copySeed} type="submit" class="btn btn-copy-seed"><span class="fa fa-bookmark"></span></button>
                                             </div>
-                                        <div class="col-2"></div>
+                                        <div class="col-1"></div>
                                     </div>
                                 </div>
                             : ''}
 
                             <div class="row">
-                                <div class="col-2"></div>
-                                <div class="col-8 text-center">
-                                    <button onClick={this.clickCreateWallet} type="submit" class="btn btn-create-wallet">Create wallet </button>
+                                <div class="col-1"></div>
+                                <div class="col-10 text-center">
+                                    <button disabled={this.state.seed.length > 0 ? false : true} onClick={this.clickCreateWallet} type="submit" class="btn btn-create-wallet">CREATE WALLET</button>
                                 </div>
-                                <div class="col-2"></div>
+                                <div class="col-1"></div>
                             </div>
                         </div>  
                     : ''}
 
-                    {this.state.showError ? 
-                        <div class="alert alert-danger" role="alert">
-                            <strong>Error</strong> {this.state.error}
-                        </div>
-                    : ''}
                 
                 </div>
            )}

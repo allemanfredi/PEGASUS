@@ -68,7 +68,7 @@ class Settings extends Component {
                                     {this.props.currentAccount.name}
                                 </div>
                                 <div class="current-balance">
-                                    {this.props.currentAccount.data.balance}
+                                    {this.props.currentAccount.data.balance} IOTA
                                 </div>
                                 
                             </li>
@@ -76,7 +76,8 @@ class Settings extends Component {
                             {this.state.accounts.map( account => {
                                 return (<li class="sidebar-brand">
                                             <a href="#" onClick={() => this.switchAccount(account)} data-scroll>
-                                                <span class="fa fa-user">{account.name}</span>
+                                                <span class="fa fa-user"></span>
+                                                <div class="span-text">{account.name}</div>
                                             </a>
                                         </li>);
                             })}
@@ -84,12 +85,14 @@ class Settings extends Component {
                             <hr/>
                             <li class="sidebar-brand-add-account">
                                 <a href="#"  onClick={this.addAccount} data-scroll>
-                                    <span class="fa fa-plus">add account</span>
+                                    <span class="fa fa-plus"></span>
+                                    <div class="span-text">add account</div>
                                 </a>
                             </li>
                             <li class="sidebar-brand-logout">   
                                 <a href="#"  onClick={this.logout} data-scroll>
-                                    <span class="fa fa-sign-out">logout</span>
+                                    <span class="fa fa-sign-out"></span>
+                                    <div class="span-text">logout</div>
                                 </a>  
                             </li>
 

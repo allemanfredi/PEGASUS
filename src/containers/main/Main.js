@@ -6,6 +6,7 @@ import {checkSession,deleteSession,startSession} from '../../utils/utils';
 import Home from '../home/Home';
 import Login from '../login/Login';
 import Init from '../init/Init';
+import Restore from '../restore/Restore'
 
 import './Main.css';
 
@@ -16,12 +17,14 @@ class Main extends Component {
 
     this.onSuccess = this.onSuccess.bind(this);
     this.onLogout = this.onLogout.bind(this);
+    this.onRestore = this.onRestore.bind(this);
 
     this.state = {
       network : {},
       showLogin : false,
       showInit : false,
       showHome : false,
+      showRestore : false
     }
   }
 
@@ -55,6 +58,11 @@ class Main extends Component {
     this.setState({showLogin:true});
   }
 
+  onRestore(){
+    this.setState({showLogin:false});
+    this.setState({showRestore:true});
+  }
+
   //called by App.js component in order to reload-data
   changeNetwork(network){
     this.setState({network : network});
@@ -64,9 +72,10 @@ class Main extends Component {
 
     return (
       <main class="main" >
-        { this.state.showHome ?   <Home network={this.state.network} onLogout={this.onLogout}> </Home> : '' }
-        { this.state.showInit ?   <Init onSuccess={this.onSuccess}> </Init> : '' }
-        { this.state.showLogin ?  <Login onSuccess={this.onSuccess}> </Login> : '' }
+        { this.state.showHome ?     <Home network={this.state.network} onLogout={this.onLogout}> </Home> : '' }
+        { this.state.showInit ?     <Init onSuccess={this.onSuccess}> </Init> : '' }
+        { this.state.showLogin ?    <Login onSuccess={this.onSuccess} onRestore={this.onRestore}> </Login> : '' }
+        { this.state.showRestore ?  <Restore onSuccess={this.onSuccess}> </Restore> : '' }
       </main>
     );
   }

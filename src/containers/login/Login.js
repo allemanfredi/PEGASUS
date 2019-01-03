@@ -60,10 +60,19 @@ class InitPsw extends Component {
               <div class="row">
                   <div class="col-2"></div>
                   <div class="col-8 text-center">
-                      <button onClick={this.clickLogin} type="submit" class="btn btn-password">Login <span class="fa fa-arrow-right"></span></button>
+                      <button onClick={this.clickLogin} type="submit" class="btn btn-password">LOGIN</button>
                   </div>
                   <div class="col-2"></div>
               </div>
+          </div>
+          <div class="container-restore">
+            <div class="row">
+                <div class="col-2"></div>
+                <div class="col-8 text-center">
+                  <button onClick={e => {this.props.onRestore()}} type="submit" class="btn btn-restore">restore from seed</button>
+                </div>
+                <div class="col-2"></div>
+            </div>
           </div>
           {this.state.showError ? 
               <div class="alert alert-danger" role="alert">
