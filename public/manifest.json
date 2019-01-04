@@ -15,5 +15,10 @@
     "scripts": [
       "background/background.js"
     ]
+  },
+  "icons": { 
+    "64": "./material/logo/pegasus-64.png",
+    "128": "./material/logo/pegasus-128.png" 
   }
+
 }

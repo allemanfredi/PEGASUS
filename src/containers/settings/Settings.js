@@ -19,8 +19,6 @@ class Settings extends Component {
         this.state = {
             accounts : []
         }
-
-        console.log(this.props.currentAccount);
     }
 
     close(){

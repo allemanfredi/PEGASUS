@@ -67,3 +67,4 @@
 .inp input:focus + span + .border {
     transform: scaleX(1);
 }
+

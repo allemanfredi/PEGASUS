@@ -244,6 +244,10 @@ class Home extends Component {
                         <button onClick={this.onClickReceive}  class="btn btn-receive"><i class="fa fa-download icon" ></i></button>
                       </div>
                     </div> 
+                    <div class="row">
+                      <div class="col-6 text-center">Send</div>
+                      <div class="col-6 text-center">Receive</div>
+                    </div> 
                 </div>
                 <div class="container-transactions">
                   <Transactions ref={this.transactions} goDetails={this.onGoDetails} transfers={this.state.account.data.transfers}/>

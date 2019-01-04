@@ -1,18 +1,18 @@
 
 const options = {
     network : [
-        {   name : 'Mainnet',
+        {   name : 'nodes.thetangle.org',
             provider : 'https://nodes.thetangle.org:443',
-            id : 1,
+            id : 0,
             type : 'mainnet'
         },
         {
-            name : 'Testnet',
+            name : 'nodes.testnet.iota.org',
             provider : 'https://nodes.testnet.iota.org',
-            id : 0,
+            id : 1,
             type : 'testnet'
         },
-        {   name : 'Custom Node',
+        {   name : 'localhost:14265',
             provider : 'http://localhost:14265',
             id : 2,
             type : 'testnet'

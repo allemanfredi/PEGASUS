@@ -86,27 +86,6 @@ class Transactions extends Component {
                 doubleBundle.push(obj);
             }
         });
-        const obj = {
-            timestamp : 123456,
-            value : 10,
-            status : true,
-            bundle : "jdhfjirdhfeif",
-            index : 0,
-            transfer : []
-        }
-        const obj2 = {
-            timestamp : 333,
-            value : 10,
-            status : false,
-            bundle : "jfhvif",
-            index : 1,
-            transfer : []
-        }
-        arr.push(obj);
-        arr.push(obj2);
-        arr.push(obj);
-        arr.push(obj2);
-        this.setState({transactions: arr});
     }
 
     async goDetails(transfer){
