@@ -6,7 +6,6 @@
     height: 100%;
     display: block;
     background: rgba(0,0,0,.6);
-
 }
 
 .display-block {
@@ -73,8 +72,8 @@
 
 .sidebar-nav li a:hover,
 .sidebar-nav li.active {
-  color: #fff;
-  background: rgba(255,255,255,0.2);
+  color: darkblue;
+  background:#f6f6f6;
   text-decoration: none;
 }
 
@@ -103,17 +102,17 @@
   font-size: 18px;
 }
 
-.sidebar-nav > .sidebar-brand a:hover {
+.sidebar-nav > .sidebar-brand:hover {
   color: darkblue;
-  background: none;
+  background:#f6f6f6;
 }
-.sidebar-nav > .sidebar-brand-add-account a:hover {
+.sidebar-nav > .sidebar-brand-add-account:hover {
   color: darkblue;
-  background: none;
+  background:#f6f6f6;
 }
-.sidebar-nav > .sidebar-brand-logout a:hover {
+.sidebar-nav > .sidebar-brand-logout:hover {
   color: darkblue;
-  background: none;
+  background:#f6f6f6;
 }
 
 .container-sidebar-header{
@@ -129,6 +128,7 @@
 
 .container-close{
   text-indent: 10px;
+  margin-left: 1%;
 }
 
 hr {
@@ -141,7 +141,11 @@ hr {
 .current-account , .current-balance{
     margin-top:5%;
 }
-
+.current-account:hover{
+  background: #f6f6f6;
+  color: darkblue;
+  cursor: pointer;
+}
 .span-text{
   margin-bottom: 3%;
 }

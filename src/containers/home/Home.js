@@ -10,6 +10,8 @@ import Settings from '../settings/Settings';
 import Details from '../details/Details';
 import Transactions from '../transactions/Transactions';
 import Add from '../add/Add';
+import Edit from '../edit/Edit';
+
 
 import Loader from '../../components/loader/Loader'
 import Navbar from '../../components/navbar/Navbar'
@@ -35,6 +37,8 @@ class Home extends Component {
       this.onAddAccount = this.onAddAccount.bind(this);
       this.onGoDetails = this.onGoDetails.bind(this);  
       this.onLogout = this.onLogout.bind(this);  
+      this.onShowEdit = this.onShowEdit.bind(this);
+      this.onCloseEdit = this.onCloseEdit.bind(this);
       this.onChangeAccount = this.onChangeAccount.bind(this);  
 
       this.state = {
@@ -50,6 +54,7 @@ class Home extends Component {
         showSettings : false,
         showDetails : false,
         showAdd : false,
+        showEdit : false,
         interval : {},
       };
 
@@ -68,10 +73,6 @@ class Home extends Component {
 
         //check account data after 50 seconds in order to receive the transaction
         this.state.interval = setInterval(() => this.getData(), 20000);
-
-        //reattachment every 30 minute and during the acces
-        /*this.reattachBundles(account.data.transactions)
-        setInterval(() => this.reattachBundles(account.data.transactions), (60000 * 30));*/
         
         //set the current address in the chrome local storage
         setCurrentAddress(account.data.latestAddress,this.state.network);
@@ -88,6 +89,7 @@ class Home extends Component {
       //controllare se è cambiata la rete (testnet/mainnet);
       const network = await getCurrentNewtwork();
       if ( JSON.stringify(network) !== JSON.stringify(this.state.network) ){
+        this.setState({account:{}});
         this.setState({network : network});
 
         let account = await getCurrentAccount(network);
@@ -151,11 +153,12 @@ class Home extends Component {
       await setCurrentAccount(account,this.state.network);
     }
 
+    //function for conditional rendering
     onClickSend(){
       this.setState({showSend : true});
       this.setState({showHome : false});
     }
-    
+
     onClickReceive(){
       this.setState({showReceive : true});
       this.setState({showHome : false});
@@ -203,6 +206,13 @@ class Home extends Component {
       this.props.onLogout();
     }
 
+    onShowEdit(){
+      this.setState({showEdit:true});
+    }
+    onCloseEdit(){
+      this.setState({showEdit:false});
+    }
+
 
     render() {
       return (
@@ -221,6 +231,7 @@ class Home extends Component {
                                                       currentAccount={this.state.account} 
                                                       onAddAccount={this.onAddAccount} 
                                                       onSwitchAccount={this.onSwitchAccount}
+                                                      onShowEdit={this.onShowEdit}
                                                       onLogout={this.onLogout}
                                                       onClose={this.onCloseSettings}/> ) 
               : ''}
@@ -228,6 +239,7 @@ class Home extends Component {
               { this.state.showReceive ?  ( <Receive  account={this.state.account} network={this.state.network} /> ) : '' }
               { this.state.showDetails ?  ( <Details  details={this.state.details} /> ) : '' }
               { this.state.showAdd ?      ( <Add      onChangeAccount={this.onChangeAccount}></Add>) : ''}
+              { this.state.showEdit ?     ( <Edit     account={this.state.account} onClose={this.onCloseEdit}></Edit>) : ''}
               { this.state.showHome ? (
                 <div>
                   <div class="container-info">
@@ -235,7 +247,7 @@ class Home extends Component {
                       <div class="col align-center">
                         <img src="./material/logo/iota-logo.png" height="60" width="60"/>
                         <div class="container-balance">
-                          {this.state.account.data.balance} IOTA
+                          {this.state.account.data.balance} i
                         </div>
                       </div>
                     </div>  

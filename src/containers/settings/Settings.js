@@ -11,29 +11,9 @@ class Settings extends Component {
     constructor(props,context) {
         super(props,context);
         
-        this.close = this.close.bind(this);
-        this.logout = this.logout.bind(this);
-        this.addAccount = this.addAccount.bind(this);
-        this.switchAccount = this.switchAccount.bind(this);
-
         this.state = {
             accounts : []
         }
-    }
-
-    close(){
-        this.props.onClose();
-    }
-    logout(){
-        this.props.onLogout();
-    }
-    addAccount(){
-        //history.push('/add');
-        this.props.onAddAccount();
-    }
-
-    switchAccount(account){
-        this.props.onSwitchAccount(account);
     }
 
     async componentWillMount(){
@@ -51,7 +31,7 @@ class Settings extends Component {
                     
                     <div class="container-sidebar-header">
                          <div class="container-close float-left">
-                            <button onClick={this.close} type="button" class="close" aria-label="Close">
+                            <button onClick={() => {this.props.onClose()}} type="button" class="close" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>  
@@ -62,38 +42,72 @@ class Settings extends Component {
                         <ul class="sidebar-nav nav">  
 
                             <li class="sidebar-header">
-                                <div class="current-account">
-                                    {this.props.currentAccount.name}
-                                </div>
-                                <div class="current-balance">
-                                    {this.props.currentAccount.data.balance} IOTA
-                                </div>
-                                
+                                <div class="row">
+                                    <div class="col-12 text-center">
+                                        <img src="./material/logo/iota-logo.png" height="50" width="50"/>
+                                    </div>
+                                </div>   
+                                <div class="row">
+                                    <div class="col-12 text-center">
+                                        <div onClick={() => {this.props.onShowEdit()}}class="current-account">
+                                            {this.props.currentAccount.name} 
+                                        </div>
+                                    </div>
+                                </div>      
+                                <div class="row">
+                                    <div class="col-12 text-center">
+                                        <div class="current-balance">
+                                            {this.props.currentAccount.data.balance} i
+                                        </div>
+                                    </div>
+                                </div>                              
                             </li>
 
                             {this.state.accounts.map( account => {
                                 return (<li class="sidebar-brand">
-                                            <a href="#" onClick={() => this.switchAccount(account)} data-scroll>
-                                                <span class="fa fa-user"></span>
-                                                <div class="span-text">{account.name}</div>
-                                            </a>
+                                            <div class="row">
+                                                <div class="col-2"><i class="fa fa-user"></i></div>
+                                                <div class="col-8">
+                                                    <a href="#" onClick={() => this.props.onSwitchAccount(account)} data-scroll>
+                                                        <div class="span-text">{account.name}</div>
+                                                    </a>
+                                                </div>
+                                            </div>
                                         </li>);
                             })}
                             
                             <hr/>
+                            <li class="sidebar-brand-logout">   
+                                <div class="row">
+                                    <div class="col-2 text-center"><i class="fa fa-globe"></i></div>
+                                    <div class="col-10 text-left">
+                                        <a href="#" data-scroll>
+                                            <div class="span-text">buy data</div>
+                                        </a>  
+                                    </div>
+                                </div>
+                            </li>
                             <li class="sidebar-brand-add-account">
-                                <a href="#"  onClick={this.addAccount} data-scroll>
-                                    <span class="fa fa-plus"></span>
-                                    <div class="span-text">add account</div>
-                                </a>
+                                <div class="row">
+                                    <div class="col-2 text-center"><i class="fa fa-plus"></i></div>
+                                    <div class="col-10 text-left">
+                                        <a href="#"  onClick={() => {this.props.onAddAccount()}} data-scroll>
+                                            <div class="span-text">add account</div>
+                                        </a>
+                                    </div>
+                                </div>
                             </li>
                             <li class="sidebar-brand-logout">   
-                                <a href="#"  onClick={this.logout} data-scroll>
-                                    <span class="fa fa-sign-out"></span>
-                                    <div class="span-text">logout</div>
-                                </a>  
+                                <div class="row">
+                                    <div class="col-2 text-center"><i class="fa fa-sign-out"></i></div>
+                                    <div class="col-10 text-left">
+                                        <a href="#"  onClick={() => {this.props.onLogout()}} data-scroll>
+                                            <div class="span-text">logout</div>
+                                        </a>  
+                                    </div>
+                                </div>
                             </li>
-
+                            
                         </ul>
                     </nav>
                 </div>
