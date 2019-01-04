@@ -50,6 +50,7 @@ class Home extends Component {
         showSettings : false,
         showDetails : false,
         showAdd : false,
+        interval : {},
       };
 
     }
@@ -66,7 +67,7 @@ class Home extends Component {
         this.setState({decryptedSeed : dseed});
 
         //check account data after 50 seconds in order to receive the transaction
-        setInterval(() => this.getData(), 20000);
+        this.state.interval = setInterval(() => this.getData(), 20000);
 
         //reattachment every 30 minute and during the acces
         /*this.reattachBundles(account.data.transactions)
@@ -192,11 +193,13 @@ class Home extends Component {
     }
 
     onChangeAccount(account){
-      console.log(account);
       this.setState({account:account});
+      this.setState({showHome:true});
+      this.setState({showAdd:false});
     }
 
     onLogout(){
+      clearInterval(this.state.interval);
       this.props.onLogout();
     }
 

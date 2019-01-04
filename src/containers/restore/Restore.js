@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {isSeedValid,checkPsw} from '../../wallet/wallet'
+import {isSeedValid,checkPsw,resetData} from '../../wallet/wallet'
 import {getAccountData} from '../../core/core';
 import {aes256encrypt,sha256} from '../../utils/crypto'
 import {addAccount,setCurrentNetwork} from '../../wallet/wallet';
@@ -25,6 +25,7 @@ class Restore extends Component {
     async onClickRestore(){
 
         this.setState({isLoading:true});
+        await resetData();
         const pswHash = sha256(this.state.psw);
         const eseed = aes256encrypt(this.state.seed,pswHash);
         const data = await getAccountData(this.state.seed); 

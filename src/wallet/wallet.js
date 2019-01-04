@@ -159,6 +159,19 @@ const setCurrentAccount = async (currentAccount,network) => {
     });  
 }
 
+const resetData = async () => {
+    return new Promise ( (resolve,reject) => {
+        try{
+            localStorage.setItem('data', JSON.stringify([]));
+            resolve();
+        }
+        catch(err){
+            console.log(err);
+            reject(err);
+        }
+    });  
+}
+
 const updateDataAccount = async (newData,network) => {
     return new Promise( (resolve,reject) => {
         try{
@@ -276,4 +289,5 @@ export {isWalletSetup,
         getCurrentNewtwork,
         getAllAccounts,
         setCurrentAccount,
+        resetData,
         isSeedValid};

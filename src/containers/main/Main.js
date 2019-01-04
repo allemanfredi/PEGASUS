@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { isWalletSetup } from '../../wallet/wallet';
+import { isWalletSetup,getCurrentNewtwork} from '../../wallet/wallet';
 import {checkSession,deleteSession,startSession} from '../../utils/utils';
 
 import Home from '../home/Home';
@@ -29,7 +29,10 @@ class Main extends Component {
     }
   }
 
-  componentDidMount(){
+  async componentDidMount(){
+    const network = await getCurrentNewtwork();
+    this.setState({network : network});
+
     if ( isWalletSetup() ){
       if (checkSession() ) {
         startSession();
@@ -51,6 +54,7 @@ class Main extends Component {
     this.setState({showHome:true});
     this.setState({showLogin:false});
     this.setState({showInit:false});
+    this.setState({showRestore:false});
   }
 
   onLogout(){
