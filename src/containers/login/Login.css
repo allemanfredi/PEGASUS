@@ -1,6 +1,6 @@
 .container-login{
 }
-.container-center{
+.container-center-login{
     margin: 0;
     background : #f6f6f6;
     width: 300px;
@@ -9,19 +9,19 @@
     top: 50%;
     left: 50%;
     margin-right: -50%;
-    transform: translate(-50%, -50%)
+    transform: translate(-50%, -27%)
 }
 .container-restore{
-    margin-top: 60%;
+    margin-top: 73%;
 }
 
 
-.container-logo{
+.container-logo-login{
     text-align: center;
-    margin-top: 12%;
+    margin-top: 22%;
     background: white;
 }
-.container-title{
+.container-title-login{
     text-align: center;
     margin-top: 1%;
     color: #00008b;

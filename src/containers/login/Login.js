@@ -1,7 +1,6 @@
 import React , { Component } from 'react';
 import {checkPsw} from '../../wallet/wallet'
 import {startSession} from '../../utils/utils'
-import history from '../../components/history';
 
 import './Login.css'
 
@@ -16,18 +15,12 @@ class InitPsw extends Component {
       this.state = {
         psw: '',
         error: '',
-        showError : false
       };
     }
 
     clickLogin(){
-    
-        if ( checkPsw(this.state.psw)){
-            if ( startSession() ) this.props.onSuccess();//history.push('/home');
-        }else{
-          this.setState({showError : true})
-          this.setState({error : 'Wrong Password'})
-        }
+        if ( startSession() ) 
+            this.props.onSuccess();//history.push('/home');
     }
 
     handleChangePsw(e) {
@@ -39,13 +32,13 @@ class InitPsw extends Component {
     render() {
       return (
         <div class="container-login">
-            <div class="container-logo">
+            <div class="container-logo-login">
                 <img src="./material/logo/pegasus-128.png" height="80" width="80"/>
             </div>
-            <div class="container-title">
+            <div class="container-title-login">
                 Pegasus
             </div>
-            <div class="container-center">
+            <div class="container-center-login">
               <div class="row">
                   <div class="col-2"></div>
                   <div class="col-8">
@@ -60,12 +53,12 @@ class InitPsw extends Component {
               <div class="row">
                   <div class="col-2"></div>
                   <div class="col-8 text-center">
-                      <button disabled={this.state.psw.length > 0 ? false : true} onClick={this.clickLogin} type="submit" class="btn btn-password">LOGIN</button>
+                      <button disabled={checkPsw(this.state.psw) ? false : true} onClick={this.clickLogin} type="submit" class="btn btn-password">LOGIN</button>
                   </div>
                   <div class="col-2"></div>
               </div>
           </div>
-          <div class="container-restore">
+          <div class="container-restore-login">
             <div class="row">
                 <div class="col-2"></div>
                 <div class="col-8 text-center">
@@ -74,12 +67,7 @@ class InitPsw extends Component {
                 <div class="col-2"></div>
             </div>
           </div>
-          {this.state.showError ? 
-              <div class="alert alert-danger" role="alert">
-                  <strong>Error</strong> {this.state.error}
-              </div>
-          : ''}
-          </div>
+        </div>
       );
     }
   }

@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import {getCurrentNewtwork,addAccount,getKey,generateSeed} from '../../wallet/wallet'
+import {isSeedValid,checkPsw} from '../../wallet/wallet'
 import {getAccountData} from '../../core/core';
-import {aes256encrypt} from '../../utils/crypto';
+import {aes256encrypt,sha256} from '../../utils/crypto'
+import {addAccount,setCurrentNetwork} from '../../wallet/wallet';
 
 import Loader from '../../components/loader/Loader'
 
@@ -16,12 +17,27 @@ class Restore extends Component {
 
         this.state = {
             seed : '',
+            psw : '',
             isLoading : false
         }
     }
 
     async onClickRestore(){
 
+        this.setState({isLoading:true});
+        const pswHash = sha256(this.state.psw);
+        const eseed = aes256encrypt(this.state.seed,pswHash);
+        const data = await getAccountData(this.state.seed); 
+        const account = {
+            name : "restored account",
+            seed : eseed,
+            data : data,
+            network : this.props.network 
+        }
+        await addAccount(account);
+        await setCurrentNetwork(this.props.network);
+        this.setState({isLoading:false});
+        this.props.onSuccess();
     }
 
     
@@ -44,7 +60,18 @@ class Restore extends Component {
                     <div class="row">
                         <div class="col-1"></div>
                         <div class="col-10 text-center">
-                            <button disabled={this.state.seed.length > 0 ? false : true} onClick={this.onClickRestore} type="button" class="btn btn-restore-account">RESTORE</button>
+                            <label for="inp-psw" class="inp">
+                                <input onChange={e => {this.setState({psw:e.target.value})}} type="password" id="inp-psw" placeholder="&nbsp;"/>
+                                <span class="label">password</span>
+                                <span class="border"></span>
+                            </label>
+                        </div>
+                        <div class="col-1"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-1"></div>
+                        <div class="col-10 text-center">
+                            <button disabled={isSeedValid(this.state.seed) && checkPsw(this.state.psw) ? false : true} onClick={this.onClickRestore} type="button" class="btn btn-restore-account">RESTORE</button>
                         </div>
                         <div class="col-1"></div>
                     </div>

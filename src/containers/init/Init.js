@@ -1,8 +1,7 @@
 import React , { Component } from 'react';
 import {storePsw} from '../../wallet/wallet'
-import history from '../../components/history';
 import {aes256encrypt,sha256} from '../../utils/crypto'
-import {getNodeInfo,getAccountData, getAccountDataSync} from '../../core/core';
+import {getAccountData} from '../../core/core';
 import {generateSeed,addAccount,setupWallet,setCurrentNetwork} from '../../wallet/wallet';
 
 import Loader from '../../components/loader/Loader'

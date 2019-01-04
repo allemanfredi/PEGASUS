@@ -37,6 +37,7 @@ class Main extends Component {
         this.props.showHeader(true);
       }
       else {
+        this.props.showHeader(true);
         this.setState({showLogin:true});
       }
     }
@@ -54,12 +55,13 @@ class Main extends Component {
 
   onLogout(){
     deleteSession();
-    this.props.showHeader(false);
+    this.props.showHeader(true);
     this.setState({showHome:false});
     this.setState({showLogin:true});
   }
 
   onRestore(){
+    this.props.showHeader(true);
     this.setState({showLogin:false});
     this.setState({showRestore:true});
   }
@@ -81,7 +83,7 @@ class Main extends Component {
         { this.state.showHome ?     <Home network={this.state.network} onLogout={this.onLogout}> </Home> : '' }
         { this.state.showInit ?     <Init onSuccess={this.onSuccess}> </Init> : '' }
         { this.state.showLogin ?    <Login onSuccess={this.onSuccess} onRestore={this.onRestore}> </Login> : '' }
-        { this.state.showRestore ?  <Restore onSuccess={this.onSuccess} onBack={this.onBack}> </Restore> : '' }
+        { this.state.showRestore ?  <Restore network={this.state.network} onSuccess={this.onSuccess} onBack={this.onBack}> </Restore> : '' }
       </main>
     );
   }
