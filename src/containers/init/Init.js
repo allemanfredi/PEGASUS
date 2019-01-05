@@ -74,6 +74,7 @@ class Init extends Component {
                 
                 const account = {
                     name : this.state.name,
+                    id : sha256(this.state.name),
                     seed : eseed,
                     data : data,
                     network : options.network[0] //TESTNET = 0  MAINNET = 1 PER ADESSO GENERO SULLA TESTNET

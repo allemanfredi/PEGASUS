@@ -1,7 +1,7 @@
 import React , { Component } from 'react';
 import {getAccountData} from '../../core/core';
-import {setCurrentAddress,setCurrentAccount,getCurrentAccount,generateSeed,updateDataAccount,addAccount,getKey,getCurrentNewtwork} from '../../wallet/wallet'
-import {aes256decrypt,aes256encrypt} from '../../utils/crypto';
+import {setCurrentAddress,setCurrentAccount,getCurrentAccount,generateSeed,updateDataAccount,addAccount,getKey,getCurrentNewtwork,updateNameAccount,deleteAccount} from '../../wallet/wallet'
+import {aes256decrypt,aes256encrypt,sha256} from '../../utils/crypto';
 import history from '../../components/history';
 
 import Send from '../send/Send';
@@ -40,6 +40,8 @@ class Home extends Component {
       this.onShowEdit = this.onShowEdit.bind(this);
       this.onCloseEdit = this.onCloseEdit.bind(this);
       this.onChangeAccount = this.onChangeAccount.bind(this);  
+      this.onChangeName = this.onChangeName.bind(this);
+      this.onDeleteAccount = this.onDeleteAccount.bind(this);
 
       this.state = {
         error: '',
@@ -121,6 +123,7 @@ class Home extends Component {
         const data = await getAccountData(newSeed);
         const account = {
             name : name ,
+            id : sha256(name),
             seed : eseed,
             data : data,
             network : network //NUOVA NETWORK
@@ -140,9 +143,8 @@ class Home extends Component {
         this.transactions.current.updateData();
     }
 
-
+    //function for conditional rendering
     async onSwitchAccount(account){
-      this.setState({showSettings : false});
       this.setState({account : account});
 
       //store the encrypted seed
@@ -153,7 +155,21 @@ class Home extends Component {
       await setCurrentAccount(account,this.state.network);
     }
 
-    //function for conditional rendering
+    async onChangeName(newName){
+      //change the name of the current account
+      await updateNameAccount(this.state.account,newName);
+      this.setState(prevState => ({account: {...prevState.account,name: newName}}));
+      this.setState({showEdit:false});
+    }
+
+    async onDeleteAccount(){
+      await deleteAccount(this.state.account);
+      const newAccount = await getCurrentAccount(this.state.network);
+      this.setState({account:newAccount});
+      this.setState({showEdit:false});
+      this.setState({showSettings:false});
+    }
+
     onClickSend(){
       this.setState({showSend : true});
       this.setState({showHome : false});
@@ -239,7 +255,12 @@ class Home extends Component {
               { this.state.showReceive ?  ( <Receive  account={this.state.account} network={this.state.network} /> ) : '' }
               { this.state.showDetails ?  ( <Details  details={this.state.details} /> ) : '' }
               { this.state.showAdd ?      ( <Add      onChangeAccount={this.onChangeAccount}></Add>) : ''}
-              { this.state.showEdit ?     ( <Edit     account={this.state.account} onClose={this.onCloseEdit}></Edit>) : ''}
+              
+              { this.state.showEdit ?     ( <Edit     account={this.state.account} 
+                                                      onClose={this.onCloseEdit}
+                                                      onChangeName={this.onChangeName}
+                                                      onDeleteAccount={this.onDeleteAccount}>
+                                            </Edit>) : ''}
               { this.state.showHome ? (
                 <div>
                   <div class="container-info">

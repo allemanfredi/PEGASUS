@@ -24,6 +24,18 @@
     transform: translate(-50%, -50%);
 }
 
-.btn-update , .btn-delete{
+
+.btn-update{
+    background: #00008b;
     margin-top: 22%;
+    color: #fff;
+    border-radius: 6px;
+    text-align: center;
+}
+.btn-delete{
+    background: red;
+    margin-top: 22%;
+    color: #fff;
+    border-radius: 6px;
+    text-align: center;
 }

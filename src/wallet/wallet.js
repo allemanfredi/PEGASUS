@@ -193,6 +193,57 @@ const updateDataAccount = async (newData,network) => {
     }); 
 }
 
+const updateNameAccount = async (current,newName) => {
+    return new Promise( (resolve,reject) => {
+        try{
+            const data = JSON.parse(localStorage.getItem('data'));
+            let updatedAccount = {};
+            data.forEach(account => { 
+                if ( account.name === current.id && account.network.type === current.network.type) {
+                    account.name = newName;
+                    account.id = sha256(newName);
+                    updatedAccount = account;
+                } 
+            });
+            localStorage.setItem('data',JSON.stringify(data));
+            resolve(updatedAccount);
+        }
+        catch(err){
+            console.log(err);
+            reject(err);
+        }
+    }); 
+}
+
+const deleteAccount = async (account) => {
+    return new Promise( (resolve,reject) => {
+        try{
+
+            const data = JSON.parse(localStorage.getItem('data'));
+            if ( data.length === 1)
+                reject("Impossible to delete this account");
+
+            //remove account
+            const index = data.indexOf(account);
+            data.splice(index,1);
+
+            //set the new current account
+            data.forEach( acc => {
+                if ( acc.network.type === account.network.type )
+                    acc.current = true;
+                    return;
+            })
+
+            localStorage.setItem('data',JSON.stringify(data));
+            resolve();
+        }
+        catch(err){
+            console.log(err);
+            reject(err);
+        }
+    }); 
+}
+
 const getCurrentAccount = async (network) => {
     return new Promise( (resolve,reject) => {
         try{
@@ -201,7 +252,6 @@ const getCurrentAccount = async (network) => {
                     resolve(account);
                 }
             });
-
             //se arrivo qua significa che per un tipo di rete non è stato ancora creato un account => creo account
             resolve(null);
         }
@@ -230,7 +280,6 @@ const getAllAccounts = async (network) => {
 }
 
 const setCurrentAddress = async (address,network) => {
-
     return new Promise( (resolve,reject) => {
         try{
             let data = JSON.parse(localStorage.getItem('data'))
@@ -273,6 +322,8 @@ const isSeedValid = (seed) => {
 
 }
 
+/*controls that uses network have been made in order to distinguish between mainnet and testnet
+* ex: it is possibile to have two equals account name, one for the testnet and one for the mainnet */
 
 
 export {isWalletSetup,
@@ -290,4 +341,6 @@ export {isWalletSetup,
         getAllAccounts,
         setCurrentAccount,
         resetData,
-        isSeedValid};
+        isSeedValid,
+        updateNameAccount,
+        deleteAccount};

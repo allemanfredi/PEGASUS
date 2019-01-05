@@ -43,10 +43,10 @@ class Edit extends Component {
                     <div class="row">
                         <div class="col-1"></div>
                         <div class="col-5 text-left">
-                            <div class="btn-update">Update <span class="fa fa-check"></span></div>
+                            <button onClick={() => this.props.onChangeName(this.state.name)}  disabled={this.state.name.length > 0 ? false : true} class="btn btn-update">Update <span class="fa fa-check"></span></button>
                         </div>
                         <div class="col-5 text-right">
-                            <div class="btn-delete">Delete profile <span class="fa fa-times"></span></div>
+                            <button onClick={() => this.props.onDeleteAccount()} class="btn btn-delete">Delete <span class="fa fa-times"></span></button>
                         </div>
                         <div class="col-1"></div>
                     </div>

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {getCurrentNewtwork,addAccount,getKey,generateSeed} from '../../wallet/wallet'
 import {getAccountData} from '../../core/core';
-import {aes256encrypt} from '../../utils/crypto';
+import {aes256encrypt,sha256} from '../../utils/crypto';
 
 import Loader from '../../components/loader/Loader'
 
@@ -37,6 +37,7 @@ class Add extends Component {
         const data = await getAccountData(seed);
         const account = {
             name : this.state.name,
+            id : sha256(this.state.name),
             seed : eseed,
             data : data,
             network : currentNetwork
@@ -71,6 +72,11 @@ class Add extends Component {
                         <div class="col-10 text-center">
                             <button disabled={this.state.name.length > 0 ? false : true} onClick={this.onClickAddAccount} type="button" class="btn btn-add"><i class="fa fa-plus icon" ></i></button>
                         </div>
+                        <div class="col-1"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-1"></div>
+                        <div class="col-10 text-center">Add account</div>
                         <div class="col-1"></div>
                     </div>
 
