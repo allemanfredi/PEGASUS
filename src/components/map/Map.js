@@ -55,8 +55,20 @@ export default class Map extends Component {
         longitude={popupInfo.longitude}
         latitude={popupInfo.latitude}
         onClose={() => this.setState({popupInfo: null})} >
-        <div>
-          {'Weather sensor'}
+        <div class="container-popup">
+          <div class="row">
+            <div class="col-12 text-center">
+              {'Sensor name'}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-6 text-center">
+              <button class="btn">Buy stream <i class="fa fa-check" ></i></button>
+            </div>
+            <div class="col-6 text-center">
+              <button class="btn">Close <i class="fa fa-times" ></i></button>
+            </div>
+          </div>
         </div>
       </Popup>
     );

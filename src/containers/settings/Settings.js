@@ -99,7 +99,7 @@ class Settings extends Component {
                                 <div class="row">
                                     <div class="col-2 text-center"><i class="fa fa-globe"></i></div>
                                     <div class="col-10 text-left">
-                                        <a href="#" data-scroll>
+                                        <a href="#" onClick={() => {this.props.onShowMap()}} data-scroll>
                                             <div class="span-text">buy data</div>
                                         </a>  
                                     </div>

@@ -2,7 +2,6 @@ import React , { Component } from 'react';
 import {getAccountData} from '../../core/core';
 import {setCurrentAddress,setCurrentAccount,getCurrentAccount,generateSeed,updateDataAccount,addAccount,getKey,getCurrentNewtwork,updateNameAccount,deleteAccount} from '../../wallet/wallet'
 import {aes256decrypt,aes256encrypt,sha256} from '../../utils/crypto';
-import history from '../../components/history';
 
 import Send from '../send/Send';
 import Receive from '../receive/Receive';
@@ -11,7 +10,7 @@ import Details from '../details/Details';
 import Transactions from '../transactions/Transactions';
 import Add from '../add/Add';
 import Edit from '../edit/Edit';
-
+import Interact from '../interact/Interact'
 
 import Loader from '../../components/loader/Loader'
 import Navbar from '../../components/navbar/Navbar'
@@ -28,7 +27,6 @@ class Home extends Component {
       this.transactions = React.createRef();
 
       this.onClickSend = this.onClickSend.bind(this);
-      this.onClickMap = this.onClickMap.bind(this);
       this.onClickSettings = this.onClickSettings.bind(this);
       this.onCloseSettings = this.onCloseSettings.bind(this);
       this.onClickReceive = this.onClickReceive.bind(this);
@@ -42,6 +40,7 @@ class Home extends Component {
       this.onChangeAccount = this.onChangeAccount.bind(this);  
       this.onChangeName = this.onChangeName.bind(this);
       this.onDeleteAccount = this.onDeleteAccount.bind(this);
+      this.onClickMap = this.onClickMap.bind(this);
 
       this.state = {
         error: '',
@@ -54,6 +53,7 @@ class Home extends Component {
         showHome : true,
         showReceive : false,
         showSettings : false,
+        showInteract : false,
         showDetails : false,
         showAdd : false,
         showEdit : false,
@@ -187,11 +187,8 @@ class Home extends Component {
       this.setState({showReceive : false});
       this.setState({showDetails : false});
       this.setState({showAdd : false});
+      this.setState({showInteract : false});
       this.setState({showHome : true});
-    }
-
-    onClickMap(){
-      history.push('/interact')
     }
 
     onClickSettings(){
@@ -230,6 +227,11 @@ class Home extends Component {
     onCloseEdit(){
       this.setState({showEdit:false});
     }
+    onClickMap(){
+      this.setState({showHome:false});
+      this.setState({showSettings:false});
+      this.setState({showInteract:true});
+    }
 
 
     render() {
@@ -238,8 +240,9 @@ class Home extends Component {
           <Navbar showBtnSettings={this.state.showHome} 
                   showBtnMarker={this.state.showHome} 
                   showBtnBack={!this.state.showHome} 
-                  text={this.state.showHome ? this.state.account.name : (this.state.showSend ? 'Send' : (this.state.showReceive ? 'Receive' : this.state.showAdd ? 'Add account' : ''))}
+                  text={this.state.showHome ? this.state.account.name : (this.state.showSend ? 'Send' : (this.state.showReceive ? 'Receive' : this.state.showAdd ? 'Add account' : (this.state.showInteract ? 'Buy data' : '')))}
                   onClickSettings={this.onClickSettings}
+                  onClickMap={this.onClickMap}
                   onBack={this.onBack}>
           </Navbar>
           
@@ -249,6 +252,7 @@ class Home extends Component {
                                                       currentAccount={this.state.account} 
                                                       onAddAccount={this.onAddAccount} 
                                                       onSwitchAccount={this.onSwitchAccount}
+                                                      onShowMap={this.onClickMap}
                                                       onShowEdit={this.onShowEdit}
                                                       onLogout={this.onLogout}
                                                       onClose={this.onCloseSettings}/> ) 
@@ -257,7 +261,8 @@ class Home extends Component {
               { this.state.showReceive ?  ( <Receive  account={this.state.account} network={this.state.network} /> ) : '' }
               { this.state.showDetails ?  ( <Details  details={this.state.details} /> ) : '' }
               { this.state.showAdd ?      ( <Add      onChangeAccount={this.onChangeAccount}></Add>) : ''}
-              
+              { this.state.showInteract ? ( <Interact ></Interact>) : ''}
+
               { this.state.showEdit ?     ( <Edit     account={this.state.account} 
                                                       onClose={this.onCloseEdit}
                                                       onChangeName={this.onChangeName}
