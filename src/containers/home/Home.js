@@ -145,6 +145,7 @@ class Home extends Component {
 
     //function for conditional rendering
     async onSwitchAccount(account){
+
       this.setState({account : account});
 
       //store the encrypted seed
@@ -163,6 +164,7 @@ class Home extends Component {
     }
 
     async onDeleteAccount(){
+      
       await deleteAccount(this.state.account);
       const newAccount = await getCurrentAccount(this.state.network);
       this.setState({account:newAccount});

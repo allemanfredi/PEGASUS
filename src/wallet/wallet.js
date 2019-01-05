@@ -199,7 +199,7 @@ const updateNameAccount = async (current,newName) => {
             const data = JSON.parse(localStorage.getItem('data'));
             let updatedAccount = {};
             data.forEach(account => { 
-                if ( account.name === current.id && account.network.type === current.network.type) {
+                if ( account.id === current.id && account.network.type === current.network.type) {
                     account.name = newName;
                     account.id = sha256(newName);
                     updatedAccount = account;
@@ -224,15 +224,19 @@ const deleteAccount = async (account) => {
                 reject("Impossible to delete this account");
 
             //remove account
-            const index = data.indexOf(account);
-            data.splice(index,1);
-
-            //set the new current account
-            data.forEach( acc => {
-                if ( acc.network.type === account.network.type )
-                    acc.current = true;
-                    return;
+            const app = data.slice();
+            app.forEach( (acc,index) => {
+                if ( acc.id === account.id )
+                    data.splice(index,1);
             })
+
+            //set the new current account (the first one of this network)
+            for ( let acc of data ){
+                if ( acc.network.type === account.network.type ){
+                    acc.current = true;
+                    break;
+                }
+            }
 
             localStorage.setItem('data',JSON.stringify(data));
             resolve();

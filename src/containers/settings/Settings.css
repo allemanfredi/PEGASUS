@@ -149,3 +149,9 @@ hr {
 .span-text{
   margin-bottom: 3%;
 }
+
+.address{
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

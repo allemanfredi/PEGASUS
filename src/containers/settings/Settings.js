@@ -11,6 +11,8 @@ class Settings extends Component {
     constructor(props,context) {
         super(props,context);
         
+        this.switchAccount = this.switchAccount.bind(this);
+
         this.state = {
             accounts : []
         }
@@ -19,8 +21,15 @@ class Settings extends Component {
     async componentWillMount(){
         let accounts = await getAllAccounts(this.props.currentNetwork);
         //remove the current account from all accounts
-        accounts = accounts.filter( account => account.name !== this.props.currentAccount.name );
+        accounts = accounts.filter( account => account.id !== this.props.currentAccount.id );
         this.setState({accounts : accounts});
+    }
+
+    async switchAccount(newAccount){
+        let accounts = await getAllAccounts(this.props.currentNetwork);
+        accounts = accounts.filter( account => account.id !== newAccount.id );
+        this.setState({accounts : accounts});
+        this.props.onSwitchAccount(newAccount);
     }
     
     render() {
@@ -53,7 +62,16 @@ class Settings extends Component {
                                             {this.props.currentAccount.name} 
                                         </div>
                                     </div>
-                                </div>      
+                                </div>    
+                                <div class="row">
+                                    <div class="col-2"></div>
+                                    <div class="col-8 text-center">
+                                        <div onClick={() => {this.props.onShowEdit()}} class="address">
+                                            {this.props.currentAccount.data.latestAddress} 
+                                        </div>
+                                    </div>
+                                    <div class="col-2"></div>
+                                </div>    
                                 <div class="row">
                                     <div class="col-12 text-center">
                                         <div class="current-balance">
@@ -68,7 +86,7 @@ class Settings extends Component {
                                             <div class="row">
                                                 <div class="col-2"><i class="fa fa-user"></i></div>
                                                 <div class="col-8">
-                                                    <a href="#" onClick={() => this.props.onSwitchAccount(account)} data-scroll>
+                                                    <a href="#" onClick={() => this.switchAccount(account)} data-scroll>
                                                         <div class="span-text">{account.name}</div>
                                                     </a>
                                                 </div>
