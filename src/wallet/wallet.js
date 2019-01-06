@@ -3,7 +3,7 @@ import {sha256} from '../utils/crypto';
 const isWalletSetup = () => {
     try{
         const data = JSON.parse(localStorage.getItem('data'));
-        if (localStorage.getItem('isWalletSetup') === 'true' && data.length > 0)
+        if ( data.length > 0)
             return true;
         else
             return false;
@@ -16,7 +16,6 @@ const isWalletSetup = () => {
 
 const setupWallet = () => {
     try{
-        localStorage.setItem('isWalletSetup', 'true')
         localStorage.setItem('data' , JSON.stringify([]) )
         return true;
     }

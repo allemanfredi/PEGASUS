@@ -15,7 +15,9 @@ class Main extends Component {
   constructor(props,context) {
     super(props,context);
 
-    this.onSuccess = this.onSuccess.bind(this);
+    this.onSuccessFromInit = this.onSuccessFromInit.bind(this);
+    this.onSuccessFromLogin = this.onSuccessFromLogin.bind(this);
+    this.onSuccessFromRestore = this.onSuccessFromRestore.bind(this);
     this.onLogout = this.onLogout.bind(this);
     this.onRestore = this.onRestore.bind(this);
     this.onBack = this.onBack.bind(this);
@@ -49,11 +51,22 @@ class Main extends Component {
     }
   }
 
-  onSuccess(){
+  onSuccessFromLogin(){
     this.props.showHeader(true);
+    startSession();
     this.setState({showHome:true});
     this.setState({showLogin:false});
+  }
+  onSuccessFromInit(){
+    this.props.showHeader(true);
+    startSession();
+    this.setState({showHome:true});
     this.setState({showInit:false});
+  }
+  onSuccessFromRestore(){
+    this.props.showHeader(true);
+    startSession();
+    this.setState({showHome:true});
     this.setState({showRestore:false});
   }
 
@@ -85,9 +98,9 @@ class Main extends Component {
     return (
       <main class="main" >
         { this.state.showHome ?     <Home network={this.state.network} onLogout={this.onLogout}> </Home> : '' }
-        { this.state.showInit ?     <Init onSuccess={this.onSuccess}> </Init> : '' }
-        { this.state.showLogin ?    <Login onSuccess={this.onSuccess} onRestore={this.onRestore}> </Login> : '' }
-        { this.state.showRestore ?  <Restore network={this.state.network} onSuccess={this.onSuccess} onBack={this.onBack}> </Restore> : '' }
+        { this.state.showInit ?     <Init onSuccess={this.onSuccessFromInit}> </Init> : '' }
+        { this.state.showLogin ?    <Login onSuccess={this.onSuccessFromLogin} onRestore={this.onRestore}> </Login> : '' }
+        { this.state.showRestore ?  <Restore network={this.state.network} onSuccess={this.onSuccessFromRestore} onBack={this.onBack}> </Restore> : '' }
       </main>
     );
   }

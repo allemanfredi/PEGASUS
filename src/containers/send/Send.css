@@ -22,11 +22,11 @@ input {
     color: white;
 }
 
-
-
-
 .container-error{
-    margin-top: 26%;
+    position: absolute;
+    width: 49%;
+    top: 24%;
+    left: 49%;
 }
 
 .btn-transfer{
