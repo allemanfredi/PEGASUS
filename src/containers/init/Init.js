@@ -30,7 +30,7 @@ class Init extends Component {
         randomLetters : 10,
         randomizedLetter : [],
         isLoading : false,
-        initialization : [true,false,false],
+        initialization : [true,false,false,false],
         indexInitialization : 0,
       };
     }
@@ -55,7 +55,7 @@ class Init extends Component {
         this.updateStatusInitialization(this.state.indexInitialization,true);
         this.setState({indexInitialization : this.state.indexInitialization + 1});
 
-        if ( this.state.indexInitialization === 2){//create wallet
+        if ( this.state.indexInitialization === 3){//create wallet
             this.setState({isLoading : true});
             await this.createWallet();
             this.setState({isLoading : false});
@@ -244,6 +244,45 @@ class Init extends Component {
                             </div>  
                         </div>
                     : ''}
+
+                    {this.state.initialization[3]  ?
+                        <div>
+                            <div class="container-export-text">
+                                <div class="row">
+                                    <div class="col-12 text-center">Let's export the seed</div>
+                                </div>
+                            </div>
+                            <div class="container-export-suggestion">
+                                <div class="row">
+                                    <div class="col-1 text-center"></div>
+                                    <div class="col-10 text-center">Take care to copy the seed in order to correctly reinitialize the wallet </div>
+                                    <div class="col-1 text-center"></div>
+                                </div>
+                            </div>
+                            <div class="container-export-seed">
+                                <div class="row">
+                                    <div class="col-1"></div>
+                                    <div class="col-10 text-center">
+                                        <div class="container-seed-to-export">{this.state.seed}</div>
+                                    </div>
+                                    
+                                </div>  
+                            </div>
+                            <div class="container-export-seed-button">
+                                <div class="row">
+                                    <div class="col-12 text-center">
+                                        <button class="btn btn-copy-seed"><span class="fa fa-clipboard"></span></button>
+                                    </div>
+                                </div> 
+                                <div class="row">
+                                    <div class="col-12 text-center">
+                                        Copy to clipboard
+                                    </div>
+                                </div>   
+                            </div>
+                            
+                        </div>
+                    : '' }
                     
                     <div class="container-menu-init">
                         <div class="row">

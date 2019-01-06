@@ -10,6 +10,8 @@
     transform: translate(-50%, -9%);
 }
 
+
+
 .container-psw-suggestion {
     margin-top: 66%;
     color: darkblue;
@@ -131,5 +133,53 @@
 
 .remained-letters{
     color: darkblue;
+    font-weight: bold;
+}
+
+.container-export-text {
+    margin-top: 5%;
+    font-size: 30px;
+    color: darkblue;
+}
+
+.container-export-seed{
+    margin: 0;
+    /*background : #f6f6f6;*/
+    width: 300px;
+    border-radius: 10px;
+    position: absolute;
+    top: 54%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, 100%);
+}
+
+.container-export-seed-button{
+    margin: 0;
+    /*background : #f6f6f6;*/
+    width: 300px;
+    border-radius: 10px;
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, 100%);
+}
+
+
+.container-export-suggestion {
+    font-size: 12px;
+    margin-top: 8%;
+}
+
+.btn-copy-seed {
+    background: white;
+    color: darkblue;
+}
+
+.container-seed-to-export {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 12px;
     font-weight: bold;
 }
