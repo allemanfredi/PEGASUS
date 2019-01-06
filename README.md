@@ -19,7 +19,7 @@ npm install
 npm run build
 ```
 
-After having build the application, it needs to be loaded on chrome.
+After having built the application, it needs to be loaded on chrome.
 
 ## How to install Chrome extensions manually
 
