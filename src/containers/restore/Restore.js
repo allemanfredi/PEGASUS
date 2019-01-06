@@ -72,7 +72,7 @@ class Restore extends Component {
                     <div class="row">
                         <div class="col-1"></div>
                         <div class="col-10 text-center">
-                            <button disabled={isSeedValid(this.state.seed) && checkPsw(this.state.psw) ? false : true} onClick={this.onClickRestore} type="button" class="btn btn-restore-account">RESTORE</button>
+                            <button disabled={isSeedValid(this.state.seed) && checkPsw(this.state.psw) ? false : true} onClick={this.onClickRestore} type="button" class="btn btn-restore-account">Restore</button>
                         </div>
                         <div class="col-1"></div>
                     </div>
