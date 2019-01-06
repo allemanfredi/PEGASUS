@@ -128,6 +128,7 @@ const timestampToDate = (timestamp) => {
     return hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2) + ' - ' + tomonth + '/' + todate + '/' + toyear;
 }
 
+
 module.exports = {
     capitalize,
     shorten,
