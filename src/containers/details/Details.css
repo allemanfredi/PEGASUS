@@ -15,6 +15,11 @@
     margin-left: 3.5%;
     margin-top: 5%;
     transition: all 0.4s ease 0s;
+    border-radius: 10px;
+}
+
+.container-promote-transaction {
+    margin-top: 15%;
 }
 
 .detail-hash{
@@ -27,9 +32,37 @@
     font-weight: bold;
     font-size: 12px;
     text-align: right;
+    color: darkblue;
 }
-.detail-bundle{
+
+.detail-bundle-value{
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.container-list-details {
+    margin-top: 12%;
+}
+
+.container-details-title {
+    font-size: 30px;
+    margin-bottom: 6%;
+    color: darkblue;
+}
+
+.details-list{
+    height: 258px;
+    overflow: overlay;
+}
+
+.btn-promote-transaction {
+    width: 100%;
+    color: white;
+    background: darkblue;
     font-weight: bold;
-    font-size: 13px;
-    text-align: center;
 }
+
+.btn-close-details {
+    margin-top: 5px;
+}
+

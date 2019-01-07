@@ -1,6 +1,8 @@
 import React , { Component } from 'react';
 import Map from '../../components/map/Map'
 
+import {mamInit} from '../../mam/mam'
+
 import './Interact.css'
 
 class Interact extends Component {
@@ -13,6 +15,9 @@ class Interact extends Component {
       }
     }
 
+    async componentDidMount(){
+      await mamInit();
+    }
 
     render() {
       return (

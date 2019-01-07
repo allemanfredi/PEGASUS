@@ -8,51 +8,69 @@ class Details extends Component {
     constructor(props, context) {
         super(props, context);
         
-        this.close = this.close.bind(this);
-
         this.state = {
       };
-    }
-
-    close(){
-        this.props.onBack();
     }
 
     render() {
       return (
         <div class="modal">
             <div class="container-info">
-                <div class="float-left">
-                    <button onClick={this.close} type="button" class="close" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                bundle details
-                <ul class="list-group">
-                    <li class="list-group-item">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="detail-bundle">
-                                    bundle {this.props.details[0].bundle}
-                                </div>
-                            </div>
+
+                <div class="container-button-close">
+                    <div class="row">
+                        <div class="col-2 text-center">
+                            <button onClick={() => this.props.onClose()} type="button" class="close btn-close-details" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         </div>
-                    </li>
-                    {this.props.details.map( detail => {
-                        return (<li class="list-group-item">
-                                    <div class="row">
-                                        <div class="col-10">
-                                            <div class="detail-hash" >{detail.hash} </div>
-                                        </div>
-                                        <div class="col-2">
-                                            <div class="detail-value">
-                                                {detail.value > 99999 || detail.value < -99999  ? (detail.value / 1000000).toFixed(2) + " Ti" : (detail.value > 999 || detail.value < -999 ?  (detail.value / 1000).toFixed(2) + " Gi"  :  detail.value + "Mi" )}
+                        <div class="col-10"></div>
+                    </div>  
+                </div>
+
+                <div class="container-details-title">
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <div class="details-title">Bundle details</div>
+                        </div>
+                    </div>
+                </div>  
+                <div class="container-details-bundle">
+                    <div class="row">
+                        <div class="col-1"></div>
+                        <div class="col-10 text-center">
+                            <div class="detail-bundle-value">{this.props.details[0].bundle}</div>
+                        </div>
+                        <div class="col-1"></div>
+                    </div>
+                </div>  
+                
+                <div class="container-list-details">
+                    <ul class="list-group details-list">
+                        {this.props.details.map( detail => {
+                            return (<li class="list-group-item">
+                                        <div class="row">
+                                            <div class="col-8">
+                                                <div class="detail-hash" >{detail.hash} </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="detail-value">
+                                                    {detail.value > 99999 || detail.value < -99999  ? (detail.value / 1000000).toFixed(2) + " Mi" : (detail.value > 999 || detail.value < -999 ?  (detail.value / 1000).toFixed(2) + " Ki"  :  detail.value + "i" )}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </li>);
-                    })}
-                </ul>
+                                    </li>);
+                        })}
+                    </ul>
+                </div>
+
+                <div class="container-promote-transaction">
+                    <div class="row">
+                        <div class="col-1"></div>
+                        <div class="col-10">
+                            <button class="btn btn-promote-transaction">Promote transaction <span class="fa fa-repeat"></span></button>
+                        </div>
+                        <div class="col-1"></div>
+                    </div>
+                </div>
             </div>
         </div> 
       );

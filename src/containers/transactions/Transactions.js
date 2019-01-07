@@ -1,4 +1,5 @@
 import React , { Component } from 'react';
+import {timestampToDate} from '../../utils/helpers'
 
 import './Transactions.css'
 
@@ -86,6 +87,7 @@ class Transactions extends Component {
                 doubleBundle.push(obj);
             }
         });
+        this.setState({transactions:arr});
     }
 
     async goDetails(transfer){
@@ -112,13 +114,13 @@ class Transactions extends Component {
                     <div onClick={() => this.goDetails(transaction.transfer)} class="transaction-list-item" >
                         <div class="row">
                             <div class="col-4 text-left">
-                                <div class="transaction-list-item-action">{transaction.value > 0 ? 'Received ' : 'Sent'}</div>
+                                <div class="transaction-date">{timestampToDate(transaction.timestamp)}</div>
                             </div>
                             <div class="col-4 text-center">
-                                <div class="transaction-list-item-value"><strong>{transaction.value}</strong></div>
+                                <div class="transaction-list-item-action">{transaction.value > 0 ? 'Received ' : 'Sent'}</div>   
                             </div>
                             <div class="col-4 text-right">
-                                <div class="transaction-status">{transaction.status ? 'Confirmed' : 'Pending'}</div>
+                                <div class="transaction-list-item-value"><strong>{transaction.value}</strong></div>
                             </div>
                         </div>
                     </div>        

@@ -210,7 +210,7 @@ class Add extends Component {
                             <div class="container-export-seed-button">
                                 <div class="row">
                                     <div class="col-12 text-center">
-                                        <button class="btn btn-copy-seed"><span class="fa fa-clipboard"></span></button>
+                                        <button onClick={this.copyToClipboard} class="btn btn-copy-seed"><span class="fa fa-clipboard"></span></button>
                                     </div>
                                 </div> 
                                 <div class="row">

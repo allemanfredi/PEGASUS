@@ -41,6 +41,7 @@ class Home extends Component {
       this.onChangeName = this.onChangeName.bind(this);
       this.onDeleteAccount = this.onDeleteAccount.bind(this);
       this.onClickMap = this.onClickMap.bind(this);
+      this.onCloseDetails = this.onCloseDetails.bind(this);
 
       this.state = {
         error: '',
@@ -91,6 +92,7 @@ class Home extends Component {
       //controllare se è cambiata la rete (testnet/mainnet);
       const network = await getCurrentNewtwork();
       if ( JSON.stringify(network) !== JSON.stringify(this.state.network) ){
+        console.log(network);
         this.setState({account:{}});
         this.setState({network : network});
 
@@ -224,13 +226,19 @@ class Home extends Component {
     onShowEdit(){
       this.setState({showEdit:true});
     }
+
     onCloseEdit(){
       this.setState({showEdit:false});
     }
+
     onClickMap(){
       this.setState({showHome:false});
       this.setState({showSettings:false});
       this.setState({showInteract:true});
+    }
+
+    onCloseDetails(){
+      this.setState({showDetails:false});
     }
 
 
@@ -259,7 +267,7 @@ class Home extends Component {
               : ''}
               { this.state.showSend ?     ( <Send     account={this.state.account} network={this.state.network} /> ) : ''}
               { this.state.showReceive ?  ( <Receive  account={this.state.account} network={this.state.network} /> ) : '' }
-              { this.state.showDetails ?  ( <Details  details={this.state.details} /> ) : '' }
+              { this.state.showDetails ?  ( <Details  details={this.state.details} onClose={this.onCloseDetails}/> ) : '' }
               { this.state.showAdd ?      ( <Add      onChangeAccount={this.onChangeAccount}></Add>) : ''}
               { this.state.showInteract ? ( <Interact ></Interact>) : ''}
 
