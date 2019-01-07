@@ -9,7 +9,6 @@ const isWalletSetup = () => {
             return false;
     }
     catch(err){
-        console.log(err);
         return false;
     } 
 }
@@ -20,7 +19,6 @@ const setupWallet = () => {
         return true;
     }
     catch(err){
-        console.log(err);
         return false;
     }
 }

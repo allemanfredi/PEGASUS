@@ -15,12 +15,14 @@ class Init extends Component {
       super(props, context);
 
       this.createWallet = this.createWallet.bind(this);
-      this.copySeed = this.copySeed.bind(this);
       this.goBack = this.goBack.bind(this);
       this.goOn = this.goOn.bind(this);
       this.updateStatusInitialization = this.updateStatusInitialization.bind(this);
       this.randomiseSeedLetter = this.randomiseSeedLetter.bind(this);
+      this.copyToClipboard = this.copyToClipboard.bind(this);
       //this.resetSeed = this.resetSeed.bind(this);
+
+      this.labelSeed = React.createRef();
 
       this.state = {
         psw: '',
@@ -32,6 +34,7 @@ class Init extends Component {
         isLoading : false,
         initialization : [true,false,false,false],
         indexInitialization : 0,
+        isCopiedToClipboard : false,
       };
     }
 
@@ -40,10 +43,6 @@ class Init extends Component {
         this.setState({seed: seed});
     }
 
-
-    copySeed(){
-        console.log("copy to do");
-    }
 
     //action = true -> goOn, action = false = goBack
     goBack(){
@@ -89,6 +88,13 @@ class Init extends Component {
             }
         })
     }
+
+    copyToClipboard(e) {
+        this.labelSeed.current.select();
+        document.execCommand('copy');
+        e.target.focus();
+        this.setState({isCopiedToClipboard : true});
+    };
 
     /*resetSeed(){
         const seed = generateSeed();
@@ -263,20 +269,24 @@ class Init extends Component {
                                 <div class="row">
                                     <div class="col-1"></div>
                                     <div class="col-10 text-center">
-                                        <div class="container-seed-to-export">{this.state.seed}</div>
+                                        <div class="container-seed-to-export">
+                                            <input class="input-seed-to-export" ref={this.labelSeed} value={this.state.seed} readOnly/>
+                                        </div>
                                     </div>
-                                    
+                                    <div class="col-1"></div>
                                 </div>  
                             </div>
                             <div class="container-export-seed-button">
                                 <div class="row">
                                     <div class="col-12 text-center">
-                                        <button class="btn btn-copy-seed"><span class="fa fa-clipboard"></span></button>
+                                        <button onClick={this.copyToClipboard} class="btn btn-copy-seed"><span class="fa fa-clipboard"></span></button>
                                     </div>
                                 </div> 
                                 <div class="row">
                                     <div class="col-12 text-center">
-                                        Copy to clipboard
+                                        <div class ="container-copy-to-clipboard">
+                                             {this.state.isCopiedToClipboard ? 'Copied!' : 'Copy to clipboard'}
+                                        </div>
                                     </div>
                                 </div>   
                             </div>

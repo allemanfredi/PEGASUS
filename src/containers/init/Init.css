@@ -183,3 +183,17 @@
     font-size: 12px;
     font-weight: bold;
 }
+
+.container-copy-to-clipboard {
+    font-size: 13px;
+    color: darkblue;
+}
+
+.input-seed-to-export {
+    overflow: hidden;
+    /* display: flex; */
+    width: 100%;
+    border: 0;
+    font-weight: bold;
+    text-overflow: ellipsis;
+}
