@@ -30,9 +30,11 @@
     opacity: 0.5;
 }
 
-.transaction-list-item-action,.transaction-list-item-value {
+.transaction-list-item-action, .transaction-list-item-value {
     text-transform: capitalize;
     background: inherit;
+    font-size: 13px;
+    font-weight: bold;
 }
 
 .transaction-list-item-date {
@@ -41,8 +43,17 @@
 
 .transaction-date {
     color: darkblue;
+    font-size: 13px;
 }
 
+.transaction-list-item-status-confirmed {
+    font-size: 13px;
+    color: green;
+}
+.transaction-list-item-status-not-confirmed {
+    font-size: 13px;
+    color: darkblue;
+}
 
 .container-no-transactions{
     margin-top: 26%;

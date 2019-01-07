@@ -149,49 +149,43 @@ const replayBundle = async (tail) => {
     })
 }
 
-const promoteTransaction = async (hash) => {
-
+/*const promoteTransaction = async (hash) => {
     const spamTransfer = [{address: '9'.repeat(81), value: 0, message: '', tag: ''}]
-    iota.promoteTransaction(hash, 3, 9, spamTransfer, {interrupt: false, delay: 0});
-}
+    iota.promoteTransaction(hash, 10, 9, spamTransfer, {interrupt: false, delay: 0});
+}*/
 
-/*const promoteTransaction = async(hash) => {
+const promoteTransaction = (tail) => {
     // We need to monitor inclusion states of all tail transactions (original tail & reattachments
-    
-    return new Promise ((resolve,reject) => {
-        const tails = [hash]
 
-        iota.getLatestInclusion(tails)
+        /*iota.getLatestInclusion(tails)
         .then(states => {
             // Check if none of transactions confirmed
-            if (states.indexOf(true) === -1) {
-                const tail = tails[tails.length - 1] // Get latest tail hash
+            if (states.indexOf(true) === -1) {*/
     
                 iota.isPromotable(tail)
                     .then(isPromotable => {
                         if ( isPromotable ){
-                            //iota.promoteTransaction(tail, 3, 14)
+                            iota.promoteTransaction(tail, 3, 14)
                             console.log("promote transactio");
-                            resolve();
+                         
                         }else{
                             iota.replayBundle(tail, 3, 14)
                                 .then(([reattachedTail]) => {
+                                    console.log("reattach transaztion");
                                     const newTailHash = reattachedTail.hash;
                                     // Keeping track of all tail hashes to check confirmation
-                                    tails.push(newTailHash);
-                                    resolve (newTailHash);
+                                   // tails.push(newTailHash);
+                                    //resolve (newTailHash);
                                 })
                         }
                     }).catch(err => {
                         console.log(err);
-                        resolve(err);
                     })
-            }
+            /*}
         }).catch(err => {
-            // ...
-        })
-    })
-}*/
+            console.log(err);
+        })*/
+}
 
 
 export {getNewAddress, 

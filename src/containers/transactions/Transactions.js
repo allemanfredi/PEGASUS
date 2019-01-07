@@ -113,14 +113,19 @@ class Transactions extends Component {
                 return (
                     <div onClick={() => this.goDetails(transaction.transfer)} class="transaction-list-item" >
                         <div class="row">
-                            <div class="col-4 text-left">
+                            <div class="col-3 text-left">
                                 <div class="transaction-date">{timestampToDate(transaction.timestamp)}</div>
                             </div>
-                            <div class="col-4 text-center">
-                                <div class="transaction-list-item-action">{transaction.value > 0 ? 'Received ' : 'Sent'}</div>   
+                            <div class="col-3 text-center">
+                                <div class="transaction-list-item-action">{transaction.value > 0 ? 'received ' : 'sent'}</div>   
                             </div>
-                            <div class="col-4 text-right">
-                                <div class="transaction-list-item-value"><strong>{transaction.value}</strong></div>
+                            <div class="col-3 text-center">
+                                <div className={transaction.status ? 'transaction-list-item-status-confirmed' : 'transaction-list-item-status-not-confirmed'} >{transaction.status ? 'confirmed ' : 'pending'}</div>   
+                            </div>
+                            <div class="col-3 text-right">
+                                <div class="transaction-list-item-value">
+                                    {transaction.value > 99999 || transaction.value < -99999  ? (transaction.value / 1000000).toFixed(2) + " Mi" : (transaction.value > 999 || transaction.value < -999 ?  (transaction.value / 1000).toFixed(2) + " Ki"  :  transaction.value + "i" )}
+                                </div>
                             </div>
                         </div>
                     </div>        

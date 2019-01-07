@@ -75,7 +75,7 @@ class Home extends Component {
         this.setState({decryptedSeed : dseed});
 
         //check account data after 50 seconds in order to receive the transaction
-        this.state.interval = setInterval(() => this.getData(), 20000);
+        this.state.interval = setInterval(() => this.getData(), 30000);
         
         //set the current address in the chrome local storage
         setCurrentAddress(account.data.latestAddress,this.state.network);
@@ -174,6 +174,7 @@ class Home extends Component {
       this.setState({showSettings:false});
     }
 
+
     onClickSend(){
       this.setState({showSend : true});
       this.setState({showHome : false});
@@ -242,6 +243,8 @@ class Home extends Component {
     }
 
 
+
+
     render() {
       return (
         <div>
@@ -267,15 +270,16 @@ class Home extends Component {
               : ''}
               { this.state.showSend ?     ( <Send     account={this.state.account} network={this.state.network} /> ) : ''}
               { this.state.showReceive ?  ( <Receive  account={this.state.account} network={this.state.network} /> ) : '' }
-              { this.state.showDetails ?  ( <Details  details={this.state.details} onClose={this.onCloseDetails}/> ) : '' }
-              { this.state.showAdd ?      ( <Add      onChangeAccount={this.onChangeAccount}></Add>) : ''}
-              { this.state.showInteract ? ( <Interact ></Interact>) : ''}
+              { this.state.showDetails ?  ( <Details  details={this.state.details} 
+                                                      onClose={this.onCloseDetails}
+                                             /> ) : '' }
+              { this.state.showAdd ?      ( <Add      onChangeAccount={this.onChangeAccount}/>) : ''}
+              { this.state.showInteract ? ( <Interact />) : ''}
 
               { this.state.showEdit ?     ( <Edit     account={this.state.account} 
                                                       onClose={this.onCloseEdit}
                                                       onChangeName={this.onChangeName}
-                                                      onDeleteAccount={this.onDeleteAccount}>
-                                            </Edit>) : ''}
+                                                      onDeleteAccount={this.onDeleteAccount}/>) : ''}
               { this.state.showHome ? (
                 <div>
                   <div class="container-info">
