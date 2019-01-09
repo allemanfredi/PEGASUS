@@ -23,17 +23,19 @@
     height: 50px;
     width: 50px;
     border-radius: 50%;
-    border: 1px solid lightskyblue;
+    border: 2px solid darkblue;
+    background: white;
+    color: darkblue;
+}
+.btn-send:hover,.btn-receive:hover{
     background: darkblue;
+    color: white;
 }
 
-/*.btn-send:hover , .btn-receive:hover{ 
-    height: 60px;
-    width: 60px;
-}*/
-
-.icon{
-    color: white;
+.text-send,.text-receive {
+    font-size: 16px;
+    font-weight: bold;
+    color: darkblue;
 }
 
 

@@ -176,9 +176,12 @@ class Home extends Component {
     async onDeleteAccount(){
       
       await deleteAccount(this.state.account);
+
       const newAccount = await getCurrentAccount(this.state.network);
       this.setState({account:newAccount});
+
       this.transactions.current.updateData();
+      
       this.setState({showEdit:false});
       this.setState({showSettings:false});
     }
@@ -311,15 +314,15 @@ class Home extends Component {
                     </div>  
                     <div class="row">
                       <div class="col-6 text-center">
-                        <button onClick={this.onClickSend} class="btn btn-send"><i class="fa fa-paper-plane icon"></i></button>
+                        <button onClick={this.onClickSend} class="btn btn-send"><i class="fa fa-paper-plane"></i></button>
                       </div>
                       <div class="col-6 text-center">
-                        <button onClick={this.onClickReceive}  class="btn btn-receive"><i class="fa fa-download icon" ></i></button>
+                        <button onClick={this.onClickReceive}  class="btn btn-receive"><i class="fa fa-download" ></i></button>
                       </div>
                     </div> 
                     <div class="row">
-                      <div class="col-6 text-center">Send</div>
-                      <div class="col-6 text-center">Receive</div>
+                      <div class="col-6 text-center"><div class="text-send">Send</div></div>
+                      <div class="col-6 text-center"><div class="text-receive">Receive</div></div>
                     </div> 
                 </div>
                 <div class="container-transactions">

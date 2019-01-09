@@ -140,14 +140,16 @@ class Send extends Component {
             <div class="row">
               <div class="col-1"></div>
               <div class="col-10 text-center">
-                <button disabled={this.state.dstAddress === '' ? true : false} onClick={this.clickTransfer} class="btn btn-transfer"><i class="fa fa-paper-plane icon" ><strong> </strong></i></button>
+                <button disabled={this.state.dstAddress === '' ? true : false} onClick={this.clickTransfer} class="btn btn-transfer"><i class="fa fa-paper-plane" ></i></button>
               </div>
               <div class="col-1"></div>
             </div>
 
             <div class="row">
               <div class="col-1"></div>
-              <div class="col-10 text-center">Send</div>
+              <div class="col-10 text-center">
+                <div class="text-transfer">Send</div>
+              </div>
               <div class="col-1"></div>
             </div>
             

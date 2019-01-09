@@ -12,15 +12,7 @@ input {
     margin-top:5%;
 }
 
-.btn-transfer{
-    background: darkblue;
-    width: 101px;
-    height: 38px;
-    margin-top: 5%;
-}
-.icon{
-    color: white;
-}
+
 
 .container-error{
     position: absolute;
@@ -33,7 +25,18 @@ input {
     height: 50px;
     width: 50px;
     border-radius: 50%;
-    border: 1px solid lightskyblue;
-    background: darkblue;
     margin-top:14%;
+    border: 2px solid darkblue;
+    background: white;
+    color: darkblue;
+}
+.btn-transfer:hover{
+    background: darkblue;
+    color: white;
+}
+
+.text-transfer {
+    font-size: 16px;
+    font-weight: bold;
+    color: darkblue;
 }
