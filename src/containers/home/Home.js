@@ -156,6 +156,7 @@ class Home extends Component {
     async onSwitchAccount(account){
 
       this.setState({account : account});
+      this.transactions.current.updateData();
 
       //store the encrypted seed
       const key = await getKey();
@@ -177,21 +178,25 @@ class Home extends Component {
       await deleteAccount(this.state.account);
       const newAccount = await getCurrentAccount(this.state.network);
       this.setState({account:newAccount});
+      this.transactions.current.updateData();
       this.setState({showEdit:false});
       this.setState({showSettings:false});
     }
 
     onClickSend(){
+      clearInterval(this.state.interval);
       this.setState({showSend : true});
       this.setState({showHome : false});
     }
 
     onClickReceive(){
+      clearInterval(this.state.interval);
       this.setState({showReceive : true});
       this.setState({showHome : false});
     }
 
     onBack(){
+      this.state.interval = setInterval(() => this.getData(), 60000);
       this.setState({showSend : false});
       this.setState({showReceive : false});
       this.setState({showDetails : false});
@@ -209,20 +214,23 @@ class Home extends Component {
     }
 
     onGoDetails(transfer){
+      clearInterval(this.state.interval);
       this.setState({details:transfer});
       this.setState({showDetails:true});
     }
 
     onAddAccount(){
+      clearInterval(this.state.interval);
       this.setState({showAdd:true});
       this.setState({showHome : false});
       this.setState({showSettings : false});
     }
 
-    onChangeAccount(account){
+    async onChangeAccount(account){
       this.setState({account:account});
       this.setState({showHome:true});
       this.setState({showAdd:false});
+      this.transactions.current.updateData();
     }
 
     onLogout(){
@@ -239,6 +247,7 @@ class Home extends Component {
     }
 
     onClickMap(){
+      clearInterval(this.state.interval);
       this.setState({showHome:false});
       this.setState({showSettings:false});
       this.setState({showInteract:true});
