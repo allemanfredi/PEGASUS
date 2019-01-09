@@ -2,7 +2,9 @@ import React , { Component } from 'react';
 import {prepareTransfer} from '../../core/core';
 import {getKey,getCurrentNewtwork} from '../../wallet/wallet';
 import {aes256decrypt} from '../../utils/crypto';
-import Loader from '../../components/loader/Loader'
+
+import Loader from '../../components/loader/Loader';
+import Alert from '../../components/alert/Alert';
 
 import './Send.css'
 
@@ -15,7 +17,7 @@ class Send extends Component {
       this.handleChangeDstAddress = this.handleChangeDstAddress.bind(this);
       this.handleChangeValue = this.handleChangeValue.bind(this);
       this.handleChangeMessage = this.handleChangeMessage.bind(this);
-      this.closeError = this.closeError.bind(this);
+      this.onCloseAlert = this.onCloseAlert.bind(this);
   
       this.state = {
         address : '',
@@ -23,14 +25,11 @@ class Send extends Component {
         dstAddress: '',
         value : '',
         message: '',
-        error: '',
-        showError : false,
-        success: '',
-        isLoading : false
+        isLoading : false,
+        showAlert : false,
+        alertText : '',
+        alertType : ''
       };
-    }
-
-    async componentDidMount(){ 
     }
 
     
@@ -46,20 +45,15 @@ class Send extends Component {
       this.setState({ message: e.target.value });
     } 
 
-    closeError(){
-      this.setState({showError:false});
+    onCloseAlert(){
+      this.setState({showAlert:false});
+      this.setState({alertText:''});
+      this.setState({alertType:''});
     }
 
 
     async clickTransfer(){
       
-      //check input parameters
-      if ( this.state.dstAddress === '' ){
-        this.setState({error : 'invalid input'});
-        this.setState({showError : true});
-        return;
-      }
-
       this.setState({isLoading:true});
 
       //get user seed in order to complete the transfer
@@ -83,15 +77,19 @@ class Send extends Component {
         if (bundle){
           console.log(bundle);
           this.setState({status : bundle});
-          this.setState({success : true});
+          this.setState({alertText : 'Bundle : ' + bundle});
+          this.setState({alertType : 'success'});
+          this.setState({showAlert : true});
         }
         if (error){
-          console.log(error);
-          this.setState({error : error.message});
-          this.setState({showError : true});
-          this.setState({success : false});
-
+          this.setState({alertText : error.message});
+          this.setState({alertType : 'error'});
+          this.setState({showAlert : true});
         }
+
+        this.setState({dstAddress: '' });
+        this.setState({value: '' });
+        this.setState({message: '' });
         this.setState({isLoading:false});
       });
     }
@@ -142,7 +140,7 @@ class Send extends Component {
             <div class="row">
               <div class="col-1"></div>
               <div class="col-10 text-center">
-                <button onClick={this.clickTransfer} class="btn btn-transfer"><i class="fa fa-paper-plane icon" ><strong> </strong></i></button>
+                <button disabled={this.state.dstAddress === '' ? true : false} onClick={this.clickTransfer} class="btn btn-transfer"><i class="fa fa-paper-plane icon" ><strong> </strong></i></button>
               </div>
               <div class="col-1"></div>
             </div>
@@ -153,16 +151,7 @@ class Send extends Component {
               <div class="col-1"></div>
             </div>
             
-            {this.state.showError ? 
-              <div class="container-error">
-                <div class="alert alert-danger" role="alert">
-                  <button onClick={this.closeError} type="button" class="close" data-dismiss="alert" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                  </button>
-                  <strong>Error</strong> {this.state.error}
-                </div>
-              </div>
-            : ''}
+            {this.state.showAlert ? <Alert text={this.state.alertText} type={this.state.alertType} onClose={this.onCloseAlert}/> : ''}
           </div>  
           
           : <Loader/>}

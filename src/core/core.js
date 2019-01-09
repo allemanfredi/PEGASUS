@@ -4,7 +4,7 @@ import { asciiToTrytes } from '@iota/converter'
 
 let iota;
 
-const iotaInit = async (provider) => { 
+const iotaInit = async provider => { 
     return new Promise ((resolve,reject) => {
         try{
             iota = composeAPI({
@@ -26,7 +26,7 @@ const getNodeInfo = async () => {
     });
 }
 
-const getNewAddress = async (seed) => {
+const getNewAddress = async seed => {
     return new Promise ((resolve , reject ) => {
         iota.getNewAddress(seed)
             .then(address => resolve(address))
@@ -34,7 +34,7 @@ const getNewAddress = async (seed) => {
     });
 }
 
-const getBalance = async (address) => {
+const getBalance = async address => {
     return new Promise ((resolve , reject) => {
         iota.getBalances([address], 100)
             .then(res => resolve(res.balances[0]))
@@ -42,7 +42,7 @@ const getBalance = async (address) => {
     })
 }
 
-const getAllTransactions = async (addresses) => {
+const getAllTransactions = async addresses => {
     return new Promise ((resolve,reject) => {
         iota.findTransactionObjects({ addresses: addresses})
             .then( transactions => resolve(transactions))
@@ -83,7 +83,7 @@ const prepareTransfer = async (transfer,ret) => {
     }
 }
 
-const getLatestInclusion = async (hashes) => {
+const getLatestInclusion = async hashes => {
     return new Promise (async (resolve,reject) => {
         iota.getLatestInclusion(hashes)
         .then(states => resolve(states))
@@ -92,7 +92,7 @@ const getLatestInclusion = async (hashes) => {
 }
 
 
-const getAccountData = async (seed) => {
+const getAccountData = async seed => {
     return new Promise ((resolve,reject) => {
         iota.getAccountData(seed, {start: 0,security: 2})
            .then(accountData => {
@@ -106,8 +106,7 @@ const getAccountData = async (seed) => {
     })
 }
 
-
-const getAccountDataSync = (seed) => {
+const getAccountDataSync = seed => {
     iota.getAccountData(seed, {start: 0,security: 2})
         .then(accountData => {
             console.log(accountData);
@@ -119,9 +118,7 @@ const getAccountDataSync = (seed) => {
         })
 }
 
-
-
-const getBundle = async (transaction) => {
+const getBundle = async transaction => {
     return new Promise ((resolve,reject) => {
         iota.getBundle(transaction)
         .then(bundle => {
@@ -133,59 +130,49 @@ const getBundle = async (transaction) => {
     })
 }
 
-/*Remember to reattach transactions once every 30 minutes that they remain pending. 
-After 5 reattachments, contact the sender to make sure the transaction wasn't double spent.*/
-const replayBundle = async (tail) => {
-    console.log(tail);
+const isPromotable = async tail => {
+    return new Promise ( (resolve,reject) => {
+        iota.isPromotable(tail , {rejectWithReason: true})
+        .then(isPromotable => {
+            console.log(isPromotable);
+            resolve(isPromotable);
+        }).catch(err => {
+            console.log(isPromotable);
+            reject(err);
+        })
+    });
+}
+
+const promoteTransaction = async (tail ) => {
+    return new Promise ((resolve,reject) => {
+        try{
+            iota.promoteTransaction(tail, 3, 14)
+             .then(() => {
+                resolve();
+            })
+            .catch(err => {
+                reject(err);
+            });
+        }catch(err){
+            reject(err);
+        }
+    }); 
+}
+
+const replayBundle = async tail => {
     return new Promise((resolve,reject) => {
-        iota.replayBundle(tail,3, 14)
+        iota.replayBundle(tail,3,14)
             .then(transactions => {
-                console.log(transactions)
                 resolve(transactions);
             })
             .catch(err => {
                 reject(err);
-            })
-    })
+            });
+    });
 }
 
-/*const promoteTransaction = async (hash) => {
-    const spamTransfer = [{address: '9'.repeat(81), value: 0, message: '', tag: ''}]
-    iota.promoteTransaction(hash, 10, 9, spamTransfer, {interrupt: false, delay: 0});
-}*/
 
-const promoteTransaction = (tail) => {
-    // We need to monitor inclusion states of all tail transactions (original tail & reattachments
 
-        /*iota.getLatestInclusion(tails)
-        .then(states => {
-            // Check if none of transactions confirmed
-            if (states.indexOf(true) === -1) {*/
-    
-                iota.isPromotable(tail)
-                    .then(isPromotable => {
-                        if ( isPromotable ){
-                            iota.promoteTransaction(tail, 3, 14)
-                            console.log("promote transactio");
-                         
-                        }else{
-                            iota.replayBundle(tail, 3, 14)
-                                .then(([reattachedTail]) => {
-                                    console.log("reattach transaztion");
-                                    const newTailHash = reattachedTail.hash;
-                                    // Keeping track of all tail hashes to check confirmation
-                                   // tails.push(newTailHash);
-                                    //resolve (newTailHash);
-                                })
-                        }
-                    }).catch(err => {
-                        console.log(err);
-                    })
-            /*}
-        }).catch(err => {
-            console.log(err);
-        })*/
-}
 
 
 export {getNewAddress, 
@@ -197,6 +184,7 @@ export {getNewAddress,
         getLatestInclusion,
         getAccountData,
         getBundle,
-        replayBundle,
         promoteTransaction,
-        getAccountDataSync};
+        replayBundle,
+        getAccountDataSync,
+        isPromotable};

@@ -1,8 +1,8 @@
 import React , { Component } from 'react';
 import history from '../../components/history';
-import {promoteTransaction} from '../../core/core';
+import {isPromotable,promoteTransaction,replayBundle} from '../../core/core'; 
 
-import Loader from '../../components/loader/Loader';
+import Alert from '../../components/alert/Alert';
 
 import "./Details.css";
 
@@ -10,29 +10,49 @@ class Details extends Component {
 
     constructor(props, context) {
         super(props, context);
-        
+
         this.promoteTransaction = this.promoteTransaction.bind(this);
+        this.replayBundle = this.replayBundle.bind(this);
+        this.onCloseAlert = this.onCloseAlert.bind(this);
 
         this.state = {
-            isLoading : false
-        };
-
-        console.log(this.props.details);
+            showAlert : false,
+            alertType : '',
+            alerText : ''
+        }
     }
 
-    promoteTransaction(hash){
-        this.setState({isLoading:true});
-        promoteTransaction(hash);
-        this.setState({isLoading:false});
+    async promoteTransaction(hash){
+        try{
+            await promoteTransaction(hash);
+        }catch(err){
+            this.setState({showAlert:true});
+            this.setState({alertType:'error'});
+            this.setState({alerText:err.message});
+        } 
     }
 
+    async replayBundle(hash){
+        try{
+            const transactions = await replayBundle(hash);
+        }catch(err){
+            this.setState({showAlert:true});
+            this.setState({alertType:'error'});
+            this.setState({alerText:err.message});
+        } 
+    }
+
+    onCloseAlert(){
+        this.setState({showAlert:false});
+        this.setState({alerText:''});
+        this.setState({alertType:''});
+
+    }
 
     render() {
       return (
-        <div>
-            { this.state.isLoading ? 
-                <Loader/>
-            : (<div class="modal">
+            <div class="modal">
+
                 <div class="container-info">
                     <div class="container-button-close">
                         <div class="row">
@@ -71,7 +91,10 @@ class Details extends Component {
                                                 </div>
                                                 <div class="col-4">
                                                     <div class="detail-value">
-                                                        {detail.value > 99999 || detail.value < -99999  ? (detail.value / 1000000).toFixed(2) + " Mi" : (detail.value > 999 || detail.value < -999 ?  (detail.value / 1000).toFixed(2) + " Ki"  :  detail.value + "i" )}
+                                                        {detail.value > 99999999 || detail.value < -99999999 ? (detail.value / 1000000000).toFixed(2) + " Gi" : 
+                                                         detail.value > 99999 || detail.value < -99999  ? (detail.value / 1000000).toFixed(2) + " Mi" :
+                                                         detail.value > 999 || detail.value < -999 ?  (detail.value / 1000).toFixed(2) + " Ki"  :  
+                                                         detail.value + "i" }
                                                     </div>
                                                 </div>
                                             </div>
@@ -79,7 +102,8 @@ class Details extends Component {
                             })}
                         </ul>
                     </div>
-
+                    
+                    
                     <div class="container-promote-transaction">
                         <div class="row">
                             <div class="col-1"></div>
@@ -90,19 +114,30 @@ class Details extends Component {
                         </div>
                     </div>
 
+                    <div class="container-reattach-transaction">
+                        <div class="row">
+                            <div class="col-1"></div>
+                            <div class="col-10">
+                                <button onClick={() => this.replayBundle(this.props.details[0].hash)} disabled={this.props.details[0].persistence ? true : false} class="btn btn-reattach-transaction">Reattach transaction <span class="fa fa-link"></span></button>
+                            </div>
+                            <div class="col-1"></div>
+                        </div>
+                    </div>
+
                     <div class="container-promote-transaction-suggestion">
                         <div class="row">
                             <div class="col-1"></div>
                             <div class="col-10 text-center">
-                                <div class="text-promote-transaction-suggestion">In case you transaction is pending for some time, click this button</div>
+                                <div class="text-promote-transaction-suggestion">In case you transaction is pending for some time, you can click these buttons</div>
                             </div>
                             <div class="col-1"></div>
                         </div>
                     </div>
                 </div>
-            </div> )}
-        </div>
-      );
+
+                {this.state.showAlert ? <Alert text={this.state.alerText} type={this.state.alertType} onClose={this.onCloseAlert}/> : ''}
+
+        </div> )
     }
   }
 

@@ -3,6 +3,7 @@ import {getAccountData} from '../../core/core';
 import {setCurrentAddress,setCurrentAccount,getCurrentAccount,generateSeed,updateDataAccount,addAccount,getKey,getCurrentNewtwork,updateNameAccount,deleteAccount} from '../../wallet/wallet'
 import {aes256decrypt,aes256encrypt,sha256} from '../../utils/crypto';
 
+
 import Send from '../send/Send';
 import Receive from '../receive/Receive';
 import Settings from '../settings/Settings';
@@ -43,6 +44,7 @@ class Home extends Component {
       this.onClickMap = this.onClickMap.bind(this);
       this.onCloseDetails = this.onCloseDetails.bind(this);
 
+
       this.state = {
         error: '',
         account : {},
@@ -75,7 +77,7 @@ class Home extends Component {
         this.setState({decryptedSeed : dseed});
 
         //check account data after 50 seconds in order to receive the transaction
-        this.state.interval = setInterval(() => this.getData(), 30000);
+        this.state.interval = setInterval(() => this.getData(), 40000);
         
         //set the current address in the chrome local storage
         setCurrentAddress(account.data.latestAddress,this.state.network);
@@ -174,7 +176,6 @@ class Home extends Component {
       this.setState({showSettings:false});
     }
 
-
     onClickSend(){
       this.setState({showSend : true});
       this.setState({showHome : false});
@@ -257,7 +258,7 @@ class Home extends Component {
                   onBack={this.onBack}>
           </Navbar>
           
-          { !(Object.keys(this.state.account).length === 0 && this.state.account.constructor === Object) ? ( //!
+          { !(Object.keys(this.state.account).length === 0 && this.state.account.constructor === Object)  ? ( //!
             <div>
               { this.state.showSettings ? ( <Settings currentNetwork={this.state.network} 
                                                       currentAccount={this.state.account} 
@@ -287,7 +288,10 @@ class Home extends Component {
                       <div class="col align-center">
                         <img src="./material/logo/iota-logo.png" height="60" width="60"/>
                         <div class="container-balance">
-                          {this.state.account.data.balance} i
+                          { this.state.account.data.balance > 99999999 || this.state.account.data.balance < -99999999 ? (this.state.account.data.balance / 1000000000).toFixed(2) + " Gi" : 
+                            this.state.account.data.balance > 99999 || this.state.account.data.balance < -99999  ? (this.state.account.data.balance / 1000000).toFixed(2) + " Mi" :
+                            this.state.account.data.balance > 999 || this.state.account.data.balance < -999 ?  (this.state.account.data.balance / 1000).toFixed(2) + " Ki"  :  
+                            this.state.account.data.balance + "i" }
                         </div>
                       </div>
                     </div>  

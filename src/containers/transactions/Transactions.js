@@ -124,7 +124,10 @@ class Transactions extends Component {
                             </div>
                             <div class="col-3 text-right">
                                 <div class="transaction-list-item-value">
-                                    {transaction.value > 99999 || transaction.value < -99999  ? (transaction.value / 1000000).toFixed(2) + " Mi" : (transaction.value > 999 || transaction.value < -999 ?  (transaction.value / 1000).toFixed(2) + " Ki"  :  transaction.value + "i" )}
+                                    {transaction.value > 99999999 || transaction.value < -99999999 ? (transaction.value / 1000000000).toFixed(2) + " Gi" : 
+                                    transaction.value > 99999 || transaction.value < -99999  ? (transaction.value / 1000000).toFixed(2) + " Mi" :
+                                    transaction.value > 999 || transaction.value < -999 ?  (transaction.value / 1000).toFixed(2) + " Ki"  :  
+                                    transaction.value + "i" }
                                 </div>
                             </div>
                         </div>

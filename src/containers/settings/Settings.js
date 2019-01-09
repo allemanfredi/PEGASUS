@@ -75,7 +75,10 @@ class Settings extends Component {
                                 <div class="row">
                                     <div class="col-12 text-center">
                                         <div class="current-balance">
-                                            {this.props.currentAccount.data.balance} i
+                                            {this.props.currentAccount.data.balance > 99999999 || this.props.currentAccount.data.balance < -99999999 ? (this.props.currentAccount.data.balance / 1000000000).toFixed(2) + " Gi" : 
+                                            this.props.currentAccount.data.balance > 99999 || this.props.currentAccount.data.balance < -99999  ? (this.props.currentAccount.data.balance / 1000000).toFixed(2) + " Mi" :
+                                            this.props.currentAccount.data.balance > 999 || this.props.currentAccount.data.balance < -999 ?  (this.props.currentAccount.data.balance / 1000).toFixed(2) + " Ki"  :  
+                                            this.props.currentAccount.data.balance + "i" }
                                         </div>
                                     </div>
                                 </div>                              

@@ -1,4 +1,4 @@
-/*import { Mam } from '../../node_modules/mam.client/lib/mam.web'
+/*import Mam from './lib/mam.client';
 
 
 const mamInit = async (provider,seed) => {

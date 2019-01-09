@@ -18,8 +18,8 @@
     border-radius: 10px;
 }
 
-.container-promote-transaction {
-    margin-top: 7%;
+.container-promote-transaction,.container-reattach-transaction {
+    margin-top: 3%;
 }
 
 .detail-hash{
@@ -41,7 +41,7 @@
 }
 
 .container-list-details {
-    margin-top: 12%;
+    margin-top: 5%;
 }
 
 .container-details-title {
@@ -55,7 +55,7 @@
     overflow: overlay;
 }
 
-.btn-promote-transaction {
+.btn-promote-transaction , .btn-reattach-transaction {
     width: 100%;
     color: white;
     background: darkblue;
