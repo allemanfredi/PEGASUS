@@ -1,6 +1,6 @@
 import React , { Component } from 'react';
 import {getAccountData} from '../../core/core';
-import {setCurrentAddress,setCurrentAccount,getCurrentAccount,generateSeed,updateDataAccount,addAccount,getKey,getCurrentNewtwork,updateNameAccount,deleteAccount} from '../../wallet/wallet'
+import {setCurrentAccount,getCurrentAccount,generateSeed,updateDataAccount,addAccount,getKey,getCurrentNewtwork,updateNameAccount,deleteAccount} from '../../wallet/wallet'
 import {aes256decrypt,aes256encrypt,sha256} from '../../utils/crypto';
 
 
@@ -81,8 +81,6 @@ class Home extends Component {
         //check account data after 50 seconds in order to receive the transaction
         this.state.interval = setInterval(() => this.getData(), 60000);
         
-        //set the current address in the chrome local storage
-        setCurrentAddress(account.data.latestAddress,this.state.network);
         this.setState({account : account});
 
       }catch(err){
@@ -115,7 +113,7 @@ class Home extends Component {
 
       if ( this.state.showHome )
         this.transactions.current.updateData();
-      
+
     }
 
 
@@ -134,7 +132,7 @@ class Home extends Component {
             data : data,
             network : network //NUOVA NETWORK
         }
-        await addAccount (account,true);
+        await addAccount (account,network,true);
         resolve(account);
       })
     }
@@ -169,14 +167,14 @@ class Home extends Component {
 
     async onChangeName(newName){
       //change the name of the current account
-      await updateNameAccount(this.state.account,newName);
+      await updateNameAccount(this.state.account,this.state.network,newName);
       this.setState(prevState => ({account: {...prevState.account,name: newName}}));
       this.setState({showEdit:false});
     }
 
     async onDeleteAccount(){
       
-      await deleteAccount(this.state.account);
+      await deleteAccount(this.state.account,this.state.network);
 
       const newAccount = await getCurrentAccount(this.state.network);
       this.setState({account:newAccount});

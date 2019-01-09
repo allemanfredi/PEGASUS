@@ -3,7 +3,7 @@ import {sha256} from '../utils/crypto';
 const isWalletSetup = () => {
     try{
         const data = JSON.parse(localStorage.getItem('data'));
-        if ( data.length > 0)
+        if ( data['mainnet'].length > 0 || data['testnet'].length > 0)
             return true;
         else
             return false;
@@ -15,7 +15,7 @@ const isWalletSetup = () => {
 
 const setupWallet = () => {
     try{
-        localStorage.setItem('data' , JSON.stringify([]) )
+        localStorage.setItem('data', JSON.stringify({'mainnet':[],'testnet':[]}));
         return true;
     }
     catch(err){
@@ -82,7 +82,7 @@ const setCurrentNetwork = async (network) => {
     })
 }
 
-const getCurrentNewtwork = async (network) => {
+const getCurrentNewtwork = async () => {
     return new Promise ((resolve,reject) => {
         try{
             const options = JSON.parse(localStorage.getItem('options'));
@@ -98,17 +98,17 @@ const getCurrentNewtwork = async (network) => {
 }
 
 
-const addAccount = async (account,isCurrent) => {
+const addAccount = async (account,network,isCurrent) => {
     //preparing object to store
     return new Promise((resolve,reject) => {
-        
-        if(isCurrent){ //reset all accounts current in order to re assign the new current
-            let data = JSON.parse(localStorage.getItem('data'));
-            data.forEach( account => account.current = false);
+
+        if ( isCurrent ){
+            const data = JSON.parse(localStorage.getItem('data'));
+            data[network.type].forEach( account => { account.current = false });
             localStorage.setItem('data',JSON.stringify(data));
         }
 
-        const account = {
+        const obj = {
             name : account.name,
             seed : account.seed,
             data : account.data,
@@ -119,10 +119,10 @@ const addAccount = async (account,isCurrent) => {
         try{
     
             let data = JSON.parse(localStorage.getItem('data'));
-            data.push(account);
+            data[network.type].push(obj);
 
             localStorage.setItem('data',JSON.stringify(data));
-            resolve(account);
+            resolve(obj);
         }
         catch(err){
             console.log(err);
@@ -135,17 +135,15 @@ const addAccount = async (account,isCurrent) => {
 const setCurrentAccount = async (currentAccount,network) => {
     return new Promise ( (resolve,reject) => {
         
-        let data = JSON.parse(localStorage.getItem('data'));
-        data.forEach( account => account.current = false);
+        const data = JSON.parse(localStorage.getItem('data'));
+        data[network.type].forEach( account => { account.current = false });
         localStorage.setItem('data',JSON.stringify(data));
-
+        
         try{
-            let data = JSON.parse(localStorage.getItem('data'));
-            data.forEach(account => { 
-                if ( account.id === currentAccount.id && account.network.type === network.type) {
-                    console.log("current " + account.name );
+            const data = JSON.parse(localStorage.getItem('data'));
+            data[network.type].forEach(account => { 
+                if ( account.id === currentAccount.id) 
                     account.current = true;
-                } 
             });
             localStorage.setItem('data',JSON.stringify(data));
             resolve(currentAccount);
@@ -160,7 +158,7 @@ const setCurrentAccount = async (currentAccount,network) => {
 const resetData = async () => {
     return new Promise ( (resolve,reject) => {
         try{
-            localStorage.setItem('data', JSON.stringify([]));
+            localStorage.setItem('data', JSON.stringify({'mainnet':[],'testnet':[]}));
             resolve();
         }
         catch(err){
@@ -173,10 +171,10 @@ const resetData = async () => {
 const updateDataAccount = async (newData,network) => {
     return new Promise( (resolve,reject) => {
         try{
-            let data = JSON.parse(localStorage.getItem('data'));
+            const data = JSON.parse(localStorage.getItem('data'));
             let updatedAccount = {};
-            data.forEach(account => { 
-                if ( account.current && account.network.type === network.type) {
+            data[network.type].forEach(account => { 
+                if ( account.current ) {
                     account.data = newData;
                     updatedAccount = account;
                 } 
@@ -191,12 +189,12 @@ const updateDataAccount = async (newData,network) => {
     }); 
 }
 
-const updateNameAccount = async (current,newName) => {
+const updateNameAccount = async (current,network,newName) => {
     return new Promise( (resolve,reject) => {
         try{
             const data = JSON.parse(localStorage.getItem('data'));
             let updatedAccount = {};
-            data.forEach(account => { 
+            data[network.type].forEach(account => { 
                 if ( account.id === current.id && account.network.type === current.network.type) {
                     account.name = newName;
                     account.id = sha256(newName);
@@ -213,23 +211,23 @@ const updateNameAccount = async (current,newName) => {
     }); 
 }
 
-const deleteAccount = async (account) => {
+const deleteAccount = async (account,network) => {
     return new Promise( (resolve,reject) => {
         try{
 
             const data = JSON.parse(localStorage.getItem('data'));
-            if ( data.length === 1)
+            if ( data[network.type].length === 1)
                 reject("Impossible to delete this account");
 
             //remove account
-            const app = data.slice();
+            const app = data[network.type].slice();
             app.forEach( (acc,index) => {
                 if ( acc.id === account.id )
-                    data.splice(index,1);
+                    data[network.type].splice(index,1);
             })
 
             //set the new current account (the first one of this network)
-            for ( let acc of data ){
+            for ( let acc of data[network.type] ){
                 if ( acc.network.type === account.network.type ){
                     acc.current = true;
                     break;
@@ -249,11 +247,9 @@ const deleteAccount = async (account) => {
 const getCurrentAccount = async (network) => {
     return new Promise( (resolve,reject) => {
         try{
-            JSON.parse(localStorage.getItem('data')).forEach(account => {
-                if ( account.current && account.network.type === network.type){
-                    console.log(account);
+            JSON.parse(localStorage.getItem('data'))[network.type].forEach(account => {
+                if ( account.current)
                     resolve(account);
-                }
             });
             //se arrivo qua significa che per un tipo di rete non è stato ancora creato un account 
             resolve(null);
@@ -269,9 +265,8 @@ const getAllAccounts = async (network) => {
     return new Promise( (resolve,reject) => {
         let accounts = [];
         try{
-            JSON.parse(localStorage.getItem('data')).forEach(account => {
-                if ( account.network.type === network.type)
-                    accounts.push(account);
+            JSON.parse(localStorage.getItem('data'))[network.type].forEach(account => {
+                accounts.push(account);
             });
             resolve(accounts);
         }
@@ -282,24 +277,6 @@ const getAllAccounts = async (network) => {
     }); 
 }
 
-const setCurrentAddress = async (address,network) => {
-    return new Promise( (resolve,reject) => {
-        try{
-            let data = JSON.parse(localStorage.getItem('data'))
-            data.forEach(account => { 
-                if ( account.current && account.network.type === network.type){
-                    account.currentAddress = address; 
-                }
-            });
-            localStorage.setItem('data',JSON.stringify(data));
-            resolve();
-        }
-        catch(err){
-            console.log(err);
-            reject(err);
-        }
-    }); 
-}
 
 const generateSeed = () => {
 
@@ -337,7 +314,6 @@ export {isWalletSetup,
         generateSeed,
         getCurrentAccount,
         getKey,
-        setCurrentAddress,
         updateDataAccount,
         setCurrentNetwork,
         getCurrentNewtwork,

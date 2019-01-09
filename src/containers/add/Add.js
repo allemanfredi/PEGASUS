@@ -104,7 +104,7 @@ class Add extends Component {
                     data : data,
                     network : currentNetwork
                 }
-                await addAccount(account,true); 
+                await addAccount(account,currentNetwork,true); 
                 resolve(account);
                 
             }catch(err){

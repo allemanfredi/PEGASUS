@@ -92,8 +92,8 @@ class Main extends Component {
 
   //called by App.js component in order to reload-data
   changeNetwork(network){
-    this.setState({network : network});
     this.home.current.changeNetwork(network);
+    this.setState({network : network});
   }
 
   render() {

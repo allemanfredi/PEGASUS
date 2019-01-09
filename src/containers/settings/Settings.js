@@ -21,7 +21,7 @@ class Settings extends Component {
     async componentWillMount(){
         let accounts = await getAllAccounts(this.props.currentNetwork);
         //remove the current account from all accounts
-        accounts = accounts.filter( account => account.id !== this.props.currentAccount.id );
+        accounts = accounts.filter( account => !account.current  );
         this.setState({accounts : accounts});
     }
 
