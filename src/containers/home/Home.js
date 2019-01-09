@@ -43,6 +43,7 @@ class Home extends Component {
       this.onDeleteAccount = this.onDeleteAccount.bind(this);
       this.onClickMap = this.onClickMap.bind(this);
       this.onCloseDetails = this.onCloseDetails.bind(this);
+      this.onReload = this.onReload.bind(this);
 
 
       this.state = {
@@ -77,7 +78,7 @@ class Home extends Component {
         this.setState({decryptedSeed : dseed});
 
         //check account data after 50 seconds in order to receive the transaction
-        this.state.interval = setInterval(() => this.getData(), 40000);
+        this.state.interval = setInterval(() => this.getData(), 60000);
         
         //set the current address in the chrome local storage
         setCurrentAddress(account.data.latestAddress,this.state.network);
@@ -147,7 +148,11 @@ class Home extends Component {
         this.transactions.current.updateData();
     }
 
-    //function for conditional rendering
+   async onReload(){
+     this.setState({account:{}})
+     this.getData();
+   }
+
     async onSwitchAccount(account){
 
       this.setState({account : account});
@@ -309,7 +314,11 @@ class Home extends Component {
                     </div> 
                 </div>
                 <div class="container-transactions">
-                  <Transactions ref={this.transactions} goDetails={this.onGoDetails} transfers={this.state.account.data.transfers}/>
+                  <Transactions ref={this.transactions} 
+                                transfers={this.state.account.data.transfers}
+                                onGoDetails={this.onGoDetails} 
+                                onReload={this.onReload}
+                               />
                 </div>
               </div>
               ) : '' }

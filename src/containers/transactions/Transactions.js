@@ -8,8 +8,6 @@ class Transactions extends Component {
     constructor(props, context) {
         super(props, context);
         
-        this.goDetails = this.goDetails.bind(this);
-
         this.state = {
             transactions : []
         }
@@ -90,9 +88,6 @@ class Transactions extends Component {
         this.setState({transactions:arr});
     }
 
-    async goDetails(transfer){
-        this.props.goDetails(transfer);
-    } 
 
     
     render() {
@@ -100,10 +95,14 @@ class Transactions extends Component {
         <div class="container-transactions">
             <div class="transactions-header">
                 <div class="row">
-                    <div class="col-12">
+                    <div class="col-4">
                         <div class="transactions-name">
                             Transactions
                         </div>
+                    </div>
+                    <div class="col-6"></div>
+                    <div class="col-2 text-center">
+                        <button onClick={() => this.props.onReload()} class="btn btn-reload"><i class="fa fa-refresh" ></i></button>
                     </div>
                 </div>
                 <hr/>
@@ -111,7 +110,7 @@ class Transactions extends Component {
             <div class="transaction-list">
             {this.state.transactions.length > 0 ? this.state.transactions.map(transaction => {
                 return (
-                    <div onClick={() => this.goDetails(transaction.transfer)} class="transaction-list-item" >
+                    <div onClick={() => this.props.onGoDetails(transaction.transfer)} class="transaction-list-item" >
                         <div class="row">
                             <div class="col-3 text-left">
                                 <div class="transaction-date">{timestampToDate(transaction.timestamp)}</div>
