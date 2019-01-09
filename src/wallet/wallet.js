@@ -108,25 +108,25 @@ const addAccount = async (account,isCurrent) => {
             localStorage.setItem('data',JSON.stringify(data));
         }
 
-        const obj = {
+        const account = {
             name : account.name,
             seed : account.seed,
             data : account.data,
-            current : true,
-            id : account.id,
+            current : isCurrent ? true : false,
+            id : sha256(account.name),
             network : account.network //mainnet or testnet
         }
         try{
     
             let data = JSON.parse(localStorage.getItem('data'));
-            data.push(obj);
+            data.push(account);
 
             localStorage.setItem('data',JSON.stringify(data));
-            resolve();
+            resolve(account);
         }
         catch(err){
             console.log(err);
-            reject();
+            reject(err);
         }
     });
     
@@ -142,7 +142,8 @@ const setCurrentAccount = async (currentAccount,network) => {
         try{
             let data = JSON.parse(localStorage.getItem('data'));
             data.forEach(account => { 
-                if ( account.name === currentAccount.name && account.network.type === network.type) {
+                if ( account.id === currentAccount.id && account.network.type === network.type) {
+                    console.log("current " + account.name );
                     account.current = true;
                 } 
             });
@@ -250,10 +251,11 @@ const getCurrentAccount = async (network) => {
         try{
             JSON.parse(localStorage.getItem('data')).forEach(account => {
                 if ( account.current && account.network.type === network.type){
+                    console.log(account);
                     resolve(account);
                 }
             });
-            //se arrivo qua significa che per un tipo di rete non è stato ancora creato un account => creo account
+            //se arrivo qua significa che per un tipo di rete non è stato ancora creato un account 
             resolve(null);
         }
         catch(err){

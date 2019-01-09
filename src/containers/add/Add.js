@@ -100,7 +100,6 @@ class Add extends Component {
                 const data = await getAccountData(seed);
                 const account = {
                     name : this.state.name,
-                    id : sha256(this.state.name),
                     seed : eseed,
                     data : data,
                     network : currentNetwork

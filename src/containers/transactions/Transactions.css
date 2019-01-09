@@ -31,7 +31,6 @@
 }
 
 .transaction-list-item-action, .transaction-list-item-value {
-    text-transform: capitalize;
     background: inherit;
     font-size: 13px;
     font-weight: bold;
@@ -49,10 +48,12 @@
 .transaction-list-item-status-confirmed {
     font-size: 13px;
     color: green;
+    font-weight: bold;
 }
 .transaction-list-item-status-not-confirmed {
     font-size: 13px;
     color: darkblue;
+    font-weight: bold;
 }
 
 .container-no-transactions{

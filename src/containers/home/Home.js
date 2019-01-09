@@ -44,6 +44,7 @@ class Home extends Component {
       this.onClickMap = this.onClickMap.bind(this);
       this.onCloseDetails = this.onCloseDetails.bind(this);
       this.onReload = this.onReload.bind(this);
+      this.changeNetwork = this.changeNetwork.bind(this);
 
 
       this.state = {
@@ -91,29 +92,30 @@ class Home extends Component {
     }
 
 
-    async componentWillReceiveProps(nextProps) {
+    async changeNetwork(network) {
       //controllare se è cambiata la rete (testnet/mainnet);
-      const network = await getCurrentNewtwork();
-      if ( JSON.stringify(network) !== JSON.stringify(this.state.network) ){
-        console.log(network);
-        this.setState({account:{}});
-        this.setState({network : network});
 
-        let account = await getCurrentAccount(network);
-        if (!account){ //se non esiste un account x questa net
-          account = await this.createAccount(network,'net-no-name');
-        }
-        
-        //store the encrypted seed
-        const key = await getKey();
-        const dseed = aes256decrypt(account.seed,key);
-        this.setState({decryptedSeed : dseed});
-        
-        this.setState({account : account});
+      this.setState({account:{}});
+      console.log(this.state.network);
+      console.log(network);
+      this.setState({network : network});
 
-        if ( this.state.showHome )
-          this.transactions.current.updateData();
+      let account = await getCurrentAccount(network);
+      console.log(account);
+      if (!account){ //se non esiste un account x questa net
+        account = await this.createAccount(network,'acc-no-name');
       }
+      
+      //store the encrypted seed
+      const key = await getKey();
+      const dseed = aes256decrypt(account.seed,key);
+      this.setState({decryptedSeed : dseed});
+      
+      this.setState({account : account});
+
+      if ( this.state.showHome )
+        this.transactions.current.updateData();
+      
     }
 
 
@@ -128,12 +130,11 @@ class Home extends Component {
         const data = await getAccountData(newSeed);
         const account = {
             name : name ,
-            id : sha256(name),
             seed : eseed,
             data : data,
             network : network //NUOVA NETWORK
         }
-        await addAccount (account);
+        await addAccount (account,true);
         resolve(account);
       })
     }

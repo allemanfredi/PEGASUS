@@ -22,6 +22,8 @@ class Main extends Component {
     this.onRestore = this.onRestore.bind(this);
     this.onBack = this.onBack.bind(this);
 
+    this.home = React.createRef();
+
     this.state = {
       network : {},
       showLogin : false,
@@ -91,13 +93,14 @@ class Main extends Component {
   //called by App.js component in order to reload-data
   changeNetwork(network){
     this.setState({network : network});
+    this.home.current.changeNetwork(network);
   }
 
   render() {
 
     return (
       <main class="main" >
-        { this.state.showHome ?     <Home network={this.state.network} onLogout={this.onLogout}> </Home> : '' }
+        { this.state.showHome ?     <Home ref={this.home} onLogout={this.onLogout}> </Home> : '' }
         { this.state.showInit ?     <Init onSuccess={this.onSuccessFromInit}> </Init> : '' }
         { this.state.showLogin ?    <Login onSuccess={this.onSuccessFromLogin} onRestore={this.onRestore}> </Login> : '' }
         { this.state.showRestore ?  <Restore network={this.state.network} onSuccess={this.onSuccessFromRestore} onBack={this.onBack}> </Restore> : '' }
