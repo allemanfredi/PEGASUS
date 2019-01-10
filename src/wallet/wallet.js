@@ -115,7 +115,7 @@ const addAccount = async (account,network,isCurrent) => {
             seed : account.seed,
             data : account.data,
             current : isCurrent ? true : false,
-            id : sha256(account.name),
+            id : account.id,
             network : account.network //mainnet or testnet
         }
         try{
@@ -217,24 +217,24 @@ const deleteAccount = async (account,network) => {
     return new Promise( (resolve,reject) => {
 
         try{
-            const data = JSON.parse(localStorage.getItem('data'));
+            let data = JSON.parse(localStorage.getItem('data'));
             if ( data[network.type].length === 1){
                 reject(new Error('Impossibile to delete this account'));
             }else{
                 //remove account
-                let app = data[network.type].slice();
-                app.forEach( (acc,index) => {
-                    if ( acc.id === account.id )
-                        data[network.type].splice(index,1);
-                });
+                console.log(account);
+                console.log(data);
+                const app = data[network.type].filter( acc => acc.id !== account.id);
+                console.log(app);
 
                 //reset the current status
-                app[network.type].forEach( account => { account.current = false });
+                app.forEach( account => { account.current = false });
 
                 //set the new current account (the first one of this network)
-                app[network.type][0].current = true;
+                app[0].current = true;
+                data[network.type] = app;
 
-                localStorage.setItem('data',JSON.stringify(app));
+                localStorage.setItem('data',JSON.stringify(data));
                 resolve(account);
             }
         }

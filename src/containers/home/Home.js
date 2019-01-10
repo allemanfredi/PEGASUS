@@ -1,7 +1,7 @@
 import React , { Component } from 'react';
 import {getAccountData} from '../../core/core';
 import {setCurrentAccount,getCurrentAccount,generateSeed,updateDataAccount,addAccount,getKey,getCurrentNewtwork,updateNameAccount} from '../../wallet/wallet'
-import {aes256decrypt,aes256encrypt} from '../../utils/crypto';
+import {aes256decrypt,aes256encrypt,sha256} from '../../utils/crypto';
 
 
 import Send from '../send/Send';
@@ -133,6 +133,7 @@ class Home extends Component {
             name : name ,
             seed : eseed,
             data : data,
+            id : sha256(name),
             network : network //NUOVA NETWORK
         }
         await addAccount (account,network,true);
@@ -298,7 +299,7 @@ class Home extends Component {
               { this.state.showDetails ?  ( <Details  details={this.state.details} 
                                                       onClose={this.onCloseDetails}
                                              /> ) : '' }
-              { this.state.showAdd ?      ( <Add      onChangeAccount={this.onChangeAccount}/>) : ''}
+              { this.state.showAdd ?      ( <Add      network={this.state.network} onChangeAccount={this.onChangeAccount}/>) : ''}
               { this.state.showInteract ? ( <Interact network={this.state.network} account={this.state.account}/>) : ''}
 
               { this.state.showEdit ?     ( <Edit     account={this.state.account}

@@ -1,5 +1,5 @@
 import React , { Component } from 'react';
-import {aes256encrypt} from '../../utils/crypto'
+import {aes256encrypt,sha256} from '../../utils/crypto'
 import {getAccountData} from '../../core/core';
 import {generateSeed,addAccount,getKey,getCurrentNewtwork} from '../../wallet/wallet';
 
@@ -91,8 +91,6 @@ class Add extends Component {
     async addAccount() {
         return new Promise ( async (resolve,reject) => {
             try{
-                const currentNetwork = await getCurrentNewtwork();
-
                 const seed = this.state.seed.toString().replace(/,/g, '');
 
                 const key = await getKey()
@@ -104,9 +102,10 @@ class Add extends Component {
                     name : this.state.name,
                     seed : eseed,
                     data : data,
-                    network : currentNetwork
+                    id : sha256(this.state.name),
+                    network : this.props.network
                 }
-                await addAccount(account,currentNetwork,true); 
+                await addAccount(account,this.props.network,true); 
                 resolve(account);
                 
             }catch(err){

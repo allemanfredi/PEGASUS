@@ -125,6 +125,7 @@ class Init extends Component {
                         name : this.state.name,
                         seed : eseed,
                         data : data,
+                        id : sha256(this.state.name),
                         network : options.network[0] //TESTNET = 1  MAINNET = 0 
                     }
                     await addAccount(account,options.network[0],true);

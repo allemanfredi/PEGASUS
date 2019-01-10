@@ -11,6 +11,7 @@ class Settings extends Component {
         super(props,context);
         
         this.switchAccount = this.switchAccount.bind(this);
+        this.updateData = this.updateData.bind(this);
 
         this.state = {
             accounts : []
@@ -18,10 +19,7 @@ class Settings extends Component {
     }
 
     async componentWillMount(){
-        let accounts = await getAllAccounts(this.props.currentNetwork);
-        //remove the current account from all accounts
-        accounts = accounts.filter( account => !account.current  );
-        this.setState({accounts : accounts});
+        this.updateData();
     }
 
     async switchAccount(newAccount){
@@ -29,6 +27,12 @@ class Settings extends Component {
         accounts = accounts.filter( account => account.id !== newAccount.id );
         this.setState({accounts : accounts});
         this.props.onSwitchAccount(newAccount);
+    }
+
+    async updateData(){
+        let accounts = await getAllAccounts(this.props.currentNetwork);
+        accounts = accounts.filter( account => !account.current  );
+        this.setState({accounts : accounts});
     }
     
     render() {
