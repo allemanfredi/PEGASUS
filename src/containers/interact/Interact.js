@@ -16,7 +16,7 @@ class Interact extends Component {
     }
 
     async componentDidMount(){
-      await mamInit();
+      await mamInit(this.props.network.provider);
     }
 
     render() {

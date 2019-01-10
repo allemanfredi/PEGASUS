@@ -81,7 +81,7 @@ class Home extends Component {
 
         //check account data after 50 seconds in order to receive the transaction
         this.setState( state => {
-            const interval = setInterval(() => this.getData(), 60000);
+            const interval = setInterval(() => this.getData(), 40000);
             return{
               interval
             }
@@ -299,7 +299,7 @@ class Home extends Component {
                                                       onClose={this.onCloseDetails}
                                              /> ) : '' }
               { this.state.showAdd ?      ( <Add      onChangeAccount={this.onChangeAccount}/>) : ''}
-              { this.state.showInteract ? ( <Interact />) : ''}
+              { this.state.showInteract ? ( <Interact network={this.state.network} account={this.state.account}/>) : ''}
 
               { this.state.showEdit ?     ( <Edit     account={this.state.account}
                                                       network={this.state.network} 
