@@ -1,6 +1,6 @@
 import React , { Component } from 'react';
 import {getAccountData} from '../../core/core';
-import {setCurrentAccount,getCurrentAccount,generateSeed,updateDataAccount,addAccount,getKey,getCurrentNewtwork,updateNameAccount,deleteAccount} from '../../wallet/wallet'
+import {setCurrentAccount,getCurrentAccount,generateSeed,updateDataAccount,addAccount,getKey,getCurrentNewtwork,updateNameAccount} from '../../wallet/wallet'
 import {aes256decrypt,aes256encrypt} from '../../utils/crypto';
 
 
@@ -15,6 +15,7 @@ import Interact from '../interact/Interact'
 
 import Loader from '../../components/loader/Loader'
 import Navbar from '../../components/navbar/Navbar'
+
 
 
 import './Home.css'
@@ -79,7 +80,12 @@ class Home extends Component {
         this.setState({decryptedSeed : dseed});
 
         //check account data after 50 seconds in order to receive the transaction
-        this.state.interval = setInterval(() => this.getData(), 60000);
+        this.setState( state => {
+            const interval = setInterval(() => this.getData(), 60000);
+            return{
+              interval
+            }
+        });
         
         this.setState({account : account});
 
@@ -171,8 +177,6 @@ class Home extends Component {
 
     async onDeleteAccount(){
       
-      await deleteAccount(this.state.account,this.state.network);
-
       const newAccount = await getCurrentAccount(this.state.network);
       this.setState({account:newAccount});
 
@@ -195,7 +199,14 @@ class Home extends Component {
     }
 
     onBack(){
-      this.state.interval = setInterval(() => this.getData(), 60000);
+
+      this.setState( state => {
+          const interval = setInterval(() => this.getData(), 60000);
+          return{
+            interval
+          }
+      });
+
       this.setState({showSend : false});
       this.setState({showReceive : false});
       this.setState({showDetails : false});
@@ -290,10 +301,12 @@ class Home extends Component {
               { this.state.showAdd ?      ( <Add      onChangeAccount={this.onChangeAccount}/>) : ''}
               { this.state.showInteract ? ( <Interact />) : ''}
 
-              { this.state.showEdit ?     ( <Edit     account={this.state.account} 
+              { this.state.showEdit ?     ( <Edit     account={this.state.account}
+                                                      network={this.state.network} 
                                                       onClose={this.onCloseEdit}
                                                       onChangeName={this.onChangeName}
                                                       onDeleteAccount={this.onDeleteAccount}/>) : ''}
+
               { this.state.showHome ? (
                 <div>
                   <div class="container-info">

@@ -45,7 +45,6 @@ class Details extends Component {
         this.setState({showAlert:false});
         this.setState({alerText:''});
         this.setState({alertType:''});
-
     }
 
     render() {

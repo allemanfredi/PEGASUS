@@ -16,7 +16,7 @@
     top: 50%;
     left: 50%;
     transform: (50%,-50%);
-    z-index: 10000000;
+    z-index: 1000;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -26,16 +26,28 @@
 
 
 .btn-update{
-    background: #00008b;
+    background: white;
+    border: 2px solid darkblue;
+    color:darkblue;
     margin-top: 22%;
-    color: #fff;
     border-radius: 6px;
     text-align: center;
+    font-weight: bold;
+}
+.btn-update:hover{
+    background: darkblue;
+    color:white;
 }
 .btn-delete{
-    background: red;
+    background: white;
+    border: 2px solid red;
+    color:red;
     margin-top: 22%;
-    color: #fff;
     border-radius: 6px;
     text-align: center;
+    font-weight: bold;
+}
+.btn-delete:hover{
+    background: red;
+    color:white;
 }

@@ -38,7 +38,7 @@ export default class Alert extends Component {
                     </div>
                 </div>
 
-                <div class="contaner-text-alert">
+                <div class="container-text-alert">
                     <div class="row">
                         <div class="col-12 text-center">
                             <div class="text-alert">{this.props.text}</div>

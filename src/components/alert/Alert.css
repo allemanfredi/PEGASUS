@@ -14,13 +14,14 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    height: 300px;
     width: 260px;
     margin-right: -50%;
     transform: translate(-50%,-50%);
     border-radius: 5px;
     padding-left: 15px;
     padding-right: 15px;
+    z-index: 10000;
+
 }
 .container-btn-close-alert {
     margin-top: 3%;
@@ -30,8 +31,9 @@
     margin-top: 13%;
 }
 
-.contaner-text-alert {
+.container-text-alert {
     margin-top: 11%;
+    margin-bottom: 13%;
 }
 
 .text-alert {
