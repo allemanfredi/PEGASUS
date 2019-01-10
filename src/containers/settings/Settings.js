@@ -1,6 +1,5 @@
 
 import React, { Component } from 'react';
-import history from '../../components/history';
 import { getAllAccounts } from '../../wallet/wallet';
  
 

@@ -172,3 +172,8 @@
     font-weight: bold;
     text-overflow: ellipsis;
 }
+
+.container-copy-to-clipboard {
+    font-size: 13px;
+    color: darkblue;
+}

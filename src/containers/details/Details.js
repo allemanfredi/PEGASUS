@@ -1,6 +1,5 @@
 import React , { Component } from 'react';
-import history from '../../components/history';
-import {isPromotable,promoteTransaction,replayBundle} from '../../core/core'; 
+import {promoteTransaction,replayBundle} from '../../core/core'; 
 
 import Alert from '../../components/alert/Alert';
 

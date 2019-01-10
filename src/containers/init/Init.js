@@ -28,7 +28,7 @@ class Init extends Component {
         psw: '',
         repsw: '',
         name : '',
-        seed : '',
+        seed : [],
         randomLetters : 10,
         randomizedLetter : [],
         isLoading : false,
@@ -80,9 +80,9 @@ class Init extends Component {
         }
         
         this.setState(state => {
-            const values = '9ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            const letter = values[Math.floor(Math.random() * values.length)];
-            const seed = state.seed.substr(0, index) + letter + state.seed.substr(index + letter.length);
+            const letter = generateSeed(1)[0];
+            let seed = state.seed;
+            seed[index] = letter;
             return {
                 seed
             }
@@ -114,11 +114,12 @@ class Init extends Component {
                     //TODO: come salvare la psw in plaintext (sol: session storage )
                     //piu sicuro: chiedere la psw per ogni send cosi da salvare solo l'hash della psw
                     //mi tengo la chiave di cifratura del seed nella ram invece che salvarmela nel session storage
+                    const seed = this.state.seed.toString().replace(/,/g, '');
                     const pswHash = sha256(this.state.psw);
-                    const eseed = aes256encrypt(this.state.seed,pswHash);
+                    const eseed = aes256encrypt(seed,pswHash);
     
                     //get all account data
-                    const data = await getAccountData(this.state.seed);
+                    const data = await getAccountData(seed);
                     
                     const account = {
                         name : this.state.name,
@@ -269,7 +270,7 @@ class Init extends Component {
                                     <div class="col-1"></div>
                                     <div class="col-10 text-center">
                                         <div class="container-seed-to-export">
-                                            <input class="input-seed-to-export" ref={this.labelSeed} value={this.state.seed} readOnly/>
+                                            <input class="input-seed-to-export" ref={this.labelSeed} value={this.state.seed.toString().replace(/,/g,'')} readOnly/>
                                         </div>
                                     </div>
                                     <div class="col-1"></div>

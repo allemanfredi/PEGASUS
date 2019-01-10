@@ -1,5 +1,5 @@
 import React , { Component } from 'react';
-import {aes256encrypt,sha256} from '../../utils/crypto'
+import {aes256encrypt} from '../../utils/crypto'
 import {getAccountData} from '../../core/core';
 import {generateSeed,addAccount,getKey,getCurrentNewtwork} from '../../wallet/wallet';
 
@@ -23,7 +23,7 @@ class Add extends Component {
 
       this.state = {
         name : '',
-        seed : '',
+        seed : [],
         randomLetters : 10,
         randomizedLetter : [],
         isLoading : false,
@@ -72,9 +72,9 @@ class Add extends Component {
         }
         
         this.setState(state => {
-            const values = '9ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            const letter = values[Math.floor(Math.random() * values.length)];
-            const seed = state.seed.substr(0, index) + letter + state.seed.substr(index + letter.length);
+            const letter = generateSeed(1)[0];
+            let seed = state.seed;
+            seed[index] = letter;
             return {
                 seed
             }
@@ -92,7 +92,9 @@ class Add extends Component {
         return new Promise ( async (resolve,reject) => {
             try{
                 const currentNetwork = await getCurrentNewtwork();
-                const seed = generateSeed();
+
+                const seed = this.state.seed.toString().replace(/,/g, '');
+
                 const key = await getKey()
                 const eseed = aes256encrypt(seed,key);
         
@@ -201,7 +203,7 @@ class Add extends Component {
                                 <div class="row">
                                     <div class="col-1"></div>
                                     <div class="col-10 text-center">
-                                        <input class="input-seed-to-export" ref={this.labelSeed} value={this.state.seed} readOnly/>
+                                        <input class="input-seed-to-export" ref={this.labelSeed} value={this.state.seed.toString().replace(/,/g,'')} readOnly/>
                                     </div>
                                     
                                 </div>  
@@ -214,7 +216,9 @@ class Add extends Component {
                                 </div> 
                                 <div class="row">
                                     <div class="col-12 text-center">
-                                        {this.state.isCopiedToClipboard ? 'Copied!' : 'Copy to clipboard'}
+                                        <div class ="container-copy-to-clipboard">
+                                             {this.state.isCopiedToClipboard ? 'Copied!' : 'Copy to clipboard'}
+                                        </div>
                                     </div>
                                 </div>   
                             </div>

@@ -1,7 +1,7 @@
 import React , { Component } from 'react';
 import {getAccountData} from '../../core/core';
 import {setCurrentAccount,getCurrentAccount,generateSeed,updateDataAccount,addAccount,getKey,getCurrentNewtwork,updateNameAccount,deleteAccount} from '../../wallet/wallet'
-import {aes256decrypt,aes256encrypt,sha256} from '../../utils/crypto';
+import {aes256decrypt,aes256encrypt} from '../../utils/crypto';
 
 
 import Send from '../send/Send';
@@ -91,17 +91,14 @@ class Home extends Component {
 
 
     async changeNetwork(network) {
-      //controllare se è cambiata la rete (testnet/mainnet);
 
+      const currentName = this.state.account.name;
       this.setState({account:{}});
-      console.log(this.state.network);
-      console.log(network);
       this.setState({network : network});
 
       let account = await getCurrentAccount(network);
-      console.log(account);
-      if (!account){ //se non esiste un account x questa net
-        account = await this.createAccount(network,'acc-no-name');
+      if (!account){ //can happens only for the first switch when the wallet is generated on the mainnet and the user switch to the testnet
+        account = await this.createAccount(network,currentName + '-test');
       }
       
       //store the encrypted seed
@@ -120,7 +117,7 @@ class Home extends Component {
     async createAccount (network,name) {
       //generate new seed
       return new Promise( async (resolve,reject) => {
-        const newSeed = generateSeed();
+        const newSeed = generateSeed().toString().replace(/,/g, '');
         const key = await getKey();
         const eseed = aes256encrypt(newSeed,key);
         

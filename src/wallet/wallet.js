@@ -1,4 +1,6 @@
-import {sha256} from '../utils/crypto';
+import {sha256,randomBytes} from '../utils/crypto';
+import {byteToChar} from '../utils/helpers'
+
 
 const isWalletSetup = () => {
     try{
@@ -278,14 +280,11 @@ const getAllAccounts = async (network) => {
 }
 
 
-const generateSeed = () => {
-
-    const values = ['9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
-    let seed = '';
-    for (let i = 0; i < 81; i++)
-        seed += values[Math.floor(Math.random() * values.length)];
-    
+const generateSeed = (length = 81) => {
+    const bytes = randomBytes(length, 27);
+    const seed = bytes.map(byte =>  byteToChar(byte)); 
     return seed;
+
 }
 
 const isSeedValid = (seed) => {

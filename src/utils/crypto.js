@@ -38,8 +38,26 @@ const sha256 = (text) => {
   return crypto.createHash('sha256').update(text).digest('hex');
 }
 
+/**
+ * Get random values 
+ * @param {Integer} size - Size of the random array
+ * @returns {Array} random bytes
+ */
+ const randomBytes = (size,max) => {
+    if (size !== parseInt(size, 10) || size < 0) {
+        return false;
+    }
 
+    const bytes = crypto.randomBytes(size);
 
+    for (let i = 0; i < bytes.length; i++) {
+        while (bytes[i] >= 256 - 256 % max) {
+            bytes[i] = randomBytes(1, max)[0];
+        }
+    }
 
-export {aes256encrypt,aes256decrypt,sha256};
+    return Array.from(bytes);
+ }
+
+export {aes256encrypt,aes256decrypt,sha256,randomBytes};
 
