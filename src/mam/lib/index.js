@@ -2,7 +2,7 @@
 require('babel-polyfill')
 const crypto = require('crypto')
 const Encryption = require('./encryption')
-const converter = require('@iota/converter');
+const converter = require('@iota/converter')
 const { composeAPI } = require('@iota/core')
 
 // Setup Provider
@@ -281,7 +281,10 @@ const keyGen = length => {
     return key;
 }
 
-const setupEnv = rustBindings => (Mam = rustBindings)
+const setupEnv = rustBindings => {
+    console.log("setup ev");
+    Mam = rustBindings
+}
 
 const setIOTA = (externalProvider = null) => (provider = externalProvider)
 

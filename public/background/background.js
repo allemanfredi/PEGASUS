@@ -4,7 +4,6 @@
 
 
 
-
 chrome.runtime.onInstalled.addListener(function() {
     
     console.log('app succesfully installed');

@@ -249,11 +249,13 @@ const Mam = {
     decodeMessage,
     createMessage,
     getMamAddress,
-    getMamRoot
+    getMamRoot,
 }
 
 // Feed Mam functions into the main file
 Main.setupEnv(Mam)
+
+
 
 // Export
 module.exports = Main

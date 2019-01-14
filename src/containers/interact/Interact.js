@@ -1,9 +1,11 @@
 import React , { Component } from 'react';
 import Map from '../../components/map/Map'
 
-import {mamInit} from '../../mam/mam'
-
 import './Interact.css'
+
+const Mam = require('../../mam/lib/mam.client');
+const { asciiToTrytes, trytesToAscii } = require('@iota/converter')
+
 
 class Interact extends Component {
 
@@ -16,7 +18,13 @@ class Interact extends Component {
     }
 
     async componentDidMount(){
-      await mamInit(this.props.network.provider);
+      console.log(Mam);
+      const state = Mam.init('https://testnet140.tangle.works')
+      const root = 'IWJWPWWTDRHBSGKMIM9TEHBOMTCCMZHOKECZJMYRQJRJZACBGGICIUFFXAPYNDMMOFFPIEREQZISMKVSX';
+      const key = 'IREALLYENJOYPOTATORELATEDPRODUCTS';
+      const resp = await Mam.fetch(root, 'public', null, data => {
+        console.log(JSON.parse(trytesToAscii(data)))
+      })
     }
 
     render() {
