@@ -12,16 +12,25 @@ class Interact extends Component {
     constructor(props, context) {
       super(props, context);
 
-      this.state = {
+      this.getDevices = this.getDevices.bind();
 
+      this.state = {
+        inteval : null
       }
     }
 
     async componentDidMount(){
-      console.log(Mam);
+        this.getDevices();    
+        this.setState( () => {
+          const interval = setInterval(this.getDevices,120000);
+          return {interval}
+        })
+
+    }
+
+    async getDevices(){
       const state = Mam.init('https://testnet140.tangle.works')
-      const root = 'IWJWPWWTDRHBSGKMIM9TEHBOMTCCMZHOKECZJMYRQJRJZACBGGICIUFFXAPYNDMMOFFPIEREQZISMKVSX';
-      const key = 'IREALLYENJOYPOTATORELATEDPRODUCTS';
+      const root = 'USUOOSHDC9DRIKNEKCKSUKKDCPBBAAXKPYXWOEGSCBNKTKYD9EDW9ZTZAF9YWEUUPEPCBSANBKUFDZYJN';
       const resp = await Mam.fetch(root, 'public', null, data => {
         console.log(JSON.parse(trytesToAscii(data)))
       })
