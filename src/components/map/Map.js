@@ -34,14 +34,15 @@ export default class Map extends Component {
     this.setState({viewport});
   }
 
-  renderMarker = (city, index) => {
-    console.log(city);
+  renderMarker = (device) => {
     return (
       <Marker 
-        key={`marker-${index}`}
-        longitude={city.longitude}
-        latitude={city.latitude} >
-        <Pin size={20} onClick={() => this.setState({popupInfo: city})} />
+        key={device.name}
+        longitude={device.longitude}
+        latitude={device.latitude} 
+        pinColor='#00008b'
+        >
+        <Pin size={20} onClick={() => this.setState({popupInfo: device})} />
       </Marker>
     );
   }
@@ -83,8 +84,8 @@ export default class Map extends Component {
           onViewportChange={this.updateViewport}
           mapStyle="mapbox://styles/mapbox/dark-v9"
           mapboxApiAccessToken={TOKEN}>
-
-          {this.renderMarker({latitude:45.4 , longitude: 9.1} , 0) }
+         
+          { this.props.devices.map (device => {this.renderMarker(device)})}
 
           {this.renderPopup()}
 

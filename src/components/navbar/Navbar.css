@@ -3,7 +3,7 @@
     background: darkblue;
 }
 
-.btn-settings, .btn-marker {
+.btn-settings, .btn-marker, .btn-add {
     background-color: darkblue; 
     border: none; 
     color: white; 

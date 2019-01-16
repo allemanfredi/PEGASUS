@@ -34,6 +34,12 @@ export default class Navbar extends Component {
                     <button onClick={() => this.props.onClickMap()} class="btn btn-marker"><i class="fa fa-map-marker"></i></button> 
                 </div>
             : ''}
+
+            { this.props.showBtnAdd ? 
+                <div class="col-2">
+                    <button onClick={() => this.props.onClickAddDevice()} class="btn btn-add"><i class="fa fa-plus"></i></button> 
+                </div>
+            : ''}
             </div>
         </div>
       );

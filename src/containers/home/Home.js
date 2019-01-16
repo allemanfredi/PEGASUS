@@ -27,6 +27,8 @@ class Home extends Component {
 
       //transactions components
       this.transactions = React.createRef();
+      this.interact = React.createRef();
+
 
       this.onClickSend = this.onClickSend.bind(this);
       this.onClickSettings = this.onClickSettings.bind(this);
@@ -45,6 +47,7 @@ class Home extends Component {
       this.onClickMap = this.onClickMap.bind(this);
       this.onCloseDetails = this.onCloseDetails.bind(this);
       this.onReload = this.onReload.bind(this);
+      this.onClickAddDevice = this.onClickAddDevice.bind(this);
       this.changeNetwork = this.changeNetwork.bind(this);
 
 
@@ -86,9 +89,8 @@ class Home extends Component {
               interval
             }
         });
-        
-        this.setState({account : account});
 
+        this.setState({account : account});
       }catch(err){
           this.setState({ error: err.error });
           console.log(err);
@@ -116,7 +118,6 @@ class Home extends Component {
 
       if ( this.state.showHome )
         this.transactions.current.updateData();
-
     }
 
 
@@ -268,6 +269,9 @@ class Home extends Component {
       this.setState({showDetails:false});
     }
 
+    onClickAddDevice(){
+      this.interact.current.addDevice();
+    }
 
 
 
@@ -277,9 +281,11 @@ class Home extends Component {
           <Navbar showBtnSettings={this.state.showHome} 
                   showBtnMarker={this.state.showHome} 
                   showBtnBack={!this.state.showHome} 
+                  showBtnAdd={this.state.showInteract}
                   text={this.state.showHome ? this.state.account.name : (this.state.showSend ? 'Send' : (this.state.showReceive ? 'Receive' : this.state.showAdd ? 'Add account' : (this.state.showInteract ? 'Buy data' : '')))}
                   onClickSettings={this.onClickSettings}
                   onClickMap={this.onClickMap}
+                  onClickAddDevice={this.onClickAddDevice}
                   onBack={this.onBack}>
           </Navbar>
           
@@ -300,7 +306,9 @@ class Home extends Component {
                                                       onClose={this.onCloseDetails}
                                              /> ) : '' }
               { this.state.showAdd ?      ( <Add      network={this.state.network} onChangeAccount={this.onChangeAccount}/>) : ''}
-              { this.state.showInteract ? ( <Interact network={this.state.network} account={this.state.account}/>) : ''}
+              { this.state.showInteract ? ( <Interact  ref={this.interact}
+                                                       network={this.state.network} 
+                                                       account={this.state.account}/>) : ''}
 
               { this.state.showEdit ?     ( <Edit     account={this.state.account}
                                                       network={this.state.network} 
