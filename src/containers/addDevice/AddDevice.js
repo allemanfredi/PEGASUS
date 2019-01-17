@@ -14,7 +14,8 @@ class AddDevice extends Component {
 
         this.state = {
             name : '',
-            root : '',
+            root : 'R9AJQ9NPWVCEFNNMQVUQRUWXHITSYNFJRZIPFUIHM9NORJCKGGEGJTQHXTC9MX9GIGUNXFRCPHTEYPONN',
+            address  : '',
             lat : '',
             long : '',
             isLoading : false,
@@ -22,12 +23,14 @@ class AddDevice extends Component {
             alertType : '',
             alerText : ''
         }
+
     }
 
     async AddDevice(){
         const device = {
             'name' : this.state.name,
             'root' : this.state.root,
+            'address':this.state.address,
             'lat' : this.state.lat,
             'long' : this.state.long,
         }
@@ -76,6 +79,17 @@ class AddDevice extends Component {
                     </div>
                     <div class="row">
                         <div class="col-1"></div>
+                        <div class="col-10">
+                            <label for="inp-address" class="inp">
+                                <input value={this.state.address} onChange={e => {this.setState({address:e.target.value})}} type="text" id="inp-address" placeholder="&nbsp;"/>
+                                <span class="label">address</span>
+                                <span class="border"></span>
+                            </label>
+                        </div>
+                        <div class="col-1"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-1"></div>
                         <div class="col-5 text-center">
                             <label for="inp-lat" class="inp">
                                 <input value={this.state.lat} onChange={e => {this.setState({lat:e.target.value})}} type="text" id="inp-lat" placeholder="&nbsp;"/>
@@ -98,9 +112,19 @@ class AddDevice extends Component {
                             <button onClick={this.AddDevice}  
                                     disabled={this.state.name.length === 0 ? true :
                                               this.state.root.length === 0 ? true :
+                                              this.state.address.length === 0 ? true :
                                               this.state.lat.length === 0 ? true : 
                                               this.state.long.length === 0 ? true : false} 
                                     class="btn btn-add-device">Add device <span class="fa fa-plus"></span></button>
+                        </div>
+                        <div class="col-1"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-1"></div>
+                        <div class="col-10 text-center">
+                            <div class="container-suggestion-add-device">
+                                Please pay attention that your device is'attacching messages on MAM channel
+                            </div>
                         </div>
                         <div class="col-1"></div>
                     </div>

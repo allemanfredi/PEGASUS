@@ -2,6 +2,9 @@ import React , { Component } from 'react';
 import Map from '../../components/map/Map'
 
 import AddDevice from '../addDevice/AddDevice';
+import Alert from '../../components/alert/Alert';
+
+import {getAlltDevices , addDevice} from '../../service/service'
 
 import './Interact.css'
 
@@ -22,7 +25,8 @@ class Interact extends Component {
       this.state = {
         interval : null,
         devices : [],
-        showAddDevice : false
+        showAddDevice : false,
+        showAlert : false
       }
     }
 
@@ -32,42 +36,56 @@ class Interact extends Component {
           const interval = setInterval(this.getDevices,120000);
           return {interval}
         })
-
     }
 
     async getDevices(){
-      const state = Mam.init('https://testnet140.tangle.works')
-      const root = 'USUOOSHDC9DRIKNEKCKSUKKDCPBBAAXKPYXWOEGSCBNKTKYD9EDW9ZTZAF9YWEUUPEPCBSANBKUFDZYJN';
-      const resp = await Mam.fetch(root, 'public', null, data => {
-        const d = JSON.parse(trytesToAscii(data));
-        console.log(d);
-      })
+      const devices = await getAlltDevices();
+      console.log(devices);
+      //this.setState({devices : devices});
     }
 
     async addDevice(){
       this.setState({showAddDevice : true});
     }
 
-    async onAddDevice(device){
-      console.log(device);
-    }
-
     async onCloseAddDevice(){
       this.setState({showAddDevice : false});
+    }
+
+    async onAddDevice(device){
+
+      this.setState({showAddDevice : false});
+      const state = Mam.init('https://testnet140.tangle.works');
+      try{
+        const resp = await Mam.fetch(device.root, 'public'); //if receive a data it means that device is connected therefore i can save it on the db
+        
+        if ( resp['nextRoot'] && resp['messages'] ){
+          console.log("correct data");
+          const res = await addDevice(device);
+        }
+        
+      }catch(err){
+        console.log(err);
+      }
+      
     }
 
 
     render() {
       return (
-        <div class="container-map">
-          <Map devices={this.state.devices}/>
+        <div>
+          <div class="container-map">
+            <Map devices={this.state.devices}/>
 
-          { this.state.showAddDevice ? 
-            <AddDevice onAddDevice={this.onAddDevice}
-                       onClose={this.onCloseAddDevice}/>
-          : ''}
+            { this.state.showAddDevice ? 
+              <AddDevice onAddDevice={this.onAddDevice}
+                        onClose={this.onCloseAddDevice}/>
+            : ''}
 
-        </div> 
+          </div> 
+          {this.showAlert ? <Alert/> : ''}
+        </div>
+        
       );
     }
   }

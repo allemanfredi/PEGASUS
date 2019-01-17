@@ -12,7 +12,7 @@
     background: white;
     border-radius: 7px;
     width: 300px;
-    height: 356px;
+    height: 457px;
     top: 50%;
     left: 50%;
     transform: (50%,-50%);
@@ -41,4 +41,10 @@
 
 .btn-close-add-device{
     margin-top: 3%;
+}
+
+.container-suggestion-add-device{
+    font-size: 11px;
+    color: darkblue;
+    margin-top: 4%;
 }
