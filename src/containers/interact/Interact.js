@@ -4,7 +4,7 @@ import Map from '../../components/map/Map'
 import AddDevice from '../addDevice/AddDevice';
 import Alert from '../../components/alert/Alert';
 
-import {getAlltDevices , addDevice} from '../../service/service'
+import {getAllDevices , addDevice} from '../../service/service'
 
 import './Interact.css'
 
@@ -39,9 +39,9 @@ class Interact extends Component {
     }
 
     async getDevices(){
-      const devices = await getAlltDevices();
-      console.log(devices);
-      //this.setState({devices : devices});
+      getAllDevices( devices => {
+        this.setState({devices : devices});
+      })
     }
 
     async addDevice(){
@@ -61,7 +61,9 @@ class Interact extends Component {
         
         if ( resp['nextRoot'] && resp['messages'] ){
           console.log("correct data");
-          const res = await addDevice(device);
+          addDevice(device , () => {
+            console.log("succesfully added")
+          });
         }
         
       }catch(err){

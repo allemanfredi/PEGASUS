@@ -14,7 +14,7 @@ class AddDevice extends Component {
 
         this.state = {
             name : '',
-            root : 'R9AJQ9NPWVCEFNNMQVUQRUWXHITSYNFJRZIPFUIHM9NORJCKGGEGJTQHXTC9MX9GIGUNXFRCPHTEYPONN',
+            root : 'INNYABYPIGOVNRRMVLHIUAQYDDNUQNDGGHBUPZLQFHKIAGZYBWCHMNHZKJBSPIAUFPYHWUTMCWEFTDAHP',
             address  : '',
             lat : '',
             long : '',
