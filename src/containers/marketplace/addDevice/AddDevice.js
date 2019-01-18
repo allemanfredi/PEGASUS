@@ -16,6 +16,7 @@ class AddDevice extends Component {
             address  : '',
             lat : '',
             long : '',
+            price : null,
         }
 
     }
@@ -77,6 +78,17 @@ class AddDevice extends Component {
                             <label for="inp-address" class="inp">
                                 <input value={this.state.address} onChange={e => {this.setState({address:e.target.value})}} type="text" id="inp-address" placeholder="&nbsp;"/>
                                 <span class="label">address</span>
+                                <span class="border"></span>
+                            </label>
+                        </div>
+                        <div class="col-1"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-1"></div>
+                        <div class="col-10">
+                            <label for="inp-price" class="inp">
+                                <input value={this.state.price} onChange={e => {this.setState({price:e.target.value})}} type="number" id="inp-price" placeholder="&nbsp;"/>
+                                <span class="label">price</span>
                                 <span class="border"></span>
                             </label>
                         </div>

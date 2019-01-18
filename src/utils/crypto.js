@@ -75,7 +75,38 @@ const sha256 = (text) => {
     return keys;
  }
 
+/**
+ * Get random values 
+ * @param {Object} toEcrypt - object to encrypt
+ * @param {Uint32Array} publicKey - public key
+ * @returns {String} encrypted text
+ */
+ const encryptWithRsaPublicKey = (toEncrypt, publicKey) => {
+    const buffer = new Buffer(toEncrypt);
+    const encrypted = crypto.publicEncrypt(publicKey, buffer);
+    return encrypted.toString("base64");
+};
+
+/**
+ * Get random values 
+ * @param {Object} toDEcrypt - object to cencrypt
+ * @param {Uint32Array} publicKey - private key
+ * @returns {String} decrypted text
+ */
+const decryptWithRsaPrivateKey = (toDecrypt, privateKey) => {
+    const buffer = new Buffer(toDecrypt, "base64");
+    const decrypted = crypto.privateDecrypt(privateKey, buffer);
+    return decrypted.toString("utf8");
+};
+
  //https://stackoverflow.com/questions/8750780/encrypting-data-with-public-key-in-node-js
 
-export {aes256encrypt,aes256decrypt,sha256,randomBytes,generateKeys};
+export {aes256encrypt,
+        aes256decrypt,
+        sha256,
+        randomBytes,
+        generateKeys,
+        encryptWithRsaPublicKey,
+        decryptWithRsaPrivateKey
+    };
 
