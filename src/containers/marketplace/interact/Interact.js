@@ -28,9 +28,9 @@ class Interact extends Component {
         interval : null,
         devices : [],
         showAddDevice : false,
-        showAlert : true,
+        showAlert : false,
         alertText : '',
-        alertType : 'loading'
+        alertType : ''
       }
     }
 
