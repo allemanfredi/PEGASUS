@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import Alert from '../../components/alert/Alert'
-
 
 import './AddDevice.css';
 
@@ -14,14 +12,10 @@ class AddDevice extends Component {
 
         this.state = {
             name : '',
-            root : 'INNYABYPIGOVNRRMVLHIUAQYDDNUQNDGGHBUPZLQFHKIAGZYBWCHMNHZKJBSPIAUFPYHWUTMCWEFTDAHP',
+            root : 'CSYUAMZYTYUXYWTMRWJQGFIPGNDNEFIBMYSMEM9ZLVHHUENKVKJTR9DNFJVNUWJHGHHPCKKRZDAJPHVVT',
             address  : '',
             lat : '',
             long : '',
-            isLoading : false,
-            showAlert : false,
-            alertType : '',
-            alerText : ''
         }
 
     }
@@ -92,14 +86,14 @@ class AddDevice extends Component {
                         <div class="col-1"></div>
                         <div class="col-5 text-center">
                             <label for="inp-lat" class="inp">
-                                <input value={this.state.lat} onChange={e => {this.setState({lat:e.target.value})}} type="text" id="inp-lat" placeholder="&nbsp;"/>
+                                <input value={this.state.lat} onChange={e => {this.setState({lat:e.target.value})}} type="number" id="inp-lat" placeholder="&nbsp;"/>
                                 <span class="label">lat</span>
                                 <span class="border"></span>
                             </label>
                         </div>
                         <div class="col-5 text-center">
                             <label for="inp-long" class="inp">
-                                <input value={this.state.long} onChange={e => {this.setState({long:e.target.value})}} type="text" id="inp-r" placeholder="&nbsp;"/>
+                                <input value={this.state.long} onChange={e => {this.setState({long:e.target.value})}} type="number" id="inp-long" placeholder="&nbsp;"/>
                                 <span class="label">long</span>
                                 <span class="border"></span>
                             </label>
@@ -129,7 +123,6 @@ class AddDevice extends Component {
                         <div class="col-1"></div>
                     </div>
                 </div>
-                {this.state.showAlert ? <Alert text={this.state.alerText} type={this.state.alertType} onClose={this.onCloseAlert}/> : ''}
             </div>
         );
     }

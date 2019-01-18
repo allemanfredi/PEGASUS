@@ -11,7 +11,7 @@ import Details from '../details/Details';
 import Transactions from '../transactions/Transactions';
 import Add from '../add/Add';
 import Edit from '../edit/Edit';
-import Interact from '../interact/Interact'
+import Interact from '../marketplace/interact/Interact'
 
 import Loader from '../../components/loader/Loader'
 import Navbar from '../../components/navbar/Navbar'

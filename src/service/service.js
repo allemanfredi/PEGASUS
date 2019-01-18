@@ -4,11 +4,9 @@ const addDevice = async (device , callback) => {
     fetch(
         'http://localhost:3000/api/add',
         {   method: 'POST',
-            mode: 'no-cors',
             headers: new Headers(
-            {
-                'Accept': 'application/json',
-                'Content-Type': 'application/x-www-form-urlencoded; application/json'}
+            {   'Accept' : 'application/json',
+                'Content-Type': 'application/json'}
             ),
             body: JSON.stringify(device)
         })

@@ -38,9 +38,8 @@ export default class Map extends Component {
     return (
       <Marker 
         key={device.name}
-        longitude={device.longitude}
-        latitude={device.latitude} 
-        pinColor='#00008b'
+        longitude={parseInt(device.long)}
+        latitude={parseInt(device.lat)} 
         >
         <Pin size={20} onClick={() => this.setState({popupInfo: device})} />
       </Marker>
@@ -53,13 +52,13 @@ export default class Map extends Component {
     return popupInfo && (
       <Popup tipSize={5}
         anchor="top"
-        longitude={popupInfo.longitude}
-        latitude={popupInfo.latitude}
+        longitude={popupInfo.long}
+        latitude={popupInfo.lat}
         onClose={() => this.setState({popupInfo: null})} >
         <div class="container-popup">
           <div class="row">
             <div class="col-12 text-center">
-              {'Sensor name'}
+              {popupInfo.name}
             </div>
           </div>
           <div class="row">
@@ -67,7 +66,7 @@ export default class Map extends Component {
               <button class="btn">Buy stream <i class="fa fa-check" ></i></button>
             </div>
             <div class="col-6 text-center">
-              <button class="btn">Close <i class="fa fa-times" ></i></button>
+              <button onClick={() => this.props.onBuy(popupInfo)} class="btn">Close <i class="fa fa-times" ></i></button>
             </div>
           </div>
         </div>
@@ -85,7 +84,7 @@ export default class Map extends Component {
           mapStyle="mapbox://styles/mapbox/dark-v9"
           mapboxApiAccessToken={TOKEN}>
          
-          { this.props.devices.map (device => {this.renderMarker(device)})}
+          {this.props.devices.map (device => this.renderMarker(device))}
 
           {this.renderPopup()}
 
