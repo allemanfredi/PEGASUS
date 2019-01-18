@@ -1,6 +1,6 @@
 import React , { Component } from 'react';
 import {storePsw} from '../../wallet/wallet'
-import {aes256encrypt,sha256} from '../../utils/crypto'
+import {aes256encrypt,sha256,generateKeys} from '../../utils/crypto'
 import {getAccountData} from '../../core/core';
 import {generateSeed,addAccount,setupWallet,setCurrentNetwork} from '../../wallet/wallet';
 
@@ -126,7 +126,8 @@ class Init extends Component {
                         seed : eseed,
                         data : data,
                         id : sha256(this.state.name),
-                        network : options.network[0] //TESTNET = 1  MAINNET = 0 
+                        network : options.network[0], //TESTNET = 1  MAINNET = 0 
+                        marketplace : {'keys' : generateKeys()}
                     }
                     await addAccount(account,options.network[0],true);
                     await setCurrentNetwork(options.network[0]);

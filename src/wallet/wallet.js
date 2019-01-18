@@ -116,7 +116,8 @@ const addAccount = async (account,network,isCurrent) => {
             data : account.data,
             current : isCurrent ? true : false,
             id : account.id,
-            network : account.network //mainnet or testnet
+            network : account.network, //mainnet or testnet
+            marketplace : account.marketplace
         }
         try{
     

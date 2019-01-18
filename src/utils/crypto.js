@@ -59,5 +59,23 @@ const sha256 = (text) => {
     return Array.from(bytes);
  }
 
-export {aes256encrypt,aes256decrypt,sha256,randomBytes};
+
+ /**
+ * Generate the asymmetric keys 
+ * 
+ * @returns {Object} containing the keys
+ */
+ const generateKeys = () => {
+    const echd = crypto.createECDH('secp256k1');
+    echd.generateKeys();
+    const keys = {
+        'private' : echd.getPrivateKey(),
+        'public' : echd.getPublicKey()
+    }
+    return keys;
+ }
+
+ //https://stackoverflow.com/questions/8750780/encrypting-data-with-public-key-in-node-js
+
+export {aes256encrypt,aes256decrypt,sha256,randomBytes,generateKeys};
 
