@@ -127,7 +127,7 @@ class Init extends Component {
                         data : data,
                         id : sha256(this.state.name),
                         network : options.network[0], //TESTNET = 1  MAINNET = 0 
-                        marketplace : {'keys' : generateKeys()}
+                        marketplace : {'keys' : generateKeys() , 'channels':[]}
                     }
                     await addAccount(account,options.network[0],true);
                     await setCurrentNetwork(options.network[0]);

@@ -4,7 +4,7 @@ import Map from '../../../components/map/Map'
 import AddDevice from '../addDevice/AddDevice';
 import Alert from '../../../components/alert/Alert';
 
-import {getAllDevices , addDevice} from '../../../service/service'
+
 
 import './Interact.css'
 
@@ -17,7 +17,7 @@ class Interact extends Component {
     constructor(props, context) {
       super(props, context);
 
-      this.getDevices = this.getDevices.bind(this);
+      this.fetchPublicChannel = this.fetchPublicChannel.bind(this);
       this.onAddDevice = this.onAddDevice.bind(this);
       this.addDevice = this.addDevice.bind(this);
       this.onCloseAddDevice = this.onCloseAddDevice.bind(this);
@@ -30,43 +30,52 @@ class Interact extends Component {
         showAddDevice : false,
         showAlert : false,
         alertText : '',
-        alertType : ''
+        alertType : '',
+        mamPublicState : '',
+        mamPublicRoot : '',
       }
     }
 
     async componentDidMount(){
-        this.getDevices();    
-        this.setState( () => {
-          const interval = setInterval(this.getDevices,120000);
-          return {interval}
-        })
+
+      //init public channel where get the device positions
+      const seedPublicChannel = 'REGUNAZAUXTI9LNUTRVKPDE9QJWZLBGJONJTNRUVIZIINYVKXZPVNEGBYWGQORZSECWD9TAGSLKKQVWHC';
+      const s = Mam.init('https://testnet140.tangle.works',seedPublicChannel);
+      this.setState({mamPublicState:s})
+      
+      const currentPublicRoot = Mam.getRoot(this.state.mamPublicState);
+      this.setState({mamPublicRoot : currentPublicRoot})
+
+      this.fetchPublicChannel(); 
+      setInterval(this.fetchPublicChannel,30000);
     }
 
-    async getDevices(){
-      getAllDevices( devices => {
-        this.setState({devices : devices});
-      })
+    async fetchPublicChannel(){
+      const resp = await Mam.fetch(this.state.currentPublicRoot, 'public'); 
+      this.setState({currentPublicRoot:resp.nextRoot});
+      console.log(resp);
     }
+
+
 
     async addDevice(){
       this.setState({showAddDevice : true});
     }
-
     async onCloseAddDevice(){
       this.setState({showAddDevice : false});
     }
 
     async onAddDevice(device){
 
-      this.setState({showAddDevice : false});
+      /*this.setState({showAddDevice : false});
 
       this.setState({alertText : 'Fetching MAM channel...'});
       this.setState({alertType : 'loading'});
       this.setState({showAlert : true});
 
-      const state = Mam.init('https://testnet140.tangle.works');
+      
       try{
-        const resp = await Mam.fetch(device.root, 'public'); //if receive a data it means that device is connected therefore i can save it on the db
+        //if receive a data it means that device is connected therefore i can save it on the db
         
         //if correct mam message
         if ( resp['nextRoot'] && resp['messages'] ){
@@ -85,7 +94,7 @@ class Interact extends Component {
         console.log(err);
         this.setState({alertText : 'Impossible to add the device'});
         this.setState({alertType : 'error'});
-      }
+      }*/
     }
 
     onBuy(device){

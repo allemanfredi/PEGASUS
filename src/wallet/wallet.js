@@ -284,7 +284,6 @@ const generateSeed = (length = 81) => {
     const bytes = randomBytes(length, 27);
     const seed = bytes.map(byte =>  byteToChar(byte)); 
     return seed;
-
 }
 
 const isSeedValid = (seed) => {

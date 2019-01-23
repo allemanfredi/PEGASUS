@@ -1,5 +1,5 @@
 import React , { Component } from 'react';
-import {aes256encrypt,sha256} from '../../utils/crypto'
+import {aes256encrypt,sha256,generateKeys} from '../../utils/crypto'
 import {getAccountData} from '../../core/core';
 import {generateSeed,addAccount,getKey,getCurrentNewtwork} from '../../wallet/wallet';
 
@@ -103,7 +103,8 @@ class Add extends Component {
                     seed : eseed,
                     data : data,
                     id : sha256(this.state.name),
-                    network : this.props.network
+                    network : this.props.network,
+                    marketplace : {'keys' : generateKeys() , 'channels':[]}
                 }
                 await addAccount(account,this.props.network,true); 
                 resolve(account);
