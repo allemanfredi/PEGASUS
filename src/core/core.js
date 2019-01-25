@@ -56,7 +56,7 @@ const prepareTransfer = async (transfer,ret) => {
         address: transfer.to,
         value: parseInt(transfer.value), 
         tag: '', // optional tag of `0-27` trytes
-        message: asciiToTrytes(transfer.message) // optional message in trytes
+        message: asciiToTrytes(JSON.stringify(transfer.message)) // optional message in trytes
     }]
 
     const depth = 3 
@@ -171,7 +171,17 @@ const replayBundle = async tail => {
     });
 }
 
-
+const findTransactionObject = async (options) => {
+	return new Promise((resolve,reject) => {
+		iota.findTransactionObjects(options)
+		.then(transactions => {
+		   resolve(transactions)
+		})
+		.catch(err => {
+		   reject(err);
+		})
+	});
+}
 
 
 
@@ -187,4 +197,5 @@ export {getNewAddress,
         promoteTransaction,
         replayBundle,
         getAccountDataSync,
-        isPromotable};
+        isPromotable,
+        findTransactionObject};

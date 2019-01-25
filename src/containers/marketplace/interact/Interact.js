@@ -4,11 +4,12 @@ import Map from '../../../components/map/Map'
 import AddDevice from '../addDevice/AddDevice';
 import Alert from '../../../components/alert/Alert';
 
-
+import {init,fetch,send} from'../../../pp/pp';
 
 import './Interact.css'
 
-const Mam = require('../../../mam/lib/mam.client');
+//const Mam = require('../../../mam/lib/mam.client');
+
 const { asciiToTrytes, trytesToAscii } = require('@iota/converter')
 
 
@@ -31,29 +32,31 @@ class Interact extends Component {
         showAlert : false,
         alertText : '',
         alertType : '',
-        mamPublicState : '',
-        mamPublicRoot : '',
+        ppChannel : '',
       }
     }
 
     async componentDidMount(){
-
-      //init public channel where get the device positions
-      const seedPublicChannel = 'REGUNAZAUXTI9LNUTRVKPDE9QJWZLBGJONJTNRUVIZIINYVKXZPVNEGBYWGQORZSECWD9TAGSLKKQVWHC';
-      const s = Mam.init('https://testnet140.tangle.works',seedPublicChannel);
-      this.setState({mamPublicState:s})
+      const seed = 'FADAAVHBCVRI9IRWXLTDBJMREFIUBCDMMOKHLWAENHKQVXRGIMGFVJI9ZZRCRFWFOOBUHJOCEZMILTQHI';
+      const publicState = await init('https://nodes.devnet.iota.org:443',seed);
       
-      const currentPublicRoot = Mam.getRoot(this.state.mamPublicState);
-      this.setState({mamPublicRoot : currentPublicRoot})
-
-      this.fetchPublicChannel(); 
-      setInterval(this.fetchPublicChannel,30000);
+      this.setState({ppChannel:'MFGFYCNAPQUMXTTWRMVUZQCTGRVKTEOCVHOMJJBDZNKPWF9JGBQXFWMMZLEOW9EZNBOQSRVVLYZRHRXEA'});
+      await this.fetchPublicChannel(); 
+      await this.fetchPublicChannel(); 
+      await this.fetchPublicChannel(); 
+      await this.fetchPublicChannel(); 
+      //setInterval(this.fetchPublicChannel,30000);
     }
 
+    //UAYHORUZYANPN9OMVDHZRPQVWNYAGVJNGCVMFQLTQOJWIKGVEBUVNKZNWQXX9EZGBXDOLUPGBCRHU9WUE
     async fetchPublicChannel(){
-      const resp = await Mam.fetch(this.state.currentPublicRoot, 'public'); 
-      this.setState({currentPublicRoot:resp.nextRoot});
-      console.log(resp);
+      
+      console.log("fetching on " + this.state.ppChannel);
+      const res = await fetch(this.state.ppChannel);
+      this.setState({ppChannel:res.channel});
+      console.log(res);
+      console.log("new fetching on " + res.channel);
+      return res;
     }
 
 
