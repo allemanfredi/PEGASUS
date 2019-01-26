@@ -38,7 +38,7 @@ export default class Map extends Component {
     return (
       <Marker 
         key={device.name}
-        longitude={parseInt(device.long)}
+        longitude={parseInt(device.lon)}
         latitude={parseInt(device.lat)} 
         >
         <Pin size={20} onClick={() => this.setState({popupInfo: device})} />
@@ -52,13 +52,18 @@ export default class Map extends Component {
     return popupInfo && (
       <Popup tipSize={5}
         anchor="top"
-        longitude={popupInfo.long}
+        longitude={popupInfo.lon}
         latitude={popupInfo.lat}
         onClose={() => this.setState({popupInfo: null})} >
         <div class="container-popup">
           <div class="row">
             <div class="col-12 text-center">
               {popupInfo.name}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 text-center">
+              {popupInfo.price} + i
             </div>
           </div>
           <div class="row">

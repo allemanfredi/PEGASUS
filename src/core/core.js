@@ -10,12 +10,11 @@ const iotaInit = async provider => {
             iota = composeAPI({
                 provider : provider
             })
-            resolve();
+            resolve(iota);
         }catch(e){
             reject(e);
         }  
-    })
-    
+    });
 }
 
 const getNodeInfo = async () => {
@@ -55,7 +54,7 @@ const prepareTransfer = async (transfer,ret) => {
     const transfers = [{
         address: transfer.to,
         value: parseInt(transfer.value), 
-        tag: '', // optional tag of `0-27` trytes
+        tag: asciiToTrytes(JSON.stringify(transfer.tag)), // optional tag of `0-27` trytes
         message: asciiToTrytes(JSON.stringify(transfer.message)) // optional message in trytes
     }]
 
@@ -185,6 +184,7 @@ const findTransactionObject = async (options) => {
 
 
 
+
 export {getNewAddress, 
         getNodeInfo,
         iotaInit,
@@ -198,4 +198,5 @@ export {getNewAddress,
         replayBundle,
         getAccountDataSync,
         isPromotable,
-        findTransactionObject};
+        findTransactionObject,
+        };
