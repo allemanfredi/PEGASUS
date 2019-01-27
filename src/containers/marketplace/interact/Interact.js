@@ -85,6 +85,8 @@ class Interact extends Component {
       const key = await getKey();
       const seed = aes256decrypt(this.props.account.seed,key);
 
+      console.log(this.props.account);
+
       //message to send
       const message = {
         publicKey : this.props.account.marketplace.keys.public

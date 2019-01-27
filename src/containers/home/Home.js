@@ -1,7 +1,7 @@
 import React , { Component } from 'react';
 import {getAccountData} from '../../core/core';
 import {setCurrentAccount,getCurrentAccount,generateSeed,updateDataAccount,addAccount,getKey,getCurrentNewtwork,updateNameAccount} from '../../wallet/wallet'
-import {aes256decrypt,aes256encrypt,sha256} from '../../utils/crypto';
+import {aes256decrypt,aes256encrypt,sha256,generateKeys} from '../../utils/crypto';
 
 
 import Send from '../send/Send';
@@ -135,7 +135,8 @@ class Home extends Component {
             seed : eseed,
             data : data,
             id : sha256(name),
-            network : network //NUOVA NETWORK
+            network : network, //NUOVA NETWORK
+            marketplace : {'keys' : generateKeys() , 'channels':[]}
         }
         await addAccount (account,network,true);
         resolve(account);
