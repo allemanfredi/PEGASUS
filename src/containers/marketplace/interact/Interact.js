@@ -1,11 +1,12 @@
 import React , { Component } from 'react';
-import Map from '../../../components/map/Map'
-
-import AddDevice from '../addDevice/AddDevice';
-import Alert from '../../../components/alert/Alert';
-
 import {init,fetch,send} from'../../../pp/pp';
 import {fetchDevices} from'../../../pp/devices';
+import {prepareTransfer} from '../../../core/core';
+import {getKey} from '../../../wallet/wallet';
+import {aes256decrypt} from '../../../utils/crypto';
+
+import Map from '../../../components/map/Map'
+import Alert from '../../../components/alert/Alert';
 
 import './Interact.css'
 
@@ -32,6 +33,9 @@ class Interact extends Component {
 
     async componentDidMount(){
 
+      this.setState({alertText:'Fetching devices...'});
+      this.setState({alertType:'loading'});
+      this.setState({showAlert:true});
       const seed = "999999999999999999999999999999999999999999999999999999999999999999999999999999999"
       await init('https://nodes.devnet.iota.org:443',seed);
       
@@ -46,8 +50,10 @@ class Interact extends Component {
 
       
       //start fetching devices
-      this.findDevices();
-      setInterval(this.findDevices,40000);
+      await this.findDevices();
+      this.setState({showAlert:false});
+
+      //setInterval(this.findDevices,40000);
     }
 
     //UAYHORUZYANPN9OMVDHZRPQVWNYAGVJNGCVMFQLTQOJWIKGVEBUVNKZNWQXX9EZGBXDOLUPGBCRHU9WUE
@@ -66,15 +72,44 @@ class Interact extends Component {
       const devices = await fetchDevices(this.props.network.provider);
       console.log(devices);
       this.setState({devices:devices});
+      return;
     }
 
 
-    
+    async onBuy(device){
+      this.setState({alertText:'Paying the device...'});
+      this.setState({alertType:'loading'});
+      this.setState({showAlert:true});
 
-    onBuy(device){
-      console.log("buy");
-      console.log(device);
+      //decrypt seed
+      const key = await getKey();
+      const seed = aes256decrypt(this.props.account.seed,key);
+
+      //message to send
+      const message = {
+        publicKey : this.props.account.marketplace.keys.public
+      }
+
+      const transfer = {
+        seed : seed,
+        to : device.address,
+        value : device.price,
+        message : message,
+        tag : "pegasus",
+        difficulty : 9 //for now testnet
+      }
+      
+      prepareTransfer( transfer , (bundle , error) => {
+        if ( error ){
+          this.setState({alertText:'Payment not successful'});
+          this.setState({alertType:'error'});
+        }else{
+          this.setState({alertText:'payment successful'});
+          this.setState({alertType:'success'});
+        }
+      })
     }
+
     onCloseAlert(){
       this.setState({showAlert:false});
     }

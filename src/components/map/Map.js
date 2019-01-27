@@ -26,7 +26,7 @@ export default class Map extends Component {
         width: 500,
         height: 500,
       },
-      popupInfo: null
+      selectedDevice: null
     };
   }
 
@@ -41,34 +41,34 @@ export default class Map extends Component {
         longitude={parseInt(device.lon)}
         latitude={parseInt(device.lat)} 
         >
-        <Pin size={20} onClick={() => this.setState({popupInfo: device})} />
+        <Pin size={20} onClick={() => this.setState({selectedDevice: device})} />
       </Marker>
     );
   }
 
   renderPopup() {
-    const {popupInfo} = this.state;
+    const {selectedDevice} = this.state;
 
-    return popupInfo && (
+    return selectedDevice && (
       <Popup tipSize={5}
         anchor="top"
-        longitude={popupInfo.lon}
-        latitude={popupInfo.lat}
-        onClose={() => this.setState({popupInfo: null})} >
+        longitude={parseInt(selectedDevice.lon)}
+        latitude={parseInt(selectedDevice.lat)}
+        onClose={() => this.setState({selectedDevice: null})} >
         <div class="container-popup">
           <div class="row">
             <div class="col-12 text-center">
-              {popupInfo.name}
+              {selectedDevice.name}
             </div>
           </div>
           <div class="row">
             <div class="col-12 text-center">
-              {popupInfo.price} + i
+              {selectedDevice.price ? selectedDevice.price : 0} i
             </div>
           </div>
           <div class="row">
             <div class="col-6 text-center">
-              <button onClick={() => this.props.onBuy(popupInfo)} class="btn">Buy stream <i class="fa fa-check" ></i></button>
+              <button onClick={() => this.props.onBuy(selectedDevice)} class="btn">Buy stream <i class="fa fa-check" ></i></button>
             </div>
             <div class="col-6 text-center">
               <button class="btn">Close <i class="fa fa-times" ></i></button>
