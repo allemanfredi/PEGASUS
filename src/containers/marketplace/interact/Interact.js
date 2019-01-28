@@ -1,6 +1,6 @@
 import React , { Component } from 'react';
 import {init,fetch,send} from'../../../pp/pp';
-import {fetchDevices} from'../../../pp/devices';
+import {fetchDevices,receiveFirstRoot} from'../../../pp/devices';
 import {prepareTransfer} from '../../../core/core';
 import {getKey} from '../../../wallet/wallet';
 import {aes256decrypt} from '../../../utils/crypto';
@@ -17,6 +17,7 @@ class Interact extends Component {
       super(props, context);
 
       this.fetchPublicChannel = this.fetchPublicChannel.bind(this);
+      this.initializeChannels = this.initializeChannels.bind(this);
       this.findDevices = this.findDevices.bind(this);
       this.onBuy = this.onBuy.bind(this);
       this.onCloseAlert = this.onCloseAlert.bind(this);
@@ -53,6 +54,10 @@ class Interact extends Component {
       await this.findDevices();
       this.setState({showAlert:false});
 
+      //receiving the first root after having payed the device
+      await this.initializeChannels();
+      setInterval(() => {this.initializeChannels()}, 20000);
+
       //setInterval(this.findDevices,40000);
     }
 
@@ -67,12 +72,18 @@ class Interact extends Component {
       return res;
     }
 
-
+    //find the device's coordinates
     async findDevices(){
       const devices = await fetchDevices(this.props.network.provider);
       console.log(devices);
       this.setState({devices:devices});
       return;
+    }
+
+    //get the first root after having payed the device
+    async initializeChannels(){
+      const channels = await receiveFirstRoot(this.props.network.provider,this.props.account.data.addresses);
+      console.log(channels);
     }
 
 
@@ -89,7 +100,8 @@ class Interact extends Component {
 
       //message to send
       const message = {
-        publicKey : this.props.account.marketplace.keys.public
+        publicKey : this.props.account.marketplace.keys.public,
+        address : this.props.account.data.latestAddress
       }
 
       const transfer = {
