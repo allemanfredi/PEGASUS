@@ -4,20 +4,19 @@ const {trytesToAscii} = require('@iota/converter')
 
 const fetchDevices = async provider => {
    
-    const options = {tags : ["GADDTCVCPCGDIDGDGA999999999"]};
+    const options = {tags : ["GADDTCVCPCGDIDGDGDGA9999999"]};
    
     const iota = await iotaInit('https://nodes.devnet.iota.org:443')
     const transactions = await iota.findTransactionObjects(options);
-    console.log(transactions)
 
     const devices = [];
     transactions.forEach ( transaction => {
         const device = trytesToAscii(transaction.signatureMessageFragment.substring(0,transactions[0].signatureMessageFragment.length-1));
         try{
-            const obj = JSON.parse(device.replace(/\0.*$/g,''))
-            //if ( obj.name && obj.address && obj.lat && obj.lon ){
+            const obj = JSON.parse(device.replace(/\0.*$/g,''));
+            if ( obj.name && obj.address && obj.lat && obj.lon ){
                 devices.push(obj);
-            //}
+            }
         }catch(err){}
     })
         
@@ -25,11 +24,10 @@ const fetchDevices = async provider => {
     const arrayDeviceName = []
     const newDevices = []
     devices.forEach ( device => {
-        if ( device.message )
-            if ( !arrayDeviceName.includes(device.message.name) ){
-                arrayDeviceName.push(device.message.name);
-                newDevices.push(device.message);
-            }
+        if ( !arrayDeviceName.includes(device.name) ){
+            arrayDeviceName.push(device.name);
+            newDevices.push(device);
+        }
     })
     return newDevices;
 }
@@ -38,26 +36,29 @@ const fetchDevices = async provider => {
 
 const receiveFirstRoot = async (provider,addresses) => {
 
+    const iota = await iotaInit('https://nodes.devnet.iota.org:443');
+
     const options = {
-        addresses : addresses,
-        tags : ["GADDTCVCPCGDIDGDGA999999999"]};
-   
-    const iota = await iotaInit('https://nodes.devnet.iota.org:443')
+        addresses : addresses
+    };
     const transactions = await iota.findTransactionObjects(options);
-    console.log(transactions)
     
     const channels = [];
+    const deviceNames = [];
     transactions.forEach ( transaction => {
         try{
-            const channel = trytesToAscii(transaction.signatureMessageFragment.substring(0,transactions[0].signatureMessageFragment.length-1)).replace(/\0.*$/g,'');
-            console.log(channel);
-            if ( channel.state && channel.deviceName ){
+            const channel = JSON.parse(trytesToAscii(transaction.signatureMessageFragment.substring(0,transactions[0].signatureMessageFragment.length-1)).replace(/\0.*$/g,''));
+            if ( channel.next_root && channel.deviceName && !deviceNames.includes(channel.deviceName) ){
                 channels.push(channel);
+                deviceNames.push(channel.deviceName);
             }
         }catch(err){}
     });
     return channels;
 }
+
+
+
 
 
 export {

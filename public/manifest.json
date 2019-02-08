@@ -19,6 +19,7 @@
   "icons": { 
     "64": "./material/logo/pegasus-64.png",
     "128": "./material/logo/pegasus-128.png" 
-  }
+  },
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 
 }

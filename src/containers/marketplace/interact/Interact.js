@@ -1,5 +1,5 @@
 import React , { Component } from 'react';
-import {init,fetch,send} from'../../../pp/pp';
+/*import {init,fetch,send} from'../../../pp/pp';*/
 import {fetchDevices,receiveFirstRoot} from'../../../pp/devices';
 import {prepareTransfer} from '../../../core/core';
 import {getKey} from '../../../wallet/wallet';
@@ -10,17 +10,19 @@ import Alert from '../../../components/alert/Alert';
 
 import './Interact.css'
 
+import {init,fetch,publish} from '../../../mam/mam';
 
 class Interact extends Component {
 
     constructor(props, context) {
       super(props, context);
 
-      this.fetchPublicChannel = this.fetchPublicChannel.bind(this);
+      //this.fetchPublicChannel = this.fetchPublicChannel.bind(this);
       this.initializeChannels = this.initializeChannels.bind(this);
       this.findDevices = this.findDevices.bind(this);
       this.onBuy = this.onBuy.bind(this);
       this.onCloseAlert = this.onCloseAlert.bind(this);
+      this.fetchChannels = this.fetchChannels.bind(this);
 
       this.state = {
         interval : null,
@@ -29,6 +31,8 @@ class Interact extends Component {
         alertText : '',
         alertType : '',
         ppChannel : '',
+        channels : [],
+        messages : [],
       }
     }
 
@@ -37,18 +41,6 @@ class Interact extends Component {
       this.setState({alertText:'Fetching devices...'});
       this.setState({alertType:'loading'});
       this.setState({showAlert:true});
-      const seed = "999999999999999999999999999999999999999999999999999999999999999999999999999999999"
-      await init('https://nodes.devnet.iota.org:443',seed);
-      
-      
-
-      /*this.setState({ppChannel:'XBDLRKBYFTUTJPBUZJJRQK9WAGMIPFBXWCZSFAQPFCDESVCHCRDOWGFTRNRFEEEAXBHPHXIXBTWTBEYNA'});
-      await this.fetchPublicChannel(); 
-      await this.fetchPublicChannel(); 
-      await this.fetchPublicChannel(); 
-      await this.fetchPublicChannel(); */
-      //setInterval(this.fetchPublicChannel,30000);
-
       
       //start fetching devices
       await this.findDevices();
@@ -56,20 +48,28 @@ class Interact extends Component {
 
       //receiving the first root after having payed the device
       await this.initializeChannels();
-      setInterval(() => {this.initializeChannels()}, 20000);
+      //setInterval(() => {this.initializeChannels()}, 30000);
 
-      //setInterval(this.findDevices,40000);
+      await this.fetchChannels();
+      setInterval(this.fetchChannels,60000);
     }
 
-    //UAYHORUZYANPN9OMVDHZRPQVWNYAGVJNGCVMFQLTQOJWIKGVEBUVNKZNWQXX9EZGBXDOLUPGBCRHU9WUE
-    async fetchPublicChannel(){
+    appendToMessages = message => {
       
-      console.log("fetching on " + this.state.ppChannel);
-      const res = await fetch(this.state.ppChannel);
-      console.log(res);
-      if ( res.length > 0 ) this.setState({ppChannel:res[res.length-1].data.state.nextChannel});
-      
-      return res;
+      console.log(message);
+      this.setState({ messages: [...this.state.messages, message] });
+    }
+
+
+    async fetchChannels(){
+      const app = this.state.channels.slice();
+      for ( let channel of app ){
+        console.log("call");
+        const result = await fetch("https://nodes.devnet.iota.org:443",channel.next_root, 'public', null,this.appendToMessages);
+        channel.next_root = result.nextRoot;
+        console.log(result.messages);
+      }
+      this.setState({channels:app});
     }
 
     //find the device's coordinates
@@ -83,6 +83,7 @@ class Interact extends Component {
     //get the first root after having payed the device
     async initializeChannels(){
       const channels = await receiveFirstRoot(this.props.network.provider,this.props.account.data.addresses);
+      this.setState({channels:channels});
       console.log(channels);
     }
 
@@ -96,8 +97,6 @@ class Interact extends Component {
       const key = await getKey();
       const seed = aes256decrypt(this.props.account.seed,key);
 
-      console.log(this.props.account);
-
       //message to send
       const message = {
         publicKey : this.props.account.marketplace.keys.public,
@@ -109,7 +108,7 @@ class Interact extends Component {
         to : device.address,
         value : device.price,
         message : message,
-        tag : "pegasus",
+        tag : "",
         difficulty : 9 //for now testnet
       }
       
