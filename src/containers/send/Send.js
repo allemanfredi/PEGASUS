@@ -56,17 +56,15 @@ class Send extends Component {
       
       this.setState({isLoading:true});
 
-      //get user seed in order to complete the transfer
-      let account = this.props.account;
-
       //decrypt seed;
       const key = await getKey();
-      const seed = aes256decrypt(account.seed,key);
+      const seed = aes256decrypt(this.props.account.seed,key);
       this.setState({seed : seed})
 
       //const address = 'IETGETEQSAAJUCCKDVBBGPUNQVUFNTHNMZYUCXXBFXYOOOQOHC9PTMP9RRIMIOQRDPATHPVQXBRXIKFDDRDPQDBWTY'
-      let transfer = {
+      const transfer = {
         seed : seed,
+        tag : "",
         to : this.state.dstAddress,
         value : this.state.value,
         message : this.state.message,

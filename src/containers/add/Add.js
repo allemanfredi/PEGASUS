@@ -95,6 +95,7 @@ class Add extends Component {
 
                 const key = await getKey()
                 const eseed = aes256encrypt(seed,key);
+
         
                 //get all account data
                 const data = await getAccountData(seed);

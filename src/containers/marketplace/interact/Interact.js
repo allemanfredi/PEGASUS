@@ -1,6 +1,6 @@
 import React , { Component } from 'react';
 /*import {init,fetch,send} from'../../../pp/pp';*/
-import {fetchDevices,receiveFirstRoot} from'../../../pp/devices';
+import {fetchDevices,receiveSideKeyAndFirstRoot} from'../../../pp/devices';
 import {prepareTransfer} from '../../../core/core';
 import {getKey} from '../../../wallet/wallet';
 import {aes256decrypt} from '../../../utils/crypto';
@@ -18,10 +18,11 @@ class Interact extends Component {
       super(props, context);
 
       //this.fetchPublicChannel = this.fetchPublicChannel.bind(this);
-      this.initializeChannels = this.initializeChannels.bind(this);
+      //this.initializeChannels = this.initializeChannels.bind(this);
       this.findDevices = this.findDevices.bind(this);
       this.onBuy = this.onBuy.bind(this);
       this.onCloseAlert = this.onCloseAlert.bind(this);
+      this.getSideKeyAndRoot = this.getSideKeyAndRoot.bind(this);
       this.fetchChannels = this.fetchChannels.bind(this);
 
       this.state = {
@@ -30,9 +31,7 @@ class Interact extends Component {
         showAlert : false,
         alertText : '',
         alertType : '',
-        ppChannel : '',
         channels : [],
-        messages : [],
       }
     }
 
@@ -44,29 +43,27 @@ class Interact extends Component {
       
       //start fetching devices
       await this.findDevices();
-      this.setState({showAlert:false});
-
-      //receiving the first root after having payed the device
-      await this.initializeChannels();
-      //setInterval(() => {this.initializeChannels()}, 30000);
+      await this.getSideKeyAndRoot();
+      t
+      his.setState({showAlert:false});
 
       await this.fetchChannels();
       setInterval(this.fetchChannels,60000);
     }
 
     appendToMessages = message => {
-      
       console.log(message);
       this.setState({ messages: [...this.state.messages, message] });
     }
 
 
     async fetchChannels(){
+      console.log("channels");
+      console.log(this.state.channels);
       const app = this.state.channels.slice();
       for ( let channel of app ){
-        console.log("call");
-        const result = await fetch("https://nodes.devnet.iota.org:443",channel.next_root, 'public', null,this.appendToMessages);
-        channel.next_root = result.nextRoot;
+        const result = await fetch("https://nodes.thetangle.org:443",channel.root, 'restricted', channel.sidekey ,this.appendToMessages);
+        channel.root = result.nextRoot;
         console.log(result.messages);
       }
       this.setState({channels:app});
@@ -80,11 +77,10 @@ class Interact extends Component {
       return;
     }
 
-    //get the first root after having payed the device
-    async initializeChannels(){
-      const channels = await receiveFirstRoot(this.props.network.provider,this.props.account.data.addresses);
+    //get the first root after having payed the device and the sidekey
+    async getSideKeyAndRoot(){
+      const channels = await receiveSideKeyAndFirstRoot(this.props.network.provider,this.props.account.data.addresses);
       this.setState({channels:channels});
-      console.log(channels);
     }
 
 
@@ -97,19 +93,13 @@ class Interact extends Component {
       const key = await getKey();
       const seed = aes256decrypt(this.props.account.seed,key);
 
-      //message to send
-      const message = {
-        publicKey : this.props.account.marketplace.keys.public,
-        address : this.props.account.data.latestAddress
-      }
-
       const transfer = {
         seed : seed,
         to : device.address,
         value : device.price,
-        message : message,
+        message : "",
         tag : "",
-        difficulty : 9 //for now testnet
+        difficulty : 14 //for now testnet
       }
       
       prepareTransfer( transfer , (bundle , error) => {
@@ -117,8 +107,24 @@ class Interact extends Component {
           this.setState({alertText:'Payment not successful'});
           this.setState({alertType:'error'});
         }else{
-          this.setState({alertText:'payment successful'});
-          this.setState({alertType:'success'});
+
+          const message = {
+            publicKey : this.props.account.marketplace.keys.publicKey,
+            address : this.props.account.data.latestAddress,
+          }
+
+          const transferPublicKey = {
+            seed : seed,
+            to : device.address,
+            value : 0,
+            message : message,
+            tag : "",
+            difficulty : 14
+          }
+          prepareTransfer( transferPublicKey , (bundle , error) => {
+            this.setState({alertText:'payment successful'});
+            this.setState({alertType:'success'});
+          });
         }
       })
     }
@@ -133,8 +139,6 @@ class Interact extends Component {
           <div class="container-map">
             <Map devices={this.state.devices}
                  onBuy={this.onBuy}/>
-
-
 
           </div> 
           {this.state.showAlert ?  <Alert text={this.state.alertText} type={this.state.alertType} onClose={this.onCloseAlert}/> : ''}

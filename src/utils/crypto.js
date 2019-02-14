@@ -1,4 +1,6 @@
+const NodeRSA = require('node-rsa');
 const crypto = require('crypto');
+
 
 
 /**
@@ -66,13 +68,11 @@ const sha256 = (text) => {
  * @returns {Object} containing the keys
  */
  const generateKeys = () => {
-    const echd = crypto.createECDH('secp256k1');
-    echd.generateKeys();
-    const keys = {
-        'private' : echd.getPrivateKey(),
-        'public' : echd.getPublicKey()
-    }
-    return keys;
+    const key = new NodeRSA();
+    key.generateKeyPair();
+    const publicKey = key.exportKey('pkcs8-public-der');
+    const privateKey = key.exportKey('pkcs1-der');
+    return { privateKey,publicKey};
  }
 
 /**

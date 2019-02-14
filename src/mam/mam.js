@@ -19,12 +19,7 @@ const publish = async (packet,state) => {
     return message;
 }
 
-/*const fetch = async (root,mode,secretKey) => {
-    const message = await Mam.fetch(root, mode, secretKey);
-    console.log(root);
-    console.log(message);
-    return message;
-}*/
+
 
 const fetch = (provider, root, mode, key, reportEvent) => {
     if (!provider || !root) return;
@@ -34,10 +29,10 @@ const fetch = (provider, root, mode, key, reportEvent) => {
         const convertAndReport = event => reportEvent(JSON.parse(trytesToAscii(event)))
         //await Mam.fetch(root, mode, null, convertAndReport);
 
-        const result = await Mam.fetch(root, mode)
+        const result = await Mam.fetch(root,mode,key)
         //result.messages.forEach(message => console.log('Fetched and parsed', JSON.parse(trytesToAscii(message)), '\n'))
         console.log(result);
-        resolve();
+        resolve(result);
       } catch (error) {
         console.log('MAM fetch error', error);
         reject();

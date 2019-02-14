@@ -6,7 +6,7 @@ const fetchDevices = async provider => {
    
     const options = {tags : ["GADDTCVCPCGDIDGDGDGA9999999"]};
    
-    const iota = await iotaInit('https://nodes.devnet.iota.org:443')
+    const iota = await iotaInit('https://nodes.thetangle.org:443')
     const transactions = await iota.findTransactionObjects(options);
 
     const devices = [];
@@ -34,34 +34,31 @@ const fetchDevices = async provider => {
 
 
 
-const receiveFirstRoot = async (provider,addresses) => {
 
-    const iota = await iotaInit('https://nodes.devnet.iota.org:443');
+const receiveSideKeyAndFirstRoot = async (provider,addresses) => {
+    const iota = await iotaInit('https://nodes.thetangle.org:443');
 
     const options = {
         addresses : addresses
     };
     const transactions = await iota.findTransactionObjects(options);
-    
-    const channels = [];
-    const deviceNames = [];
-    transactions.forEach ( transaction => {
+    const res = [];
+
+    transactions.forEach( transaction => {
         try{
-            const channel = JSON.parse(trytesToAscii(transaction.signatureMessageFragment.substring(0,transactions[0].signatureMessageFragment.length-1)).replace(/\0.*$/g,''));
-            if ( channel.next_root && channel.deviceName && !deviceNames.includes(channel.deviceName) ){
-                channels.push(channel);
-                deviceNames.push(channel.deviceName);
+            const message = JSON.parse(trytesToAscii(transaction.signatureMessageFragment.substring(0,transactions[0].signatureMessageFragment.length-1)).replace(/\0.*$/g,''));
+            if ( message.sidekey && message.root ){
+                res.push(message);
             }
         }catch(err){}
     });
-    return channels;
+    return res;
 }
-
 
 
 
 
 export {
     fetchDevices,
-    receiveFirstRoot
+    receiveSideKeyAndFirstRoot
 }
