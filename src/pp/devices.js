@@ -34,7 +34,6 @@ const fetchDevices = async provider => {
 
 
 
-
 const receiveSideKeyAndFirstRoot = async (provider,addresses) => {
     const iota = await iotaInit('https://nodes.thetangle.org:443');
 
@@ -54,7 +53,6 @@ const receiveSideKeyAndFirstRoot = async (provider,addresses) => {
     });
     return res;
 }
-
 
 
 

@@ -1,29 +1,30 @@
 import React , { Component } from 'react';
-/*import {init,fetch,send} from'../../../pp/pp';*/
 import {fetchDevices,receiveSideKeyAndFirstRoot} from'../../../pp/devices';
 import {prepareTransfer} from '../../../core/core';
 import {getKey} from '../../../wallet/wallet';
 import {aes256decrypt} from '../../../utils/crypto';
+import {init,fetch,publish} from '../../../mam/mam';
 
 import Map from '../../../components/map/Map'
 import Alert from '../../../components/alert/Alert';
+import Data from '../data/Data'
 
 import './Interact.css'
 
-import {init,fetch,publish} from '../../../mam/mam';
+
 
 class Interact extends Component {
 
     constructor(props, context) {
       super(props, context);
 
-      //this.fetchPublicChannel = this.fetchPublicChannel.bind(this);
-      //this.initializeChannels = this.initializeChannels.bind(this);
       this.findDevices = this.findDevices.bind(this);
       this.onBuy = this.onBuy.bind(this);
       this.onCloseAlert = this.onCloseAlert.bind(this);
       this.getSideKeyAndRoot = this.getSideKeyAndRoot.bind(this);
       this.fetchChannels = this.fetchChannels.bind(this);
+      this.showData = this.showData.bind(this);
+      this.onCloseData = this.onCloseData.bind(this);
 
       this.state = {
         interval : null,
@@ -31,24 +32,27 @@ class Interact extends Component {
         showAlert : false,
         alertText : '',
         alertType : '',
+        showData : false,
         channels : [],
       }
     }
 
     async componentDidMount(){
 
-      this.setState({alertText:'Fetching devices...'});
+      this.setState({alertText:'Finding devices...'});
       this.setState({alertType:'loading'});
       this.setState({showAlert:true});
       
       //start fetching devices
       await this.findDevices();
-      await this.getSideKeyAndRoot();
-      t
-      his.setState({showAlert:false});
 
+      this.setState({alertText:'Getting root and sidekey...'});
+      await this.getSideKeyAndRoot();
+
+      this.setState({alertText:'Fetching devices...'});
       await this.fetchChannels();
       setInterval(this.fetchChannels,60000);
+      this.setState({showAlert:false});
     }
 
     appendToMessages = message => {
@@ -59,14 +63,19 @@ class Interact extends Component {
 
     async fetchChannels(){
       console.log("channels");
-      console.log(this.state.channels);
       const app = this.state.channels.slice();
       for ( let channel of app ){
         const result = await fetch("https://nodes.thetangle.org:443",channel.root, 'restricted', channel.sidekey ,this.appendToMessages);
+        
         channel.root = result.nextRoot;
-        console.log(result.messages);
+        
+        if ( !channel['messages'] ){
+          channel['messages'] = [];
+        }
+        result.messages.forEach(message => channel['messages'].push(message));
       }
       this.setState({channels:app});
+      console.log(this.state.channels);
     }
 
     //find the device's coordinates
@@ -129,9 +138,9 @@ class Interact extends Component {
       })
     }
 
-    onCloseAlert(){
-      this.setState({showAlert:false});
-    }
+    onCloseAlert(){this.setState({showAlert:false});}
+    showData(){this.setState({showData:true})}
+    onCloseData(){this.setState({showData:false})}
 
     render() {
       return (
@@ -142,6 +151,8 @@ class Interact extends Component {
 
           </div> 
           {this.state.showAlert ?  <Alert text={this.state.alertText} type={this.state.alertType} onClose={this.onCloseAlert}/> : ''}
+          {this.state.showData ?  <Data data={this.state.channels} onClose={this.onCloseData}/> : ''}
+
         </div>
         
       );

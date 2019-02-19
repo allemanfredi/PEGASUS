@@ -295,9 +295,7 @@ const isSeedValid = (seed) => {
         if ( values.indexOf(c) === -1)
             return false
     });
-
     return true;
-
 }
 
 /*controls that uses network have been made in order to distinguish between mainnet and testnet

@@ -68,3 +68,7 @@
     transform: scaleX(1);
 }
 
+
+.btn-close{
+    margin-top:10px;
+}

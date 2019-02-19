@@ -47,7 +47,7 @@ class Home extends Component {
       this.onClickMap = this.onClickMap.bind(this);
       this.onCloseDetails = this.onCloseDetails.bind(this);
       this.onReload = this.onReload.bind(this);
-      this.onClickAddDevice = this.onClickAddDevice.bind(this);
+      this.onClickShowData = this.onClickShowData.bind(this);
       this.changeNetwork = this.changeNetwork.bind(this);
 
 
@@ -270,8 +270,8 @@ class Home extends Component {
       this.setState({showDetails:false});
     }
 
-    onClickAddDevice(){
-      this.interact.current.addDevice();
+    onClickShowData(){
+      this.interact.current.showData();
     }
 
 
@@ -282,11 +282,11 @@ class Home extends Component {
           <Navbar showBtnSettings={this.state.showHome} 
                   showBtnMarker={this.state.showHome} 
                   showBtnBack={!this.state.showHome} 
-                  showBtnAdd={this.state.showInteract}
+                  showBtnData={this.state.showInteract}
                   text={this.state.showHome ? this.state.account.name : (this.state.showSend ? 'Send' : (this.state.showReceive ? 'Receive' : this.state.showAdd ? 'Add account' : (this.state.showInteract ? 'Buy data' : '')))}
                   onClickSettings={this.onClickSettings}
                   onClickMap={this.onClickMap}
-                  onClickAddDevice={this.onClickAddDevice}
+                  onClickShowData={this.onClickShowData}
                   onBack={this.onBack}>
           </Navbar>
           

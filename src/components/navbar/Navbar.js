@@ -35,9 +35,9 @@ export default class Navbar extends Component {
                 </div>
             : ''}
 
-            { this.props.showBtnAdd ? 
+            { this.props.showBtnData ? 
                 <div class="col-2">
-                    <button onClick={() => this.props.onClickAddDevice()} class="btn btn-add"><i class="fa fa-plus"></i></button> 
+                    <button onClick={() => this.props.onClickShowData()} class="btn btn-add"><i class="fa fa-database"></i></button> 
                 </div>
             : ''}
             </div>

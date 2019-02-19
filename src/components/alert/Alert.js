@@ -20,7 +20,7 @@ export default class Alert extends Component {
                 <div class="container-btn-close-alert">
                     <div class="row">
                         <div class="col-2">
-                            <button onClick={() => this.props.onClose()} type="button" class="close btn-close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <button onClick={() => this.props.onClose()} type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         </div>
                         <div class="col-10"/>
 
