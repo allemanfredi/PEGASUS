@@ -2,7 +2,7 @@ import {decryptWithRsaPrivateKey} from '../utils/crypto'
 const {iotaInit,getMessage} = require('../core/core');
 const {trytesToAscii} = require('@iota/converter')
 
-const tag = "GADDTCVCPCGDIDGDJDVAGA99999"
+const tag = "GADDTCVCPCGDIDGDJDVAUAGA999"
 
 const fetchDevices = async provider => {
    
