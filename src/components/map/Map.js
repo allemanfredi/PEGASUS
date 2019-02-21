@@ -63,6 +63,11 @@ export default class Map extends Component {
           </div>
           <div class="row">
             <div class="col-12 text-center">
+              {selectedDevice.description} 
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 text-center">
               {selectedDevice.price ? selectedDevice.price : 0} i
             </div>
           </div>

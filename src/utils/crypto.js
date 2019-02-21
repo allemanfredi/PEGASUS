@@ -70,33 +70,36 @@ const sha256 = (text) => {
  const generateKeys = () => {
     const key = new NodeRSA();
     key.generateKeyPair();
-    const publicKey = key.exportKey('pkcs8-public-der');
-    const privateKey = key.exportKey('pkcs1-der');
-    return { privateKey,publicKey};
+    const keys = {
+        privateKey : key.exportKey('pkcs8-private'),
+        publicKey : key.exportKey('pkcs8-public')
+    }
+    return keys;
  }
 
 /**
  * Get random values 
  * @param {Object} toEcrypt - object to encrypt
- * @param {Uint32Array} publicKey - public key
+ * @param {String} PEM publicKey - public key
  * @returns {String} encrypted text
  */
- const encryptWithRsaPublicKey = (toEncrypt, publicKey) => {
-    const buffer = new Buffer(toEncrypt);
-    const encrypted = crypto.publicEncrypt(publicKey, buffer);
-    return encrypted.toString("base64");
+ const encryptWithRsaPublicKey = (message, publicKey) => {
+    const key = new NodeRSA();
+	key.importKey(publicKey, 'pkcs8-public');
+	return key.encrypt(message,'base64');
 };
 
 /**
  * Get random values 
  * @param {Object} toDEcrypt - object to cencrypt
- * @param {Uint32Array} publicKey - private key
+ * @param {String} PEM publicKey - private key
  * @returns {String} decrypted text
  */
-const decryptWithRsaPrivateKey = (toDecrypt, privateKey) => {
-    const buffer = new Buffer(toDecrypt, "base64");
-    const decrypted = crypto.privateDecrypt(privateKey, buffer);
-    return decrypted.toString("utf8");
+const decryptWithRsaPrivateKey = (message, privateKey) => {
+    const key = new NodeRSA();
+	key.importKey(privateKey, 'pkcs8-private');
+    const res =  key.decrypt(message,'utf8');
+    return res;
 };
 
  //https://stackoverflow.com/questions/8750780/encrypting-data-with-public-key-in-node-js

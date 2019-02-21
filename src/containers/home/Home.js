@@ -218,13 +218,8 @@ class Home extends Component {
       this.setState({showHome : true});
     }
 
-    onClickSettings(){
-      this.setState({showSettings:true});
-    }
-
-    onCloseSettings(){
-      this.setState({showSettings:false});
-    }
+    onClickSettings(){this.setState({showSettings:true});}
+    onCloseSettings(){this.setState({showSettings:false});}
 
     onGoDetails(transfer){
       clearInterval(this.state.interval);
@@ -251,13 +246,8 @@ class Home extends Component {
       this.props.onLogout();
     }
 
-    onShowEdit(){
-      this.setState({showEdit:true});
-    }
-
-    onCloseEdit(){
-      this.setState({showEdit:false});
-    }
+    onShowEdit(){this.setState({showEdit:true});}
+    onCloseEdit(){this.setState({showEdit:false});}
 
     onClickMap(){
       clearInterval(this.state.interval);
@@ -266,13 +256,8 @@ class Home extends Component {
       this.setState({showInteract:true});
     }
 
-    onCloseDetails(){
-      this.setState({showDetails:false});
-    }
-
-    onClickShowData(){
-      this.interact.current.showData();
-    }
+    onCloseDetails(){this.setState({showDetails:false});}
+    onClickShowData(){this.interact.current.showData();}
 
 
 

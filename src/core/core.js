@@ -1,6 +1,6 @@
 import { composeAPI } from '@iota/core'
 import { asciiToTrytes } from '@iota/converter'
-
+import {extractJson} from '@iota/extract-json';
 
 let iota;
 
@@ -182,7 +182,17 @@ const findTransactionObject = async (options) => {
 	});
 }
 
-
+const getMessage = async tail => {
+    return new Promise ( async (resolve,reject) => {
+      const bundle = await getBundle(tail);
+      try{
+        const message = JSON.parse(extractJson(bundle));
+        resolve(message);
+      }catch(err){
+        console.log(err);
+      }
+    });
+  }
 
 
 export {getNewAddress, 
@@ -199,4 +209,5 @@ export {getNewAddress,
         getAccountDataSync,
         isPromotable,
         findTransactionObject,
+        getMessage
         };

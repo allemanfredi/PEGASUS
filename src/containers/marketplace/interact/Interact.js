@@ -62,10 +62,9 @@ class Interact extends Component {
 
 
     async fetchChannels(){
-      console.log("channels");
       const app = this.state.channels.slice();
       for ( let channel of app ){
-        const result = await fetch("https://nodes.thetangle.org:443",channel.root, 'restricted', channel.sidekey ,this.appendToMessages);
+        const result = await fetch(this.props.network.provider,channel.root, 'restricted', channel.sidekey ,this.appendToMessages);
         
         channel.root = result.nextRoot;
         
@@ -81,14 +80,13 @@ class Interact extends Component {
     //find the device's coordinates
     async findDevices(){
       const devices = await fetchDevices(this.props.network.provider);
-      console.log(devices);
       this.setState({devices:devices});
       return;
     }
 
     //get the first root after having payed the device and the sidekey
     async getSideKeyAndRoot(){
-      const channels = await receiveSideKeyAndFirstRoot(this.props.network.provider,this.props.account.data.addresses);
+      const channels = await receiveSideKeyAndFirstRoot(this.props.network.provider,this.props.account);
       this.setState({channels:channels});
     }
 
@@ -108,12 +106,12 @@ class Interact extends Component {
         value : device.price,
         message : "",
         tag : "",
-        difficulty : 14 //for now testnet
+        difficulty : this.props.network.difficulty
       }
       
       prepareTransfer( transfer , (bundle , error) => {
         if ( error ){
-          this.setState({alertText:'Payment not successful'});
+          this.setState({alertText:'Error: ' + error});
           this.setState({alertType:'error'});
         }else{
 
@@ -128,11 +126,16 @@ class Interact extends Component {
             value : 0,
             message : message,
             tag : "",
-            difficulty : 14
+            difficulty : this.props.network.difficulty
           }
           prepareTransfer( transferPublicKey , (bundle , error) => {
-            this.setState({alertText:'payment successful'});
-            this.setState({alertType:'success'});
+            if ( error ){
+              this.setState({alertText:'Error: ' + error});
+              this.setState({alertType:'error'});
+            }else{
+              this.setState({alertText:'payment successful '});
+              this.setState({alertType:'success'});
+            }
           });
         }
       })

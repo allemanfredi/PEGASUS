@@ -1,12 +1,14 @@
-const {iotaInit} = require('../core/core');
+import {decryptWithRsaPrivateKey} from '../utils/crypto'
+const {iotaInit,getMessage} = require('../core/core');
 const {trytesToAscii} = require('@iota/converter')
 
+const tag = "GADDTCVCPCGDIDGDJDVAGA99999"
 
 const fetchDevices = async provider => {
    
-    const options = {tags : ["GADDTCVCPCGDIDGDGDGA9999999"]};
+    const options = {tags : [tag]};
    
-    const iota = await iotaInit('https://nodes.thetangle.org:443')
+    const iota = await iotaInit(provider)
     const transactions = await iota.findTransactionObjects(options);
 
     const devices = [];
@@ -34,23 +36,30 @@ const fetchDevices = async provider => {
 
 
 
-const receiveSideKeyAndFirstRoot = async (provider,addresses) => {
-    const iota = await iotaInit('https://nodes.thetangle.org:443');
+const receiveSideKeyAndFirstRoot = async (provider,account) => {
+    
+    const iota = await iotaInit(provider);
 
     const options = {
-        addresses : addresses
+        addresses : account.data.addresses,
+        tags : [tag]
     };
     const transactions = await iota.findTransactionObjects(options);
-    const res = [];
+    const res = [];    
 
-    transactions.forEach( transaction => {
-        try{
-            const message = JSON.parse(trytesToAscii(transaction.signatureMessageFragment.substring(0,transactions[0].signatureMessageFragment.length-1)).replace(/\0.*$/g,''));
-            if ( message.sidekey && message.root ){
-                res.push(message);
-            }
-        }catch(err){}
-    });
+    for ( let transaction of transactions ){
+        if ( transaction.currentIndex === 0 ){
+            try{
+                let message = await getMessage(transaction.hash)//JSON.parse(trytesToAscii(transaction.signatureMessageFragment.substring(0,transaction.signatureMessageFragment.length-1)).replace(/\0.*$/g,''));
+                if ( message.sidekey && message.root ){
+                    message.root = decryptWithRsaPrivateKey(message.root,account.marketplace.keys.privateKey);
+                    message.sidekey = decryptWithRsaPrivateKey(message.sidekey,account.marketplace.keys.privateKey);
+                    res.push(message);
+                }
+            }catch(err){}
+        }
+    }
+    
     return res;
 }
 
