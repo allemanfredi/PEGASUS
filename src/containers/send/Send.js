@@ -97,58 +97,58 @@ class Send extends Component {
 
         <div>
           { !this.state.isLoading ?   
-          <div class="container-send"> 
+          <div className="container-send"> 
 
-            <div class="row">
-              <div class="col-1"></div>
-              <div class="col-10">
-                <label for="inp-address" class="inp">
+            <div className="row">
+              <div className="col-1"></div>
+              <div className="col-10">
+                <label htmlFor="inp-address" className="inp">
                       <input value={this.state.dstAddress} onChange={this.handleChangeDstAddress}  type="text" id="inp-address" placeholder="&nbsp;"/>
-                      <span class="label">address</span>
-                      <span class="border"></span>
+                      <span className="label">address</span>
+                      <span className="border"></span>
                 </label>
               </div>
-              <div class="col-1"></div>
+              <div className="col-1"></div>
             </div>
 
-            <div class="row">
-              <div class="col-1"></div>
-                <div class="col-10">
-                  <label for="inp-value" class="inp">
+            <div className="row">
+              <div className="col-1"></div>
+                <div className="col-10">
+                  <label htmlFor="inp-value" className="inp">
                       <input value={this.state.value} onChange={this.handleChangeValue} type="text" id="inp-value" placeholder="&nbsp;"/>
-                      <span class="label">value</span>
-                      <span class="border"></span>
+                      <span className="label">value</span>
+                      <span className="border"></span>
                   </label>
                 </div>
-              <div class="col-1"></div>
+              <div className="col-1"></div>
             </div>
 
-            <div class="row">
-              <div class="col-1"></div>
-                <div class="col-10">
-                  <label for="inp-message" class="inp">
+            <div className="row">
+              <div className="col-1"></div>
+                <div className="col-10">
+                  <label htmlFor="inp-message" className="inp">
                       <input value={this.state.message} onChange={this.handleChangeMessage} type="text" id="inp-message" placeholder="&nbsp;"/>
-                      <span class="label">message</span>
-                      <span class="border"></span>
+                      <span className="label">message</span>
+                      <span className="border"></span>
                   </label>
                 </div>
-              <div class="col-1"></div>
+              <div className="col-1"></div>
             </div>
 
-            <div class="row">
-              <div class="col-1"></div>
-              <div class="col-10 text-center">
-                <button disabled={this.state.dstAddress === '' ? true : false} onClick={this.clickTransfer} class="btn btn-transfer"><i class="fa fa-paper-plane" ></i></button>
+            <div className="row">
+              <div className="col-1"></div>
+              <div className="col-10 text-center">
+                <button disabled={this.state.dstAddress === '' ? true : false} onClick={this.clickTransfer} className="btn btn-transfer"><i className="fa fa-paper-plane" ></i></button>
               </div>
-              <div class="col-1"></div>
+              <div className="col-1"></div>
             </div>
 
-            <div class="row">
-              <div class="col-1"></div>
-              <div class="col-10 text-center">
-                <div class="text-transfer">Send</div>
+            <div className="row">
+              <div className="col-1"></div>
+              <div className="col-10 text-center">
+                <div className="text-transfer">Send</div>
               </div>
-              <div class="col-1"></div>
+              <div className="col-1"></div>
             </div>
             
             {this.state.showAlert ? <Alert text={this.state.alertText} type={this.state.alertType} onClose={this.onCloseAlert}/> : ''}

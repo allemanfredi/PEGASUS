@@ -304,11 +304,11 @@ class Home extends Component {
 
               { this.state.showHome ? (
                 <div>
-                  <div class="container-info">
-                    <div class="row ">
-                      <div class="col align-center">
+                  <div className="container-info">
+                    <div className="row ">
+                      <div className="col align-center">
                         <img src="./material/logo/iota-logo.png" height="60" width="60"/>
-                        <div class="container-balance">
+                        <div className="container-balance">
                           { this.state.account.data.balance > 99999999 || this.state.account.data.balance < -99999999 ? (this.state.account.data.balance / 1000000000).toFixed(2) + " Gi" : 
                             this.state.account.data.balance > 99999 || this.state.account.data.balance < -99999  ? (this.state.account.data.balance / 1000000).toFixed(2) + " Mi" :
                             this.state.account.data.balance > 999 || this.state.account.data.balance < -999 ?  (this.state.account.data.balance / 1000).toFixed(2) + " Ki"  :  
@@ -316,20 +316,20 @@ class Home extends Component {
                         </div>
                       </div>
                     </div>  
-                    <div class="row">
-                      <div class="col-6 text-center">
-                        <button onClick={this.onClickSend} class="btn btn-send"><i class="fa fa-paper-plane"></i></button>
+                    <div className="row">
+                      <div className="col-6 text-center">
+                        <button onClick={this.onClickSend} className="btn btn-send"><i className="fa fa-paper-plane"></i></button>
                       </div>
-                      <div class="col-6 text-center">
-                        <button onClick={this.onClickReceive}  class="btn btn-receive"><i class="fa fa-download" ></i></button>
+                      <div className="col-6 text-center">
+                        <button onClick={this.onClickReceive}  className="btn btn-receive"><i className="fa fa-download" ></i></button>
                       </div>
                     </div> 
-                    <div class="row">
-                      <div class="col-6 text-center"><div class="text-send">Send</div></div>
-                      <div class="col-6 text-center"><div class="text-receive">Receive</div></div>
+                    <div className="row">
+                      <div className="col-6 text-center"><div className="text-send">Send</div></div>
+                      <div className="col-6 text-center"><div className="text-receive">Receive</div></div>
                     </div> 
                 </div>
-                <div class="container-transactions">
+                <div className="container-transactions">
                   <Transactions ref={this.transactions} 
                                 transfers={this.state.account.data.transfers}
                                 onGoDetails={this.onGoDetails} 

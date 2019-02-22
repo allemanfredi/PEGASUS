@@ -14,8 +14,8 @@ export default class Loader extends Component {
 
   render() {
     return (
-        <div class="container-loader">
-            <div class="loader"></div>
+        <div className="container-loader">
+            <div className="loader"></div>
         </div>
       );
     }

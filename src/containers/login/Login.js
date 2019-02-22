@@ -31,40 +31,40 @@ class InitPsw extends Component {
 
     render() {
       return (
-        <div class="container-login">
-            <div class="container-logo-login">
+        <div className="container-login">
+            <div className="container-logo-login">
                 <img src="./material/logo/pegasus-128.png" height="80" width="80"/>
             </div>
-            <div class="container-title-login">
+            <div className="container-title-login">
                 Pegasus
             </div>
-            <div class="container-center-login">
-              <div class="row">
-                  <div class="col-2"></div>
-                  <div class="col-8">
-                    <label for="inp-psw" class="inp">
+            <div className="container-center-login">
+              <div className="row">
+                  <div className="col-2"></div>
+                  <div className="col-8">
+                    <label for="inp-psw" className="inp">
                         <input onChange={this.handleChangePsw} type="password" id="inp-psw" placeholder="&nbsp;"/>
-                        <span class="label">password</span>
-                        <span class="border"></span>
+                        <span className="label">password</span>
+                        <span className="border"></span>
                     </label>
                   </div>
-                  <div class="col-2"></div>
+                  <div className="col-2"></div>
               </div>
-              <div class="row">
-                  <div class="col-2"></div>
-                  <div class="col-8 text-center">
-                      <button disabled={checkPsw(this.state.psw) ? false : true} onClick={this.clickLogin} type="submit" class="btn btn-password">Login</button>
+              <div className="row">
+                  <div className="col-2"></div>
+                  <div className="col-8 text-center">
+                      <button disabled={checkPsw(this.state.psw) ? false : true} onClick={this.clickLogin} type="submit" className="btn btn-password">Login</button>
                   </div>
-                  <div class="col-2"></div>
+                  <div className="col-2"></div>
               </div>
           </div>
-          <div class="container-restore-login">
-            <div class="row">
-                <div class="col-2"></div>
-                <div class="col-8 text-center">
-                  <button onClick={e => {this.props.onRestore()}} type="submit" class="btn btn-restore">restore from seed</button>
+          <div className="container-restore-login">
+            <div className="row">
+                <div className="col-2"></div>
+                <div className="col-8 text-center">
+                  <button onClick={e => {this.props.onRestore()}} type="submit" className="btn btn-restore">restore from seed</button>
                 </div>
-                <div class="col-2"></div>
+                <div className="col-2"></div>
             </div>
           </div>
         </div>

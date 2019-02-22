@@ -14,34 +14,34 @@ export default class Alert extends Component {
 
   render() {
     return (
-        <div class="modal">
-            <div class="container-alert">
+        <div className="modal">
+            <div className="container-alert">
 
-                <div class="container-btn-close-alert">
-                    <div class="row">
-                        <div class="col-2">
-                            <button onClick={() => this.props.onClose()} type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <div className="container-btn-close-alert">
+                    <div className="row">
+                        <div className="col-2">
+                            <button onClick={() => this.props.onClose()} type="button" className="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         </div>
-                        <div class="col-10"/>
+                        <div className="col-10"/>
 
                     </div>
                 </div>
 
-                <div class="container-logo-alert">
-                    <div class="row">
-                        <div class="col-12 text-center">
+                <div className="container-logo-alert">
+                    <div className="row">
+                        <div className="col-12 text-center">
                             {this.props.type === 'error' ? <img src="./material/img/error.png" height="90" width="90"/> :
                              this.props.type === 'success' ? <img src="./material/img/success.png" height="90" width="90"/> :
-                             this.props.type === 'loading' ? <div class="loading"></div> : '' }
+                             this.props.type === 'loading' ? <div className="loading"></div> : '' }
                            
                         </div> 
                     </div>
                 </div>
 
-                <div class="container-text-alert">
-                    <div class="row">
-                        <div class="col-12 text-center">
-                            <div class="text-alert">{this.props.text}</div>
+                <div className="container-text-alert">
+                    <div className="row">
+                        <div className="col-12 text-center">
+                            <div className="text-alert">{this.props.text}</div>
                         </div> 
                     </div>
                 </div>

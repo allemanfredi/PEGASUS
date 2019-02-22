@@ -150,7 +150,7 @@ class Interact extends Component {
     render() {
       return (
         <div>
-          <div class="container-map">
+          <div className="container-map">
             <Map devices={this.state.devices}
                  onBuy={this.onBuy}/>
 

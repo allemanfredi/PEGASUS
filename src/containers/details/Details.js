@@ -33,7 +33,7 @@ class Details extends Component {
 
     async replayBundle(hash){
         try{
-            const transactions = await replayBundle(hash);
+            await replayBundle(hash);
         }catch(err){
             this.setState({showAlert:true});
             this.setState({alertType:'error'});
@@ -49,46 +49,46 @@ class Details extends Component {
 
     render() {
       return (
-            <div class="modal">
+            <div className="modal">
 
-                <div class="container-info">
-                    <div class="container-button-close">
-                        <div class="row">
-                            <div class="col-2 text-center">
-                                <button onClick={() => this.props.onClose()} type="button" class="close btn-close-details" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <div className="container-info">
+                    <div className="container-button-close">
+                        <div className="row">
+                            <div className="col-2 text-center">
+                                <button onClick={() => this.props.onClose()} type="button" className="close btn-close-details" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                             </div>
-                            <div class="col-10"></div>
+                            <div className="col-10"></div>
                         </div>  
                     </div>
 
-                    <div class="container-details-title">
-                        <div class="row">
-                            <div class="col-12 text-center">
-                                <div class="details-title">Bundle details</div>
+                    <div className="container-details-title">
+                        <div className="row">
+                            <div className="col-12 text-center">
+                                <div className="details-title">Bundle details</div>
                             </div>
                         </div>
                     </div>  
 
-                    <div class="container-details-bundle">
-                        <div class="row">
-                            <div class="col-1"></div>
-                            <div class="col-10 text-center">
-                                <div class="detail-bundle-value">{this.props.details[0].bundle}</div>
+                    <div className="container-details-bundle">
+                        <div className="row">
+                            <div className="col-1"></div>
+                            <div className="col-10 text-center">
+                                <div className="detail-bundle-value">{this.props.details[0].bundle}</div>
                             </div>
-                            <div class="col-1"></div>
+                            <div className="col-1"></div>
                         </div>
                     </div>  
                     
-                    <div class="container-list-details">
-                        <ul class="list-group details-list">
+                    <div className="container-list-details">
+                        <ul className="list-group details-list">
                             {this.props.details.map( detail => {
-                                return (<li class="list-group-item">
-                                            <div class="row">
-                                                <div class="col-8">
-                                                    <div class="detail-hash" >{detail.hash} </div>
+                                return (<li className="list-group-item">
+                                            <div className="row">
+                                                <div className="col-8">
+                                                    <div className="detail-hash" >{detail.hash} </div>
                                                 </div>
-                                                <div class="col-4">
-                                                    <div class="detail-value">
+                                                <div className="col-4">
+                                                    <div className="detail-value">
                                                         {detail.value > 99999999 || detail.value < -99999999 ? (detail.value / 1000000000).toFixed(2) + " Gi" : 
                                                          detail.value > 99999 || detail.value < -99999  ? (detail.value / 1000000).toFixed(2) + " Mi" :
                                                          detail.value > 999 || detail.value < -999 ?  (detail.value / 1000).toFixed(2) + " Ki"  :  
@@ -102,33 +102,33 @@ class Details extends Component {
                     </div>
                     
                     
-                    <div class="container-promote-transaction">
-                        <div class="row">
-                            <div class="col-1"></div>
-                            <div class="col-10">
-                                <button onClick={() => this.promoteTransaction(this.props.details[0].hash)} disabled={this.props.details[0].persistence ? true : false} class="btn btn-promote-transaction">Promote transaction <span class="fa fa-repeat"></span></button>
+                    <div className="container-promote-transaction">
+                        <div className="row">
+                            <div className="col-1"></div>
+                            <div className="col-10">
+                                <button onClick={() => this.promoteTransaction(this.props.details[0].hash)} disabled={this.props.details[0].persistence ? true : false} className="btn btn-promote-transaction">Promote transaction <span className="fa fa-repeat"></span></button>
                             </div>
-                            <div class="col-1"></div>
+                            <div className="col-1"></div>
                         </div>
                     </div>
 
-                    <div class="container-reattach-transaction">
-                        <div class="row">
-                            <div class="col-1"></div>
-                            <div class="col-10">
-                                <button onClick={() => this.replayBundle(this.props.details[0].hash)} disabled={this.props.details[0].persistence ? true : false} class="btn btn-reattach-transaction">Reattach transaction <span class="fa fa-link"></span></button>
+                    <div className="container-reattach-transaction">
+                        <div className="row">
+                            <div className="col-1"></div>
+                            <div className="col-10">
+                                <button onClick={() => this.replayBundle(this.props.details[0].hash)} disabled={this.props.details[0].persistence ? true : false} className="btn btn-reattach-transaction">Reattach transaction <span className="fa fa-link"></span></button>
                             </div>
-                            <div class="col-1"></div>
+                            <div className="col-1"></div>
                         </div>
                     </div>
 
-                    <div class="container-promote-transaction-suggestion">
-                        <div class="row">
-                            <div class="col-1"></div>
-                            <div class="col-10 text-center">
-                                <div class="text-promote-transaction-suggestion">In case you transaction is pending for some time, you can click these buttons</div>
+                    <div className="container-promote-transaction-suggestion">
+                        <div className="row">
+                            <div className="col-1"></div>
+                            <div className="col-10 text-center">
+                                <div className="text-promote-transaction-suggestion">In case you transaction is pending for some time, you can click these buttons</div>
                             </div>
-                            <div class="col-1"></div>
+                            <div className="col-1"></div>
                         </div>
                     </div>
                 </div>

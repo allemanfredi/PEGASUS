@@ -5,6 +5,23 @@
     font-family: "HelveticaNeue-Light", "HelveticaNeue-CondensedBold" ,"Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif !important;
 }
 
+.app.desktop{
+    width: 350px;
+    height: 600px;
+    margin: 0;
+    background : #fff;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%)
+}
+
+.app.chrome{
+    width: 350px;
+    height: 600px;
+}
+
 
 .inp {
     position: relative;

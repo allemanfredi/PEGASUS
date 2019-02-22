@@ -99,7 +99,7 @@ class Main extends Component {
   render() {
 
     return (
-      <main class="main" >
+      <main className="main" >
         { this.state.showHome ?     <Home ref={this.home} onLogout={this.onLogout}> </Home> : '' }
         { this.state.showInit ?     <Init onSuccess={this.onSuccessFromInit}> </Init> : '' }
         { this.state.showLogin ?    <Login onSuccess={this.onSuccessFromLogin} onRestore={this.onRestore}> </Login> : '' }

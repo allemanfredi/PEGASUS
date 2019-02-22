@@ -46,42 +46,42 @@ class Restore extends Component {
         return (
             <div>
                 { this.state.isLoading ? <Loader></Loader> : (
-                <div class="container-restore-account">
-                    <div class="row">
-                        <div class="col-1"></div>
-                        <div class="col-10 text-center">
-                            <label for="inp-seed" class="inp">
+                <div className="container-restore-account">
+                    <div className="row">
+                        <div className="col-1"></div>
+                        <div className="col-10 text-center">
+                            <label for="inp-seed" className="inp">
                                 <input onChange={e => {this.setState({seed:e.target.value})}} type="text" id="inp-seed" placeholder="&nbsp;"/>
-                                <span class="label">seed</span>
-                                <span class="border"></span>
+                                <span className="label">seed</span>
+                                <span className="border"></span>
                             </label>
                         </div>
-                        <div class="col-1"></div>
+                        <div className="col-1"></div>
                     </div>
-                    <div class="row">
-                        <div class="col-1"></div>
-                        <div class="col-10 text-center">
-                            <label for="inp-psw" class="inp">
+                    <div className="row">
+                        <div className="col-1"></div>
+                        <div className="col-10 text-center">
+                            <label for="inp-psw" className="inp">
                                 <input onChange={e => {this.setState({psw:e.target.value})}} type="password" id="inp-psw" placeholder="&nbsp;"/>
-                                <span class="label">password</span>
-                                <span class="border"></span>
+                                <span className="label">password</span>
+                                <span className="border"></span>
                             </label>
                         </div>
-                        <div class="col-1"></div>
+                        <div className="col-1"></div>
                     </div>
-                    <div class="row">
-                        <div class="col-1"></div>
-                        <div class="col-10 text-center">
-                            <button disabled={isSeedValid(this.state.seed) && checkPsw(this.state.psw) ? false : true} onClick={this.onClickRestore} type="button" class="btn btn-restore-account">Restore</button>
+                    <div className="row">
+                        <div className="col-1"></div>
+                        <div className="col-10 text-center">
+                            <button disabled={isSeedValid(this.state.seed) && checkPsw(this.state.psw) ? false : true} onClick={this.onClickRestore} type="button" className="btn btn-restore-account">Restore</button>
                         </div>
-                        <div class="col-1"></div>
+                        <div className="col-1"></div>
                     </div>
-                    <div class="row">
-                        <div class="col-1"></div>
-                        <div class="col-10 text-center">
-                            <button onClick={e => {this.props.onBack()}} type="submit" class="btn btn-login-back">return to login</button>
+                    <div className="row">
+                        <div className="col-1"></div>
+                        <div className="col-10 text-center">
+                            <button onClick={e => {this.props.onBack()}} type="submit" className="btn btn-login-back">return to login</button>
                         </div>
-                        <div class="col-1"></div>
+                        <div className="col-1"></div>
                     </div>
 
                 </div>

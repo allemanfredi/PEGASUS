@@ -26,7 +26,7 @@ const fetch = (provider, root, mode, key, reportEvent) => {
     return new Promise(async (resolve, reject) => {
       try {
         Mam.init(provider);
-        const convertAndReport = event => reportEvent(JSON.parse(trytesToAscii(event)))
+        //const convertAndReport = event => reportEvent(JSON.parse(trytesToAscii(event)))
         //await Mam.fetch(root, mode, null, convertAndReport);
 
         const result = await Mam.fetch(root,mode,key)

@@ -33,40 +33,40 @@ class Header extends Component {
 
     return (
       <header>
-        <div class="row">
-          <div class="col-2 container-header-logo">
+        <div className="row">
+          <div className="col-2 container-header-logo">
               <img src="./material/logo/pegasus-64.png" height="40" width="40"/>
           </div>
-          <div class="col-1"></div>
-          <div class="col-8">
-            <div class="row container-selection">
-              <div class="col-2"> <i class="fa fa-signal"></i></div>
-              <div class="col-8 text-center">{this.state.network.name}</div>
-              <div class="col-2">
-              <div onClick={e => {this.setState({showNetworks : !this.state.showNetworks})}} class="">
-                  { this.state.showNetworks ? <span class="fa fa-chevron-up"></span>  : <span class="fa fa-chevron-down"></span> }
+          <div className="col-1"></div>
+          <div className="col-8">
+            <div className="row container-selection">
+              <div className="col-2"> <i className="fa fa-signal"></i></div>
+              <div className="col-8 text-center">{this.state.network.name}</div>
+              <div className="col-2">
+              <div onClick={e => {this.setState({showNetworks : !this.state.showNetworks})}} className="">
+                  { this.state.showNetworks ? <span className="fa fa-chevron-up"></span>  : <span className="fa fa-chevron-down"></span> }
                 </div>
               </div>
             </div>
           </div>
-          <div class="col-1"></div>
+          <div className="col-1"></div>
         </div>
         { this.state.showNetworks ? 
-          <div class="container-hidden-network">
-            <div class="container-hidden-network-header">Nodes</div>
-            <div class="container-hidden-network-body">
+          <div className="container-hidden-network">
+            <div className="container-hidden-network-header">Nodes</div>
+            <div className="container-hidden-network-body">
               {options.network.map( (network,index) => {
                 return(
-                  <div onClick={() => this.switchNetwork(network)} class="container-hidden-network-item">
+                  <div onClick={() => this.switchNetwork(network)} className="container-hidden-network-item">
                       
-                      <div class="container-icon-check">
+                      <div className="container-icon-check">
                         { this.state.network.id === network.id ? 
-                          <span class="fa fa-check"></span>
+                          <span className="fa fa-check"></span>
                         :''}
                       </div>
                       { this.state.network.id === network.id ? 
-                        <div class="container-hidden-network-item-name-selected">{network.name}</div>
-                      : <div class="container-hidden-network-item-name-not-selected">{network.name}</div>}
+                        <div className="container-hidden-network-item-name-selected">{network.name}</div>
+                      : <div className="container-hidden-network-item-name-not-selected">{network.name}</div>}
                   </div>
                 )
                 })}

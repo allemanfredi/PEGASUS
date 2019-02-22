@@ -37,13 +37,13 @@ class Settings extends Component {
     
     render() {
         return (
-            <div class="modal">
+            <div className="modal">
 
                  <div id="sidebar-wrapper">
                     
-                    <div class="container-sidebar-header">
-                         <div class="container-close float-left">
-                            <button onClick={() => {this.props.onClose()}} type="button" class="close" aria-label="Close">
+                    <div className="container-sidebar-header">
+                         <div className="container-close float-left">
+                            <button onClick={() => {this.props.onClose()}} type="button" className="close" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>  
@@ -51,33 +51,33 @@ class Settings extends Component {
                     
 
                     <nav id="spy">
-                        <ul class="sidebar-nav nav">  
+                        <ul className="sidebar-nav nav">  
 
-                            <li class="sidebar-header">
-                                <div class="row">
-                                    <div class="col-12 text-center">
+                            <li className="sidebar-header">
+                                <div className="row">
+                                    <div className="col-12 text-center">
                                         <img src="./material/logo/iota-logo.png" height="50" width="50"/>
                                     </div>
                                 </div>   
-                                <div class="row">
-                                    <div class="col-12 text-center">
-                                        <div onClick={() => {this.props.onShowEdit()}}class="current-account">
+                                <div className="row">
+                                    <div className="col-12 text-center">
+                                        <div onClick={() => {this.props.onShowEdit()}}className="current-account">
                                             {this.props.currentAccount.name} 
                                         </div>
                                     </div>
                                 </div>    
-                                <div class="row">
-                                    <div class="col-2"></div>
-                                    <div class="col-8 text-center">
-                                        <div onClick={() => {this.props.onShowEdit()}} class="address">
+                                <div className="row">
+                                    <div className="col-2"></div>
+                                    <div className="col-8 text-center">
+                                        <div onClick={() => {this.props.onShowEdit()}} className="address">
                                             {this.props.currentAccount.data.latestAddress} 
                                         </div>
                                     </div>
-                                    <div class="col-2"></div>
+                                    <div className="col-2"></div>
                                 </div>    
-                                <div class="row">
-                                    <div class="col-12 text-center">
-                                        <div class="current-balance">
+                                <div className="row">
+                                    <div className="col-12 text-center">
+                                        <div className="current-balance">
                                             {this.props.currentAccount.data.balance > 99999999 || this.props.currentAccount.data.balance < -99999999 ? (this.props.currentAccount.data.balance / 1000000000).toFixed(2) + " Gi" : 
                                             this.props.currentAccount.data.balance > 99999 || this.props.currentAccount.data.balance < -99999  ? (this.props.currentAccount.data.balance / 1000000).toFixed(2) + " Mi" :
                                             this.props.currentAccount.data.balance > 999 || this.props.currentAccount.data.balance < -999 ?  (this.props.currentAccount.data.balance / 1000).toFixed(2) + " Ki"  :  
@@ -88,12 +88,12 @@ class Settings extends Component {
                             </li>
 
                             {this.state.accounts.map( account => {
-                                return (<li class="sidebar-brand">
-                                            <div class="row">
-                                                <div class="col-2"><i class="fa fa-user"></i></div>
-                                                <div class="col-8">
+                                return (<li className="sidebar-brand">
+                                            <div className="row">
+                                                <div className="col-2"><i className="fa fa-user"></i></div>
+                                                <div className="col-8">
                                                     <a href="#" onClick={() => this.switchAccount(account)} data-scroll>
-                                                        <div class="span-text">{account.name}</div>
+                                                        <div className="span-text">{account.name}</div>
                                                     </a>
                                                 </div>
                                             </div>
@@ -101,32 +101,32 @@ class Settings extends Component {
                             })}
                             
                             <hr/>
-                            <li class="sidebar-brand-logout">   
-                                <div class="row">
-                                    <div class="col-2 text-center"><i class="fa fa-globe"></i></div>
-                                    <div class="col-10 text-left">
+                            <li className="sidebar-brand-logout">   
+                                <div className="row">
+                                    <div className="col-2 text-center"><i className="fa fa-globe"></i></div>
+                                    <div className="col-10 text-left">
                                         <a href="#" onClick={() => {this.props.onShowMap()}} data-scroll>
-                                            <div class="span-text">buy data</div>
+                                            <div className="span-text">buy data</div>
                                         </a>  
                                     </div>
                                 </div>
                             </li>
-                            <li class="sidebar-brand-add-account">
-                                <div class="row">
-                                    <div class="col-2 text-center"><i class="fa fa-plus"></i></div>
-                                    <div class="col-10 text-left">
+                            <li className="sidebar-brand-add-account">
+                                <div className="row">
+                                    <div className="col-2 text-center"><i className="fa fa-plus"></i></div>
+                                    <div className="col-10 text-left">
                                         <a href="#"  onClick={() => {this.props.onAddAccount()}} data-scroll>
-                                            <div class="span-text">add account</div>
+                                            <div className="span-text">add account</div>
                                         </a>
                                     </div>
                                 </div>
                             </li>
-                            <li class="sidebar-brand-logout">   
-                                <div class="row">
-                                    <div class="col-2 text-center"><i class="fa fa-sign-out"></i></div>
-                                    <div class="col-10 text-left">
+                            <li className="sidebar-brand-logout">   
+                                <div className="row">
+                                    <div className="col-2 text-center"><i className="fa fa-sign-out"></i></div>
+                                    <div className="col-10 text-left">
                                         <a href="#"  onClick={() => {this.props.onLogout()}} data-scroll>
-                                            <div class="span-text">logout</div>
+                                            <div className="span-text">logout</div>
                                         </a>  
                                     </div>
                                 </div>

@@ -24,11 +24,12 @@ export default class Map extends Component {
         bearing: 0,
         pitch: 0,
         width: 500,
-        height: 500,
+        height: 500
       },
       selectedDevice: null
     };
   }
+
 
   updateViewport = (viewport) => {
     this.setState({viewport});
@@ -55,28 +56,28 @@ export default class Map extends Component {
         longitude={parseInt(selectedDevice.lon)}
         latitude={parseInt(selectedDevice.lat)}
         onClose={() => this.setState({selectedDevice: null})} >
-        <div class="container-popup">
-          <div class="row">
-            <div class="col-12 text-center">
+        <div className="container-popup">
+          <div className="row">
+            <div className="col-12 text-center">
               {selectedDevice.name}
             </div>
           </div>
-          <div class="row">
-            <div class="col-12 text-center">
+          <div className="row">
+            <div className="col-12 text-center">
               {selectedDevice.description} 
             </div>
           </div>
-          <div class="row">
-            <div class="col-12 text-center">
+          <div className="row">
+            <div className="col-12 text-center">
               {selectedDevice.price ? selectedDevice.price : 0} i
             </div>
           </div>
-          <div class="row">
-            <div class="col-6 text-center">
-              <button onClick={() => this.props.onBuy(selectedDevice)} class="btn">Buy stream <i class="fa fa-check" ></i></button>
+          <div className="row">
+            <div className="col-6 text-center">
+              <button onClick={() => this.props.onBuy(selectedDevice)} className="btn">Buy stream <i className="fa fa-check" ></i></button>
             </div>
-            <div class="col-6 text-center">
-              <button class="btn">Close <i class="fa fa-times" ></i></button>
+            <div className="col-6 text-center">
+              <button className="btn">Close <i className="fa fa-times" ></i></button>
             </div>
           </div>
         </div>
@@ -102,6 +103,7 @@ export default class Map extends Component {
             <NavigationControl onViewportChange={this.updateViewport}/>
           </div>
         </MapGL>
+        
       );
     }
 }

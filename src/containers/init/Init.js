@@ -148,27 +148,27 @@ class Init extends Component {
            { this.state.isLoading ? 
                 <Loader/>
             : (<div>
-                    <div class="container-logo">
+                    <div className="container-logo">
                         <img src="./material/logo/pegasus-128.png" height="80" width="80"/>
                     </div>
                    {this.state.initialization[0] ?  
                         <div>
-                            <div class="container-name-text">
-                                <div class="row">
-                                    <div class="col-12 text-center">Let's add a name</div>
+                            <div className="container-name-text">
+                                <div className="row">
+                                    <div className="col-12 text-center">Let's add a name</div>
                                 </div>
                             </div>
-                            <div class="container-name-init">
-                                <div class="row">
-                                    <div class="col-1"></div>
-                                    <div class="col-10">
-                                        <label for="inp-name" class="inp">
+                            <div className="container-name-init">
+                                <div className="row">
+                                    <div className="col-1"></div>
+                                    <div className="col-10">
+                                        <label for="inp-name" className="inp">
                                             <input value={this.state.name} onChange={e => {this.setState({name: e.target.value})}} type="text" id="inp-name" placeholder="&nbsp;"/>
-                                            <span class="label">name</span>
-                                            <span class="border"></span>
+                                            <span className="label">name</span>
+                                            <span className="border"></span>
                                         </label>
                                     </div>
-                                    <div class="col-1"></div>
+                                    <div className="col-1"></div>
                                 </div>
                             </div>
                         </div>
@@ -178,38 +178,38 @@ class Init extends Component {
 
                    {this.state.initialization[1] ? 
                     <div>
-                        <div class="container-psw-text">
-                                <div class="row">
-                                    <div class="col-12 text-center">Let's add a password</div>
+                        <div className="container-psw-text">
+                                <div className="row">
+                                    <div className="col-12 text-center">Let's add a password</div>
                                 </div>
                         </div>
-                        <div class="container-psw-init">
-                            <div class="row">
-                                <div class="col-1"></div>
-                                <div class="col-10">
-                                    <label for="inp-password" class="inp">
+                        <div className="container-psw-init">
+                            <div className="row">
+                                <div className="col-1"></div>
+                                <div className="col-10">
+                                    <label for="inp-password" className="inp">
                                         <input value={this.state.psw} onChange={e => {this.setState({psw: e.target.value})}}  type="password" id="inp-password" placeholder="&nbsp;"/>
-                                        <span class="label">password</span>
-                                        <span class="border"></span>
+                                        <span className="label">password</span>
+                                        <span className="border"></span>
                                     </label>
                                 </div>
-                                <div class="col-1"></div>
+                                <div className="col-1"></div>
                             </div>
-                            <div class="row">
-                                <div class="col-1"></div>
-                                <div class="col-10">
-                                    <label for="inp-re-password" class="inp">
+                            <div className="row">
+                                <div className="col-1"></div>
+                                <div className="col-10">
+                                    <label for="inp-re-password" className="inp">
                                         <input value={this.state.repsw} onChange={e => {this.setState({repsw: e.target.value})}} type="password" id="inp-re-password" placeholder="&nbsp;"/>
-                                        <span class="label">re-password</span>
-                                        <span class="border"></span>
+                                        <span className="label">re-password</span>
+                                        <span className="border"></span>
                                     </label>
                                 </div>
-                                <div class="col-1"></div>
+                                <div className="col-1"></div>
                             </div>
                         </div>
-                        <div class="container-psw-suggestion">
-                            <div class="row">
-                                <div class="col-12 text-center">
+                        <div className="container-psw-suggestion">
+                            <div className="row">
+                                <div className="col-12 text-center">
                                     Password must contain at least 8 characters
                                 </div>
                             </div>
@@ -219,33 +219,33 @@ class Init extends Component {
 
                    {this.state.initialization[2]  ? 
                         <div>
-                            <div class="container-seed-text">
-                                <div class="row">
-                                    <div class="col-12 text-center">Let's generate a seed</div>
+                            <div className="container-seed-text">
+                                <div className="row">
+                                    <div className="col-12 text-center">Let's generate a seed</div>
                                 </div>
                             </div>
                             { this.state.randomLetters > 0 ?
-                                <div class="container-randomise">
-                                    <div class="row">
-                                        <div class="col-12 text-center">
-                                            Press <i class="remained-letters">{this.state.randomLetters}</i> more letters to randomise them
+                                <div className="container-randomise">
+                                    <div className="row">
+                                        <div className="col-12 text-center">
+                                            Press <i className="remained-letters">{this.state.randomLetters}</i> more letters to randomise them
                                         </div>
                                     </div>
                                 </div>
                             : ''}
-                            <div class="container-seed-init">
+                            <div className="container-seed-init">
                                 {[0,9,18,27,36,45,54,63,72].map(item => {
                                     return (
-                                        <div class="row">
-                                            <div class="col-1"></div>
+                                        <div className="row">
+                                            <div className="col-1"></div>
                                             { Array.from(new Array(9), (x,i) => i+item).map( index => {
                                                 return (
-                                                    <div class="col-1">
-                                                        <div onClick={ () => this.randomiseSeedLetter(index) } class="container-letter">{this.state.seed[index]}</div>
+                                                    <div className="col-1">
+                                                        <div onClick={ () => this.randomiseSeedLetter(index) } className="container-letter">{this.state.seed[index]}</div>
                                                     </div>
                                                 )
                                             })}
-                                            <div class="col-1"></div>
+                                            <div className="col-1"></div>
                                         </div>
                                     )
                                 })}
@@ -255,38 +255,38 @@ class Init extends Component {
 
                     {this.state.initialization[3]  ?
                         <div>
-                            <div class="container-export-text">
-                                <div class="row">
-                                    <div class="col-12 text-center">Let's export the seed</div>
+                            <div className="container-export-text">
+                                <div className="row">
+                                    <div className="col-12 text-center">Let's export the seed</div>
                                 </div>
                             </div>
-                            <div class="container-export-suggestion">
-                                <div class="row">
-                                    <div class="col-1 text-center"></div>
-                                    <div class="col-10 text-center">Take care to copy the seed in order to correctly reinitialize the wallet </div>
-                                    <div class="col-1 text-center"></div>
+                            <div className="container-export-suggestion">
+                                <div className="row">
+                                    <div className="col-1 text-center"></div>
+                                    <div className="col-10 text-center">Take care to copy the seed in order to correctly reinitialize the wallet </div>
+                                    <div className="col-1 text-center"></div>
                                 </div>
                             </div>
-                            <div class="container-export-seed">
-                                <div class="row">
-                                    <div class="col-1"></div>
-                                    <div class="col-10 text-center">
-                                        <div class="container-seed-to-export">
-                                            <input class="input-seed-to-export" ref={this.labelSeed} value={this.state.seed.toString().replace(/,/g,'')} readOnly/>
+                            <div className="container-export-seed">
+                                <div className="row">
+                                    <div className="col-1"></div>
+                                    <div className="col-10 text-center">
+                                        <div className="container-seed-to-export">
+                                            <input className="input-seed-to-export" ref={this.labelSeed} value={this.state.seed.toString().replace(/,/g,'')} readOnly/>
                                         </div>
                                     </div>
-                                    <div class="col-1"></div>
+                                    <div className="col-1"></div>
                                 </div>  
                             </div>
-                            <div class="container-export-seed-button">
-                                <div class="row">
-                                    <div class="col-12 text-center">
-                                        <button onClick={this.copyToClipboard} class="btn btn-copy-seed"><span class="fa fa-clipboard"></span></button>
+                            <div className="container-export-seed-button">
+                                <div className="row">
+                                    <div className="col-12 text-center">
+                                        <button onClick={this.copyToClipboard} className="btn btn-copy-seed"><span className="fa fa-clipboard"></span></button>
                                     </div>
                                 </div> 
-                                <div class="row">
-                                    <div class="col-12 text-center">
-                                        <div class ="container-copy-to-clipboard">
+                                <div className="row">
+                                    <div className="col-12 text-center">
+                                        <div className ="container-copy-to-clipboard">
                                              {this.state.isCopiedToClipboard ? 'Copied!' : 'Copy to clipboard'}
                                         </div>
                                     </div>
@@ -296,18 +296,18 @@ class Init extends Component {
                         </div>
                     : '' }
                     
-                    <div class="container-menu-init">
-                        <div class="row">
-                            <div class="col-6 text-center padding-0">
-                                <button disabled={this.state.initialization[0] ? true : false} onClick={this.goBack} type="submit" class="btn btn-menu-init-back"><span class="fa fa-arrow-left"></span></button>
+                    <div className="container-menu-init">
+                        <div className="row">
+                            <div className="col-6 text-center padding-0">
+                                <button disabled={this.state.initialization[0] ? true : false} onClick={this.goBack} type="submit" className="btn btn-menu-init-back"><span className="fa fa-arrow-left"></span></button>
                             </div>
-                            <div class="col-6 text-center padding-0">
+                            <div className="col-6 text-center padding-0">
                                 <button disabled={this.state.initialization[0] ? (this.state.name.length > 0 ? false : true ) : 
                                                   this.state.initialization[1] ? (this.state.psw.length > 7 && (this.state.psw === this.state.repsw) ? false : true) : 
                                                   this.state.initialization[2] ? (this.state.randomLetters === 0 ? false : true) : ''}
                                         onClick={this.goOn}
                                         type="submit" 
-                                        class="btn btn-menu-init-option"><span class="fa fa-arrow-right"></span></button>
+                                        className="btn btn-menu-init-option"><span className="fa fa-arrow-right"></span></button>
                             </div>
                         </div>
                     </div>
