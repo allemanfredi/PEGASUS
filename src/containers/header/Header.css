@@ -1,24 +1,18 @@
 .container-header{
     width: 100%;
-    height: 20%;
     background: #efefef;
     height: 10%;
     position: absolute;
 }
 
 .container-header-logo{
-    margin-top: 3%;
     margin-left: 2%;
 }
 
 .container-selection{
-    margin: 0;
-    margin-left: 28%;
-    width: 250px;
-    margin-top: -9%;
     border: 2px solid darkblue;
     border-radius: 12px;
-    display: flex;
+    margin-top: 7px;
 }
 
 .network-selection{
@@ -28,19 +22,8 @@
     flex-direction: row;
 }
 
-.selected-network{
-    margin-left: -7%;
-    text-align: center;
-    width: inherit;
-}
-.btn-show-hidden-network {
-    margin-left: 63%;
-    position: fixed;
-}
 
-.container-signal-icon {
-    margin-left: 3%;
-}
+
 .container-icon-check{
     position: absolute;
 }
@@ -49,11 +32,11 @@
     background: rgba(0,0,0,.8);
     width: 261px;
     min-height: 355px;
-    margin-left: 25%;
+    margin-left: 24%;
     overflow-y: hidden;
     position: absolute;
     z-index: 1000;
-    margin-top: 1%;
+    /* margin-top: 1%; */
     border-radius: 7px;
 }
 .container-hidden-network-header{

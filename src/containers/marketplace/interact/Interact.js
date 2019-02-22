@@ -115,6 +115,7 @@ class Interact extends Component {
           this.setState({alertType:'error'});
         }else{
 
+          console.log(bundle);
           const message = {
             publicKey : this.props.account.marketplace.keys.publicKey,
             address : this.props.account.data.latestAddress,
@@ -133,6 +134,7 @@ class Interact extends Component {
               this.setState({alertText:'Error: ' + error});
               this.setState({alertType:'error'});
             }else{
+              console.log(bundle);
               this.setState({alertText:'payment successful '});
               this.setState({alertType:'success'});
             }
