@@ -1,10 +1,7 @@
-.container-header{
-    width: 100%;
-    background: #efefef;
-    height: 10%;
-    position: absolute;
-}
 
+header{
+    background: #efefefba;
+}
 .container-header-logo{
     margin-left: 2%;
 }
@@ -23,16 +20,14 @@
 }
 
 
-
 .container-icon-check{
     position: absolute;
 }
 
 .container-hidden-network{
     background: rgba(0,0,0,.8);
-    width: 261px;
+    width: 98%;
     min-height: 355px;
-    margin-left: 24%;
     overflow-y: hidden;
     position: absolute;
     z-index: 1000;

@@ -57,7 +57,11 @@
 }
 
 .container-no-transactions{
-    margin-top: 26%;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
 }
 
 .text-no-transactions{

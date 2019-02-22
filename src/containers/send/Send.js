@@ -97,8 +97,8 @@ class Send extends Component {
 
         <div>
           { !this.state.isLoading ?   
-          <div className="container-send"> 
 
+          <div className="container-send"> 
             <div className="row">
               <div className="col-1"></div>
               <div className="col-10">
@@ -150,11 +150,9 @@ class Send extends Component {
               </div>
               <div className="col-1"></div>
             </div>
-            
-            {this.state.showAlert ? <Alert text={this.state.alertText} type={this.state.alertType} onClose={this.onCloseAlert}/> : ''}
           </div>  
-          
           : <Loader/>}
+          {this.state.showAlert ? <Alert text={this.state.alertText} type={this.state.alertType} onClose={this.onCloseAlert}/> : ''}
         </div>
       );
     }

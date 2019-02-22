@@ -37,8 +37,8 @@ class Header extends Component {
           <div className="col-2 container-header-logo">
               <img src="./material/logo/pegasus-64.png" height="40" width="40"/>
           </div>
-          <div className="col-1"></div>
-          <div className="col-8">
+          <div className="col-1 col-sm-4"></div>
+          <div className="col-8 col-sm-5">
             <div className="row container-selection">
               <div className="col-2"> <i className="fa fa-signal"></i></div>
               <div className="col-8 text-center">{this.state.network.name}</div>
@@ -51,28 +51,36 @@ class Header extends Component {
           </div>
           <div className="col-1"></div>
         </div>
-        { this.state.showNetworks ? 
-          <div className="container-hidden-network">
-            <div className="container-hidden-network-header">Nodes</div>
-            <div className="container-hidden-network-body">
-              {options.network.map( (network,index) => {
-                return(
-                  <div onClick={() => this.switchNetwork(network)} className="container-hidden-network-item">
-                      
-                      <div className="container-icon-check">
-                        { this.state.network.id === network.id ? 
-                          <span className="fa fa-check"></span>
-                        :''}
+        
+          <div class="row">
+            <div className="col-3 col-sm-6"></div>
+            <div className="col-8 col-sm-5">
+            { this.state.showNetworks ? 
+              <div className="container-hidden-network">
+                <div className="container-hidden-network-header">Nodes</div>
+                <div className="container-hidden-network-body">
+                  {options.network.map( (network,index) => {
+                    return(
+                      <div onClick={() => this.switchNetwork(network)} className="container-hidden-network-item">
+                          
+                          <div className="container-icon-check">
+                            { this.state.network.id === network.id ? 
+                              <span className="fa fa-check"></span>
+                            :''}
+                          </div>
+                          { this.state.network.id === network.id ? 
+                            <div className="container-hidden-network-item-name-selected">{network.name}</div>
+                          : <div className="container-hidden-network-item-name-not-selected">{network.name}</div>}
                       </div>
-                      { this.state.network.id === network.id ? 
-                        <div className="container-hidden-network-item-name-selected">{network.name}</div>
-                      : <div className="container-hidden-network-item-name-not-selected">{network.name}</div>}
-                  </div>
-                )
-                })}
-            </div>
-          </div>
+                    )
+                    })}
+                </div>
+              </div>
               :''}
+            </div>
+            <div className="col-1"></div>
+          </div>
+            
       </header>
 
         

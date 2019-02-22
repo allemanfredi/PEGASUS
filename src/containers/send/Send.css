@@ -3,23 +3,17 @@
 }
 
 
-input {
-    width: 100%;
-    margin-top: 3%
-}
 
 .container-send{
-    margin-top:5%;
-}
-
-
-
-.container-error{
     position: absolute;
-    width: 49%;
-    top: 24%;
-    left: 49%;
+    top: 54%;
+    left: 50%;
+    width: 100%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%)
 }
+
+
 
 .btn-transfer{
     height: 50px;

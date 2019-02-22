@@ -23,6 +23,7 @@ class App extends Component {
       network : {},
       showHeader : false
     }
+    console.log(process.env.NODE_ENV)
   }
 
   async componentWillMount(){
@@ -57,10 +58,13 @@ class App extends Component {
 
   render() {
     return (
-      <div className="app chrome">
+    <div className={process.env.NODE_ENV === 'development' ? 'app-wrapper web': 'app-wrapper'}>
+      <div className={process.env.NODE_ENV === 'production' ? 'app chrome' : 'app web' }>
         {this.state.showHeader ? <Header isLogged={this.state.isLogged} changeNetwork={this.onHandleNetworkChanging}/> : '' }
         <Main  showHeader={this.onShowHeader} ref={this.main} currentNetwork={this.state.network}/>
       </div>
+    </div>
+      
     );
   }
 }

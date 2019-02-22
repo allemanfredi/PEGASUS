@@ -59,7 +59,7 @@ class Edit extends Component {
                     <div class="row">
                         <div class="col-1"></div>
                         <div class="col-10">
-                            <label for="inp-name" class="inp">
+                            <label htmlFor="inp-name" class="inp">
                                 <input value={this.state.name} onChange={e => {this.setState({name:e.target.value})}} type="text" id="inp-name" placeholder="&nbsp;"/>
                                 <span class="label">name</span>
                                 <span class="border"></span>

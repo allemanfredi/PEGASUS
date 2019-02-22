@@ -12,8 +12,8 @@
 
 
 
-.container-psw-suggestion {
-    margin-top: 66%;
+.text-psw-suggestion {
+    margin-top: 30px;
     color: darkblue;
     font-size: 11px;
 }
@@ -29,28 +29,33 @@
     transform: translate(-50%,15%);
 }
 
-.container-name-text,.container-psw-text {
-    margin-top: 22%;
+.name-text,.psw-text {
+    margin-top: 30px;
     font-size: 29px;
     color: darkblue;
+    margin-bottom: 30px;
 }
 
-.container-seed-text {
+.seed-text {
     font-size: 30px;
     margin-top: 5%;
     color: darkblue;
 }
 
-.container-seed-init{
+.seed-info-text{
+    margin-top:20px;
+}
+
+.container-seed-generation{
     margin: 0;
     /*background : #f6f6f6;*/
     width: 307px;
     border-radius: 10px;
     position: absolute;
-    top: 50%;
     left: 50%;
     margin-right: -50%;
-    transform: translate(-50%, -17%);
+    transform: translate(-50%, 0%);
+    margin-top: 20px;
 }
 
 .container-randomise{
@@ -61,10 +66,17 @@
 
 .container-logo{
     text-align: center;
-    margin-top: 12%;
+    margin-top: 30px;
     background: white;
 }
 
+.container-data-init{
+    position: absolute;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, 0%);
+    margin-top: 20px;
+}
 
 .btn-name , .btn-password{
     margin-bottom: 10%;
@@ -196,4 +208,12 @@
     border: 0;
     font-weight: bold;
     text-overflow: ellipsis;
+}
+
+.container-init-data{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%)
 }

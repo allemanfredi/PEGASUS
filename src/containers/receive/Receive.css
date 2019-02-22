@@ -1,9 +1,13 @@
 
-.container-address{
-}
-
-.container-qr-code{
-    margin-top:40%;
+.container-receive{
+    margin: 0;
+    background : #fff;
+    position: absolute;
+    top: 54%;
+    left: 50%;
+    width: 100%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%)
 }
 
 .label-address{
@@ -12,6 +16,6 @@
     text-overflow: ellipsis;
     text-align: left;
     font-size: 15px;
-    max-width: 30ch;
+    max-width: 100%;
 }
 

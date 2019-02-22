@@ -152,105 +152,108 @@ class Init extends Component {
                         <img src="./material/logo/pegasus-128.png" height="80" width="80"/>
                     </div>
                    {this.state.initialization[0] ?  
-                        <div>
-                            <div className="container-name-text">
-                                <div className="row">
-                                    <div className="col-12 text-center">Let's add a name</div>
-                                </div>
-                            </div>
-                            <div className="container-name-init">
-                                <div className="row">
-                                    <div className="col-1"></div>
-                                    <div className="col-10">
-                                        <label for="inp-name" className="inp">
-                                            <input value={this.state.name} onChange={e => {this.setState({name: e.target.value})}} type="text" id="inp-name" placeholder="&nbsp;"/>
-                                            <span className="label">name</span>
-                                            <span className="border"></span>
-                                        </label>
+                        <div >
+                            <div className="row">
+                                <div className="col-1"></div>
+                                <div className="col-10 text-center">
+                                    <div className="row">
+                                        <div className="col-12 text-center name-text">Let's add a name</div>
                                     </div>
-                                    <div className="col-1"></div>
+                                    <div className="row">
+                                        <div className="col-12">
+                                            <label for="inp-name" className="inp">
+                                                <input value={this.state.name} onChange={e => {this.setState({name: e.target.value})}} type="text" id="inp-name" placeholder="&nbsp;"/>
+                                                <span className="label">name</span>
+                                                <span className="border"></span>
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
+                                <div className="col-1"></div>
                             </div>
                         </div>
-                        
-
                    : ''}
 
                    {this.state.initialization[1] ? 
                     <div>
-                        <div className="container-psw-text">
+                        <div className="row">
+                            <div className="col-1"></div>
+                            <div className="col-10 text-center">
                                 <div className="row">
-                                    <div className="col-12 text-center">Let's add a password</div>
+                                    <div className="col-12 text-center psw-text">Let's add a password</div>
                                 </div>
-                        </div>
-                        <div className="container-psw-init">
-                            <div className="row">
-                                <div className="col-1"></div>
-                                <div className="col-10">
-                                    <label for="inp-password" className="inp">
-                                        <input value={this.state.psw} onChange={e => {this.setState({psw: e.target.value})}}  type="password" id="inp-password" placeholder="&nbsp;"/>
-                                        <span className="label">password</span>
-                                        <span className="border"></span>
-                                    </label>
+
+                                <div className="row">
+                                    <div className="col-12">
+                                        <label for="inp-password" className="inp">
+                                            <input value={this.state.psw} onChange={e => {this.setState({psw: e.target.value})}}  type="password" id="inp-password" placeholder="&nbsp;"/>
+                                            <span className="label">password</span>
+                                            <span className="border"></span>
+                                        </label>
+                                    </div>
                                 </div>
-                                <div className="col-1"></div>
+
+                                <div className="row">
+                                    <div className="col-12">
+                                        <label for="inp-re-password" className="inp">
+                                            <input value={this.state.repsw} onChange={e => {this.setState({repsw: e.target.value})}} type="password" id="inp-re-password" placeholder="&nbsp;"/>
+                                            <span className="label">re-password</span>
+                                            <span className="border"></span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div className="row">
+                                    <div className="col-12 text-center text-psw-suggestion ">
+                                        Password must contain at least 8 characters
+                                    </div>
+                                </div>
+
                             </div>
-                            <div className="row">
-                                <div className="col-1"></div>
-                                <div className="col-10">
-                                    <label for="inp-re-password" className="inp">
-                                        <input value={this.state.repsw} onChange={e => {this.setState({repsw: e.target.value})}} type="password" id="inp-re-password" placeholder="&nbsp;"/>
-                                        <span className="label">re-password</span>
-                                        <span className="border"></span>
-                                    </label>
-                                </div>
-                                <div className="col-1"></div>
-                            </div>
-                        </div>
-                        <div className="container-psw-suggestion">
-                            <div className="row">
-                                <div className="col-12 text-center">
-                                    Password must contain at least 8 characters
-                                </div>
-                            </div>
+                            <div className="col-1"></div>
                         </div>
                     </div>
                     : ''}
 
                    {this.state.initialization[2]  ? 
-                        <div>
-                            <div className="container-seed-text">
+                    <div>
+                        <div className="row">
+                            <div className="col-1"></div>
+                            <div className="col-10 text-center">
                                 <div className="row">
-                                    <div className="col-12 text-center">Let's generate a seed</div>
+                                    <div className="col-12 text-center seed-text">Let's generate a seed</div>
                                 </div>
-                            </div>
-                            { this.state.randomLetters > 0 ?
-                                <div className="container-randomise">
-                                    <div className="row">
-                                        <div className="col-12 text-center">
-                                            Press <i className="remained-letters">{this.state.randomLetters}</i> more letters to randomise them
-                                        </div>
+                                
+                                <div className="row">
+                                    <div className="col-12 text-center seed-info-text">
+                                        Press <i className="remained-letters">{this.state.randomLetters >= 0 ? this.state.randomLetters : 0}</i> more letters to randomise them
                                     </div>
                                 </div>
-                            : ''}
-                            <div className="container-seed-init">
-                                {[0,9,18,27,36,45,54,63,72].map(item => {
-                                    return (
-                                        <div className="row">
-                                            <div className="col-1"></div>
-                                            { Array.from(new Array(9), (x,i) => i+item).map( index => {
-                                                return (
-                                                    <div className="col-1">
-                                                        <div onClick={ () => this.randomiseSeedLetter(index) } className="container-letter">{this.state.seed[index]}</div>
-                                                    </div>
-                                                )
-                                            })}
-                                            <div className="col-1"></div>
-                                        </div>
-                                    )
-                                })}
-                            </div>  
+                            
+                                <div className="container-seed-generation">
+                                    {[0,9,18,27,36,45,54,63,72].map(item => {
+                                        return (
+                                            <div className="row">
+                                                <div className="col-1"></div>
+                                                { Array.from(new Array(9), (x,i) => i+item).map( index => {
+                                                    return (
+                                                        <div className="col-1">
+                                                            <div onClick={ () => this.randomiseSeedLetter(index) } className="container-letter">{this.state.seed[index]}</div>
+                                                        </div>
+                                                    )
+                                                })}
+                                                <div className="col-1"></div>
+                                            </div>
+                                        )
+                                    })}
+                                </div>  
+                                  
+                            </div>
+                            <div className="col-1"></div>
                         </div>
+                    </div>
+
+
                     : ''}
 
                     {this.state.initialization[3]  ?

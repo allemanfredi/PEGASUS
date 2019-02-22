@@ -23,8 +23,8 @@ export default class Map extends Component {
         zoom: 2.8,
         bearing: 0,
         pitch: 0,
-        width: 500,
-        height: 500
+        width: 800,
+        height: 600
       },
       selectedDevice: null
     };
