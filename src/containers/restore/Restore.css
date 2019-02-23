@@ -1,5 +1,10 @@
 .container-restore-account{
-    margin-top:40%;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    margin-right: -50%;
+    width: 100%;
+    transform: translate(-50%, -27%);
 }
 
 

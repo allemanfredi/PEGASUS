@@ -30,8 +30,8 @@ export default class Alert extends Component {
                 <div className="container-logo-alert">
                     <div className="row">
                         <div className="col-12 text-center">
-                            {this.props.type === 'error' ? <img src="./material/img/error.png" height="90" width="90"/> :
-                             this.props.type === 'success' ? <img src="./material/img/success.png" height="90" width="90"/> :
+                            {this.props.type === 'error' ? <img src="./material/img/error.png" height="90" width="90" alt='error'/> :
+                             this.props.type === 'success' ? <img src="./material/img/success.png" height="90" width="90" alt='success'/> :
                              this.props.type === 'loading' ? <div className="loading"></div> : '' }
                            
                         </div> 

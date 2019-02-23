@@ -149,7 +149,7 @@ class Init extends Component {
                 <Loader/>
             : (<div>
                     <div className="container-logo">
-                        <img src="./material/logo/pegasus-128.png" height="80" width="80"/>
+                        <img src="./material/logo/pegasus-128.png" height="80" width="80" alt='pegasus logo'/>
                     </div>
                    {this.state.initialization[0] ?  
                         <div >

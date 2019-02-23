@@ -1,28 +1,14 @@
-.container-login{
-}
-.container-center-login{
-    margin: 0;
-    background : #f6f6f6;
-    width: 300px;
-    border-radius: 10px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -27%)
-}
-.container-restore-login{
-    margin-top: 73%;
-}
+
 
 .container-logo-login{
     text-align: center;
-    margin-top: 22%;
+    margin-top: 10%;
     background: white;
+    position: relative;
 }
-.container-title-login{
-    text-align: center;
-    margin-top: 1%;
+.title-login{
+    margin-top: 3%;
+    margin-bottom: 3%;
     color: #00008b;
     font-size: 29px;
 }

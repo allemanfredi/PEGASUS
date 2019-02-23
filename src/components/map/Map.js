@@ -24,7 +24,7 @@ export default class Map extends Component {
         bearing: 0,
         pitch: 0,
         width: 800,
-        height: 600
+        height: 550
       },
       selectedDevice: null
     };

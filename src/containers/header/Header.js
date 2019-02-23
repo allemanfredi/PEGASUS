@@ -35,7 +35,7 @@ class Header extends Component {
       <header>
         <div className="row">
           <div className="col-2 container-header-logo">
-              <img src="./material/logo/pegasus-64.png" height="40" width="40"/>
+              <img src="./material/logo/pegasus-64.png" height="40" width="40" alt='pegasus logo'/>
           </div>
           <div className="col-1 col-sm-4"></div>
           <div className="col-8 col-sm-5">
@@ -52,9 +52,9 @@ class Header extends Component {
           <div className="col-1"></div>
         </div>
         
-          <div class="row">
-            <div className="col-3 col-sm-6"></div>
-            <div className="col-8 col-sm-5">
+          <div className="row">
+            <div className="col-2 col-sm-5"></div>
+            <div className="col-9 col-sm-6 pr-2">
             { this.state.showNetworks ? 
               <div className="container-hidden-network">
                 <div className="container-hidden-network-header">Nodes</div>

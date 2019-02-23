@@ -51,7 +51,7 @@ class Details extends Component {
       return (
             <div className="modal">
 
-                <div className="container-info">
+                <div className="container-details">
                     <div className="container-button-close">
                         <div className="row">
                             <div className="col-2 text-center">

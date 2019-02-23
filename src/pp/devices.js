@@ -2,13 +2,11 @@ import {decryptWithRsaPrivateKey} from '../utils/crypto'
 const {iotaInit,getMessage} = require('../core/core');
 const {trytesToAscii} = require('@iota/converter')
 
-const tag = "GADDTCVCPCGDIDGDJDVAUAGA999"
+const tag = "GADDTCVCPCGDIDGDJDVAUAVCGA9"
 
 const fetchDevices = async provider => {
-   
-    const options = {tags : [tag]};
-   
     const iota = await iotaInit(provider)
+    const options = {tags : [tag]};
     const transactions = await iota.findTransactionObjects(options);
 
     const devices = [];
@@ -39,7 +37,6 @@ const fetchDevices = async provider => {
 const receiveSideKeyAndFirstRoot = async (provider,account) => {
     
     const iota = await iotaInit(provider);
-
     const options = {
         addresses : account.data.addresses,
         tags : [tag]
@@ -51,6 +48,7 @@ const receiveSideKeyAndFirstRoot = async (provider,account) => {
         if ( transaction.currentIndex === 0 ){
             try{
                 let message = await getMessage(transaction.hash)//JSON.parse(trytesToAscii(transaction.signatureMessageFragment.substring(0,transaction.signatureMessageFragment.length-1)).replace(/\0.*$/g,''));
+                console.log(message);
                 if ( message.sidekey && message.root ){
                     message.root = decryptWithRsaPrivateKey(message.root,account.marketplace.keys.privateKey);
                     message.sidekey = decryptWithRsaPrivateKey(message.sidekey,account.marketplace.keys.privateKey);
@@ -59,7 +57,6 @@ const receiveSideKeyAndFirstRoot = async (provider,account) => {
             }catch(err){}
         }
     }
-    
     return res;
 }
 

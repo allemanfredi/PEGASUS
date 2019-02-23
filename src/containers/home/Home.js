@@ -82,7 +82,8 @@ class Home extends Component {
         const dseed = aes256decrypt(account.seed,key);
         this.setState({decryptedSeed : dseed});
 
-        //check account data after 50 seconds in order to receive the transaction
+        //check account data after 40 seconds in order to receive the transaction
+        this.getData();
         this.setState( state => {
             const interval = setInterval(() => this.getData(), 40000);
             return{
@@ -307,7 +308,7 @@ class Home extends Component {
                   <div className="container-info">
                     <div className="row ">
                       <div className="col align-center">
-                        <img src="./material/logo/iota-logo.png" height="60" width="60"/>
+                        <img src="./material/logo/iota-logo.png" height="60" width="60" alt='iota logo'/>
                         <div className="container-balance">
                           { this.state.account.data.balance > 99999999 || this.state.account.data.balance < -99999999 ? (this.state.account.data.balance / 1000000000).toFixed(2) + " Gi" : 
                             this.state.account.data.balance > 99999 || this.state.account.data.balance < -99999  ? (this.state.account.data.balance / 1000000).toFixed(2) + " Mi" :

@@ -56,7 +56,7 @@ class Settings extends Component {
                             <li className="sidebar-header">
                                 <div className="row">
                                     <div className="col-12 text-center">
-                                        <img src="./material/logo/iota-logo.png" height="50" width="50"/>
+                                        <img src="./material/logo/iota-logo.png" height="50" width="50" alt='iota logo'/>
                                     </div>
                                 </div>   
                                 <div className="row">

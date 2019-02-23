@@ -1,9 +1,9 @@
 import React , { Component } from 'react';
 import {fetchDevices,receiveSideKeyAndFirstRoot} from'../../../pp/devices';
 import {prepareTransfer} from '../../../core/core';
-import {getKey} from '../../../wallet/wallet';
+import {getKey,getChannels,storeChannels} from '../../../wallet/wallet';
 import {aes256decrypt} from '../../../utils/crypto';
-import {init,fetch,publish} from '../../../mam/mam';
+import {fetch} from '../../../mam/mam';
 
 import Map from '../../../components/map/Map'
 import Alert from '../../../components/alert/Alert';
@@ -55,6 +55,11 @@ class Interact extends Component {
       this.setState({showAlert:false});
     }
 
+    async componentWillMount (){
+      const channels = await getChannels(this.props.network);
+      this.setState({channels:channels});
+    }
+
     appendToMessages = message => {
       console.log(message);
       this.setState({ messages: [...this.state.messages, message] });
@@ -65,15 +70,14 @@ class Interact extends Component {
       const app = this.state.channels.slice();
       for ( let channel of app ){
         const result = await fetch(this.props.network.provider,channel.root, 'restricted', channel.sidekey ,this.appendToMessages);
-        
         channel.root = result.nextRoot;
-        
         if ( !channel['messages'] ){
           channel['messages'] = [];
         }
         result.messages.forEach(message => channel['messages'].push(message));
       }
       this.setState({channels:app});
+      storeChannels(this.props.network,this.state.channels);
       console.log(this.state.channels);
     }
 
@@ -90,7 +94,6 @@ class Interact extends Component {
       this.setState({channels:channels});
     }
 
-
     async onBuy(device){
       this.setState({alertText:'Paying the device...'});
       this.setState({alertType:'loading'});
@@ -100,45 +103,28 @@ class Interact extends Component {
       const key = await getKey();
       const seed = aes256decrypt(this.props.account.seed,key);
 
+      const message = {
+        publicKey : this.props.account.marketplace.keys.publicKey,
+        address : this.props.account.data.latestAddress,
+      }
       const transfer = {
         seed : seed,
         to : device.address,
         value : device.price,
-        message : "",
+        message : message,
         tag : "",
         difficulty : this.props.network.difficulty
       }
       
-      prepareTransfer( transfer , (bundle , error) => {
+      prepareTransfer( transfer , (bundle,error) => {
         if ( error ){
           this.setState({alertText:'Error: ' + error});
           this.setState({alertType:'error'});
         }else{
 
           console.log(bundle);
-          const message = {
-            publicKey : this.props.account.marketplace.keys.publicKey,
-            address : this.props.account.data.latestAddress,
-          }
-
-          const transferPublicKey = {
-            seed : seed,
-            to : device.address,
-            value : 0,
-            message : message,
-            tag : "",
-            difficulty : this.props.network.difficulty
-          }
-          prepareTransfer( transferPublicKey , (bundle , error) => {
-            if ( error ){
-              this.setState({alertText:'Error: ' + error});
-              this.setState({alertType:'error'});
-            }else{
-              console.log(bundle);
-              this.setState({alertText:'payment successful '});
-              this.setState({alertType:'success'});
-            }
-          });
+          this.setState({alertText:'payment successful ' + bundle});
+          this.setState({alertType:'success'});
         }
       })
     }

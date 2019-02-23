@@ -8,14 +8,21 @@
     background: rgba(0, 0, 0, 0.6);
 }
 
-.container-info{
+.container-details{
     background: #fff;
-    width: 93%;
-    height: 90%;
-    margin-left: 3.5%;
-    margin-top: 5%;
-    transition: all 0.4s ease 0s;
+    position: absolute;
+    top: 54%;
+    left: 50%;
+    width: 329px;
+    height: 483px;
+    margin: 0 -50% 0 0;
+    -webkit-transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);
     border-radius: 5px;
+    padding-left: 15px;
+    padding-right: 15px;
+    z-index: 10000;
+    overflow-y: auto;
 }
 
 .container-promote-transaction,.container-reattach-transaction {
@@ -51,7 +58,7 @@
 }
 
 .details-list{
-    height: 258px;
+    height: 209px;
     overflow: overlay;
 }
 

@@ -301,6 +301,42 @@ const isSeedValid = (seed) => {
 /*controls that uses network have been made in order to distinguish between mainnet and testnet
 * ex: it is possibile to have two equals account name, one for the testnet and one for the mainnet */
 
+/* M A R K E T P L A C E   F U N C T I O N S */
+
+
+
+const storeChannels = async (network,channels) => {
+    return new Promise ((resolve,reject) => {
+        try{
+            const data = JSON.parse(localStorage.getItem('data'));
+            data[network.type].forEach( account => {
+                if ( account.current )
+                    account.marketplace.channels = channels;
+            });
+            localStorage.setItem('data',JSON.stringify(data));
+            resolve(channels)
+        }catch(err){
+            reject(err);
+        }
+    });
+}
+
+const getChannels = async network => {
+    return new Promise ((resolve,reject) => {
+        try{
+            const data = JSON.parse(localStorage.getItem('data'));
+            console.log(data);
+            data[network.type].forEach( account => {
+                if ( account.current ){
+                    console.log(account.marketplace.channels);
+                    resolve(account.marketplace.channels);
+                }
+            });
+        }catch(err){
+            reject(err);
+        }
+    });
+}
 
 export {isWalletSetup,
         storePsw,
@@ -318,4 +354,6 @@ export {isWalletSetup,
         resetData,
         isSeedValid,
         updateNameAccount,
-        deleteAccount};
+        deleteAccount,
+        getChannels,
+        storeChannels};

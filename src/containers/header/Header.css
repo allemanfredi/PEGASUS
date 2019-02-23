@@ -4,12 +4,15 @@ header{
 }
 .container-header-logo{
     margin-left: 2%;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .container-selection{
     border: 2px solid darkblue;
     border-radius: 12px;
-    margin-top: 7px;
+    margin-top: 17px;
+    margin-bottom: 10px;
 }
 
 .network-selection{
@@ -31,7 +34,7 @@ header{
     overflow-y: hidden;
     position: absolute;
     z-index: 1000;
-    /* margin-top: 1%; */
+    margin-top: -3%;
     border-radius: 7px;
 }
 .container-hidden-network-header{

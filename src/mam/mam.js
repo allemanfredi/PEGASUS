@@ -40,7 +40,7 @@ const fetch = (provider, root, mode, key, reportEvent) => {
     });
 };
 
-const logData = data => console.log('Fetched and parsed', JSON.parse(trytesToAscii(data)), '\n')
+//const logData = data => console.log('Fetched and parsed', JSON.parse(trytesToAscii(data)), '\n')
 
 
 export  {
