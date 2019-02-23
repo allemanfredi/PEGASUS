@@ -45,19 +45,19 @@ class Interact extends Component {
       
       //start fetching devices
       await this.findDevices();
+      this.setState({showAlert:false});
 
-      this.setState({alertText:'Getting root and sidekey...'});
       await this.getSideKeyAndRoot();
-
-      this.setState({alertText:'Fetching devices...'});
+      setInterval(this.getSideKeyAndRoot,60000);
       await this.fetchChannels();
       setInterval(this.fetchChannels,60000);
-      this.setState({showAlert:false});
+      
     }
 
     async componentWillMount (){
       const channels = await getChannels(this.props.network);
       this.setState({channels:channels});
+      console.log(channels);
     }
 
     appendToMessages = message => {

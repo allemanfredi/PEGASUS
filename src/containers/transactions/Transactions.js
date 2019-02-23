@@ -108,9 +108,9 @@ class Transactions extends Component {
                 <hr/>
             </div>
             <div className="transaction-list">
-            {this.state.transactions.length > 0 ? this.state.transactions.map(transaction => {
+            {this.state.transactions.length > 0 ? this.state.transactions.map((transaction,index) => {
                 return (
-                    <div onClick={() => this.props.onGoDetails(transaction.transfer)} className="transaction-list-item" >
+                    <div key={index} onClick={() => this.props.onGoDetails(transaction.transfer)} className="transaction-list-item" >
                         <div className="row">
                             <div className="col-3 text-left">
                                 <div className="transaction-date">{timestampToDate(transaction.timestamp)}</div>

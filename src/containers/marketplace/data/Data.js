@@ -16,7 +16,9 @@ class Data extends Component {
         } 
     }
 
-    componentWillMount(){
+    componentDidMount(){
+
+        console.log(this.props.data);
         this.setState( () => {
             let hidden = {};
             this.props.data.forEach ( channel => {
@@ -30,6 +32,7 @@ class Data extends Component {
 
     showHideData(data){
         this.setState( state => {
+            console.log(this.state.hidden);
             let hidden = this.state.hidden;
             hidden[data.deviceName] = !hidden[data.deviceName];
             return {
@@ -49,18 +52,18 @@ class Data extends Component {
             </div>
 
              <div className="data-list">
-                {this.props.data.map( channel => {
+                {this.props.data.map( (channel,cindex) => {
                     return (
-                        <div className="container-data">
+                        <div key={channel.deviceName} className="container-data">
                             <div className="row data-item">
                                 <div onClick={() => this.showHideData(channel)} className="col-12 text-center data-name">{channel.deviceName}</div>
                             </div>
 
                             <div className="data-hidden">
-                                {this.state.hidden[channel.deviceName] ? 
-                                channel.messages.map( message => {
+                                {this.state.hidden[channel.deviceName] &&  channel.messages? 
+                                channel.messages.map( (message,mindex) => {
                                     return (
-                                        <div className="row data-item-hidden">
+                                        <div key={cindex.toString()+mindex.toString()} className="row data-item-hidden">
                                             <div className="col-12 text-center">{trytesToAscii(message)}</div>
                                         </div>
                                     )
