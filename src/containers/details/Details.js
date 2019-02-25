@@ -55,7 +55,7 @@ class Details extends Component {
                     <div className="container-button-close">
                         <div className="row">
                             <div className="col-2 text-center">
-                                <button onClick={() => this.props.onClose()} type="button" className="close btn-close-details" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <button onClick={() => this.props.onClose()} type="button" className="close btn-close-details float-left" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                             </div>
                             <div className="col-10"></div>
                         </div>  
@@ -100,7 +100,6 @@ class Details extends Component {
                             })}
                         </ul>
                     </div>
-                    
                     
                     <div className="container-promote-transaction">
                         <div className="row">

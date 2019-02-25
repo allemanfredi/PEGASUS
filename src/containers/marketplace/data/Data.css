@@ -12,21 +12,35 @@
     padding-left: 15px;
     padding-right: 15px;
     z-index: 10000;
+}
+
+.data-list{
     overflow-y: auto;
-    
-}
-
-.container-data{
-    
-}
-
-.data-item {
+    overflow-x: hidden;
+    height: 435px;
     margin-top: 10px;
-    background: #efefef;
-    font-size: 22px;
 }
-.data-item:hover{
+
+.data-name {
+    font-size: 18px;
+}
+
+.container-data {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+    margin-bottom: 20px;
+}
+.container-data:hover{
     cursor: pointer;
     opacity: 0.5;
     color: darkblue;
+}
+
+.data-value{
+    font-size: 45px;
+    color: darkblue;
+}
+.data-timestamp{
+    margin-top: 20px;
+    font-size: 20px;
 }

@@ -1,5 +1,6 @@
 import React , { Component } from 'react';
 import { trytesToAscii } from '@iota/converter'
+import { timestampToDateMilliseconds } from '../../../utils/helpers';
 
 
 import './Data.css'
@@ -17,8 +18,6 @@ class Data extends Component {
     }
 
     componentDidMount(){
-
-        console.log(this.props.data);
         this.setState( () => {
             let hidden = {};
             this.props.data.forEach ( channel => {
@@ -32,7 +31,6 @@ class Data extends Component {
 
     showHideData(data){
         this.setState( state => {
-            console.log(this.state.hidden);
             let hidden = this.state.hidden;
             hidden[data.deviceName] = !hidden[data.deviceName];
             return {
@@ -45,8 +43,8 @@ class Data extends Component {
       return (
           <div className="data">
             <div className="row">
-                <div className="col-2">
-                    <button onClick={() => this.props.onClose()} type="button" className="close btn-close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <div className="col-2 text-left">
+                    <button onClick={() => this.props.onClose()} type="button" className="close btn-close float-left" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
                 <div className="col-10"/>
             </div>
@@ -55,8 +53,9 @@ class Data extends Component {
                 {this.props.data.map( (channel,cindex) => {
                     return (
                         <div key={channel.deviceName} className="container-data">
-                            <div className="row data-item">
-                                <div onClick={() => this.showHideData(channel)} className="col-12 text-center data-name">{channel.deviceName}</div>
+                            <div onClick={() => this.showHideData(channel)} className="row data-item">
+                                <div className="col-6 text-left data-name">{channel.deviceName}</div>
+                                <div className="col-6 text-right data-name">{channel.description}</div>
                             </div>
 
                             <div className="data-hidden">
@@ -64,7 +63,8 @@ class Data extends Component {
                                 channel.messages.map( (message,mindex) => {
                                     return (
                                         <div key={cindex.toString()+mindex.toString()} className="row data-item-hidden">
-                                            <div className="col-12 text-center">{trytesToAscii(message)}</div>
+                                            <div className="col-3 text-left data-value">{JSON.parse(trytesToAscii(message)).data}</div>
+                                            <div className="col-9 text-right data-timestamp">{JSON.parse(trytesToAscii(message)).timestamp ? timestampToDateMilliseconds(JSON.parse(trytesToAscii(message)).timestamp) : ''}</div>
                                         </div>
                                     )
                                 })

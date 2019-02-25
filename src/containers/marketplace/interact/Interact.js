@@ -91,7 +91,18 @@ class Interact extends Component {
     //get the first root after having payed the device and the sidekey
     async getSideKeyAndRoot(){
       const channels = await receiveSideKeyAndFirstRoot(this.props.network.provider,this.props.account);
-      this.setState({channels:channels});
+
+      //in order to keep shown the messages within the data view
+      const newChannels = channels.filter ( channel => {
+        for ( let c of this.state.channels )
+          if ( c.deviceName === channel.deviceName )
+            return false;
+        return true;
+      });
+
+      this.setState({channels: [...this.state.channels, ...newChannels]});
+
+      console.log(this.state.channels)
     }
 
     async onBuy(device){
@@ -138,8 +149,7 @@ class Interact extends Component {
         <div>
           <div className="container-map">
             <Map devices={this.state.devices}
-                 onBuy={this.onBuy}/>
-
+                  onBuy={this.onBuy}/>
           </div> 
           {this.state.showAlert ?  <Alert text={this.state.alertText} type={this.state.alertType} onClose={this.onCloseAlert}/> : ''}
           {this.state.showData ?  <Data data={this.state.channels} onClose={this.onCloseData}/> : ''}

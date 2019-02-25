@@ -43,8 +43,8 @@ class Header extends Component {
               <div className="col-2"> <i className="fa fa-signal"></i></div>
               <div className="col-8 text-center">{this.state.network.name}</div>
               <div className="col-2">
-              <div onClick={e => {this.setState({showNetworks : !this.state.showNetworks})}} className="">
-                  { this.state.showNetworks ? <span className="fa fa-chevron-up"></span>  : <span className="fa fa-chevron-down"></span> }
+              <div onClick={e => {this.setState({showNetworks : !this.state.showNetworks})}} className="float-right">
+                  { this.state.showNetworks ? <span className="fa fa-chevron-up"></span>  : <span className="fa fa-chevron-down "></span> }
                 </div>
               </div>
             </div>

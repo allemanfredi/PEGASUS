@@ -122,10 +122,19 @@ const timestampToDate = (timestamp) => {
     const todate = date.getDate();
     const tomonth = date.getMonth()+1;
     const toyear = date.getFullYear();
-    /*const hours = date.getHours();
+    return tomonth + '/' + todate + '/' + toyear;
+}
+
+const timestampToDateMilliseconds = (timestamp) => {
+
+    const date = new Date(timestamp)
+    const todate = date.getDate();
+    const tomonth = date.getMonth()+1;
+    const toyear = date.getFullYear();
+    const hours = date.getHours();
     const minutes = "0" + date.getMinutes();
-    const seconds = "0" + date.getSeconds();*/
-    return /*hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2) + ' - ' +*/ tomonth + '/' + todate + '/' + toyear;
+    const seconds = "0" + date.getSeconds();
+    return hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2) + ' - ' + tomonth + '/' + todate + '/' + toyear;
 }
 
 
@@ -137,5 +146,6 @@ module.exports = {
     bytesToTrits,
     tritsToChars,
     charToByte,
-    timestampToDate
+    timestampToDate,
+    timestampToDateMilliseconds
 };
