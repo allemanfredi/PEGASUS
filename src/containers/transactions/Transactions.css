@@ -19,12 +19,14 @@
 }
 
 .transaction-list-item {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
     box-sizing: border-box;
-    background: #f6f6f6;
+    background: white;
     margin-top: 7px;
     margin-bottom: 7px;
-    cursor : pointer;
-    padding: 2px 10px 2px 10px;
+    cursor: pointer;
+    padding: 13px 10px 13px 10px;
 }
 .transaction-list-item:hover {
     opacity: 0.5;
@@ -32,9 +34,10 @@
 
 .transaction-list-item-action, .transaction-list-item-value {
     background: inherit;
-    font-size: 13px;
+    font-size: 16px;
     font-weight: bold;
 }
+
 
 .transaction-list-item-date {
     font-size: .75rem;
@@ -42,17 +45,17 @@
 
 .transaction-date {
     color: darkblue;
-    font-size: 13px;
+    font-size: 16px;
 }
 
 .transaction-list-item-status-confirmed {
-    font-size: 13px;
-    color: green;
+    font-size: 16px;
+    color: darkblue;
     font-weight: bold;
 }
 .transaction-list-item-status-not-confirmed {
-    font-size: 13px;
-    color: darkblue;
+    font-size: 16px;
+    color: gray;
     font-weight: bold;
 }
 

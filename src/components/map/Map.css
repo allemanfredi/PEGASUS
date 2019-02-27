@@ -23,6 +23,7 @@
     margin-top: 20px;
     padding-top: 10px;
     padding-bottom: 10px;
+    cursor: pointer;
 }
 .popup-btn-close-stream {
     background: white;
