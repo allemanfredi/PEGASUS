@@ -19,28 +19,47 @@
     overflow-x: hidden;
     height: 435px;
     margin-top: 10px;
+    padding-left: 2px;
+    padding-right: 2px;
 }
 
-.data-name {
-    font-size: 18px;
+.channel-name {
+    font-size: 22px;
+    color: darkblue;
+    font-weight: bold;
+}
+.channel-description{
+    font-size: 12px;
+}  
+.channel-info{
+    font-size: 12px;
+    color: #7a7a7a;
 }
 
 .container-data {
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
     transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+    border-radius: 5px;
     margin-bottom: 20px;
+    margin-top: 2px;
 }
-.container-data:hover{
+
+.data-item:hover{
     cursor: pointer;
-    opacity: 0.5;
-    color: darkblue;
 }
 
 .data-value{
     font-size: 45px;
     color: darkblue;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 .data-timestamp{
-    margin-top: 20px;
-    font-size: 20px;
+    margin-top: 52px;
+    font-size: 14px;
+}
+
+.btn-show-data{
+    background: transparent;
+    border: 0;
 }

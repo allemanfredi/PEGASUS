@@ -1,5 +1,5 @@
 
-const {iotaInit,getNewAddress,prepareTransfer,findTransactionObject} = require('../core/core');
+/*const {iotaInit,getNewAddress,prepareTransfer,findTransactionObject} = require('../core/core');
 const { trytesToAscii } = require('@iota/converter')
 
 let seed;
@@ -76,4 +76,4 @@ export  {
 	init,
 	send,
 	fetch
-}
+}*/

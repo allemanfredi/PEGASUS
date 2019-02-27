@@ -70,11 +70,13 @@ class Interact extends Component {
       const app = this.state.channels.slice();
       for ( let channel of app ){
         const result = await fetch(this.props.network.provider,channel.root, 'restricted', channel.sidekey ,this.appendToMessages);
-        channel.root = result.nextRoot;
-        if ( !channel['messages'] ){
-          channel['messages'] = [];
+        if ( result ){
+          channel.root = result.nextRoot;
+          if ( !channel['messages'] ){
+            channel['messages'] = [];
+          }
+          result.messages.forEach(message => channel['messages'].push(message));
         }
-        result.messages.forEach(message => channel['messages'].push(message));
       }
       this.setState({channels:app});
       storeChannels(this.props.network,this.state.channels);

@@ -11,8 +11,9 @@ const iotaInit = async provider => {
                 provider : provider
             })
             resolve(iota);
-        }catch(e){
-            reject(e);
+        }catch(err){
+            //reject(err);
+           console.log(err);
         }  
     });
 }
@@ -21,7 +22,10 @@ const getNodeInfo = async () => {
     return new Promise ((resolve , reject ) => {
         iota.getNodeInfo()
         .then(info =>  resolve(info))
-        .catch(err => reject(err))
+        .catch(err => {
+            //reject(err);
+            console.log(err);
+        })
     });
 }
 
@@ -29,7 +33,10 @@ const getNewAddress = async seed => {
     return new Promise ((resolve , reject ) => {
         iota.getNewAddress(seed)
             .then(address => resolve(address))
-            .catch(err => reject(err))
+            .catch(err => {
+                //reject(err);
+                console.log(err);
+            })
     });
 }
 
@@ -37,7 +44,10 @@ const getBalance = async address => {
     return new Promise ((resolve , reject) => {
         iota.getBalances([address], 100)
             .then(res => resolve(res.balances[0]))
-            .catch(err =>  reject(err))
+            .catch(err =>  {
+                //reject(err);
+                console.log(err);
+            })
     })
 }
 
@@ -45,7 +55,10 @@ const getAllTransactions = async addresses => {
     return new Promise ((resolve,reject) => {
         iota.findTransactionObjects({ addresses: addresses})
             .then( transactions => resolve(transactions))
-            .catch( err => reject(err))
+            .catch( err => {
+                //reject(err);
+                console.log(err);
+            })
     })
 }
 
@@ -86,7 +99,10 @@ const getLatestInclusion = async hashes => {
     return new Promise (async (resolve,reject) => {
         iota.getLatestInclusion(hashes)
         .then(states => resolve(states))
-        .catch(err => reject(err))
+        .catch(err => {
+            //reject(err);
+            console.log(err);
+        })
     })
 }
 
@@ -99,8 +115,8 @@ const getAccountData = async seed => {
              resolve(accountData);
            })
            .catch(err => {
+            //reject(err);
             console.log(err);
-            reject(err);
            })
     })
 }
@@ -113,7 +129,6 @@ const getAccountDataSync = seed => {
         })
         .catch(err => {
         console.log(err);
-        return err;
         })
 }
 
@@ -124,7 +139,8 @@ const getBundle = async transaction => {
             resolve(bundle);
         })
         .catch(err => {
-            reject(err);
+            //reject(err);
+            console.log(err);
         })
     })
 }
@@ -136,8 +152,8 @@ const isPromotable = async tail => {
             console.log(isPromotable);
             resolve(isPromotable);
         }).catch(err => {
-            console.log(isPromotable);
-            reject(err);
+            //reject(err);
+            console.log(err);
         })
     });
 }
@@ -150,10 +166,12 @@ const promoteTransaction = async (tail ) => {
                 resolve();
             })
             .catch(err => {
-                reject(err);
+                 //reject(err);
+                console.log(err);
             });
         }catch(err){
-            reject(err);
+            //reject(err);
+           console.log(err);
         }
     }); 
 }
@@ -165,7 +183,8 @@ const replayBundle = async tail => {
                 resolve(transactions);
             })
             .catch(err => {
-                reject(err);
+                //reject(err);
+                console.log(err);
             });
     });
 }
@@ -177,7 +196,8 @@ const findTransactionObject = async (options) => {
 		   resolve(transactions)
 		})
 		.catch(err => {
-		   reject(err);
+           //reject(err);
+           console.log(err);
 		})
 	});
 }
@@ -189,6 +209,7 @@ const getMessage = async tail => {
         const message = JSON.parse(extractJson(bundle));
         resolve(message);
       }catch(err){
+        //reject(err);
         console.log(err);
       }
     });

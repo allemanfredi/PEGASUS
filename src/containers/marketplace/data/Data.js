@@ -53,12 +53,24 @@ class Data extends Component {
                 {this.props.data.map( (channel,cindex) => {
                     return (
                         <div key={channel.deviceName} className="container-data">
-                            <div onClick={() => this.showHideData(channel)} className="row data-item">
-                                <div className="col-6 text-left data-name">{channel.deviceName}</div>
-                                <div className="col-6 text-right data-name">{channel.description}</div>
+                            <div onClick={() => this.showHideData(channel)} className="container data-item">
+                                <div className="row">
+                                    <div className="col-10 channel-name">{channel.deviceName}</div>
+                                    <div className="col-2">
+                                        <button className="btn-show-data"><i className={this.state.hidden[channel.deviceName] ? "fa fa-eye" : "fa fa-eye-slash" }></i></button> 
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-6 channel-info">Description:</div>
+                                    <div className="col-6 text-right channel-description">{channel.description}</div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-6 channel-info">Owner:</div>
+                                    <div className="col-6 text-right channel-description">alle</div>
+                                </div>
                             </div>
 
-                            <div className="data-hidden">
+                            <div className="container data-hidden">
                                 {this.state.hidden[channel.deviceName] &&  channel.messages? 
                                 channel.messages.map( (message,mindex) => {
                                     return (
