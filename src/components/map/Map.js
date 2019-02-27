@@ -3,6 +3,7 @@ import MapGL, {NavigationControl,Marker,Popup} from 'react-map-gl';
 
 import Pin from './pin/Pin';
 
+import './Map.css'
 
 const TOKEN = 'pk.eyJ1IjoiYWxsZW1hbmZyZWRpIiwiYSI6ImNqbmx3aXhiZjAwc2IzcG16OWhmNWpxaWEifQ.uH79I15NLlm4yLZ5kDAojg'; // Set your mapbox token here
 
@@ -56,28 +57,34 @@ export default class Map extends Component {
         longitude={parseInt(selectedDevice.lon)}
         latitude={parseInt(selectedDevice.lat)}
         onClose={() => this.setState({selectedDevice: null})} >
-        <div className="container-popup">
+        <div className="container container-popup">
           <div className="row">
             <div className="col-12 text-center">
-              {selectedDevice.name}
+              <div className="popup-device-name">
+                {selectedDevice.name}
+              </div>
             </div>
           </div>
           <div className="row">
             <div className="col-12 text-center">
-              {selectedDevice.description} 
+              <div className="popup-device-description">
+                {selectedDevice.description} 
+              </div>
             </div>
           </div>
           <div className="row">
             <div className="col-12 text-center">
-              {selectedDevice.price ? selectedDevice.price : 0} i
+              <div className="popup-device-price">
+                {selectedDevice.price ? selectedDevice.price : 0} i
+              </div>
             </div>
           </div>
           <div className="row">
-            <div className="col-6 text-center">
-              <button onClick={() => this.props.onBuy(selectedDevice)} className="btn">Buy stream <i className="fa fa-check" ></i></button>
+            <div className="col-6 text-left pr-1 pl-1 ">
+              <button onClick={() => this.props.onBuy(selectedDevice)} className="popup-btn-buy-stream">Buy  <i className="fa fa-check" ></i></button>
             </div>
-            <div className="col-6 text-center">
-              <button className="btn">Close <i className="fa fa-times" ></i></button>
+            <div className="col-6 text-right pr-1 pl-1 ">
+              <button className="popup-btn-close-stream">Close <i className="fa fa-times" ></i></button>
             </div>
           </div>
         </div>
@@ -92,7 +99,7 @@ export default class Map extends Component {
         <MapGL
           {...viewport}
           onViewportChange={this.updateViewport}
-          mapStyle="mapbox://styles/mapbox/dark-v9"
+          mapStyle="mapbox://styles/mapbox/light-v9"
           mapboxApiAccessToken={TOKEN}>
          
           {this.props.devices.map (device => this.renderMarker(device))}

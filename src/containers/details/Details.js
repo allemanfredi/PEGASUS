@@ -82,7 +82,7 @@ class Details extends Component {
                     <div className="container-list-details">
                         <ul className="list-group details-list">
                             {this.props.details.map( detail => {
-                                return (<li className="list-group-item">
+                                return (<li key={detail.hash} className="list-group-item">
                                             <div className="row">
                                                 <div className="col-8">
                                                     <div className="detail-hash" >{detail.hash} </div>
