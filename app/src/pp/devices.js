@@ -4,7 +4,7 @@ const {iotaInit,getMessage} = require('../core/core');
 const {trytesToAscii} = require('@iota/converter');
 const pow = require('proof-of-work');
 
-const tag = "GADDTCVCPCGDIDGDJDVAUAKDGA9"
+const tag = "GADDTCVCPCGDIDGDJDVAUAMDGA9"
 
 const fetchDevices = async provider => {
     try{
@@ -18,13 +18,12 @@ const fetchDevices = async provider => {
             const device = trytesToAscii(transaction.signatureMessageFragment.substring(0,transactions[0].signatureMessageFragment.length-1));
             try{
                 const obj = JSON.parse(device.replace(/\0.*$/g,''));
-                if ( obj.name && obj.address && obj.lat && obj.lon ){
-                    console.log(obj);
-                    devices.push(obj);
+                if ( obj.name && obj.address && obj.lat && obj.lon && obj.prove ){
 
                     //PROOF OF WORK
-                    const r= checkProofOfWork(obj.prove.proof,obj.prove.complexity,obj.prove.nonce);
-                    console.log(r);
+                    if ( checkProofOfWork(obj.prove.proof,obj.prove.complexity,obj.prove.nonce) ){
+                        devices.push(obj);
+                    }
                 }
             }catch(err){}
         })
@@ -81,17 +80,17 @@ const receiveSideKeyAndFirstRoot = async (provider,account) => {
 }
 
 const checkProofOfWork = (proof,complexity,nonce) => {
-    let buff = new Buffer(nonce, 'base64');  
-    console.log(buff);
-    let text = buff.toString('ascii');
-    console.log(text); 
+    const buff = Buffer.from(nonce, 'base64');  
     const verifier = new pow.Verifier({
+        size: 1024,
+        n: 16,
         complexity: complexity,
         prefix: Buffer.from(proof,'hex'),
-        // nonce validity time (default: one minute)
-        /*validity: 60000*/
+        validity: 6000000
     });
-    const res = verifier.check(buff)
+	   
+	// Remove stale nonces from Bloom filter
+    const res = verifier.check(buff);
     return res;
 }
 

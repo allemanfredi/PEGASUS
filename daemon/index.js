@@ -10,15 +10,15 @@ const {init,fetch,publish,changeMode} = require('./src/mam');
 const pow = require('proof-of-work');
 
 
-const deviceName = 'device-vale1';
-const lat = 44;
+const deviceName = 'device-vale2';
+const lat = 45;
 const lon = 13;
-const price = 5;
-const description = "weather sensor"
+const price = 4;
+const description = "pression sensor"
 
 const provider = 'https://nodes.devnet.iota.org';//'https://nodes.thetangle.org:443';
 const difficulty = 9;
-const tag = "pegasusv10w"; //"pegasusv10";
+const tag = "pegasusv10y"; //"pegasusv10";
 
 let publicState;
 let seed;
@@ -203,22 +203,30 @@ const encrypt = (publicKey,message) => {
 
 const proofOfWork = async (proof,complexity) => {
 	const solver = new pow.Solver();
-	const prefix = Buffer.from('ciao', 'hex');
-	const nonce = solver.solve(complexity,  prefix);
-	/*return {
-			proof : proof,
-			nonce : nonce.toString('base64'),
-			complexity : complexity
-	}*/
+	const prefix = Buffer.from(proof,'hex');
+	const nonce = solver.solve(complexity,prefix);
+	return {
+		proof : proof,
+		nonce : nonce.toString('base64'),
+		complexity : complexity
+	}
 	
-		const verifier = new pow.Verifier({
-			complexity: complexity,
-			prefix: Buffer.from(proof,'ascii'),
-			// nonce validity time (default: one minute)
-			/*validity: 60000*/
-		});
-		const res = verifier.check(nonce)
-		console.log(res);
+	/*const t = nonce.toString('base64')
+	console.log(t);
+	const buff = Buffer.from(t, 'base64');  
+	console.log(proof);
+    console.log(buff);
+    const verifier = new pow.Verifier({
+        size: 1024,
+        n: 16,
+        complexity: complexity,
+        prefix: Buffer.from(proof,'hex'),
+        validity: 60000
+    });
+	   
+	// Remove stale nonces from Bloom filter
+    const res = verifier.check(buff);
+    console.log(res);	*/
 }
 
 const main = async () => {
@@ -242,5 +250,5 @@ const main = async () => {
 			console.log(err);
 	}
 }
-//main();
-proofOfWork("ciao",13);
+main();
+//proofOfWork(sha256("device-vale2"),13);
