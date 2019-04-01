@@ -8,10 +8,10 @@ const NodeRSA = require('node-rsa');
 const {init,fetch,publish,changeMode} = require('./src/mam');
 
 
-const deviceName = 'device-vale12';
-const lat = 41;
-const lon = 8;
-const price = 3;
+const deviceName = 'device-vale17';
+const lat = 44;
+const lon = 13;
+const price = 5;
 const description = "weather sensor"
 
 const provider = 'https://nodes.devnet.iota.org';//'https://nodes.thetangle.org:443';
@@ -39,8 +39,8 @@ const initialize = async () => {
 
 	if (fs.existsSync('param.json')) {
 		console.log("daemon initialied with param.json with the following parameters");
-		const fileContents = await fs.promises.readFile('param.json');
-    data = JSON.parse(fileContents);
+		const fileContents = fs.readFileSync('param.json');
+    	data = JSON.parse(fileContents);
 		console.log(data);
 		if ( !data.sentInfo ){
 			await sendInfo();

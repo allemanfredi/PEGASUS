@@ -1,4 +1,4 @@
-![Alt text](public/material/logo/pegasus-64.png?raw=true "Title")
+![Alt text](app/public/material/logo/pegasus-64.png?raw=true "Title")
 # PEGASUS
  Pegasus is a chrome extension that implements a wallet for the IOTA cryptocurrency. In addition to being a wallet, Pegasus will implement a sort of marketplace where a user can buy streams of data coming from sensors connected to the IOTA network through the MAM protocol (Masked Authentication Message).
 
@@ -9,7 +9,7 @@ git clone https://github.com/allemanfredi/PEGASUS.git
 ```
 
 ```
-cd PEGASUS
+cd PEGASUS/app
 ```
 
 ```
@@ -33,6 +33,22 @@ After having built the application, it needs to be loaded on chrome.
 
 * Go to chrome://extensions/ and check the box for Developer mode in the top right.
 * Click the Load unpacked extension button and select the build folder for your extension to install it.
+
+
+## Run Daemon
+
+
+```
+cd PEGASUS/daemon
+```
+
+```
+npm install
+```
+
+```
+npm start
+```
 
 
 
