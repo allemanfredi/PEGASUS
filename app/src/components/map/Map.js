@@ -81,10 +81,10 @@ export default class Map extends Component {
           </div>
           <div className="row">
             <div className="col-6 text-left pr-1 pl-1 ">
-              <button onClick={() => this.props.onBuy(selectedDevice)} className="popup-btn-buy-stream">Buy  <i className="fa fa-check" ></i></button>
+              <button className="popup-btn-close-stream">Close <i className="fa fa-times" ></i></button>
             </div>
             <div className="col-6 text-right pr-1 pl-1 ">
-              <button className="popup-btn-close-stream">Close <i className="fa fa-times" ></i></button>
+              <button onClick={() => this.props.onBuy(selectedDevice)} className="popup-btn-buy-stream">Buy  <i className="fa fa-check" ></i></button>
             </div>
           </div>
         </div>

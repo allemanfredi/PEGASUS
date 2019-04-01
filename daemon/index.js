@@ -1,14 +1,16 @@
 
 const {iotaInit,generateSeed,getAccountData,findTransactionObject,prepareTransfer,getInputs,getMessage} = require('./src/iota.js');
 const {trytesToAscii} = require('@iota/converter');
-const {generateKeys,encryptWithRsaPublicKey} = require('./src/crypto');
+const {generateKeys,encryptWithRsaPublicKey,sha256} = require('./src/crypto');
 const fs = require('fs');
 const NodeRSA = require('node-rsa');
 
 const {init,fetch,publish,changeMode} = require('./src/mam');
 
+const pow = require('proof-of-work');
 
-const deviceName = 'device-vale17';
+
+const deviceName = 'device-vale1';
 const lat = 44;
 const lon = 13;
 const price = 5;
@@ -16,7 +18,7 @@ const description = "weather sensor"
 
 const provider = 'https://nodes.devnet.iota.org';//'https://nodes.thetangle.org:443';
 const difficulty = 9;
-const tag = "pegasusv10g"; //"pegasusv10";
+const tag = "pegasusv10w"; //"pegasusv10";
 
 let publicState;
 let seed;
@@ -61,6 +63,9 @@ const initialize = async () => {
 	restrictedState = await init(provider,restrictedSeed);
 	restrictedState = changeMode(restrictedState, mode, secretKey);
 
+	//PROOF OF WORK
+	const pow = await proofOfWork(sha256(deviceName),13);
+
 	//save settings
 	data = {
 		seed : seed,
@@ -71,14 +76,15 @@ const initialize = async () => {
 			price : price,
 			description : description
 		},
+		pow : pow,
 		channel : {
 			state : restrictedState
 		},
 		processed : [],
 		sentInfo : false
 	}
-	fs.writeFileSync('param.json', JSON.stringify(data), null);
-
+	//fs.writeFileSync('param.json', JSON.stringify(data), null);
+	console.log(data);
 	//send the coordinate in order to properly be displayed on the map in PEGASUS-CLIENT
 	sendInfo(() => {
 		data.sentInfo = true;
@@ -99,7 +105,8 @@ const sendInfo = async callback => {
 		lat : data.device.lat,
 		lon : data.device.lon,
 		price : data.device.price,
-		description : data.device.description
+		description : data.device.description,
+		prove : data.pow
 	}
 
 	//genero un seed in maniera da compiere una tx sul tangle all'indirizzo di questo seed appena generato
@@ -119,6 +126,9 @@ const sendInfo = async callback => {
 		if (bundle){
 			callback();
 			console.log("device succesfully comunicate its details " + bundle);
+		}
+		if (error){
+			console.log(error);
 		}
 	});
 }
@@ -191,6 +201,26 @@ const encrypt = (publicKey,message) => {
 	return key.encrypt(message,'base64');
 }
 
+const proofOfWork = async (proof,complexity) => {
+	const solver = new pow.Solver();
+	const prefix = Buffer.from('ciao', 'hex');
+	const nonce = solver.solve(complexity,  prefix);
+	/*return {
+			proof : proof,
+			nonce : nonce.toString('base64'),
+			complexity : complexity
+	}*/
+	
+		const verifier = new pow.Verifier({
+			complexity: complexity,
+			prefix: Buffer.from(proof,'ascii'),
+			// nonce validity time (default: one minute)
+			/*validity: 60000*/
+		});
+		const res = verifier.check(nonce)
+		console.log(res);
+}
+
 const main = async () => {
 	try{
 		await initialize();
@@ -200,10 +230,7 @@ const main = async () => {
 			timestamp : Date.now()
 		});
 
-		setInterval ( () => {
-			payments();
-		},20000);
-
+		setInterval ( () => {payments();},20000);
 
 		setInterval ( () => {
 			publishData({
@@ -215,4 +242,5 @@ const main = async () => {
 			console.log(err);
 	}
 }
-main();
+//main();
+proofOfWork("ciao",13);

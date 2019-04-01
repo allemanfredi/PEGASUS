@@ -1,8 +1,10 @@
 import {decryptWithRsaPrivateKey} from '../utils/crypto'
+import { copyFile } from 'fs';
 const {iotaInit,getMessage} = require('../core/core');
-const {trytesToAscii} = require('@iota/converter')
+const {trytesToAscii} = require('@iota/converter');
+const pow = require('proof-of-work');
 
-const tag = "GADDTCVCPCGDIDGDJDVAUAVCGA9"
+const tag = "GADDTCVCPCGDIDGDJDVAUAKDGA9"
 
 const fetchDevices = async provider => {
     try{
@@ -17,7 +19,12 @@ const fetchDevices = async provider => {
             try{
                 const obj = JSON.parse(device.replace(/\0.*$/g,''));
                 if ( obj.name && obj.address && obj.lat && obj.lon ){
+                    console.log(obj);
                     devices.push(obj);
+
+                    //PROOF OF WORK
+                    const r= checkProofOfWork(obj.prove.proof,obj.prove.complexity,obj.prove.nonce);
+                    console.log(r);
                 }
             }catch(err){}
         })
@@ -73,9 +80,24 @@ const receiveSideKeyAndFirstRoot = async (provider,account) => {
     }
 }
 
+const checkProofOfWork = (proof,complexity,nonce) => {
+    let buff = new Buffer(nonce, 'base64');  
+    console.log(buff);
+    let text = buff.toString('ascii');
+    console.log(text); 
+    const verifier = new pow.Verifier({
+        complexity: complexity,
+        prefix: Buffer.from(proof,'hex'),
+        // nonce validity time (default: one minute)
+        /*validity: 60000*/
+    });
+    const res = verifier.check(buff)
+    return res;
+}
+
 
 
 export {
     fetchDevices,
-    receiveSideKeyAndFirstRoot
+    receiveSideKeyAndFirstRoot,
 }
