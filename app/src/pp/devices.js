@@ -87,7 +87,7 @@ const checkProofOfWork = (proof,complexity,nonce) => {
         n: 16,
         complexity: complexity,
         prefix: Buffer.from(proof,'hex'),
-        validity: 60000000000
+        validity: 31556952000 //validity one year
     });
 	   
     const res = verifier.check(buff);
