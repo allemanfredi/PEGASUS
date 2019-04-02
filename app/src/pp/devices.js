@@ -21,6 +21,7 @@ const fetchDevices = async provider => {
                 if ( obj.name && obj.address && obj.lat && obj.lon && obj.prove ){
 
                     //PROOF OF WORK
+                    console.log(obj);
                     if ( checkProofOfWork(obj.prove.proof,obj.prove.complexity,obj.prove.nonce) ){
                         devices.push(obj);
                     }
@@ -86,10 +87,9 @@ const checkProofOfWork = (proof,complexity,nonce) => {
         n: 16,
         complexity: complexity,
         prefix: Buffer.from(proof,'hex'),
-        validity: 6000000
+        validity: 60000000000
     });
 	   
-	// Remove stale nonces from Bloom filter
     const res = verifier.check(buff);
     return res;
 }
