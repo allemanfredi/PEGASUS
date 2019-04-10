@@ -70,7 +70,7 @@ class Data extends Component {
                                 </div>
                             </div>
 
-                            <div className="container data-hidden">
+                            <div className="container container-data-hidden">
                                 {this.state.hidden[channel.deviceName] &&  channel.messages? 
                                 channel.messages.map( (message,mindex) => {
                                     return (

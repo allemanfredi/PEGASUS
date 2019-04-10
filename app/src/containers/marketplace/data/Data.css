@@ -45,7 +45,6 @@
 
 
 .container-data:hover {
-    transform: scale(1.03);
     cursor: pointer;
 }
 
@@ -63,4 +62,8 @@
 .btn-show-data{
     background: transparent;
     border: 0;
+}
+
+.container-data-hidden{
+    cursor: default;
 }
