@@ -41,7 +41,7 @@ class Data extends Component {
 
     render() {
       return (
-          <div className="data">
+          <div className="container data">
             <div className="row">
                 <div className="col-2 text-left">
                     <button onClick={() => this.props.onClose()} type="button" className="close btn-close float-left" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -75,7 +75,7 @@ class Data extends Component {
                                 channel.messages.map( (message,mindex) => {
                                     return (
                                         <div key={cindex.toString()+mindex.toString()} className="row data-item-hidden">
-                                            <div className="col-3 text-left data-value">{JSON.parse(trytesToAscii(message)).data}</div>
+                                            <div className="col-3 text-left data-value">{Math.round(JSON.parse(trytesToAscii(message)).data * 100) / 100}</div>
                                             <div className="col-9 text-right data-timestamp">{JSON.parse(trytesToAscii(message)).timestamp ? timestampToDateMilliseconds(JSON.parse(trytesToAscii(message)).timestamp) : ''}</div>
                                         </div>
                                     )

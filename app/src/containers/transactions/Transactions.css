@@ -15,7 +15,9 @@
     flex: 1;
     overflow-y: auto;
     height: 233px;
-    margin-top: -18px;
+    margin-top: -13px;
+    padding-right: 10px;
+    padding-left: 10px;
 }
 
 .transaction-list-item {
@@ -29,7 +31,7 @@
     padding: 13px 10px 13px 10px;
 }
 .transaction-list-item:hover {
-    opacity: 0.5;
+    transform: scale(1.05);
 }
 
 .transaction-list-item-action, .transaction-list-item-value {

@@ -107,7 +107,7 @@ class Transactions extends Component {
                 </div>
                 <hr/>
             </div>
-            <div className="container transaction-list">
+            <div className="transaction-list">
             {this.state.transactions.length > 0 ? this.state.transactions.map((transaction,index) => {
                 return (
                     <div key={index} onClick={() => this.props.onGoDetails(transaction.transfer)} className="transaction-list-item" >

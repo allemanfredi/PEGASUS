@@ -10,11 +10,11 @@ const {init,fetch,publish,changeMode} = require('./src/mam');
 const pow = require('proof-of-work');
 
 
-const deviceName = 'device-vale2';
-const lat = 45;
-const lon = 13;
-const price = 4;
-const description = "pression sensor"
+const deviceName = 'device-vale4';
+const lat = 30;
+const lon = 8;
+const price = 14;
+const description = 'x sensor'
 
 const provider = 'https://nodes.devnet.iota.org';//'https://nodes.thetangle.org:443';
 const difficulty = 9;
@@ -242,7 +242,7 @@ const main = async () => {
 
 		setInterval ( () => {
 			publishData({
-				data:10,
+				data:Math.random() * 100,
 				timestamp : Date.now()
 			});
 		},20000);
