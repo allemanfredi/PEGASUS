@@ -5,7 +5,6 @@ import Main from './main/Main';
 import {getCurrentNewtwork,setCurrentNetwork} from '../wallet/wallet';
 import options from '../options/options';
 
-import './App.css';
 
 class App extends Component {
 

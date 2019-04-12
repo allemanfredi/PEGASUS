@@ -9,12 +9,13 @@ const {init,fetch,publish,changeMode} = require('./src/mam');
 
 const pow = require('proof-of-work');
 
+process.argv.forEach( (val, index, array) => console.log(val));
 
-const deviceName = 'device-vale4';
-const lat = 30;
-const lon = 8;
-const price = 14;
-const description = 'x sensor'
+let deviceName;
+let lat;
+let lon;
+let price;
+let description;
 
 const provider = 'https://nodes.devnet.iota.org';//'https://nodes.thetangle.org:443';
 const difficulty = 9;
@@ -52,6 +53,16 @@ const initialize = async () => {
 		await init(provider,data.channel.state.seed);
 		return;
 	}
+
+	//get device details
+	deviceName = process.argv[2];
+	lat = process.argv[3];
+	lon = process.argv[4];
+	price = process.argv[5];
+	description = process.argv[6];
+	process.argv.forEach(function (val, index, array) {
+		console.log(index + ': ' + val);
+	});
 
 	const bufSeed = generateSeed();
 	seed = bufSeed.toString().replace(/,/g, '');

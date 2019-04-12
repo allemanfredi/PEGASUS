@@ -47,7 +47,7 @@ npm install
 ```
 
 ```
-npm start
+node index.js deviceName latitude longitude price description
 ```
 
 
