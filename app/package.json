@@ -1,36 +1,28 @@
 {
   "name": "pegasus",
-  "version": "0.1.0",
   "private": true,
-  "dependencies": {
-    "@iota/converter": "^1.0.0-beta.8",
-    "@iota/core": "^1.0.0-beta.8",
-    "@iota/curl": "^1.0.0-beta.8",
-    "@iota/extract-json": "^1.0.0-beta.8",
-    "@iota/http-client": "^1.0.0-beta.8",
-    "@mapbox/react-native-mapbox-gl": "^6.1.3",
-    "babel-polyfill": "^6.26.0",
-    "mam.client.js": "iotaledger/mam.client.js",
-    "node-rsa": "^1.0.3",
-    "npm": "^6.5.0",
-    "proof-of-work": "^3.3.2",
-    "qrcode.react": "^0.8.0",
-    "react": "^16.8.1",
-    "react-dom": "^16.4.2",
-    "react-map-gl": "^3.3.6",
-    "react-router-dom": "^4.1.1",
-    "react-scripts": "2.1.3"
-  },
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "start": "  react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "build": "lerna run build",
+    "build:react": "lerna run build --scope @pegasus/popup",
+    "build:core": "lerna run build --ignore @pegasus/popup",
+    "update-version": "lerna publish --skip-git --skip-npm --force-publish '*'",
+    "lint": "lerna run lint",
+    "build:zip": "yarn build && npx bestzip chrome-extension.zip dist manifest.json packages/popup/build packages/popup/static"
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ]
+  "devDependencies": {
+    "@babel/plugin-transform-runtime": "^7.1.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-class-property": "^1.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.2",
+    "eslint-plugin-no-null": "^1.0.2",
+    "eslint-plugin-react": "^7.11.1",
+    "lerna": "^3.13.2"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.1.2"
+  }
 }
