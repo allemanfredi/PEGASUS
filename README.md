@@ -13,18 +13,14 @@ cd PEGASUS/app
 ```
 
 ```
-npm install
+yarn install
+lerna bootstrap
 ```
 
 ```
-npm run build
+yarn build
 ```
 
-In case you want to use the application through a normal web page:
-
-```
-npm start
-```
 
 
 After having built the application, it needs to be loaded on chrome.
