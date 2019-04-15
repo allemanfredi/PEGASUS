@@ -31,7 +31,24 @@
     height: 600px;
 }
 
+/*CONTAINERS*/
+.container-center{
+    position: absolute;
+    top: 35%;
+    left: 50%;
+    margin-right: -50%;
+    width: 100%;
+    transform: translate(-50%, 0);
+}
 
+.container-logo-login{
+    text-align: center;
+    margin-top: 7%;
+    background: white;
+    position: relative;
+}
+
+/*INPUT*/
 .inp {
     position: relative;
     margin: auto;
@@ -93,17 +110,6 @@
 .inp input:focus + span + .border {
     transform: scaleX(1);
 }
-
-
-
-.container-logo-login{
-    text-align: center;
-    margin-top: 7%;
-    background: white;
-    position: relative;
-}
-
-
 
 
 /*BUTTONS*/

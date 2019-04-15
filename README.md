@@ -21,6 +21,11 @@ lerna bootstrap
 yarn build
 ```
 
+If you want to build only the popup:
+
+```
+yarn build:react
+```
 
 
 After having built the application, it needs to be loaded on chrome.
