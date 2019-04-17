@@ -1,77 +1,76 @@
-import { composeAPI } from '@iota/core'
-import { asciiToTrytes } from '@iota/converter'
-import {extractJson} from '@iota/extract-json';
+import { composeAPI } from '@iota/core';
+import { asciiToTrytes } from '@iota/converter';
+import { extractJson } from '@iota/extract-json';
 
 let iota;
 
-const iotaInit = async provider => { 
-    return new Promise ((resolve,reject) => {
+const iotaInit = async provider => {
+    return new Promise((resolve, reject) => {
         try{
             iota = composeAPI({
-                provider : provider
-            })
+                provider
+            });
             resolve(iota);
-        }catch(err){
-            //reject(err);
-           console.log(err);
-        }  
-    });
-}
-
-const getNodeInfo = async () => {
-    return new Promise ((resolve , reject ) => {
-        iota.getNodeInfo()
-        .then(info =>  resolve(info))
-        .catch(err => {
+        }catch(err) {
             //reject(err);
             console.log(err);
-        })
+        }
     });
-}
+};
+
+const getNodeInfo = async () => {
+    return new Promise((resolve, reject ) => {
+        iota.getNodeInfo()
+            .then(info => resolve(info))
+            .catch(err => {
+            //reject(err);
+                console.log(err);
+            });
+    });
+};
 
 const getNewAddress = async seed => {
-    return new Promise ((resolve , reject ) => {
+    return new Promise((resolve, reject ) => {
         iota.getNewAddress(seed)
             .then(address => resolve(address))
             .catch(err => {
                 //reject(err);
                 console.log(err);
-            })
+            });
     });
-}
+};
 
 const getBalance = async address => {
-    return new Promise ((resolve , reject) => {
+    return new Promise((resolve, reject) => {
         iota.getBalances([address], 100)
-            .then(res => resolve(res.balances[0]))
-            .catch(err =>  {
+            .then(res => resolve(res.balances[ 0 ]))
+            .catch(err => {
                 //reject(err);
                 console.log(err);
-            })
-    })
-}
+            });
+    });
+};
 
 const getAllTransactions = async addresses => {
-    return new Promise ((resolve,reject) => {
-        iota.findTransactionObjects({ addresses: addresses})
+    return new Promise((resolve, reject) => {
+        iota.findTransactionObjects({ addresses })
             .then( transactions => resolve(transactions))
             .catch( err => {
                 //reject(err);
                 console.log(err);
-            })
-    })
-}
+            });
+    });
+};
 
-const prepareTransfer = async (transfer,ret) => {
-
+const prepareTransfer = async (transfer, ret) => {
     const transfers = [{
         address: transfer.to,
-        value: parseInt(transfer.value), 
+        value: parseInt(transfer.value),
         tag: asciiToTrytes(JSON.stringify(transfer.tag)), // optional tag of `0-27` trytes
         message: asciiToTrytes(JSON.stringify(transfer.message)) // optional message in trytes
-    }]
+    }];
 
-    const depth = 3 
+    const depth = 3;
 
     // Difficulty of Proof-of-Work required to attach transaction to tangle.
     // Minimum value on mainnet & spamnet is `14`, `9` on devnet and other testnets.
@@ -79,106 +78,105 @@ const prepareTransfer = async (transfer,ret) => {
 
     const inputs = await iota.getInputs(transfer.seed);
     try{
-        iota.prepareTransfers(transfer.seed, transfers , inputs)
-        .then(trytes => {
-            return iota.sendTrytes(trytes, depth, minWeightMagnitude);
-        })
-        .then(bundle => {
-            console.log(bundle);
-            ret(bundle[0].hash,null);
-        })
-        .catch(err => {
-            ret(null,err);
-        }) 
-    }catch(err){
-        ret(null,err);
-    }
-}
-
-const getLatestInclusion = async hashes => {
-    return new Promise (async (resolve,reject) => {
-        iota.getLatestInclusion(hashes)
-        .then(states => resolve(states))
-        .catch(err => {
-            //reject(err);
-            console.log(err);
-        })
-    })
-}
-
-
-const getAccountData = async seed => {
-    return new Promise ((resolve,reject) => {
-        iota.getAccountData(seed, {start: 0,security: 2})
-           .then(accountData => {
-             console.log(accountData);
-             resolve(accountData);
-           })
-           .catch(err => {
-            //reject(err);
-            console.log(err);
-           })
-    })
-}
-
-const getAccountDataSync = seed => {
-    iota.getAccountData(seed, {start: 0,security: 2})
-        .then(accountData => {
-            console.log(accountData);
-        return accountData;
-        })
-        .catch(err => {
-        console.log(err);
-        })
-}
-
-const getBundle = async transaction => {
-    return new Promise ((resolve,reject) => {
-        iota.getBundle(transaction)
-        .then(bundle => {
-            resolve(bundle);
-        })
-        .catch(err => {
-            //reject(err);
-            console.log(err);
-        })
-    })
-}
-
-const isPromotable = async tail => {
-    return new Promise ( (resolve,reject) => {
-        iota.isPromotable(tail , {rejectWithReason: true})
-        .then(isPromotable => {
-            console.log(isPromotable);
-            resolve(isPromotable);
-        }).catch(err => {
-            //reject(err);
-            console.log(err);
-        })
-    });
-}
-
-const promoteTransaction = async (tail ) => {
-    return new Promise ((resolve,reject) => {
-        try{
-            iota.promoteTransaction(tail, 3, 14)
-             .then(() => {
-                resolve();
+        iota.prepareTransfers(transfer.seed, transfers, inputs)
+            .then(trytes => {
+                return iota.sendTrytes(trytes, depth, minWeightMagnitude);
+            })
+            .then(bundle => {
+                console.log(bundle);
+                ret(bundle[ 0 ].hash, null);
             })
             .catch(err => {
-                 //reject(err);
+                ret(null, err);
+            });
+    }catch(err) {
+        ret(null, err);
+    }
+};
+
+const getLatestInclusion = async hashes => {
+    return new Promise(async (resolve, reject) => {
+        iota.getLatestInclusion(hashes)
+            .then(states => resolve(states))
+            .catch(err => {
+            //reject(err);
                 console.log(err);
             });
-        }catch(err){
+    });
+};
+
+const getAccountData = async seed => {
+    return new Promise((resolve, reject) => {
+        iota.getAccountData(seed, { start: 0, security: 2 })
+            .then(accountData => {
+                console.log(accountData);
+                resolve(accountData);
+            })
+            .catch(err => {
             //reject(err);
-           console.log(err);
+                console.log(err);
+            });
+    });
+};
+
+const getAccountDataSync = seed => {
+    iota.getAccountData(seed, { start: 0, security: 2 })
+        .then(accountData => {
+            console.log(accountData);
+            return accountData;
+        })
+        .catch(err => {
+            console.log(err);
+        });
+};
+
+const getBundle = async transaction => {
+    return new Promise((resolve, reject) => {
+        iota.getBundle(transaction)
+            .then(bundle => {
+                resolve(bundle);
+            })
+            .catch(err => {
+            //reject(err);
+                console.log(err);
+            });
+    });
+};
+
+const isPromotable = async tail => {
+    return new Promise( (resolve, reject) => {
+        iota.isPromotable(tail, { rejectWithReason: true })
+            .then(isPromotable => {
+                console.log(isPromotable);
+                resolve(isPromotable);
+            }).catch(err => {
+            //reject(err);
+                console.log(err);
+            });
+    });
+};
+
+const promoteTransaction = async (tail ) => {
+    return new Promise((resolve, reject) => {
+        try{
+            iota.promoteTransaction(tail, 3, 14)
+                .then(() => {
+                    resolve();
+                })
+                .catch(err => {
+                    //reject(err);
+                    console.log(err);
+                });
+        }catch(err) {
+            //reject(err);
+            console.log(err);
         }
-    }); 
-}
+    });
+};
 
 const replayBundle = async tail => {
-    return new Promise((resolve,reject) => {
-        iota.replayBundle(tail,3,14)
+    return new Promise((resolve, reject) => {
+        iota.replayBundle(tail, 3, 14)
             .then(transactions => {
                 resolve(transactions);
             })
@@ -187,48 +185,47 @@ const replayBundle = async tail => {
                 console.log(err);
             });
     });
-}
+};
 
 const findTransactionObject = async (options) => {
-	return new Promise((resolve,reject) => {
-		iota.findTransactionObjects(options)
-		.then(transactions => {
-		   resolve(transactions)
-		})
-		.catch(err => {
-           //reject(err);
-           console.log(err);
-		})
-	});
-}
+    return new Promise((resolve, reject) => {
+        iota.findTransactionObjects(options)
+            .then(transactions => {
+		   resolve(transactions);
+            })
+            .catch(err => {
+                //reject(err);
+                console.log(err);
+            });
+    });
+};
 
 const getMessage = async tail => {
-    return new Promise ( async (resolve,reject) => {
-      const bundle = await getBundle(tail);
-      try{
-        const message = JSON.parse(extractJson(bundle));
-        resolve(message);
-      }catch(err){
+    return new Promise( async (resolve, reject) => {
+        const bundle = await getBundle(tail);
+        try{
+            const message = JSON.parse(extractJson(bundle));
+            resolve(message);
+        }catch(err) {
         //reject(err);
-        console.log(err);
-      }
+            console.log(err);
+        }
     });
-  }
+};
 
-
-export {getNewAddress, 
-        getNodeInfo,
-        iotaInit,
-        getBalance,
-        getAllTransactions,
-        prepareTransfer,
-        getLatestInclusion,
-        getAccountData,
-        getBundle,
-        promoteTransaction,
-        replayBundle,
-        getAccountDataSync,
-        isPromotable,
-        findTransactionObject,
-        getMessage
-        };
+export { getNewAddress,
+    getNodeInfo,
+    iotaInit,
+    getBalance,
+    getAllTransactions,
+    prepareTransfer,
+    getLatestInclusion,
+    getAccountData,
+    getBundle,
+    promoteTransaction,
+    replayBundle,
+    getAccountDataSync,
+    isPromotable,
+    findTransactionObject,
+    getMessage
+};

@@ -1,100 +1,98 @@
-import React , { Component } from 'react';
-import {storePsw} from '../../wallet/wallet'
-import {aes256encrypt,sha256,generateKeys} from '../../utils/crypto'
-import {getAccountData} from '../../core/core';
-import {generateSeed,addAccount,setupWallet,setCurrentNetwork} from '../../wallet/wallet';
+import React, { Component } from 'react';
+import { storePsw } from '../../wallet/wallet';
+import { aes256encrypt, sha256, generateKeys } from '../../utils/crypto';
+import { getAccountData } from '../../core/core';
+import { generateSeed, addAccount, setupWallet, setCurrentNetwork } from '../../wallet/wallet';
 
-import Loader from '../../components/loader/Loader'
+import Loader from '../../components/loader/Loader';
 import options from '../../options/options';
 
 import './Init.css';
 
 class Init extends Component {
-
     constructor(props, context) {
-      super(props, context);
+        super(props, context);
 
-      this.createWallet = this.createWallet.bind(this);
-      this.goBack = this.goBack.bind(this);
-      this.goOn = this.goOn.bind(this);
-      this.updateStatusInitialization = this.updateStatusInitialization.bind(this);
-      this.randomiseSeedLetter = this.randomiseSeedLetter.bind(this);
-      this.copyToClipboard = this.copyToClipboard.bind(this);
-      //this.resetSeed = this.resetSeed.bind(this);
+        this.createWallet = this.createWallet.bind(this);
+        this.goBack = this.goBack.bind(this);
+        this.goOn = this.goOn.bind(this);
+        this.updateStatusInitialization = this.updateStatusInitialization.bind(this);
+        this.randomiseSeedLetter = this.randomiseSeedLetter.bind(this);
+        this.copyToClipboard = this.copyToClipboard.bind(this);
+        //this.resetSeed = this.resetSeed.bind(this);
 
-      this.labelSeed = React.createRef();
+        this.labelSeed = React.createRef();
 
-      this.state = {
-        psw: '',
-        repsw: '',
-        name : '',
-        seed : [],
-        randomLetters : 10,
-        randomizedLetter : [],
-        isLoading : false,
-        initialization : [true,false,false,false],
-        indexInitialization : 0,
-        isCopiedToClipboard : false,
-      };
+        this.state = {
+            psw: '',
+            repsw: '',
+            name: '',
+            seed: [],
+            randomLetters: 10,
+            randomizedLetter: [],
+            isLoading: false,
+            initialization: [true, false, false, false],
+            indexInitialization: 0,
+            isCopiedToClipboard: false,
+        };
     }
 
     async componentDidMount() {
         const seed = generateSeed();
-        this.setState({seed: seed});
+        this.setState({ seed });
     }
-
 
     //action = true -> goOn, action = false = goBack
-    goBack(){
-        this.updateStatusInitialization(this.state.indexInitialization,false);
-        this.setState({indexInitialization : this.state.indexInitialization -1});
+    goBack() {
+        this.updateStatusInitialization(this.state.indexInitialization, false);
+        this.setState({ indexInitialization: this.state.indexInitialization - 1 });
     }
 
-    async goOn(){
-        this.updateStatusInitialization(this.state.indexInitialization,true);
-        this.setState({indexInitialization : this.state.indexInitialization + 1});
+    async goOn() {
+        this.updateStatusInitialization(this.state.indexInitialization, true);
+        this.setState({ indexInitialization: this.state.indexInitialization + 1 });
 
-        if ( this.state.indexInitialization === 3){//create wallet
-            this.setState({isLoading : true});
+        if ( this.state.indexInitialization === 3) { //create wallet
+            this.setState({ isLoading: true });
             await this.createWallet();
-            this.setState({isLoading : false});
+            this.setState({ isLoading: false });
             this.props.onSuccess();
         }
     }
-  
-    updateStatusInitialization(index,action){
+
+    updateStatusInitialization(index, action) {
         this.setState(state => {
             const initialization = state.initialization;
-            initialization[index] = false;
-            action ? initialization[index+1] = true : initialization[index-1] = true;
+            initialization[ index ] = false;
+            action ? initialization[ index + 1 ] = true : initialization[ index - 1 ] = true;
             return {
-              initialization,
+                initialization,
             };
         });
     }
 
-    randomiseSeedLetter(index){
-        if ( !this.state.randomizedLetter.includes(index) && this.state.randomLetters > 0){
-            this.setState({randomizedLetter: [...this.state.randomizedLetter, index]});
-            this.setState({randomLetters: this.state.randomLetters - 1});
+    randomiseSeedLetter(index) {
+        if ( !this.state.randomizedLetter.includes(index) && this.state.randomLetters > 0) {
+            this.setState({ randomizedLetter: [...this.state.randomizedLetter, index] });
+            this.setState({ randomLetters: this.state.randomLetters - 1 });
         }
-        
+
         this.setState(state => {
-            const letter = generateSeed(1)[0];
-            let seed = state.seed;
-            seed[index] = letter;
+            const letter = generateSeed(1)[ 0 ];
+            const seed = state.seed;
+            seed[ index ] = letter;
             return {
                 seed
-            }
-        })
+            };
+        });
     }
 
     copyToClipboard(e) {
         this.labelSeed.current.select();
         document.execCommand('copy');
         e.target.focus();
-        this.setState({isCopiedToClipboard : true});
-    };
+        this.setState({ isCopiedToClipboard: true });
+    }
 
     /*resetSeed(){
         const seed = generateSeed();
@@ -104,222 +102,220 @@ class Init extends Component {
     }*/
 
     async createWallet() {
-        return new Promise ( async (resolve,reject) => {
+        return new Promise( async (resolve, reject) => {
             try{
-                if ( setupWallet() ){
-                    
+                if ( setupWallet() ) {
                     //store the psw
                     storePsw(this.state.psw);
-    
+
                     //TODO: come salvare la psw in plaintext (sol: session storage )
                     //piu sicuro: chiedere la psw per ogni send cosi da salvare solo l'hash della psw
                     //mi tengo la chiave di cifratura del seed nella ram invece che salvarmela nel session storage
                     const seed = this.state.seed.toString().replace(/,/g, '');
                     const pswHash = sha256(this.state.psw);
-                    const eseed = aes256encrypt(seed,pswHash);
-    
+                    const eseed = aes256encrypt(seed, pswHash);
+
                     //get all account data
                     const data = await getAccountData(seed);
-                    
+
                     const account = {
-                        name : this.state.name,
-                        seed : eseed,
-                        data : data,
-                        id : sha256(this.state.name),
-                        network : options.network[0], //TESTNET = 1  MAINNET = 0 
-                        marketplace : {'keys' : generateKeys() , 'channels':[]}
-                    }
-                    await addAccount(account,options.network[0],true);
-                    await setCurrentNetwork(options.network[0]);
+                        name: this.state.name,
+                        seed: eseed,
+                        data,
+                        id: sha256(this.state.name),
+                        network: options.network[ 0 ], //TESTNET = 1  MAINNET = 0
+                        marketplace: { keys: generateKeys(), channels: [] }
+                    };
+                    await addAccount(account, options.network[ 0 ], true);
+                    await setCurrentNetwork(options.network[ 0 ]);
                     resolve();
                 }
-            }catch(err){
+            }catch(err) {
                 console.log(err);
-                reject("Impossible to create the wallet");
+                reject('Impossible to create the wallet');
             }
-        })
-        
+        });
     }
 
-    
     render() {
-      return (
-       <div>
-           { this.state.isLoading ? 
-                <Loader/>
-            : (<div>
-                    <div className="container-logo">
-                        <img src="./material/logo/pegasus-128.png" height="80" width="80" alt='pegasus logo'/>
-                    </div>
-                   {this.state.initialization[0] ?  
-                        <div >
-                            <div className="row">
-                                <div className="col-1"></div>
-                                <div className="col-10 text-center">
-                                    <div className="row">
-                                        <div className="col-12 text-center name-text">Let's add a name</div>
-                                    </div>
-                                    <div className="row">
-                                        <div className="col-12">
-                                            <label for="inp-name" className="inp">
-                                                <input value={this.state.name} onChange={e => {this.setState({name: e.target.value})}} type="text" id="inp-name" placeholder="&nbsp;"/>
-                                                <span className="label">name</span>
-                                                <span className="border"></span>
-                                            </label>
+        return (
+            <div>
+                { this.state.isLoading ?
+                    <Loader/>
+                    : (<div>
+                        <div className='container-logo'>
+                            <img src='./material/logo/pegasus-128.png' height='80' width='80' alt='pegasus logo'/>
+                        </div>
+                        {this.state.initialization[ 0 ] ?
+                            <div >
+                                <div className='row'>
+                                    <div className='col-1'></div>
+                                    <div className='col-10 text-center'>
+                                        <div className='row'>
+                                            <div className='col-12 text-center name-text'>Let's add a name</div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div className="col-1"></div>
-                            </div>
-                        </div>
-                   : ''}
-
-                   {this.state.initialization[1] ? 
-                    <div>
-                        <div className="row">
-                            <div className="col-1"></div>
-                            <div className="col-10 text-center">
-                                <div className="row">
-                                    <div className="col-12 text-center psw-text">Let's add a password</div>
-                                </div>
-
-                                <div className="row">
-                                    <div className="col-12">
-                                        <label for="inp-password" className="inp">
-                                            <input value={this.state.psw} onChange={e => {this.setState({psw: e.target.value})}}  type="password" id="inp-password" placeholder="&nbsp;"/>
-                                            <span className="label">password</span>
-                                            <span className="border"></span>
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <div className="row">
-                                    <div className="col-12">
-                                        <label for="inp-re-password" className="inp">
-                                            <input value={this.state.repsw} onChange={e => {this.setState({repsw: e.target.value})}} type="password" id="inp-re-password" placeholder="&nbsp;"/>
-                                            <span className="label">re-password</span>
-                                            <span className="border"></span>
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <div className="row">
-                                    <div className="col-12 text-center text-psw-suggestion ">
-                                        Password must contain at least 8 characters
-                                    </div>
-                                </div>
-
-                            </div>
-                            <div className="col-1"></div>
-                        </div>
-                    </div>
-                    : ''}
-
-                   {this.state.initialization[2]  ? 
-                    <div>
-                        <div className="row">
-                            <div className="col-1"></div>
-                            <div className="col-10 text-center">
-                                <div className="row">
-                                    <div className="col-12 text-center seed-text">Let's generate a seed</div>
-                                </div>
-                                
-                                <div className="row">
-                                    <div className="col-12 text-center seed-info-text">
-                                        Press <i className="remained-letters">{this.state.randomLetters >= 0 ? this.state.randomLetters : 0}</i> more letters to randomise them
-                                    </div>
-                                </div>
-                            
-                                <div className="container-seed-generation">
-                                    {[0,9,18,27,36,45,54,63,72].map(item => {
-                                        return (
-                                            <div className="row">
-                                                <div className="col-1"></div>
-                                                { Array.from(new Array(9), (x,i) => i+item).map( index => {
-                                                    return (
-                                                        <div className="col-1">
-                                                            <div onClick={ () => this.randomiseSeedLetter(index) } className="container-letter">{this.state.seed[index]}</div>
-                                                        </div>
-                                                    )
-                                                })}
-                                                <div className="col-1"></div>
+                                        <div className='row'>
+                                            <div className='col-12'>
+                                                <label htmlFor='inp-name' className='inp'>
+                                                    <input value={this.state.name} onChange={e => { this.setState({ name: e.target.value }); }} type='text' id='inp-name' placeholder='&nbsp;'/>
+                                                    <span className='label'>name</span>
+                                                    <span className='border'></span>
+                                                </label>
                                             </div>
-                                        )
-                                    })}
-                                </div>  
-                                  
-                            </div>
-                            <div className="col-1"></div>
-                        </div>
-                    </div>
-
-
-                    : ''}
-
-                    {this.state.initialization[3]  ?
-                        <div>
-                            <div className="container-export-text">
-                                <div className="row">
-                                    <div className="col-12 text-center">Let's export the seed</div>
-                                </div>
-                            </div>
-                            <div className="container-export-suggestion">
-                                <div className="row">
-                                    <div className="col-1 text-center"></div>
-                                    <div className="col-10 text-center">Take care to copy the seed in order to correctly reinitialize the wallet </div>
-                                    <div className="col-1 text-center"></div>
-                                </div>
-                            </div>
-                            <div className="container-export-seed">
-                                <div className="row">
-                                    <div className="col-1"></div>
-                                    <div className="col-10 text-center">
-                                        <div className="container-seed-to-export">
-                                            <input className="input-seed-to-export" ref={this.labelSeed} value={this.state.seed.toString().replace(/,/g,'')} readOnly/>
                                         </div>
                                     </div>
-                                    <div className="col-1"></div>
-                                </div>  
+                                    <div className='col-1'></div>
+                                </div>
                             </div>
-                            <div className="container-export-seed-button">
-                                <div className="row">
-                                    <div className="col-12 text-center">
-                                        <button onClick={this.copyToClipboard} className="btn btn-copy-seed"><span className="fa fa-clipboard"></span></button>
+                            : ''}
+
+                        {this.state.initialization[ 1 ] ?
+                            <div>
+                                <div className='row'>
+                                    <div className='col-1'></div>
+                                    <div className='col-10 text-center'>
+                                        <div className='row'>
+                                            <div className='col-12 text-center psw-text'>Let's add a password</div>
+                                        </div>
+
+                                        <div className='row'>
+                                            <div className='col-12'>
+                                                <label htmlFor='inp-password' className='inp'>
+                                                    <input value={this.state.psw} onChange={e => { this.setState({ psw: e.target.value }); }} type='password' id='inp-password' placeholder='&nbsp;'/>
+                                                    <span className='label'>password</span>
+                                                    <span className='border'></span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div className='row'>
+                                            <div className='col-12'>
+                                                <label htmlFor='inp-re-password' className='inp'>
+                                                    <input value={this.state.repsw} onChange={e => { this.setState({ repsw: e.target.value }); }} type='password' id='inp-re-password' placeholder='&nbsp;'/>
+                                                    <span className='label'>re-password</span>
+                                                    <span className='border'></span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div className='row'>
+                                            <div className='col-12 text-center text-psw-suggestion '>
+                                        Password must contain at least 8 characters
+                                            </div>
+                                        </div>
+
                                     </div>
-                                </div> 
-                                <div className="row">
-                                    <div className="col-12 text-center">
-                                        <div className ="container-copy-to-clipboard">
-                                             {this.state.isCopiedToClipboard ? 'Copied!' : 'Copy to clipboard'}
+                                    <div className='col-1'></div>
+                                </div>
+                            </div>
+                            : ''}
+
+                        {this.state.initialization[ 2 ] ?
+                            <div>
+                                <div className='row'>
+                                    <div className='col-1'></div>
+                                    <div className='col-10 text-center'>
+                                        <div className='row'>
+                                            <div className='col-12 text-center seed-text'>Let's generate a seed</div>
+                                        </div>
+
+                                        <div className='row'>
+                                            <div className='col-12 text-center seed-info-text'>
+                                        Press <i className='remained-letters'>{this.state.randomLetters >= 0 ? this.state.randomLetters : 0}</i> more letters to randomise them
+                                            </div>
+                                        </div>
+
+                                        <div className='container-seed-generation'>
+                                            {[0, 9, 18, 27, 36, 45, 54, 63, 72].map(item => {
+                                                return (
+                                                    <div className='row'>
+                                                        <div className='col-1'></div>
+                                                        { Array.from(new Array(9), (x, i) => i + item).map( index => {
+                                                            return (
+                                                                <div className='col-1'>
+                                                                    <div onClick={ () => this.randomiseSeedLetter(index) } className='container-letter'>{this.state.seed[ index ]}</div>
+                                                                </div>
+                                                            );
+                                                        })}
+                                                        <div className='col-1'></div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+
+                                    </div>
+                                    <div className='col-1'></div>
+                                </div>
+                            </div>
+
+                            : ''}
+
+                        {this.state.initialization[ 3 ] ?
+                            <div>
+                                <div className='container-export-text'>
+                                    <div className='row'>
+                                        <div className='col-12 text-center'>Let's export the seed</div>
+                                    </div>
+                                </div>
+                                <div className='container-export-suggestion'>
+                                    <div className='row'>
+                                        <div className='col-1 text-center'></div>
+                                        <div className='col-10 text-center'>Take care to copy the seed in order to correctly reinitialize the wallet </div>
+                                        <div className='col-1 text-center'></div>
+                                    </div>
+                                </div>
+                                <div className='container-export-seed'>
+                                    <div className='row'>
+                                        <div className='col-1'></div>
+                                        <div className='col-10 text-center'>
+                                            <div className='container-seed-to-export'>
+                                                <input className='input-seed-to-export' ref={this.labelSeed} value={this.state.seed.toString().replace(/,/g, '')} readOnly/>
+                                            </div>
+                                        </div>
+                                        <div className='col-1'></div>
+                                    </div>
+                                </div>
+                                <div className='container-export-seed-button'>
+                                    <div className='row'>
+                                        <div className='col-12 text-center'>
+                                            <button onClick={this.copyToClipboard} className='btn btn-copy-seed'><span className='fa fa-clipboard'></span></button>
                                         </div>
                                     </div>
-                                </div>   
+                                    <div className='row'>
+                                        <div className='col-12 text-center'>
+                                            <div className ='container-copy-to-clipboard'>
+                                                {this.state.isCopiedToClipboard ? 'Copied!' : 'Copy to clipboard'}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
-                            
+                            : '' }
+
+                        <div className='container-menu-init'>
+                            <div className='row'>
+                                <div className='col-6 text-center padding-0'>
+                                    <button disabled={this.state.initialization[ 0 ] ? true : false} onClick={this.goBack} type='submit' className='btn btn-menu-init-back'><span className='fa fa-arrow-left'></span></button>
+                                </div>
+                                <div className='col-6 text-center padding-0'>
+                                    <button disabled={this.state.initialization[ 0 ] ? (this.state.name.length > 0 ? false : true ) :
+                                        this.state.initialization[ 1 ] ? (this.state.psw.length > 7 && (this.state.psw === this.state.repsw) ? false : true) :
+                                            this.state.initialization[ 2 ] ? (this.state.randomLetters === 0 ? false : true) : ''}
+                                    onClick={this.goOn}
+                                    type='submit'
+                                    className='btn btn-menu-init-option'
+                                    ><span className='fa fa-arrow-right'></span>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                    : '' }
-                    
-                    <div className="container-menu-init">
-                        <div className="row">
-                            <div className="col-6 text-center padding-0">
-                                <button disabled={this.state.initialization[0] ? true : false} onClick={this.goBack} type="submit" className="btn btn-menu-init-back"><span className="fa fa-arrow-left"></span></button>
-                            </div>
-                            <div className="col-6 text-center padding-0">
-                                <button disabled={this.state.initialization[0] ? (this.state.name.length > 0 ? false : true ) : 
-                                                  this.state.initialization[1] ? (this.state.psw.length > 7 && (this.state.psw === this.state.repsw) ? false : true) : 
-                                                  this.state.initialization[2] ? (this.state.randomLetters === 0 ? false : true) : ''}
-                                        onClick={this.goOn}
-                                        type="submit" 
-                                        className="btn btn-menu-init-option"><span className="fa fa-arrow-right"></span></button>
-                            </div>
-                        </div>
-                    </div>
-                
-                </div>
-           )}
-       </div>
-      );
+
+                       </div>
+                    )}
+            </div>
+        );
     }
-  }
+}
 
 export default Init;

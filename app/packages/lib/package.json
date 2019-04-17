@@ -1,0 +1,14 @@
+{
+  "name": "@pegasus/lib",
+  "main": "index.js",
+  "author": "Alle <alle.manfredi@gmail.com>",
+  "private": true,
+  "version": "0.0.0",
+  "dependencies": {
+    "eventemitter3": "^3.1.0",
+    "extensionizer": "^1.0.1"
+  },
+  "scripts": {
+    "lint": "npx eslint . --fix"
+  }
+}

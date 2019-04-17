@@ -1,7 +1,8 @@
 {
   "name": "@pegasus/popup",
   "main": "index.js",
-  "version": "0.1.0",
+  "version": "0.0.0",
+  "author": "Alle <alle.manfredi@gmail.com>",
   "private": true,
   "dependencies": {
     "@iota/converter": "^1.0.0-beta.8",
@@ -10,6 +11,9 @@
     "@iota/extract-json": "^1.0.0-beta.8",
     "@iota/http-client": "^1.0.0-beta.8",
     "babel-polyfill": "^6.26.0",
+    "fff": "^0.0.0",
+    "lib": "^4.0.2",
+    "lib2": "^0.0.4",
     "mam.client.js": "iotaledger/mam.client.js",
     "node-rsa": "^1.0.3",
     "npm": "^6.5.0",

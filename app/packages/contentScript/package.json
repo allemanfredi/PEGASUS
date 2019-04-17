@@ -1,0 +1,15 @@
+{
+  "name": "@pegasus/contentScript",
+  "main": "index.js",
+  "author": "Alle <alle.manfredi@gmail.com>",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "build": "webpack --config ../../webpack.config.js --progress --colors -o ../../dist/contentScript.js",
+    "lint": "npx eslint . --fix"
+  },
+  "dependencies": {
+    "extensionizer": "^1.0.1",
+    "tronweb": "^2.1.30"
+  }
+}

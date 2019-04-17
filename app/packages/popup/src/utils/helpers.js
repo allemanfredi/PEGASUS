@@ -4,7 +4,7 @@
  * @param {string} Capitalized string
  */
 const capitalize = (input) => {
-    return typeof input === 'string' && input.length > 0 ? input[0].toUpperCase() + input.substr(1).toLowerCase() : '';
+    return typeof input === 'string' && input.length > 0 ? input[ 0 ].toUpperCase() + input.substr(1).toLowerCase() : '';
 };
 
 /**
@@ -14,7 +14,7 @@ const capitalize = (input) => {
  * @param {string} Trimmed string
  */
 const shorten = (input, length) => {
-    return typeof input === 'string' && input.length > length ? input.substr(0, length - 1) + '…' : input;
+    return typeof input === 'string' && input.length > length ? `${input.substr(0, length - 1) }…` : input;
 };
 
 /**
@@ -75,7 +75,7 @@ const charToByte = (char) => {
  * @returns {array} Output trit array
  */
 const byteToTrit = (byte) => {
-    return trytesTrits[byte % 27];
+    return trytesTrits[ byte % 27 ];
 };
 
 /**
@@ -85,9 +85,9 @@ const byteToTrit = (byte) => {
  */
 const bytesToTrits = (bytes) => {
     let trits = [];
-    for (let i = 0; i < bytes.length; i++) {
-        trits = trits.concat(byteToTrit(bytes[i]));
-    }
+    for (let i = 0; i < bytes.length; i++)
+        trits = trits.concat(byteToTrit(bytes[ i ]));
+
     return trits;
 };
 
@@ -101,42 +101,36 @@ const tritsToChars = (trits) => {
     for (let i = 0; i < trits.length; i += 3) {
         const trit = trits.slice(i, i + 3).toString();
         for (let x = 0; x < tritStrings.length; x++) {
-            if (tritStrings[x] === trit) {
+            if (tritStrings[ x ] === trit)
                 seed += '9ABCDEFGHIJKLMNOPQRSTUVWXYZ'.charAt(x);
-            }
         }
     }
     return seed;
 };
 
-
-
 /**
  * Convert timestamp  to date string
- * @param {int} timestamp - Input timestamp 
+ * @param {int} timestamp - Input timestamp
  * @returns {string} Output string
  */
 const timestampToDate = (timestamp) => {
-
-    const date = new Date(timestamp)
+    const date = new Date(timestamp);
     const todate = date.getDate();
-    const tomonth = date.getMonth()+1;
+    const tomonth = date.getMonth() + 1;
     const toyear = date.getFullYear();
-    return tomonth + '/' + todate + '/' + toyear;
-}
+    return `${tomonth }/${ todate }/${ toyear}`;
+};
 
 const timestampToDateMilliseconds = (timestamp) => {
-
-    const date = new Date(timestamp)
+    const date = new Date(timestamp);
     const todate = date.getDate();
-    const tomonth = date.getMonth()+1;
+    const tomonth = date.getMonth() + 1;
     const toyear = date.getFullYear();
     const hours = date.getHours();
-    const minutes = "0" + date.getMinutes();
-    const seconds = "0" + date.getSeconds();
-    return hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2) + ' - ' + tomonth + '/' + todate + '/' + toyear;
-}
-
+    const minutes = `0${ date.getMinutes()}`;
+    const seconds = `0${ date.getSeconds()}`;
+    return `${hours }:${ minutes.substr(-2) }:${ seconds.substr(-2) } - ${ tomonth }/${ todate }/${ toyear}`;
+};
 
 module.exports = {
     capitalize,

@@ -1,6 +1,5 @@
 
 const startSession = () => {
-    
     try{
         //set the current time
         const date = new Date();
@@ -8,41 +7,40 @@ const startSession = () => {
         localStorage.setItem('session', date.getTime());
         return true;
     }
-    catch(err){
+    catch(err) {
         console.log(err);
         return false;
     }
-}
+};
 
 const checkSession = () => {
-    
     try{
-        const time = localStorage.getItem('session') 
+        const time = localStorage.getItem('session');
         const date = new Date();
         const currentTime = date.getTime();
         if ( currentTime - time > 3600000 ) //greather than 1 our
             return false;
-        
+
         return true;
     }
-    catch(err){
+    catch(err) {
         console.log(err);
         return false;
     }
-}
+};
 
 const deleteSession = () => {
     try{
         localStorage.removeItem('session');
         return true;
     }
-    catch(err){
+    catch(err) {
         console.log(err);
         return false;
     }
-}
+};
 
 export { startSession,
-         checkSession,
-         deleteSession
-        };
+    checkSession,
+    deleteSession
+};
