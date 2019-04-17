@@ -16,7 +16,6 @@ const contentScript = {
         this.eventChannel.on('tunnel', async data => {
             console.log(data);
         });
-
     },
 
     inject() {
