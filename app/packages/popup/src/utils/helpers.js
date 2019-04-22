@@ -52,10 +52,9 @@ const trytesTrits = [
 
 const tritStrings = trytesTrits.map((trit) => trit.toString());
 
-/**
- * Convert trit to an ASCII character
- * @param {trit} trit - raw Trit input
- */
+
+
+
 const byteToChar = (trit) => {
     return '9ABCDEFGHIJKLMNOPQRSTUVWXYZ'.charAt(trit % 27);
 };

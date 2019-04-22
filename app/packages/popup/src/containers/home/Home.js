@@ -1,7 +1,4 @@
 import React, { Component } from 'react';
-import { getAccountData } from '../../core/core';
-import { setCurrentAccount, getCurrentAccount, generateSeed, updateDataAccount, addAccount, getKey, getCurrentNewtwork, updateNameAccount } from '../../wallet/wallet';
-import { aes256decrypt, aes256encrypt, sha256, generateKeys } from '../../utils/crypto';
 
 import Send from '../send/Send';
 import Receive from '../receive/Receive';
@@ -14,6 +11,11 @@ import Interact from '../marketplace/interact/Interact';
 
 import Loader from '../../components/loader/Loader';
 import Navbar from '../../components/navbar/Navbar';
+
+import { PopupAPI } from '@pegasus/lib/api';
+import Utils from '@pegasus/lib/utils';
+import { getAccountData } from '../../core/core';
+
 
 import './Home.css';
 
@@ -66,12 +68,13 @@ class Home extends Component {
 
     async componentDidMount() {
         try{
-            const network = await getCurrentNewtwork();
+            const network = await PopupAPI.getCurrentNewtwork();
             this.setState({ network });
-            const account = await getCurrentAccount(network);
+            const account = await PopupAPI.getCurrentAccount(network);
+            console.log(account);
 
-            const key = await getKey();
-            const dseed = aes256decrypt(account.seed, key);
+            const key = await PopupAPI.getKey();
+            const dseed = Utils.aes256decrypt(account.seed, key);
             this.setState({ decryptedSeed: dseed });
 
             //check account data after 40 seconds in order to receive the transaction
@@ -95,14 +98,14 @@ class Home extends Component {
         this.setState({ account: {} });
         this.setState({ network });
 
-        let account = await getCurrentAccount(network);
+        let account = await PopupAPI.getCurrentAccount(network);
         if (!account) { //can happens only for the first switch when the wallet is generated on the mainnet and the user switch to the testnet
             account = await this.createAccount(network, `${currentName }-test`);
         }
 
         //store the encrypted seed
-        const key = await getKey();
-        const dseed = aes256decrypt(account.seed, key);
+        const key = await PopupAPI.getKey();
+        const dseed = Utils.aes256decrypt(account.seed, key);
         this.setState({ decryptedSeed: dseed });
 
         this.setState({ account });
@@ -114,9 +117,9 @@ class Home extends Component {
     async createAccount (network, name) {
         //generate new seed
         return new Promise( async (resolve, reject) => {
-            const newSeed = generateSeed().toString().replace(/,/g, '');
-            const key = await getKey();
-            const eseed = aes256encrypt(newSeed, key);
+            const newSeed = PopupAPI.generateSeed().toString().replace(/,/g, '');
+            const key = await PopupAPI.getKey();
+            const eseed = Utils.aes256encrypt(newSeed, key);
 
             //get all account data
             const data = await getAccountData(newSeed);
@@ -124,11 +127,11 @@ class Home extends Component {
                 name,
                 seed: eseed,
                 data,
-                id: sha256(name),
+                id: Utils.sha256(name),
                 network, //NUOVA NETWORK
-                marketplace: { keys: generateKeys(), channels: [] }
+                marketplace: { keys: Utils.generateKeys(), channels: [] }
             };
-            await addAccount(account, network, true);
+            await PopupAPI.addAccount(account, network, true);
             resolve(account);
         });
     }
@@ -137,7 +140,7 @@ class Home extends Component {
         const data = await getAccountData(this.state.decryptedSeed);
 
         //update table
-        const newAccount = await updateDataAccount(data, this.state.network);
+        const newAccount = await PopupAPI.updateDataAccount(data, this.state.network);
         this.setState({ account: newAccount });
         if ( this.state.showHome && !this.state.showSettings )
             this.transactions.current.updateData();
@@ -153,22 +156,22 @@ class Home extends Component {
         this.transactions.current.updateData();
 
         //store the encrypted seed
-        const key = await getKey();
-        const dseed = aes256decrypt(account.seed, key);
+        const key = await PopupAPI.getKey();
+        const dseed = Utils.aes256decrypt(account.seed, key);
         this.setState({ decryptedSeed: dseed });
 
-        await setCurrentAccount(account, this.state.network);
+        await PopupAPI.setCurrentAccount(account, this.state.network);
     }
 
     async onChangeName(newName) {
         //change the name of the current account
-        await updateNameAccount(this.state.account, this.state.network, newName);
+        await PopupAPI.updateNameAccount(this.state.account, this.state.network, newName);
         this.setState(prevState => ({ account: { ...prevState.account, name: newName } }));
         this.setState({ showEdit: false });
     }
 
     async onDeleteAccount() {
-        const newAccount = await getCurrentAccount(this.state.network);
+        const newAccount = await PopupAPI.getCurrentAccount(this.state.network);
         this.setState({ account: newAccount });
 
         this.transactions.current.updateData();

@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
-import { aes256encrypt, sha256, generateKeys } from '../../utils/crypto';
 import { getAccountData } from '../../core/core';
-import { generateSeed, addAccount, getKey } from '../../wallet/wallet';
 
 import Loader from '../../components/loader/Loader';
+
+import { PopupAPI } from '@pegasus/lib/api';
+import Utils from '@pegasus/lib/utils';
+
 
 import './Add.css';
 
@@ -32,7 +34,7 @@ class Add extends Component {
     }
 
     async componentDidMount() {
-        const seed = generateSeed();
+        const seed = PopupAPI.generateSeed();
         this.setState({ seed });
     }
 
@@ -71,7 +73,7 @@ class Add extends Component {
         }
 
         this.setState(state => {
-            const letter = generateSeed(1)[ 0 ];
+            const letter = PopupAPI.generateSeed(1)[ 0 ];
             const seed = state.seed;
             seed[ index ] = letter;
             return {
@@ -92,8 +94,8 @@ class Add extends Component {
             try{
                 const seed = this.state.seed.toString().replace(/,/g, '');
 
-                const key = await getKey();
-                const eseed = aes256encrypt(seed, key);
+                const key = await PopupAPI.getKey();
+                const eseed = Utils.aes256encrypt(seed, key);
 
                 //get all account data
                 const data = await getAccountData(seed);
@@ -101,11 +103,11 @@ class Add extends Component {
                     name: this.state.name,
                     seed: eseed,
                     data,
-                    id: sha256(this.state.name),
+                    id: Utils.sha256(this.state.name),
                     network: this.props.network,
-                    marketplace: { keys: generateKeys(), channels: [] }
+                    marketplace: { keys: Utils.generateKeys(), channels: [] }
                 };
-                await addAccount(account, this.props.network, true);
+                await PopupAPI.addAccount(account, this.props.network, true);
                 resolve(account);
             }catch(err) {
                 console.log(err);

@@ -1,20 +1,32 @@
+import MessageDuplex from '@pegasus/lib/MessageDuplex';
 import EventChannel from '@pegasus/lib/EventChannel';
 import extensionizer from 'extensionizer';
 
 
 const contentScript = {
     eventChannel: new EventChannel('contentScript'),
+    duplex: new MessageDuplex.Tab(),
 
     init() {
         console.log('Initialising Pegasus');
-
         this.registerListeners();
         this.inject();
     },
 
     registerListeners() {
         this.eventChannel.on('tunnel', async data => {
-            console.log(data);
+            try {
+                this.eventChannel.send(
+                    'tabReply',
+                    await this.duplex.send('tabRequest', data)
+                );
+            } catch(ex) {
+                console.log('Tab request failed:', ex);
+            }
+        });
+
+        this.duplex.on('tunnel', ({ action, data }) => {
+            this.eventChannel.send(action, data);
         });
     },
 

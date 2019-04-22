@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
-import { storePsw } from '../../wallet/wallet';
-import { aes256encrypt, sha256, generateKeys } from '../../utils/crypto';
 import { getAccountData } from '../../core/core';
-import { generateSeed, addAccount, setupWallet, setCurrentNetwork } from '../../wallet/wallet';
 
 import Loader from '../../components/loader/Loader';
 import options from '../../options/options';
 
 import './Init.css';
+
+import { PopupAPI } from '@pegasus/lib/api';
+import Utils from '@pegasus/lib/utils';
+
+
 
 class Init extends Component {
     constructor(props, context) {
@@ -19,7 +21,6 @@ class Init extends Component {
         this.updateStatusInitialization = this.updateStatusInitialization.bind(this);
         this.randomiseSeedLetter = this.randomiseSeedLetter.bind(this);
         this.copyToClipboard = this.copyToClipboard.bind(this);
-        //this.resetSeed = this.resetSeed.bind(this);
 
         this.labelSeed = React.createRef();
 
@@ -38,7 +39,7 @@ class Init extends Component {
     }
 
     async componentDidMount() {
-        const seed = generateSeed();
+        const seed = await PopupAPI.generateSeed();
         this.setState({ seed });
     }
 
@@ -71,16 +72,18 @@ class Init extends Component {
         });
     }
 
-    randomiseSeedLetter(index) {
+    async randomiseSeedLetter(index) {
         if ( !this.state.randomizedLetter.includes(index) && this.state.randomLetters > 0) {
             this.setState({ randomizedLetter: [...this.state.randomizedLetter, index] });
             this.setState({ randomLetters: this.state.randomLetters - 1 });
         }
 
+        const letter = await PopupAPI.generateSeed(1)[0];
+        console.log("reset ");
+        console.log(letter);
         this.setState(state => {
-            const letter = generateSeed(1)[ 0 ];
             const seed = state.seed;
-            seed[ index ] = letter;
+            seed[index] = letter;
             return {
                 seed
             };
@@ -94,26 +97,16 @@ class Init extends Component {
         this.setState({ isCopiedToClipboard: true });
     }
 
-    /*resetSeed(){
-        const seed = generateSeed();
-        this.setState({seed: seed});
-        this.setState({randomLetters: 10});
-        this.setState({randomizedLetter: []});
-    }*/
-
     async createWallet() {
         return new Promise( async (resolve, reject) => {
             try{
-                if ( setupWallet() ) {
+                if ( await PopupAPI.setupWallet() ) {
                     //store the psw
-                    storePsw(this.state.psw);
+                    PopupAPI.storePsw(this.state.psw);
 
-                    //TODO: come salvare la psw in plaintext (sol: session storage )
-                    //piu sicuro: chiedere la psw per ogni send cosi da salvare solo l'hash della psw
-                    //mi tengo la chiave di cifratura del seed nella ram invece che salvarmela nel session storage
                     const seed = this.state.seed.toString().replace(/,/g, '');
-                    const pswHash = sha256(this.state.psw);
-                    const eseed = aes256encrypt(seed, pswHash);
+                    const pswHash = Utils.sha256(this.state.psw);
+                    const eseed = Utils.aes256encrypt(seed, pswHash);
 
                     //get all account data
                     const data = await getAccountData(seed);
@@ -122,12 +115,12 @@ class Init extends Component {
                         name: this.state.name,
                         seed: eseed,
                         data,
-                        id: sha256(this.state.name),
+                        id: Utils.sha256(this.state.name),
                         network: options.network[ 0 ], //TESTNET = 1  MAINNET = 0
-                        marketplace: { keys: generateKeys(), channels: [] }
+                        marketplace: { keys: Utils.generateKeys(), channels: [] }
                     };
-                    await addAccount(account, options.network[ 0 ], true);
-                    await setCurrentNetwork(options.network[ 0 ]);
+                    await PopupAPI.addAccount(account, options.network[ 0 ], true);
+                    await PopupAPI.setCurrentNetwork(options.network[ 0 ]);
                     resolve();
                 }
             }catch(err) {

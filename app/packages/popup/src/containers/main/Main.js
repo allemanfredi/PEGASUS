@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 
-import { isWalletSetup, getCurrentNewtwork } from '../../wallet/wallet';
-import { checkSession, deleteSession, startSession } from '../../utils/utils';
-
 import Home from '../home/Home';
 import Login from '../login/Login';
 import Init from '../init/Init';
 import Restore from '../restore/Restore';
+
+import { PopupAPI } from '@pegasus/lib/api';
+
 
 import './Main.css';
 
@@ -19,7 +19,7 @@ class Main extends Component {
         this.onSuccessFromRestore = this.onSuccessFromRestore.bind(this);
         this.onLogout = this.onLogout.bind(this);
         this.onRestore = this.onRestore.bind(this);
-        this.onBack = this.onBack.bind(this);
+        this.onBack = this.onBack.bind(this);        
 
         this.home = React.createRef();
 
@@ -28,17 +28,20 @@ class Main extends Component {
             showLogin: false,
             showInit: false,
             showHome: false,
-            showRestore: false
+            showRestore: false,
         };
     }
 
     async componentDidMount() {
-        const network = await getCurrentNewtwork();
-        this.setState({ network });
 
-        if ( isWalletSetup() ) {
-            if (checkSession() ) {
-                startSession();
+        if ( await PopupAPI.isWalletSetup() ) {
+            if (await PopupAPI.checkSession() ) {
+                console.log("sss");
+                await PopupAPI.startSession();
+                
+                const network = await PopupAPI.getCurrentNewtwork();
+                this.setState({ network });
+                
                 this.setState({ showHome: true });
                 this.props.showHeader(true);
             }
@@ -53,27 +56,27 @@ class Main extends Component {
 
     onSuccessFromLogin() {
         this.props.showHeader(true);
-        startSession();
+        PopupAPI.startSession();
         this.setState({ showHome: true });
         this.setState({ showLogin: false });
     }
 
     onSuccessFromInit() {
         this.props.showHeader(true);
-        startSession();
+        PopupAPI.startSession();
         this.setState({ showHome: true });
         this.setState({ showInit: false });
     }
 
     onSuccessFromRestore() {
         this.props.showHeader(true);
-        startSession();
+        PopupAPI.startSession();
         this.setState({ showHome: true });
         this.setState({ showRestore: false });
     }
 
     onLogout() {
-        deleteSession();
+        PopupAPI.deleteSession();
         this.props.showHeader(true);
         this.setState({ showHome: false });
         this.setState({ showLogin: true });
