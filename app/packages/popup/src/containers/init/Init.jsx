@@ -2,18 +2,20 @@ import React, { Component } from 'react';
 import { getAccountData } from '../../core/core';
 
 import Loader from '../../components/loader/Loader';
+import options from '../../options/options';
+
+import './Init.css';
 
 import { PopupAPI } from '@pegasus/lib/api';
 import Utils from '@pegasus/lib/utils';
 
 
-import './Add.css';
 
-class Add extends Component {
+class Init extends Component {
     constructor(props, context) {
         super(props, context);
 
-        this.addAccount = this.addAccount.bind(this);
+        this.createWallet = this.createWallet.bind(this);
         this.goBack = this.goBack.bind(this);
         this.goOn = this.goOn.bind(this);
         this.updateStatusInitialization = this.updateStatusInitialization.bind(this);
@@ -23,21 +25,27 @@ class Add extends Component {
         this.labelSeed = React.createRef();
 
         this.state = {
+            psw: '',
+            repsw: '',
             name: '',
             seed: [],
             randomLetters: 10,
             randomizedLetter: [],
             isLoading: false,
-            initialization: [true, false, false],
+            initialization: [true, false, false, false],
             indexInitialization: 0,
+            isCopiedToClipboard: false,
+            popup : PopupAPI
         };
     }
 
+
     async componentDidMount() {
-        const seed = PopupAPI.generateSeed();
+        const seed = await PopupAPI.generateSeed();
         this.setState({ seed });
     }
 
+    //action = true -> goOn, action = false = goBack
     goBack() {
         this.updateStatusInitialization(this.state.indexInitialization, false);
         this.setState({ indexInitialization: this.state.indexInitialization - 1 });
@@ -47,11 +55,11 @@ class Add extends Component {
         this.updateStatusInitialization(this.state.indexInitialization, true);
         this.setState({ indexInitialization: this.state.indexInitialization + 1 });
 
-        if ( this.state.indexInitialization === 2) {
+        if ( this.state.indexInitialization === 3) { //create wallet
             this.setState({ isLoading: true });
-            const newAccount = await this.addAccount();
+            await this.createWallet();
             this.setState({ isLoading: false });
-            this.props.onChangeAccount(newAccount);
+            this.props.onSuccess();
         }
     }
 
@@ -66,16 +74,16 @@ class Add extends Component {
         });
     }
 
-    randomiseSeedLetter(index) {
+    async randomiseSeedLetter(index) {
         if ( !this.state.randomizedLetter.includes(index) && this.state.randomLetters > 0) {
             this.setState({ randomizedLetter: [...this.state.randomizedLetter, index] });
             this.setState({ randomLetters: this.state.randomLetters - 1 });
         }
 
+        const letter = await PopupAPI.generateSeed(1);
         this.setState(state => {
-            const letter = PopupAPI.generateSeed(1)[ 0 ];
             const seed = state.seed;
-            seed[ index ] = letter;
+            seed[index] = letter[0];
             return {
                 seed
             };
@@ -89,29 +97,30 @@ class Add extends Component {
         this.setState({ isCopiedToClipboard: true });
     }
 
-    async addAccount() {
+    async createWallet() {
         return new Promise( async (resolve, reject) => {
             try{
-                const seed = this.state.seed.toString().replace(/,/g, '');
+                if ( await PopupAPI.setupWallet() ) {
+                    //store the psw
+                    PopupAPI.storePsw(this.state.psw);
 
-                const key = await PopupAPI.getKey();
-                const eseed = Utils.aes256encrypt(seed, key);
+                    const promisedSeed = await PopupAPI.generateSeed()
+                    const seed = promisedSeed.toString().replace(/,/g, '');
+                    const data = await getAccountData(seed);
+                    const account = {
+                        seed : seed,
+                        name : this.state.name,
+                        network : options.network[ 0 ],
+                        data : data
+                    };
 
-                //get all account data
-                const data = await getAccountData(seed);
-                const account = {
-                    name: this.state.name,
-                    seed: eseed,
-                    data,
-                    id: Utils.sha256(this.state.name),
-                    network: this.props.network,
-                    marketplace: { keys: Utils.generateKeys(), channels: [] }
-                };
-                await PopupAPI.addAccount(account, this.props.network, true);
-                resolve(account);
+                    await PopupAPI.addAccount(account, options.network[ 0 ], true);
+                    await PopupAPI.setCurrentNetwork(options.network[ 0 ]);
+                    resolve();
+                }
             }catch(err) {
                 console.log(err);
-                reject('Impossible to create the account');
+                reject('Impossible to create the wallet');
             }
         });
     }
@@ -154,12 +163,53 @@ class Add extends Component {
                                     <div className='col-1'></div>
                                     <div className='col-10 text-center'>
                                         <div className='row'>
+                                            <div className='col-12 text-center psw-text'>Let's add a password</div>
+                                        </div>
+
+                                        <div className='row'>
+                                            <div className='col-12'>
+                                                <label htmlFor='inp-password' className='inp'>
+                                                    <input value={this.state.psw} onChange={e => { this.setState({ psw: e.target.value }); }} type='password' id='inp-password' placeholder='&nbsp;'/>
+                                                    <span className='label'>password</span>
+                                                    <span className='border'></span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div className='row'>
+                                            <div className='col-12'>
+                                                <label htmlFor='inp-re-password' className='inp'>
+                                                    <input value={this.state.repsw} onChange={e => { this.setState({ repsw: e.target.value }); }} type='password' id='inp-re-password' placeholder='&nbsp;'/>
+                                                    <span className='label'>re-password</span>
+                                                    <span className='border'></span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div className='row'>
+                                            <div className='col-12 text-center text-psw-suggestion '>
+                                        Password must contain at least 8 characters
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div className='col-1'></div>
+                                </div>
+                            </div>
+                            : ''}
+
+                        {this.state.initialization[ 2 ] ?
+                            <div>
+                                <div className='row'>
+                                    <div className='col-1'></div>
+                                    <div className='col-10 text-center'>
+                                        <div className='row'>
                                             <div className='col-12 text-center seed-text'>Let's generate a seed</div>
                                         </div>
 
                                         <div className='row'>
                                             <div className='col-12 text-center seed-info-text'>
-                                     Press <i className='remained-letters'>{this.state.randomLetters >= 0 ? this.state.randomLetters : 0}</i> more letters to randomise them
+                                        Press <i className='remained-letters'>{this.state.randomLetters >= 0 ? this.state.randomLetters : 0}</i> more letters to randomise them
                                             </div>
                                         </div>
 
@@ -188,7 +238,7 @@ class Add extends Component {
 
                             : ''}
 
-                        {this.state.initialization[ 2 ] ?
+                        {this.state.initialization[ 3 ] ?
                             <div>
                                 <div className='container-export-text'>
                                     <div className='row'>
@@ -238,7 +288,8 @@ class Add extends Component {
                                 </div>
                                 <div className='col-6 text-center padding-0'>
                                     <button disabled={this.state.initialization[ 0 ] ? (this.state.name.length > 0 ? false : true ) :
-                                        this.state.initialization[ 2 ] ? (this.state.randomLetters === 0 ? false : true) : ''}
+                                        this.state.initialization[ 1 ] ? (this.state.psw.length > 7 && (this.state.psw === this.state.repsw) ? false : true) :
+                                            this.state.initialization[ 2 ] ? (this.state.randomLetters === 0 ? false : true) : ''}
                                     onClick={this.goOn}
                                     type='submit'
                                     className='btn btn-menu-init-option'
@@ -255,4 +306,4 @@ class Add extends Component {
     }
 }
 
-export default Add;
+export default Init;

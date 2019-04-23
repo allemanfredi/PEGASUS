@@ -22,7 +22,7 @@ class Wallet extends EventEmitter {
         }
     };
 
-    async setupWallet(){
+    setupWallet(){
         try{
             localStorage.setItem('data', JSON.stringify({ mainnet: [], testnet: [] }));
             return true;
@@ -32,11 +32,10 @@ class Wallet extends EventEmitter {
         }
     };
 
-    async storePsw(psw){
+    storePsw(psw){
         const hash = Utils.sha256(psw);
         try{
             localStorage.setItem('hpsw', hash);
-            sessionStorage.setItem('key', psw);
             return true;
         }
         catch(err) {
@@ -45,7 +44,7 @@ class Wallet extends EventEmitter {
         }
     }
 
-    async checkPsw(psw){
+    checkPsw(psw){
         const hash = Utils.sha256(psw);
         try{
             let pswToCompare;
@@ -61,7 +60,7 @@ class Wallet extends EventEmitter {
         }
     }
 
-    async getKey(){
+    getKey(){
         try{
             const key = localStorage.getItem('hpsw');
             return key;
@@ -72,7 +71,7 @@ class Wallet extends EventEmitter {
     }
 
     //return the account with current = true and the reletated network
-    async setCurrentNetwork(network){
+    setCurrentNetwork(network){
         try{
             const options = JSON.parse(localStorage.getItem('options'));
             options.network = network;
@@ -81,7 +80,6 @@ class Wallet extends EventEmitter {
         }catch(e) {
             throw new Error(err);
         }
-        
     }
 
     getCurrentNewtwork(){
@@ -97,7 +95,7 @@ class Wallet extends EventEmitter {
         }
     }
 
-    async addAccount({account, network, isCurrent}){
+    addAccount({account, network, isCurrent}){
         //preparing object to store
         if ( isCurrent ) {
             const data = JSON.parse(localStorage.getItem('data'));
@@ -105,14 +103,17 @@ class Wallet extends EventEmitter {
             localStorage.setItem('data', JSON.stringify(data));
         }
 
+        const key = this.getKey();
+        const eseed = Utils.aes256encrypt(account.seed, key);
+
         const obj = {
             name: account.name,
-            seed: account.seed,
+            seed: eseed,
             data: account.data,
             current: isCurrent ? true : false,
-            id: account.id,
+            id: Utils.sha256(name),
             network: account.network, //mainnet or testnet
-            marketplace: account.marketplace
+            marketplace: { keys: Utils.generateKeys(), channels: [] }
         };
         try{
             const data = JSON.parse(localStorage.getItem('data'));
@@ -126,7 +127,7 @@ class Wallet extends EventEmitter {
         }
     }
 
-    async setCurrentAccount({currentAccount, network}){
+    setCurrentAccount({currentAccount, network}){
         const data = JSON.parse(localStorage.getItem('data'));
         data[ network.type ].forEach( account => { account.current = false; });
         localStorage.setItem('data', JSON.stringify(data));
@@ -156,7 +157,7 @@ class Wallet extends EventEmitter {
         }
     };
 
-    async updateDataAccount({newData, network}){
+    updateDataAccount({newData, network}){
         try{
             const data = JSON.parse(localStorage.getItem('data'));
             let updatedAccount = {};
@@ -175,7 +176,7 @@ class Wallet extends EventEmitter {
         
     }
 
-    async updateNameAccount({current, network, newName}){
+    updateNameAccount({current, network, newName}){
         try{
             const data = JSON.parse(localStorage.getItem('data'));
             let updatedAccount = {};
@@ -195,7 +196,7 @@ class Wallet extends EventEmitter {
         
     }
 
-    async deleteAccount({account, network}){
+    deleteAccount({account, network}){
         try{
             const data = JSON.parse(localStorage.getItem('data'));
             if ( data[ network.type ].length === 1)
@@ -222,10 +223,12 @@ class Wallet extends EventEmitter {
 
     getCurrentAccount(network){
         try{
-            JSON.parse(localStorage.getItem('data'))[ network.type ].forEach(account => {
-                if ( account.current)
+            const accounts = JSON.parse(localStorage.getItem('data'))[ network.type ];
+            for ( let account of accounts){
+                if ( account.current ){
                     return account;
-            });
+                }
+            }
             throw new Error('Account not found');
         }
         catch(err) {
@@ -233,7 +236,7 @@ class Wallet extends EventEmitter {
         }
     }
 
-    async getAllAccounts(network){
+    getAllAccounts(network){
         const accounts = [];
         try{
             JSON.parse(localStorage.getItem('data'))[ network.type ].forEach(account => {
@@ -246,7 +249,7 @@ class Wallet extends EventEmitter {
         }
     }
 
-    async generateSeed(length = 81){
+    generateSeed(length = 81){
         const bytes = Utils.randomBytes(length, 27);
         const seed = bytes.map(byte => Utils.byteToChar(byte));
         return seed;

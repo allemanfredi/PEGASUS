@@ -136,6 +136,16 @@ const Utils = {
         let dec = decipher.update(text, 'hex', 'utf8');
         dec += decipher.final('utf8');
         return dec;
+    },
+
+    generateKeys(){
+        const key = new NodeRSA();
+        key.generateKeyPair();
+        const keys = {
+            privateKey: key.exportKey('pkcs8-private'),
+            publicKey: key.exportKey('pkcs8-public')
+        };
+        return keys;
     }
     
 };

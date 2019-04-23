@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Alert from '../../components/alert/Alert';
 
-import { deleteAccount } from '../../wallet/wallet';
+import { PopupAPI } from '@pegasus/lib/api';
 
 import './Edit.css';
 
@@ -28,7 +28,7 @@ class Edit extends Component {
 
     async deleteAccount() {
         try{
-            await deleteAccount(this.props.account, this.props.network);
+            await PopupAPI.deleteAccount(this.props.account, this.props.network);
             this.props.onDeleteAccount();
         }catch(err) {
             this.setState({ showAlert: true });

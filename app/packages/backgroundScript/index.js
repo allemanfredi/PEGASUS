@@ -27,6 +27,7 @@ const backgroundScript = {
         duplex.on('setupWallet', this.walletService.setupWallet);
         duplex.on('checkPsw', this.walletService.checkPsw);
         duplex.on('getKey', this.walletService.getKey);
+        duplex.on('storePsw', this.walletService.storePsw);
 
         duplex.on('setCurrentNetwork', this.walletService.setCurrentNetwork);
         duplex.on('getCurrentNewtwork', this.walletService.getCurrentNewtwork);
@@ -53,7 +54,7 @@ const backgroundScript = {
                 case 'init': {
                     
                     let response = {
-                        address : "",
+                        selectedAddress : "",
                         provider : ""
                     }
 

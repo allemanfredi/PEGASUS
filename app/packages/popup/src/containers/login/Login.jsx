@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { checkPsw } from '../../wallet/wallet';
-import { startSession } from '../../utils/utils';
+
+import { PopupAPI } from '@pegasus/lib/api';
+import Utils from '@pegasus/lib/utils';
 
 import './Login.css';
 
@@ -14,17 +16,25 @@ class InitPsw extends Component {
         this.state = {
             psw: '',
             error: '',
+            isLoginable : false
         };
     }
 
     clickLogin() {
-        if ( startSession() )
-            this.props.onSuccess();//history.push('/home');
+        PopupAPI.startSession();
+        this.props.onSuccess();//history.push('/home');
     }
 
-    handleChangePsw(e) {
+    async handleChangePsw(e) {
         this.setState({ showError: false });
         this.setState({ psw: e.target.value });
+        
+        const canAccess = await PopupAPI.checkPsw(this.state.psw)
+        if (canAccess){
+            this.setState({isLoginable:true});
+        }else{
+            this.setState({isLoginable:false});
+        }
     }
 
     render() {
@@ -52,7 +62,7 @@ class InitPsw extends Component {
                 <div className='row'>
                     <div className='col-1'></div>
                     <div className='col-10 text-center'>
-                        <button disabled={checkPsw(this.state.psw) ? false : true} onClick={this.clickLogin} type='submit' className='btn btn-blue mt-4'>Login</button>
+                        <button disabled={!this.state.isLoginable} onClick={this.clickLogin} type='submit' className='btn btn-blue mt-4'>Login</button>
                     </div>
                     <div className='col-1'></div>
                 </div>

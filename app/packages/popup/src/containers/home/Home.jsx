@@ -71,11 +71,11 @@ class Home extends Component {
             const network = await PopupAPI.getCurrentNewtwork();
             this.setState({ network });
             const account = await PopupAPI.getCurrentAccount(network);
-            console.log(account);
 
             const key = await PopupAPI.getKey();
             const dseed = Utils.aes256decrypt(account.seed, key);
             this.setState({ decryptedSeed: dseed });
+
 
             //check account data after 40 seconds in order to receive the transaction
             this.getData();
@@ -117,19 +117,16 @@ class Home extends Component {
     async createAccount (network, name) {
         //generate new seed
         return new Promise( async (resolve, reject) => {
-            const newSeed = PopupAPI.generateSeed().toString().replace(/,/g, '');
-            const key = await PopupAPI.getKey();
-            const eseed = Utils.aes256encrypt(newSeed, key);
-
+            
             //get all account data
-            const data = await getAccountData(newSeed);
+            const promisedSeed = await PopupAPI.generateSeed()
+            const seed = promisedSeed.toString().replace(/,/g, '');
+            const data = await getAccountData(seed);
             const account = {
+                seed,
                 name,
-                seed: eseed,
+                network,
                 data,
-                id: Utils.sha256(name),
-                network, //NUOVA NETWORK
-                marketplace: { keys: Utils.generateKeys(), channels: [] }
             };
             await PopupAPI.addAccount(account, network, true);
             resolve(account);
@@ -137,6 +134,7 @@ class Home extends Component {
     }
 
     async getData() {
+        console.log("get data");
         const data = await getAccountData(this.state.decryptedSeed);
 
         //update table

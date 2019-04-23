@@ -2,20 +2,18 @@ import React, { Component } from 'react';
 import { getAccountData } from '../../core/core';
 
 import Loader from '../../components/loader/Loader';
-import options from '../../options/options';
-
-import './Init.css';
 
 import { PopupAPI } from '@pegasus/lib/api';
 import Utils from '@pegasus/lib/utils';
 
 
+import './Add.css';
 
-class Init extends Component {
+class Add extends Component {
     constructor(props, context) {
         super(props, context);
 
-        this.createWallet = this.createWallet.bind(this);
+        this.addAccount = this.addAccount.bind(this);
         this.goBack = this.goBack.bind(this);
         this.goOn = this.goOn.bind(this);
         this.updateStatusInitialization = this.updateStatusInitialization.bind(this);
@@ -25,16 +23,13 @@ class Init extends Component {
         this.labelSeed = React.createRef();
 
         this.state = {
-            psw: '',
-            repsw: '',
             name: '',
             seed: [],
             randomLetters: 10,
             randomizedLetter: [],
             isLoading: false,
-            initialization: [true, false, false, false],
+            initialization: [true, false, false],
             indexInitialization: 0,
-            isCopiedToClipboard: false,
         };
     }
 
@@ -43,7 +38,6 @@ class Init extends Component {
         this.setState({ seed });
     }
 
-    //action = true -> goOn, action = false = goBack
     goBack() {
         this.updateStatusInitialization(this.state.indexInitialization, false);
         this.setState({ indexInitialization: this.state.indexInitialization - 1 });
@@ -53,11 +47,11 @@ class Init extends Component {
         this.updateStatusInitialization(this.state.indexInitialization, true);
         this.setState({ indexInitialization: this.state.indexInitialization + 1 });
 
-        if ( this.state.indexInitialization === 3) { //create wallet
+        if ( this.state.indexInitialization === 2) {
             this.setState({ isLoading: true });
-            await this.createWallet();
+            const newAccount = await this.addAccount();
             this.setState({ isLoading: false });
-            this.props.onSuccess();
+            this.props.onChangeAccount(newAccount);
         }
     }
 
@@ -78,12 +72,10 @@ class Init extends Component {
             this.setState({ randomLetters: this.state.randomLetters - 1 });
         }
 
-        const letter = await PopupAPI.generateSeed(1)[0];
-        console.log("reset ");
-        console.log(letter);
+        const letter = await PopupAPI.generateSeed(1);
         this.setState(state => {
             const seed = state.seed;
-            seed[index] = letter;
+            seed[ index ] = letter[0];
             return {
                 seed
             };
@@ -97,35 +89,23 @@ class Init extends Component {
         this.setState({ isCopiedToClipboard: true });
     }
 
-    async createWallet() {
+    async addAccount() {
         return new Promise( async (resolve, reject) => {
             try{
-                if ( await PopupAPI.setupWallet() ) {
-                    //store the psw
-                    PopupAPI.storePsw(this.state.psw);
-
-                    const seed = this.state.seed.toString().replace(/,/g, '');
-                    const pswHash = Utils.sha256(this.state.psw);
-                    const eseed = Utils.aes256encrypt(seed, pswHash);
-
-                    //get all account data
-                    const data = await getAccountData(seed);
-
-                    const account = {
-                        name: this.state.name,
-                        seed: eseed,
-                        data,
-                        id: Utils.sha256(this.state.name),
-                        network: options.network[ 0 ], //TESTNET = 1  MAINNET = 0
-                        marketplace: { keys: Utils.generateKeys(), channels: [] }
-                    };
-                    await PopupAPI.addAccount(account, options.network[ 0 ], true);
-                    await PopupAPI.setCurrentNetwork(options.network[ 0 ]);
-                    resolve();
-                }
+                const promisedSeed = await PopupAPI.generateSeed()
+                const seed = promisedSeed.toString().replace(/,/g, '');
+                const data = await getAccountData(seed);
+                const account = {
+                    seed : seed,
+                    name : this.state.name,
+                    network : this.props.network,
+                    data : data
+                };
+                await PopupAPI.addAccount(account, this.props.network, true);
+                resolve(account);
             }catch(err) {
                 console.log(err);
-                reject('Impossible to create the wallet');
+                reject('Impossible to create the account');
             }
         });
     }
@@ -136,9 +116,6 @@ class Init extends Component {
                 { this.state.isLoading ?
                     <Loader/>
                     : (<div>
-                        <div className='container-logo'>
-                            <img src='./material/logo/pegasus-128.png' height='80' width='80' alt='pegasus logo'/>
-                        </div>
                         {this.state.initialization[ 0 ] ?
                             <div >
                                 <div className='row'>
@@ -168,53 +145,12 @@ class Init extends Component {
                                     <div className='col-1'></div>
                                     <div className='col-10 text-center'>
                                         <div className='row'>
-                                            <div className='col-12 text-center psw-text'>Let's add a password</div>
-                                        </div>
-
-                                        <div className='row'>
-                                            <div className='col-12'>
-                                                <label htmlFor='inp-password' className='inp'>
-                                                    <input value={this.state.psw} onChange={e => { this.setState({ psw: e.target.value }); }} type='password' id='inp-password' placeholder='&nbsp;'/>
-                                                    <span className='label'>password</span>
-                                                    <span className='border'></span>
-                                                </label>
-                                            </div>
-                                        </div>
-
-                                        <div className='row'>
-                                            <div className='col-12'>
-                                                <label htmlFor='inp-re-password' className='inp'>
-                                                    <input value={this.state.repsw} onChange={e => { this.setState({ repsw: e.target.value }); }} type='password' id='inp-re-password' placeholder='&nbsp;'/>
-                                                    <span className='label'>re-password</span>
-                                                    <span className='border'></span>
-                                                </label>
-                                            </div>
-                                        </div>
-
-                                        <div className='row'>
-                                            <div className='col-12 text-center text-psw-suggestion '>
-                                        Password must contain at least 8 characters
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                    <div className='col-1'></div>
-                                </div>
-                            </div>
-                            : ''}
-
-                        {this.state.initialization[ 2 ] ?
-                            <div>
-                                <div className='row'>
-                                    <div className='col-1'></div>
-                                    <div className='col-10 text-center'>
-                                        <div className='row'>
                                             <div className='col-12 text-center seed-text'>Let's generate a seed</div>
                                         </div>
 
                                         <div className='row'>
                                             <div className='col-12 text-center seed-info-text'>
-                                        Press <i className='remained-letters'>{this.state.randomLetters >= 0 ? this.state.randomLetters : 0}</i> more letters to randomise them
+                                     Press <i className='remained-letters'>{this.state.randomLetters >= 0 ? this.state.randomLetters : 0}</i> more letters to randomise them
                                             </div>
                                         </div>
 
@@ -243,7 +179,7 @@ class Init extends Component {
 
                             : ''}
 
-                        {this.state.initialization[ 3 ] ?
+                        {this.state.initialization[ 2 ] ?
                             <div>
                                 <div className='container-export-text'>
                                     <div className='row'>
@@ -293,8 +229,7 @@ class Init extends Component {
                                 </div>
                                 <div className='col-6 text-center padding-0'>
                                     <button disabled={this.state.initialization[ 0 ] ? (this.state.name.length > 0 ? false : true ) :
-                                        this.state.initialization[ 1 ] ? (this.state.psw.length > 7 && (this.state.psw === this.state.repsw) ? false : true) :
-                                            this.state.initialization[ 2 ] ? (this.state.randomLetters === 0 ? false : true) : ''}
+                                        this.state.initialization[ 2 ] ? (this.state.randomLetters === 0 ? false : true) : ''}
                                     onClick={this.goOn}
                                     type='submit'
                                     className='btn btn-menu-init-option'
@@ -311,4 +246,4 @@ class Init extends Component {
     }
 }
 
-export default Init;
+export default Add;
