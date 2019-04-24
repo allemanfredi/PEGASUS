@@ -74,8 +74,8 @@ class Home extends Component {
 
             const key = await PopupAPI.getKey();
             const dseed = Utils.aes256decrypt(account.seed, key);
+            console.log(dseed);
             this.setState({ decryptedSeed: dseed });
-
 
             //check account data after 40 seconds in order to receive the transaction
             this.getData();
@@ -99,8 +99,15 @@ class Home extends Component {
         this.setState({ network });
 
         let account = await PopupAPI.getCurrentAccount(network);
-        if (!account) { //can happens only for the first switch when the wallet is generated on the mainnet and the user switch to the testnet
-            account = await this.createAccount(network, `${currentName }-test`);
+        if (Object.entries(account.data).length === 0 && account.data.constructor === Object ) { //can happens only for the first switch when the wallet is generated on the mainnet and the user switch to the testnet
+            const key = await PopupAPI.getKey();
+            console.log(key);
+            const dseed = Utils.aes256decrypt(account.seed, key);
+            console.log(dseed);
+
+            this.setState({ decryptedSeed: dseed });
+            account.data = await getAccountData(dseed);
+            PopupAPI.updateDataAccount(account.data,network);
         }
 
         //store the encrypted seed
@@ -114,27 +121,7 @@ class Home extends Component {
             this.transactions.current.updateData();
     }
 
-    async createAccount (network, name) {
-        //generate new seed
-        return new Promise( async (resolve, reject) => {
-            
-            //get all account data
-            const promisedSeed = await PopupAPI.generateSeed()
-            const seed = promisedSeed.toString().replace(/,/g, '');
-            const data = await getAccountData(seed);
-            const account = {
-                seed,
-                name,
-                network,
-                data,
-            };
-            await PopupAPI.addAccount(account, network, true);
-            resolve(account);
-        });
-    }
-
     async getData() {
-        console.log("get data");
         const data = await getAccountData(this.state.decryptedSeed);
 
         //update table
@@ -302,10 +289,7 @@ class Home extends Component {
                                         <div className='col align-center'>
                                             <img src='./material/logo/iota-logo.png' height='60' width='60' alt='iota logo'/>
                                             <div className='container-balance'>
-                                                { this.state.account.data.balance > 99999999 || this.state.account.data.balance < -99999999 ? `${(this.state.account.data.balance / 1000000000).toFixed(2) } Gi` :
-                                                    this.state.account.data.balance > 99999 || this.state.account.data.balance < -99999 ? `${(this.state.account.data.balance / 1000000).toFixed(2) } Mi` :
-                                                        this.state.account.data.balance > 999 || this.state.account.data.balance < -999 ? `${(this.state.account.data.balance / 1000).toFixed(2) } Ki` :
-                                                            `${this.state.account.data.balance }i` }
+                                                { Utils.iotaReducer(this.state.account.data.balance) }
                                             </div>
                                         </div>
                                     </div>

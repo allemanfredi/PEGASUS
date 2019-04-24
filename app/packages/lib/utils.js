@@ -135,6 +135,7 @@ const Utils = {
         const decipher = crypto.createDecipher('aes-256-ctr', key);
         let dec = decipher.update(text, 'hex', 'utf8');
         dec += decipher.final('utf8');
+        console.log(dec);
         return dec;
     },
 
@@ -146,7 +147,32 @@ const Utils = {
             publicKey: key.exportKey('pkcs8-public')
         };
         return keys;
-    }
+    },
+
+    iotaReducer(amount){
+        if (amount < Math.pow(10, 3)) {
+          const num = amount;
+          if (num % 1 !== 0) return num.toFixed(2) + 'i';
+          return num + 'i';
+        } else if (amount < Math.pow(10, 6)) {
+          const num = amount / Math.pow(10, 3);
+          if (num % 1 !== 0) return num.toFixed(2) + 'Ki';
+          return num + 'Ki';
+        } else if (amount < Math.pow(10, 9)) {
+          const num = amount / Math.pow(10, 6);
+          if (num % 1 !== 0) return num.toFixed(2) + 'Mi';
+          return num + 'Mi';
+        } else if (amount < Math.pow(10, 12)) {
+          const num = amount / Math.pow(10, 9);
+          if (num % 1 !== 0) return num.toFixed(2) + 'Gi';
+          return num + 'Gi';
+        } else if (amount < Math.pow(10, 15)) {
+          const num = amount / Math.pow(10, 12);
+          if (num % 1 !== 0) return num.toFixed(2) + 'Ti';
+          return num + 'Ti';
+        }
+      },
+    
     
 };
 

@@ -24,7 +24,6 @@ class App extends Component {
             showHeader: false,
             duplex: new MessageDuplex.Popup(),
         };
-        console.log(process.env.NODE_ENV);
     }
 
     async componentWillMount() {
@@ -33,8 +32,7 @@ class App extends Component {
 
         //check if the current network has been already set, if no => set to testnet (options[0])
         let network = await PopupAPI.getCurrentNewtwork();
-        console.log(network);
-        if ( !network ) {
+        if ( Object.entries(network).length === 0 && network.constructor === Object ) {
             network = options.network[ 0 ];
             await PopupAPI.setCurrentNetwork(options.network[ 0 ]);
             await iotaInit(options.network[ 0 ].provider);

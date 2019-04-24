@@ -36,7 +36,6 @@ class Main extends Component {
 
         if ( await PopupAPI.isWalletSetup() ) {
             if (await PopupAPI.checkSession() ) {
-                console.log("sss");
                 await PopupAPI.startSession();
                 
                 const network = await PopupAPI.getCurrentNewtwork();

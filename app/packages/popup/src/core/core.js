@@ -83,7 +83,6 @@ const prepareTransfer = async (transfer, ret) => {
                 return iota.sendTrytes(trytes, depth, minWeightMagnitude);
             })
             .then(bundle => {
-                console.log(bundle);
                 ret(bundle[ 0 ].hash, null);
             })
             .catch(err => {
@@ -109,7 +108,6 @@ const getAccountData = async seed => {
     return new Promise((resolve, reject) => {
         iota.getAccountData(seed, { start: 0, security: 2 })
             .then(accountData => {
-                console.log(accountData);
                 resolve(accountData);
             })
             .catch(err => {
@@ -122,7 +120,6 @@ const getAccountData = async seed => {
 const getAccountDataSync = seed => {
     iota.getAccountData(seed, { start: 0, security: 2 })
         .then(accountData => {
-            console.log(accountData);
             return accountData;
         })
         .catch(err => {
@@ -147,7 +144,6 @@ const isPromotable = async tail => {
     return new Promise( (resolve, reject) => {
         iota.isPromotable(tail, { rejectWithReason: true })
             .then(isPromotable => {
-                console.log(isPromotable);
                 resolve(isPromotable);
             }).catch(err => {
             //reject(err);

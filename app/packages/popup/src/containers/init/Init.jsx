@@ -4,11 +4,10 @@ import { getAccountData } from '../../core/core';
 import Loader from '../../components/loader/Loader';
 import options from '../../options/options';
 
-import './Init.css';
-
 import { PopupAPI } from '@pegasus/lib/api';
 import Utils from '@pegasus/lib/utils';
 
+import './Init.css';
 
 
 class Init extends Component {

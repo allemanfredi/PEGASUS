@@ -127,6 +127,32 @@ class Wallet extends EventEmitter {
         }
     }
 
+    getCurrentAccount(network){
+        try{
+            const accounts = JSON.parse(localStorage.getItem('data'))[ network.type ];
+            for ( let account of accounts){
+                if ( account.current ){
+                    return account;
+                }
+            }
+
+            //create an account for testnet
+            const isCurrent = true;
+            const seed = this.generateSeed()
+            const account = {
+                name : 'account-testnet',
+                network : network,
+                seed : seed.toString().replace(/,/g, ''),
+                data : {}
+            }
+            const res = this.addAccount({account, network, isCurrent});
+            return res;
+        }
+        catch(err) {
+            throw new Error(err);
+        }
+    }
+
     setCurrentAccount({currentAccount, network}){
         const data = JSON.parse(localStorage.getItem('data'));
         data[ network.type ].forEach( account => { account.current = false; });
@@ -221,20 +247,6 @@ class Wallet extends EventEmitter {
         }
     }
 
-    getCurrentAccount(network){
-        try{
-            const accounts = JSON.parse(localStorage.getItem('data'))[ network.type ];
-            for ( let account of accounts){
-                if ( account.current ){
-                    return account;
-                }
-            }
-            throw new Error('Account not found');
-        }
-        catch(err) {
-            throw new Error(err);
-        }
-    }
 
     getAllAccounts(network){
         const accounts = [];
