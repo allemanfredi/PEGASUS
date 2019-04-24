@@ -6,7 +6,6 @@ import { aes256decrypt } from '../../utils/crypto';
 import Loader from '../../components/loader/Loader';
 import Alert from '../../components/alert/Alert';
 
-import './Send.css';
 
 class Send extends Component {
     constructor(props, context) {
@@ -66,11 +65,11 @@ class Send extends Component {
             message: this.state.message,
             difficulty: getCurrentNewtwork().type === 'mainnet' ? 14 : 9
         };
-        prepareTransfer( transfer, (bundle, error) => {
+        prepareTransfer(transfer, (bundle, error) => {
             if (bundle) {
                 console.log(bundle);
                 this.setState({ status: bundle });
-                this.setState({ alertText: `Bundle : ${ bundle}` });
+                this.setState({ alertText: `Bundle : ${bundle}` });
                 this.setState({ alertType: 'success' });
                 this.setState({ showAlert: true });
             }
@@ -90,64 +89,47 @@ class Send extends Component {
     render() {
         return (
 
-            <div>
-                { !this.state.isLoading ?
-
-                    <div className='container-send'>
+            <div className="container">
+                {!this.state.isLoading ?
+                    <div>
                         <div className='row'>
-                            <div className='col-1'></div>
-                            <div className='col-10'>
+                            <div className='col-12'>
                                 <label htmlFor='inp-address' className='inp'>
-                                    <input value={this.state.dstAddress} onChange={this.handleChangeDstAddress} type='text' id='inp-address' placeholder='&nbsp;'/>
+                                    <input value={this.state.dstAddress} onChange={this.handleChangeDstAddress} type='text' id='inp-address' placeholder='&nbsp;' />
                                     <span className='label'>address</span>
                                     <span className='border'></span>
                                 </label>
                             </div>
-                            <div className='col-1'></div>
                         </div>
 
                         <div className='row'>
-                            <div className='col-1'></div>
-                            <div className='col-10'>
+                            <div className='col-12'>
                                 <label htmlFor='inp-value' className='inp'>
-                                    <input value={this.state.value} onChange={this.handleChangeValue} type='text' id='inp-value' placeholder='&nbsp;'/>
+                                    <input value={this.state.value} onChange={this.handleChangeValue} type='text' id='inp-value' placeholder='&nbsp;' />
                                     <span className='label'>value</span>
                                     <span className='border'></span>
                                 </label>
                             </div>
-                            <div className='col-1'></div>
                         </div>
 
                         <div className='row'>
-                            <div className='col-1'></div>
-                            <div className='col-10'>
+                            <div className='col-12'>
                                 <label htmlFor='inp-message' className='inp'>
-                                    <input value={this.state.message} onChange={this.handleChangeMessage} type='text' id='inp-message' placeholder='&nbsp;'/>
+                                    <input value={this.state.message} onChange={this.handleChangeMessage} type='text' id='inp-message' placeholder='&nbsp;' />
                                     <span className='label'>message</span>
                                     <span className='border'></span>
                                 </label>
                             </div>
-                            <div className='col-1'></div>
                         </div>
 
                         <div className='row'>
-                            <div className='col-1'></div>
-                            <div className='col-10 text-center'>
-                                <button disabled={this.state.dstAddress === '' ? true : false} onClick={this.clickTransfer} className='btn btn-transfer'><i className='fa fa-paper-plane' ></i></button>
+                            <div className='col-12 text-center'>
+                                <button disabled={this.state.dstAddress === '' ? true : false} onClick={this.clickTransfer} className='btn btn-blue mt-5'>Send</button>
                             </div>
-                            <div className='col-1'></div>
-                        </div>
-
-                        <div className='row'>
-                            <div className='col-1'></div>
-                            <div className='col-10 text-center'>
-                                <div className='text-transfer'>Send</div>
-                            </div>
-                            <div className='col-1'></div>
                         </div>
                     </div>
-                    : <Loader/>}
-                {this.state.showAlert ? <Alert text={this.state.alertText} type={this.state.alertType} onClose={this.onCloseAlert}/> : ''}
+                    : <Loader />}
+                {this.state.showAlert ? <Alert text={this.state.alertText} type={this.state.alertType} onClose={this.onCloseAlert} /> : ''}
             </div>
         );
     }

@@ -48,6 +48,16 @@
     position: relative;
 }
 
+.container-center-absolute{
+    margin: 0;
+    background : #fff;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%)
+}
+
 /*INPUT*/
 .inp {
     position: relative;
@@ -128,6 +138,25 @@
     outline: none;
     height: 50px;
 }
+.btn-border-blue{
+    width: 100%;
+    background: white;
+    color: darkblue;
+    text-decoration: underline;
+    border: 1px solid darkblue;
+    outline: none;
+    height: 50px;
+}
+
+.btn-icon {
+    background-color: darkblue; 
+    border: none; 
+    color: white; 
+    padding: 0px 0px;
+    font-size: 30px; 
+    cursor: pointer; 
+    z-index: 2;
+}
 
 /* MARGINS */
 .mt-1{
@@ -176,7 +205,7 @@
 
 }
 .text-sm{
-    
+    font-size: 18px;
 }
 .text-md{
     
@@ -186,4 +215,51 @@
 }
 .text-xl{
     
+}
+
+/*BACKGROUNG*/
+
+.bg-darkblue{
+    background-color: darkblue;
+}
+
+.bg-transparent{
+    background-color: transparent;
+}
+
+/*LOADER*/
+.lds-ring {
+    display: inline-block;
+    position: relative;
+    width: 64px;
+    height: 64px;
+}
+.lds-ring div {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    margin: 6px;
+    border: 6px solid darkblue;
+    border-radius: 50%;
+    animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    border-color: darkblue transparent transparent transparent;
+}
+.lds-ring div:nth-child(1) {
+    animation-delay: -0.45s;
+}
+.lds-ring div:nth-child(2) {
+    animation-delay: -0.3s;
+}
+.lds-ring div:nth-child(3) {
+    animation-delay: -0.15s;
+}
+@keyframes lds-ring {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
 }
