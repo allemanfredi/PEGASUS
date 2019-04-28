@@ -6,15 +6,14 @@ import { aes256decrypt } from '../../utils/crypto';
 import Loader from '../../components/loader/Loader';
 import Alert from '../../components/alert/Alert';
 
+import { PopupAPI } from '@pegasus/lib/api';
+import Utils from '@pegasus/lib/utils';
 
 class Send extends Component {
     constructor(props, context) {
         super(props, context);
 
         this.clickTransfer = this.clickTransfer.bind(this);
-        this.handleChangeDstAddress = this.handleChangeDstAddress.bind(this);
-        this.handleChangeValue = this.handleChangeValue.bind(this);
-        this.handleChangeMessage = this.handleChangeMessage.bind(this);
         this.onCloseAlert = this.onCloseAlert.bind(this);
 
         this.state = {
@@ -30,18 +29,6 @@ class Send extends Component {
         };
     }
 
-    handleChangeDstAddress(e) {
-        this.setState({ dstAddress: e.target.value });
-    }
-
-    handleChangeValue(e) {
-        this.setState({ value: e.target.value });
-    }
-
-    handleChangeMessage(e) {
-        this.setState({ message: e.target.value });
-    }
-
     onCloseAlert() {
         this.setState({ showAlert: false });
         this.setState({ alertText: '' });
@@ -52,18 +39,18 @@ class Send extends Component {
         this.setState({ isLoading: true });
 
         //decrypt seed;
-        const key = await getKey();
-        const seed = aes256decrypt(this.props.account.seed, key);
+        const key = await PopupAPI.getKey();
+        const seed = Utils.aes256decrypt(this.props.account.seed, key);
         this.setState({ seed });
 
-        //const address = 'IETGETEQSAAJUCCKDVBBGPUNQVUFNTHNMZYUCXXBFXYOOOQOHC9PTMP9RRIMIOQRDPATHPVQXBRXIKFDDRDPQDBWTY'
+        //const address = ''
         const transfer = {
             seed,
             tag: '',
             to: this.state.dstAddress,
             value: this.state.value,
             message: this.state.message,
-            difficulty: getCurrentNewtwork().type === 'mainnet' ? 14 : 9
+            difficulty: PopupAPI.getCurrentNewtwork().type === 'mainnet' ? 14 : 9
         };
         prepareTransfer(transfer, (bundle, error) => {
             if (bundle) {
@@ -95,7 +82,7 @@ class Send extends Component {
                         <div className='row'>
                             <div className='col-12'>
                                 <label htmlFor='inp-address' className='inp'>
-                                    <input value={this.state.dstAddress} onChange={this.handleChangeDstAddress} type='text' id='inp-address' placeholder='&nbsp;' />
+                                    <input value={this.state.dstAddress} onChange={e => this.setState({ dstAddress: e.target.value })} type='text' id='inp-address' placeholder='&nbsp;' />
                                     <span className='label'>address</span>
                                     <span className='border'></span>
                                 </label>
@@ -105,7 +92,7 @@ class Send extends Component {
                         <div className='row'>
                             <div className='col-12'>
                                 <label htmlFor='inp-value' className='inp'>
-                                    <input value={this.state.value} onChange={this.handleChangeValue} type='text' id='inp-value' placeholder='&nbsp;' />
+                                    <input value={this.state.value} onChange={e => this.setState({ value: e.target.value })} type='text' id='inp-value' placeholder='&nbsp;' />
                                     <span className='label'>value</span>
                                     <span className='border'></span>
                                 </label>
@@ -115,7 +102,7 @@ class Send extends Component {
                         <div className='row'>
                             <div className='col-12'>
                                 <label htmlFor='inp-message' className='inp'>
-                                    <input value={this.state.message} onChange={this.handleChangeMessage} type='text' id='inp-message' placeholder='&nbsp;' />
+                                    <input value={this.state.message} onChange={e => this.setState({ message: e.target.value })} type='text' id='inp-message' placeholder='&nbsp;' />
                                     <span className='label'>message</span>
                                     <span className='border'></span>
                                 </label>

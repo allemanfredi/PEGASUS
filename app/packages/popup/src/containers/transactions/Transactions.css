@@ -29,9 +29,10 @@
     margin-bottom: 7px;
     cursor: pointer;
     padding: 13px 10px 13px 10px;
+    border-radius: 5px;
 }
 .transaction-list-item:hover {
-    transform: scale(1.05);
+    transform: scale(1.02);
 }
 
 .transaction-list-item-action, .transaction-list-item-value {
