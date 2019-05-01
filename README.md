@@ -51,7 +51,7 @@ npm install
 node index.js deviceName latitude longitude price description
 ```
 
-##In development
+## In development
 
 iotaJs injection. 
 
