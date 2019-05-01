@@ -32,6 +32,10 @@ class Confirm extends Component {
 
     changePayments(payments){
         console.log("arrivato");
+        console.log(this.state.payments);
+
+        console.log("adesso");
+        console.log(payments);
         this.setState({payments});
     }
 

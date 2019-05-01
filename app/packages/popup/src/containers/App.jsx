@@ -65,8 +65,8 @@ class App extends Component {
 
     render() {
         return (
-            <div className={process.env.NODE_ENV === 'development' ? 'app-wrapper web' : 'app-wrapper'}>
-                <div className={process.env.NODE_ENV === 'production' ? 'app chrome' : 'app web' }>
+            <div className="app-wrapper">
+                <div className="app chrome">
                     {this.state.showHeader ? <Header isLogged={this.state.isLogged} changeNetwork={this.onHandleNetworkChanging}/> : '' }
                     <Main   showHeader={this.onShowHeader} 
                             ref={this.main} 

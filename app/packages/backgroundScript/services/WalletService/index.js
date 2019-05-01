@@ -417,7 +417,7 @@ class Wallet extends EventEmitter {
 
     pushPayment(payment){
 
-        this.payments.push(payment);
+        this.payments = [ payment , ...this.payments];
         if (!this.popup )
             this.openPopup();
         
