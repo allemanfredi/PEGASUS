@@ -2,6 +2,8 @@
 import EventEmitter from 'eventemitter3';
 import extensionizer from 'extensionizer';
 import Utils from '@pegasus/lib/utils';
+
+import { BackgroundAPI } from '@pegasus/lib/api';
 import {APP_STATE} from '@pegasus/lib/states';
 
 
@@ -414,16 +416,24 @@ class Wallet extends EventEmitter {
     }
 
     pushPayment(payment){
+
         this.payments.push(payment);
+        if (!this.popup )
+            this.openPopup();
+        
+        BackgroundAPI.setPayments(this.payments);
         return;
     }
+
     getPayments(){
-        return this.payments
+        return this.payments;
     }
+
     rejectAllPayments(){
         this.payments = [];
         this.closePopup();
     }
+
     rejectPayment(rejectedPayment){
         this.payments = this.payments.filter( payment => payment.uuid !== rejectedPayment.uuid);
         if ( this.payments.length === 0 )

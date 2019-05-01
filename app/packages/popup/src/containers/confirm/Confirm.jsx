@@ -26,6 +26,13 @@ class Confirm extends Component {
         await PopupAPI.rejectPayment(payment);
         const payments = await PopupAPI.getPayments();
         this.setState({payments});
+        if (payments.length === 0)
+            this.props.onClose();
+    }
+
+    changePayments(payments){
+        console.log("arrivato");
+        this.setState({payments});
     }
 
     render() {      
@@ -79,7 +86,7 @@ class Confirm extends Component {
                         </div>
 
                         <div className="row mt-1">
-                            <div className="col-12 text-center text-xxs text-blue">1 transaction</div>
+                            <div className="col-12 text-center text-xxs text-blue">{this.state.payments.length} transactions</div>
                         </div>
                     </div>
                 )

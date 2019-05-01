@@ -5,20 +5,8 @@ export default {
         this.duplex = duplex;
     },
 
-    setAddress(address) {
-        this.duplex.send('popup', 'setAddress', address, false);
-
-        if(this.currentAddress === account)
-            return;
-
-        this.currentAddress = address;
-    },
-
-    setProvider(provider) {
-        this.duplex.send('tab', 'tunnel', {
-            action: 'setProvider',
-            data: provider
-        }, false);
+    setPayments(payments) {
+        this.duplex.send('popup', 'setPayments', payments, false);
     },
 
 };

@@ -96,7 +96,6 @@ const backgroundScript = {
                     data['uuid'] = uuid;
                     this.walletService.pushPayment(data);
 
-                    this.walletService.openPopup();
                     
                     break;
                 }
@@ -106,10 +105,10 @@ const backgroundScript = {
 
 
     bindWalletEvents() {
-        /*this.walletService.on('newState', appState => (
-            BackgroundAPI.setState(appState)
-        ));*/
-
+        
+        this.walletService.on('setPayments', payments => (
+            BackgroundAPI.setPayments(payments)
+        ));
     }
 };
 

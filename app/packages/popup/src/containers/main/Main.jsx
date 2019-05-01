@@ -23,6 +23,7 @@ class Main extends Component {
         this.onRejectAll = this.onRejectAll.bind(this);
 
         this.home = React.createRef();
+        this.confirm = React.createRef();
 
         this.state = {
             network: {},
@@ -99,6 +100,10 @@ class Main extends Component {
         this.setState({ network });
     }
 
+    changePayments(payments){
+        this.confirm.current.changePayments(payments);
+    }
+
     render() {
                  
         switch(parseInt(this.state.appState)){
@@ -111,7 +116,7 @@ class Main extends Component {
             case APP_STATE.WALLET_UNLOCKED:
                 return <Home ref={this.home} onLogout={this.onLogout}/>
             case APP_STATE.WALLET_TRANSFERS_IN_QUEUE:
-                return <Confirm onRejectAll={this.onRejectAll}/>
+                return <Confirm ref={this.confirm} onClose={this.onBack} onRejectAll={this.onRejectAll}/>
             default:
                 return '';
         }

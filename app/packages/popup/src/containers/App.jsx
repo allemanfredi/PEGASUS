@@ -29,6 +29,7 @@ class App extends Component {
     async componentWillMount() {
 
         PopupAPI.init(this.state.duplex);
+        this.bindDuplexRequests();
 
         //check if the current network has been already set, if no => set to testnet (options[0])
         let network = await PopupAPI.getCurrentNetwork();
@@ -59,7 +60,7 @@ class App extends Component {
     }
 
     bindDuplexRequests(){
-        console.log("todo");
+        this.state.duplex.on('setPayments', payments => this.main.current.changePayments(payments));
     }
 
     render() {
