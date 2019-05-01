@@ -68,7 +68,7 @@ class InitPsw extends Component {
                 <div className='row mt-1'>
                     <div className='col-1'></div>
                     <div className='col-10 text-center'>
-                        <button onClick={e => { this.props.onRestore(); }} type='submit' className='btn btn-white '>restore from seed</button>
+                        <button onClick={e => { this.props.onRestore(); }} type='submit' className='btn btn-white '>Restore from seed</button>
                     </div>
                     <div className='col-1'></div>
                 </div>

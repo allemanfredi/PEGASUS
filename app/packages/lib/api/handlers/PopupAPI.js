@@ -86,9 +86,21 @@ export default {
     getState(){
         return this.duplex.send('getState');
     },
-
     setState(state){
         return this.duplex.send('setState',state);
+    },
+
+    getPayments(){
+        return this.duplex.send('getPayments');
+    },
+    pushPayments(payment){
+        return this.duplex.send('pushPayment',payment);
+    },
+    rejectPayment(payment){
+        return this.duplex.send('rejectPayment',payment);
+    },
+    rejectAllPayments(){
+        return this.duplex.send('rejectAllPayments');
     }
 
 };

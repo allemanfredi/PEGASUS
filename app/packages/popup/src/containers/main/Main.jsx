@@ -19,7 +19,8 @@ class Main extends Component {
         this.onSuccessFromRestore = this.onSuccessFromRestore.bind(this);
         this.onLogout = this.onLogout.bind(this);
         this.onRestore = this.onRestore.bind(this);
-        this.onBack = this.onBack.bind(this);        
+        this.onBack = this.onBack.bind(this);   
+        this.onRejectAll = this.onRejectAll.bind(this);
 
         this.home = React.createRef();
 
@@ -85,6 +86,13 @@ class Main extends Component {
         PopupAPI.setState(APP_STATE.WALLET_LOCKED);
     }
 
+    onRejectAll(){
+        this.props.showHeader(true);
+        this.setState({appState:APP_STATE.WALLET_UNLOCKED});
+        PopupAPI.setState(APP_STATE.WALLET_UNLOCKED);
+        PopupAPI.rejectAllPayments();
+    }
+
     //called by App.js component in order to reload-data
     changeNetwork(network) {
         this.home.current.changeNetwork(network);
@@ -103,7 +111,7 @@ class Main extends Component {
             case APP_STATE.WALLET_UNLOCKED:
                 return <Home ref={this.home} onLogout={this.onLogout}/>
             case APP_STATE.WALLET_TRANSFERS_IN_QUEUE:
-                return <Confirm />
+                return <Confirm onRejectAll={this.onRejectAll}/>
             default:
                 return '';
         }

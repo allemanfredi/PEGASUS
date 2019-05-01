@@ -52,6 +52,11 @@ const backgroundScript = {
         duplex.on('getState', this.walletService.getState);
         duplex.on('setState', this.walletService.setState);
 
+        duplex.on('getPayments', this.walletService.getPayments);
+        duplex.on('pushPayment', this.walletService.pushPayment);
+        duplex.on('rejectAllPayments', this.walletService.rejectAllPayments);
+        duplex.on('rejectPayment', this.walletService.rejectPayment);
+
     },
 
     bindTabDuplex() {
@@ -88,6 +93,9 @@ const backgroundScript = {
                     const dseed = Utils.aes256decrypt(account.seed, key);
                     
                     this.walletService.setState(APP_STATE.WALLET_TRANSFERS_IN_QUEUE);
+                    data['uuid'] = uuid;
+                    this.walletService.pushPayment(data);
+
                     this.walletService.openPopup();
                     
                     break;

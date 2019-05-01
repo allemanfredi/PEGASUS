@@ -111,9 +111,9 @@ class Send extends Component {
                             </div>
                         </div>
 
-                        <div className='row'>
+                        <div className='row mt-5 '>
                             <div className='col-12 text-center'>
-                                <button disabled={this.state.dstAddress === '' ? true : false} onClick={this.clickTransfer} className='btn btn-blue mt-5'>Send</button>
+                                <button disabled={this.state.dstAddress === '' ? true : false} onClick={this.clickTransfer} className='btn btn-blue text-bold'>Send</button>
                             </div>
                         </div>
                     </div>

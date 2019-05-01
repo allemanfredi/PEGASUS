@@ -11,6 +11,7 @@ class Wallet extends EventEmitter {
         super();
 
         this.popup = false;
+        this.payments = [];
 
         this.setState(APP_STATE.WALLET_NOT_INITIALIZED);
     }
@@ -304,9 +305,7 @@ class Wallet extends EventEmitter {
         try{
 
             const currentState = this.getState();
-            console.log("CALL " + currentState);
             if ( currentState == APP_STATE.WALLET_TRANSFERS_IN_QUEUE ){
-                console.log("aaaa "+currentState);
                 return;
             }
 
@@ -349,14 +348,55 @@ class Wallet extends EventEmitter {
     }
 
     async openPopup() {
+        if(this.popup && this.popup.closed)
+            this.popup = false;
+
+        if(this.popup && await this.updateWindow())
+            return;
+
+        if(typeof chrome !== 'undefined') {
+            return extensionizer.windows.create({
+                url: 'packages/popup/build/index.html',
+                type: 'popup',
+                width: 380,
+                height: 600,
+                left: 25,
+                top: 25
+            }, window => this.popup = window);
+        }
 
         this.popup = await extensionizer.windows.create({
             url: 'packages/popup/build/index.html',
             type: 'popup',
             width: 380,
             height: 600,
-            left: 50,
-            top: 50
+            left: 25,
+            top: 25
+        });
+    }
+
+    async closePopup(){
+        if(this.payments.length)
+            return;
+
+        if(!this.popup)
+            return;
+        
+        extensionizer.windows.remove(this.popup.id);
+        this.popup = false;
+    }
+
+    async updateWindow() {
+        return new Promise(resolve => {
+            if(typeof chrome !== 'undefined') {
+                return extensionizer.windows.update(this.popup.id, { focused: true }, window => {
+                    resolve(!!window);
+                });
+            }
+
+            extensionizer.windows.update(this.popup.id, {
+                focused: true
+            }).then(resolve).catch(() => resolve(false));
         });
     }
 
@@ -373,6 +413,22 @@ class Wallet extends EventEmitter {
         return state;
     }
 
+    pushPayment(payment){
+        this.payments.push(payment);
+        return;
+    }
+    getPayments(){
+        return this.payments
+    }
+    rejectAllPayments(){
+        this.payments = [];
+        this.closePopup();
+    }
+    rejectPayment(rejectedPayment){
+        this.payments = this.payments.filter( payment => payment.uuid !== rejectedPayment.uuid);
+        if ( this.payments.length === 0 )
+            this.closePopup();
+    }
     
 
 }
