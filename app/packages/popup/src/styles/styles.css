@@ -166,7 +166,14 @@
     padding: 0px 0px;
     font-size: 30px; 
     cursor: pointer; 
-    z-index: 2;
+}
+
+.btn-icon-inverted {
+    background-color: white; 
+    border: none; 
+    color: darkblue; 
+    padding: 0px 0px;
+    cursor: pointer; 
 }
 
 /* MARGINS */
@@ -197,6 +204,9 @@
 .mt-9{
     margin-top: 90px  !important;
 }
+.mt-10{
+    margin-top: 100px  !important;
+}
 
 .mb-1{
     margin-bottom:10px !important;
@@ -218,7 +228,6 @@
 }
 
 /* DECORATION */
-
 .text-blue{
     color:darkblue;
 }
@@ -227,6 +236,9 @@
 }
 .text-black{
     color: black;
+}
+.text-gray{
+    color: lightgrey;
 }
 
 .text-underline{
@@ -308,6 +320,11 @@
     word-wrap: break-word;
 }
 
+hr {
+    border: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
 
 /*HEADERS*/
 header{
@@ -375,3 +392,60 @@ header{
     color:gray;
     margin-left: 13%;
 }
+
+
+/*TRANSACTION*/
+
+.transaction-list {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow-y: auto;
+    height: 200px;
+    margin-top: -13px;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+.transaction-list-item {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+    box-sizing: border-box;
+    background: white;
+    margin-top: 7px;
+    margin-bottom: 7px;
+    cursor: pointer;
+    padding: 13px 10px 13px 10px;
+    border-radius: 5px;
+}
+.transaction-list-item:hover {
+    transform: scale(1.02);
+}
+
+.transaction-list-item-action, .transaction-list-item-value {
+    background: inherit;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.transaction-list-item-date {
+    font-size: .75rem;
+}
+
+.transaction-date {
+    color: darkblue;
+    font-size: 16px;
+}
+
+.transaction-list-item-status-confirmed {
+    font-size: 16px;
+    color: darkblue;
+    font-weight: bold;
+}
+.transaction-list-item-status-not-confirmed {
+    font-size: 16px;
+    color: gray;
+    font-weight: bold;
+}
+
+

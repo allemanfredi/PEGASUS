@@ -25,7 +25,7 @@ class Main extends Component {
 
         this.state = {
             network: {},
-            appState : APP_STATE.WALLET_NOT_INITIALIZED
+            appState : APP_STATE.WALLET_WITHOUT_STATE
         };
     }
 
@@ -33,13 +33,14 @@ class Main extends Component {
 
         await PopupAPI.checkSession();
         const state = await PopupAPI.getState();
+        console.log(state);
 
         if ( state >= APP_STATE.WALLET_LOCKED  ){
             const network = await PopupAPI.getCurrentNetwork();
             this.setState({ network });
             this.props.showHeader(true);
         }
-        if ( state === APP_STATE.WALLET_TRANSFERS_IN_QUEUE )
+        if ( state == APP_STATE.WALLET_TRANSFERS_IN_QUEUE )
             this.props.showHeader(false);
         
         this.setState({appState:state});
@@ -103,6 +104,8 @@ class Main extends Component {
                 return <Home ref={this.home} onLogout={this.onLogout}/>
             case APP_STATE.WALLET_TRANSFERS_IN_QUEUE:
                 return <Confirm />
+            default:
+                return '';
         }
  
     }

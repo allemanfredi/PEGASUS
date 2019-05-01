@@ -86,7 +86,8 @@ const backgroundScript = {
                     const account = this.walletService.getCurrentAccount(currentNetwork);
                     const key = this.walletService.getKey();
                     const dseed = Utils.aes256decrypt(account.seed, key);
-
+                    
+                    this.walletService.setState(APP_STATE.WALLET_TRANSFERS_IN_QUEUE);
                     this.walletService.openPopup();
                     
                     break;

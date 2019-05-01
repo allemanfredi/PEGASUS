@@ -294,7 +294,7 @@ class Home extends Component {
                                     </div>
                                 </div>
 
-                                <div className='row mt-3 mb-3'>
+                                <div className='row mt-2 mb-3'>
                                     <div className="col-2"></div>
                                     <div className='col-4 text-center'>
                                         <button onClick={this.onClickReceive} className='btn btn-border-blue'>Receive</button>
@@ -304,7 +304,7 @@ class Home extends Component {
                                     </div>
                                     <div className="col-2"></div>
                                 </div>
-                                
+
                                 <Transactions ref={this.transactions}
                                     transfers={this.state.account.data.transfers}
                                     onGoDetails={this.onGoDetails}

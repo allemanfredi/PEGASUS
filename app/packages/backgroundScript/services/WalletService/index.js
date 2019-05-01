@@ -302,24 +302,31 @@ class Wallet extends EventEmitter {
 
     checkSession(){
         try{
+
+            const currentState = this.getState();
+            console.log("CALL " + currentState);
+            if ( currentState == APP_STATE.WALLET_TRANSFERS_IN_QUEUE ){
+                console.log("aaaa "+currentState);
+                return;
+            }
+
             const time = localStorage.getItem('session');
             if ( time ){
                 const date = new Date();
                 const currentTime = date.getTime();
                 if ( currentTime - time > 3600000 ){ //greather than 1 our
                     this.setState(APP_STATE.WALLET_LOCKED);
-                    return false;
+                    return;
                 }
                 this.setState(APP_STATE.WALLET_UNLOCKED);
-                return true;
+                return;
             }
 
-            const currentState = this.getState();
             if ( currentState <= APP_STATE.WALLET_INITIALIZED ){
-                return false
+                return
             }else{
                 this.setState(APP_STATE.WALLET_LOCKED);
-                return false;
+                return;
             }
             
         }

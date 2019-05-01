@@ -1,6 +1,9 @@
 
 import React, { Component } from 'react';
 import { getAllAccounts } from '../../wallet/wallet';
+import Utils from '@pegasus/lib/utils';
+import { PopupAPI } from '@pegasus/lib/api';
+
 
 import './Settings.css';
 
@@ -21,21 +24,21 @@ class Settings extends Component {
     }
 
     async switchAccount(newAccount) {
-        let accounts = await getAllAccounts(this.props.currentNetwork);
+        let accounts = await PopupAPI.getAllAccounts(this.props.currentNetwork);
         accounts = accounts.filter( account => account.id !== newAccount.id );
         this.setState({ accounts });
         this.props.onSwitchAccount(newAccount);
     }
 
     async updateData() {
-        let accounts = await getAllAccounts(this.props.currentNetwork);
+        let accounts = await PopupAPI.getAllAccounts(this.props.currentNetwork);
         accounts = accounts.filter( account => !account.current );
         this.setState({ accounts });
     }
 
     render() {
         return (
-            <div className='modal'>
+            <div className='modal container'>
 
                 <div id='sidebar-wrapper'>
 
@@ -75,10 +78,7 @@ class Settings extends Component {
                                 <div className='row'>
                                     <div className='col-12 text-center'>
                                         <div className='current-balance'>
-                                            {this.props.currentAccount.data.balance > 99999999 || this.props.currentAccount.data.balance < -99999999 ? `${(this.props.currentAccount.data.balance / 1000000000).toFixed(2) } Gi` :
-                                                this.props.currentAccount.data.balance > 99999 || this.props.currentAccount.data.balance < -99999 ? `${(this.props.currentAccount.data.balance / 1000000).toFixed(2) } Mi` :
-                                                    this.props.currentAccount.data.balance > 999 || this.props.currentAccount.data.balance < -999 ? `${(this.props.currentAccount.data.balance / 1000).toFixed(2) } Ki` :
-                                                        `${this.props.currentAccount.data.balance }i` }
+                                            { Utils.iotaReducer(this.props.currentAccount.data.balance) }
                                         </div>
                                     </div>
                                 </div>
