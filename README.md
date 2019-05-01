@@ -1,4 +1,4 @@
-![Alt text](app/package/popup/public/material/logo/pegasus-64.png?raw=true "Title")
+![Alt text](app/packages/popup/public/material/logo/pegasus-64.png?raw=true "Title")
 # PEGASUS
  Pegasus is a chrome extension that implements a wallet for the IOTA cryptocurrency. In addition to being a wallet, Pegasus will implement a sort of marketplace where a user can buy streams of data coming from sensors connected to the IOTA network through the MAM protocol (Masked Authentication Message).
 
@@ -51,6 +51,19 @@ npm install
 node index.js deviceName latitude longitude price description
 ```
 
+##In development
 
+iotaJs injection. 
+
+### Usage
+
+```js
+if (window.iota) {
+    const iotajs = window.iota.iotajs;
+    const selectedAddress = window.iota.selectedAddress
+    .
+    .
+    .
+}
 
 
