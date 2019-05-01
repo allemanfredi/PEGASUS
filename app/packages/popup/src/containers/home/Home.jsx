@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import Send from '../send/Send';
 import Receive from '../receive/Receive';
 import Settings from '../settings/Settings';
-import Details from '../details/Details';
 import Transactions from '../transactions/Transactions';
 import Add from '../add/Add';
 import Edit from '../edit/Edit';
@@ -32,7 +31,6 @@ class Home extends Component {
         this.onBack = this.onBack.bind(this);
         this.onSwitchAccount = this.onSwitchAccount.bind(this);
         this.onAddAccount = this.onAddAccount.bind(this);
-        this.onGoDetails = this.onGoDetails.bind(this);
         this.onLogout = this.onLogout.bind(this);
         this.onShowEdit = this.onShowEdit.bind(this);
         this.onCloseEdit = this.onCloseEdit.bind(this);
@@ -40,7 +38,6 @@ class Home extends Component {
         this.onChangeName = this.onChangeName.bind(this);
         this.onDeleteAccount = this.onDeleteAccount.bind(this);
         this.onClickMap = this.onClickMap.bind(this);
-        this.onCloseDetails = this.onCloseDetails.bind(this);
         this.onReload = this.onReload.bind(this);
         this.onClickShowData = this.onClickShowData.bind(this);
         this.changeNetwork = this.changeNetwork.bind(this);
@@ -57,7 +54,6 @@ class Home extends Component {
             showReceive: false,
             showSettings: false,
             showInteract: false,
-            showDetails: false,
             showAdd: false,
             showEdit: false,
             interval: {},
@@ -195,11 +191,6 @@ class Home extends Component {
 
     onCloseSettings() { this.setState({ showSettings: false }); }
 
-    onGoDetails(transfer) {
-        clearInterval(this.state.interval);
-        this.setState({ details: transfer });
-        this.setState({ showDetails: true });
-    }
 
     onAddAccount() {
         clearInterval(this.state.interval);
@@ -231,8 +222,6 @@ class Home extends Component {
         this.setState({ showInteract: true });
     }
 
-    onCloseDetails() { this.setState({ showDetails: false }); }
-
     onClickShowData() { this.interact.current.showData(); }
 
     render() {
@@ -253,62 +242,56 @@ class Home extends Component {
                 { !(Object.keys(this.state.account).length === 0 && this.state.account.constructor === Object) ? ( //!
                     <div>
                         { this.state.showSettings ? ( <Settings currentNetwork={this.state.network}
-                            currentAccount={this.state.account}
-                            onAddAccount={this.onAddAccount}
-                            onSwitchAccount={this.onSwitchAccount}
-                            onShowMap={this.onClickMap}
-                            onShowEdit={this.onShowEdit}
-                            onLogout={this.onLogout}
-                            onClose={this.onCloseSettings}
-                                                      /> )
-                            : ''}
-                        { this.state.showSend ? ( <Send account={this.state.account} network={this.state.network} /> ) : ''}
-                        { this.state.showReceive ? ( <Receive account={this.state.account} network={this.state.network} /> ) : '' }
-                        { this.state.showDetails ? ( <Details details={this.state.details}
-                            onClose={this.onCloseDetails}
-                                                     /> ) : '' }
-                        { this.state.showAdd ? ( <Add network={this.state.network} onChangeAccount={this.onChangeAccount}/>) : ''}
-                        { this.state.showInteract ? ( <Interact ref={this.interact}
-                            network={this.state.network}
-                            account={this.state.account}
-                                                      />) : ''}
+                                                                currentAccount={this.state.account}
+                                                                onAddAccount={this.onAddAccount}
+                                                                onSwitchAccount={this.onSwitchAccount}
+                                                                onShowMap={this.onClickMap}
+                                                                onShowEdit={this.onShowEdit}
+                                                                onLogout={this.onLogout}
+                                                                onClose={this.onCloseSettings}/> ) : ''}
+
+                        { this.state.showSend ? (       <Send account={this.state.account} network={this.state.network} /> ) : ''}
+                        { this.state.showReceive ? (    <Receive account={this.state.account} network={this.state.network} /> ) : '' }
+                        { this.state.showAdd ? (        <Add network={this.state.network} onChangeAccount={this.onChangeAccount}/>) : ''}
+                        { this.state.showInteract ? (   <Interact ref={this.interact}
+                                                                    network={this.state.network}
+                                                                    account={this.state.account}/>) : ''}
 
                         { this.state.showEdit ? ( <Edit account={this.state.account}
-                            network={this.state.network}
-                            onClose={this.onCloseEdit}
-                            onChangeName={this.onChangeName}
-                            onDeleteAccount={this.onDeleteAccount}
-                                                  />) : ''}
+                                                        network={this.state.network}
+                                                        onClose={this.onCloseEdit}
+                                                        onChangeName={this.onChangeName}
+                                                        onDeleteAccount={this.onDeleteAccount}/>) : ''}
 
                         { this.state.showHome ? (
                             <div>
-                                <div className='row mt-5'>
+                                <div className='row mt-2'>
                                     <div className='col-12 text-center'>
                                         <img src='./material/logo/iota-logo.png' height='60' width='60' alt='iota logo'/>
                                     </div>
                                 </div>
 
-                                <div className="row mt-2">
+                                <div className="row mt-1">
                                     <div className='col-12 text-center text-black text-md'>
                                         { Utils.iotaReducer(this.state.account.data.balance) }
                                     </div>
                                 </div>
 
-                                <div className='row mt-2 mb-3'>
+                                <div className='row mt-1 mb-2'>
                                     <div className="col-2"></div>
                                     <div className='col-4 text-center'>
-                                        <button onClick={this.onClickReceive} className='btn btn-border-blue'>Receive</button>
+                                        <button onClick={this.onClickReceive} className='btn btn-border-blue btn-big'>Receive</button>
                                     </div>
                                     <div className='col-4 text-center'>
-                                        <button onClick={this.onClickSend} className='btn btn-border-blue'>Send</button>
+                                        <button onClick={this.onClickSend} className='btn btn-border-blue btn-big'>Send</button>
                                     </div>
                                     <div className="col-2"></div>
                                 </div>
 
-                                <Transactions ref={this.transactions}
-                                    transfers={this.state.account.data.transfers}
-                                    onGoDetails={this.onGoDetails}
-                                    onReload={this.onReload}
+                                <Transactions   ref={this.transactions}
+                                                transfers={this.state.account.data.transfers}
+                                                network={this.state.network}
+                                                onReload={this.onReload}
                                 />  
                             </div>
                         ) : '' }

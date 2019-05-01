@@ -55,7 +55,7 @@ class Restore extends Component {
                     <div className='row mt-4'>
                         <div className='col-1'></div>
                         <div className='col-10 text-center'>
-                            <button disabled={isSeedValid(this.state.seed) ? false : true} onClick={this.onClickRestore} type='button' className='btn btn-blue text-bold '>Restore</button>
+                            <button disabled={isSeedValid(this.state.seed) ? false : true} onClick={this.onClickRestore} type='button' className='btn btn-blue text-bold btn-big'>Restore</button>
                         </div>
                         <div className='col-1'></div>
                     </div>

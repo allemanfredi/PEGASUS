@@ -50,7 +50,7 @@ class InitPsw extends Component {
                 <div className='row mt-4'>
                     <div className='col-1'></div>
                     <div className='col-10 text-center'>
-                        <button disabled={!this.state.psw.length > 0} onClick={this.clickLogin} type='submit' className='btn btn-blue text-bold'>Login</button>
+                        <button disabled={!this.state.psw.length > 0} onClick={this.clickLogin} type='submit' className='btn btn-blue text-bold btn-big'>Login</button>
                     </div>
                     <div className='col-1'></div>
                 </div>

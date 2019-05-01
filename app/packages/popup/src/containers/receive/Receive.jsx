@@ -41,7 +41,7 @@ class Receive extends Component {
                 <div className="row mt-5">
                     <div className="col-2"></div>
                     <div className="col-8">
-                        <button onClick={this.copyToClipboard} className='btn btn-blue text-bold'><span className='fa fa-clipboard'></span> Copy to clipboard</button>
+                        <button onClick={this.copyToClipboard} className='btn btn-blue text-bold btn-big'><span className='fa fa-clipboard'></span> Copy to clipboard</button>
                     </div>
                     <div className="col-2"></div>
                 </div>

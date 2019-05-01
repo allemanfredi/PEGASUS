@@ -96,7 +96,6 @@ const backgroundScript = {
                     data['uuid'] = uuid;
                     this.walletService.pushPayment(data);
 
-                    
                     break;
                 }
             }
@@ -105,7 +104,7 @@ const backgroundScript = {
 
 
     bindWalletEvents() {
-        
+
         this.walletService.on('setPayments', payments => (
             BackgroundAPI.setPayments(payments)
         ));

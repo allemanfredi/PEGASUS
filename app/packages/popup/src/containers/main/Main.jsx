@@ -90,7 +90,6 @@ class Main extends Component {
     onRejectAll(){
         this.props.showHeader(true);
         this.setState({appState:APP_STATE.WALLET_UNLOCKED});
-        PopupAPI.setState(APP_STATE.WALLET_UNLOCKED);
         PopupAPI.rejectAllPayments();
     }
 

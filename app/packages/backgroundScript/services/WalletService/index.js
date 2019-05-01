@@ -432,12 +432,15 @@ class Wallet extends EventEmitter {
     rejectAllPayments(){
         this.payments = [];
         this.closePopup();
+        this.setState(APP_STATE.WALLET_UNLOCKED);
     }
 
     rejectPayment(rejectedPayment){
         this.payments = this.payments.filter( payment => payment.uuid !== rejectedPayment.uuid);
-        if ( this.payments.length === 0 )
+        if ( this.payments.length === 0 ){
+            this.setState(APP_STATE.WALLET_UNLOCKED);
             this.closePopup();
+        }
     }
     
 
