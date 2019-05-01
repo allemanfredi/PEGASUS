@@ -10,29 +10,18 @@ class InitPsw extends Component {
         super(props, context);
 
         this.clickLogin = this.clickLogin.bind(this);
-        this.handleChangePsw = this.handleChangePsw.bind(this);
 
         this.state = {
             psw: '',
             error: '',
-            isLoginable : false
         };
     }
 
-    clickLogin() {
-        PopupAPI.startSession();
-        this.props.onSuccess();
-    }
-
-    async handleChangePsw(e) {
-        this.setState({ showError: false });
-        this.setState({ psw: e.target.value });
-        
+    async clickLogin() {
         const canAccess = await PopupAPI.checkPsw(this.state.psw)
-        if (canAccess){
-            this.setState({isLoginable:true});
-        }else{
-            this.setState({isLoginable:false});
+        if ( canAccess ){
+            PopupAPI.startSession();
+            this.props.onSuccess();
         }
     }
 
@@ -51,7 +40,7 @@ class InitPsw extends Component {
                     <div className='col-1'></div>
                     <div className='col-10'>
                         <label htmlFor='inp-psw ' className='inp'>
-                            <input onChange={this.handleChangePsw} type='password' id='inp-psw' placeholder='&nbsp;'/>
+                            <input onChange={e => this.setState({ psw: e.target.value })} type='password' id='inp-psw' placeholder='&nbsp;'/>
                             <span className='label'>password</span>
                             <span className='border'></span>
                         </label>
@@ -61,7 +50,7 @@ class InitPsw extends Component {
                 <div className='row mt-4'>
                     <div className='col-1'></div>
                     <div className='col-10 text-center'>
-                        <button disabled={!this.state.isLoginable} onClick={this.clickLogin} type='submit' className='btn btn-blue text-bold'>Login</button>
+                        <button disabled={!this.state.psw.length > 0} onClick={this.clickLogin} type='submit' className='btn btn-blue text-bold'>Login</button>
                     </div>
                     <div className='col-1'></div>
                 </div>
