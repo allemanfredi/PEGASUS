@@ -55,7 +55,6 @@ node index.js deviceName latitude longitude price description
 
 iotaJs injection. 
 
-### Usage
 
 ```js
 if (window.iota) {
