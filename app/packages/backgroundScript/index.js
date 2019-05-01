@@ -3,6 +3,8 @@ import WalletService from './services/WalletService';
 import Utils from '@pegasus/lib/utils';
 
 import { BackgroundAPI } from '@pegasus/lib/api';
+import {APP_STATE} from '@pegasus/lib/states';
+
 
 const duplex = new MessageDuplex.Host();
 
@@ -30,7 +32,7 @@ const backgroundScript = {
         duplex.on('storePsw', this.walletService.storePsw);
 
         duplex.on('setCurrentNetwork', this.walletService.setCurrentNetwork);
-        duplex.on('getCurrentNewtwork', this.walletService.getCurrentNewtwork);
+        duplex.on('getCurrentNetwork', this.walletService.getCurrentNetwork);
         
         duplex.on('addAccount', this.walletService.addAccount);
         duplex.on('getCurrentAccount', this.walletService.getCurrentAccount);
@@ -46,6 +48,10 @@ const backgroundScript = {
         duplex.on('checkSession', this.walletService.checkSession);
         duplex.on('deleteSession', this.walletService.deleteSession);
         duplex.on('startSession', this.walletService.startSession);
+
+        duplex.on('getState', this.walletService.getState);
+        duplex.on('setState', this.walletService.setState);
+
     },
 
     bindTabDuplex() {
@@ -55,13 +61,15 @@ const backgroundScript = {
                     
                     let response = {
                         selectedAddress : "",
-                        provider : ""
+                        selectedProvider : ""
                     }
 
-                    if ( this.walletService.isWalletSetup() ){
+                    if ( this.walletService.getState() >= APP_STATE.WALLET_INITIALIZED ){
+                        const currentNetwork = this.walletService.getCurrentNetwork();
+                        const account = this.walletService.getCurrentAccount(currentNetwork);
                         response = {
-                            address : this.walletService.getCurrentAccount().data.latestAddress,
-                            provider : this.walletService.getCurrentNewtwork()
+                            selectedAddress : account.data.latestAddress,
+                            selectedProvider : currentNetwork.provider
                         }
                     }
                     
@@ -72,6 +80,17 @@ const backgroundScript = {
                     });
                     break;
                 } 
+
+                case 'prepareTransfer': {
+                    const currentNetwork = this.walletService.getCurrentNetwork();
+                    const account = this.walletService.getCurrentAccount(currentNetwork);
+                    const key = this.walletService.getKey();
+                    const dseed = Utils.aes256decrypt(account.seed, key);
+
+                    this.walletService.openPopup();
+                    
+                    break;
+                }
             }
         });
     },

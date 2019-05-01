@@ -27,8 +27,8 @@ export default {
         return this.duplex.send('setCurrentNetwork', network);
     },
 
-    getCurrentNewtwork() {
-        return this.duplex.send('getCurrentNewtwork');
+    getCurrentNetwork() {
+        return this.duplex.send('getCurrentNetwork');
     },
 
     addAccount(account, network, isCurrent) {
@@ -82,5 +82,13 @@ export default {
     deleteSession(seed) {
         return this.duplex.send('deleteSession', seed);
     },
+
+    getState(){
+        return this.duplex.send('getState');
+    },
+
+    setState(state){
+        return this.duplex.send('setState',state);
+    }
 
 };

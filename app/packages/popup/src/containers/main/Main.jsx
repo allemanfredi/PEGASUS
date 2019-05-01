@@ -4,11 +4,11 @@ import Home from '../home/Home';
 import Login from '../login/Login';
 import Init from '../init/Init';
 import Restore from '../restore/Restore';
+import Confirm from '../confirm/Confirm';
 
 import { PopupAPI } from '@pegasus/lib/api';
+import {APP_STATE} from '@pegasus/lib/states';
 
-
-import './Main.css';
 
 class Main extends Component {
     constructor(props, context) {
@@ -25,71 +25,63 @@ class Main extends Component {
 
         this.state = {
             network: {},
-            showLogin: false,
-            showInit: false,
-            showHome: false,
-            showRestore: false,
+            appState : APP_STATE.WALLET_NOT_INITIALIZED
         };
     }
 
     async componentDidMount() {
 
-        if ( await PopupAPI.isWalletSetup() ) {
-            if (await PopupAPI.checkSession() ) {
-                await PopupAPI.startSession();
-                
-                const network = await PopupAPI.getCurrentNewtwork();
-                this.setState({ network });
-                
-                this.setState({ showHome: true });
-                this.props.showHeader(true);
-            }
-            else {
-                this.props.showHeader(true);
-                this.setState({ showLogin: true });
-            }
+        await PopupAPI.checkSession();
+        const state = await PopupAPI.getState();
+
+        if ( state >= APP_STATE.WALLET_LOCKED  ){
+            const network = await PopupAPI.getCurrentNetwork();
+            this.setState({ network });
+            this.props.showHeader(true);
         }
-        else
-            this.setState({ showInit: true });
+        if ( state === APP_STATE.WALLET_TRANSFERS_IN_QUEUE )
+            this.props.showHeader(false);
+        
+        this.setState({appState:state});
     }
 
     onSuccessFromLogin() {
         this.props.showHeader(true);
         PopupAPI.startSession();
-        this.setState({ showHome: true });
-        this.setState({ showLogin: false });
+        this.setState({appState:APP_STATE.WALLET_UNLOCKED});
+        PopupAPI.setState(APP_STATE.WALLET_UNLOCKED);
     }
 
     onSuccessFromInit() {
         this.props.showHeader(true);
         PopupAPI.startSession();
-        this.setState({ showHome: true });
-        this.setState({ showInit: false });
+        this.setState({appState:APP_STATE.WALLET_UNLOCKED});
+        PopupAPI.setState(APP_STATE.WALLET_UNLOCKED);
     }
 
     onSuccessFromRestore() {
         this.props.showHeader(true);
         PopupAPI.startSession();
-        this.setState({ showHome: true });
-        this.setState({ showRestore: false });
+        this.setState({appState:APP_STATE.WALLET_UNLOCKED});
+        PopupAPI.setState(APP_STATE.WALLET_UNLOCKED);
     }
 
     onLogout() {
         PopupAPI.deleteSession();
         this.props.showHeader(true);
-        this.setState({ showHome: false });
-        this.setState({ showLogin: true });
+        this.setState({appState:APP_STATE.WALLET_LOCKED});
+        PopupAPI.setState(APP_STATE.WALLET_LOCKED);
     }
 
     onRestore() {
         this.props.showHeader(true);
-        this.setState({ showLogin: false });
-        this.setState({ showRestore: true });
+        this.setState({appState:APP_STATE.WALLET_RESTORE});
+        PopupAPI.setState(APP_STATE.WALLET_RESTORE);
     }
 
     onBack() {
-        this.setState({ showRestore: false });
-        this.setState({ showLogin: true });
+        this.setState({appState:APP_STATE.WALLET_LOCKED});
+        PopupAPI.setState(APP_STATE.WALLET_LOCKED);
     }
 
     //called by App.js component in order to reload-data
@@ -99,14 +91,20 @@ class Main extends Component {
     }
 
     render() {
-        return (
-            <main className='main' >
-                { this.state.showHome ? <Home ref={this.home} onLogout={this.onLogout}> </Home> : '' }
-                { this.state.showInit ? <Init onSuccess={this.onSuccessFromInit}> </Init> : '' }
-                { this.state.showLogin ? <Login onSuccess={this.onSuccessFromLogin} onRestore={this.onRestore}> </Login> : '' }
-                { this.state.showRestore ? <Restore network={this.state.network} onSuccess={this.onSuccessFromRestore} onBack={this.onBack}> </Restore> : '' }
-            </main>
-        );
+                 
+        switch(parseInt(this.state.appState)){
+            case APP_STATE.WALLET_NOT_INITIALIZED:
+                return <Init onSuccess={this.onSuccessFromInit}/>;
+            case APP_STATE.WALLET_LOCKED:
+                return <Login onSuccess={this.onSuccessFromLogin} onRestore={this.onRestore}/>
+            case APP_STATE.WALLET_RESTORE:
+                return <Restore network={this.state.network} onSuccess={this.onSuccessFromRestore} onBack={this.onBack}/>;
+            case APP_STATE.WALLET_UNLOCKED:
+                return <Home ref={this.home} onLogout={this.onLogout}/>
+            case APP_STATE.WALLET_TRANSFERS_IN_QUEUE:
+                return <Confirm />
+        }
+ 
     }
 }
 

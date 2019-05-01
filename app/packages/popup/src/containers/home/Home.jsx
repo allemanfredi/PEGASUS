@@ -17,8 +17,6 @@ import Utils from '@pegasus/lib/utils';
 import { getAccountData } from '../../core/core';
 
 
-import './Home.css';
-
 class Home extends Component {
     constructor(props, context) {
         super(props, context);
@@ -68,7 +66,7 @@ class Home extends Component {
 
     async componentDidMount() {
         try{
-            const network = await PopupAPI.getCurrentNewtwork();
+            const network = await PopupAPI.getCurrentNetwork();
             this.setState({ network });
             const account = await PopupAPI.getCurrentAccount(network);
 
@@ -284,35 +282,34 @@ class Home extends Component {
 
                         { this.state.showHome ? (
                             <div>
-                                <div className='container-info'>
-                                    <div className='row '>
-                                        <div className='col align-center'>
-                                            <img src='./material/logo/iota-logo.png' height='60' width='60' alt='iota logo'/>
-                                            <div className='container-balance'>
-                                                { Utils.iotaReducer(this.state.account.data.balance) }
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className='row'>
-                                        <div className='col-6 text-center'>
-                                            <button onClick={this.onClickSend} className='btn btn-send'><i className='fa fa-paper-plane'></i></button>
-                                        </div>
-                                        <div className='col-6 text-center'>
-                                            <button onClick={this.onClickReceive} className='btn btn-receive'><i className='fa fa-download' ></i></button>
-                                        </div>
-                                    </div>
-                                    <div className='row'>
-                                        <div className='col-6 text-center'><div className='text-send'>Send</div></div>
-                                        <div className='col-6 text-center'><div className='text-receive'>Receive</div></div>
+                                <div className='row mt-5'>
+                                    <div className='col-12 text-center'>
+                                        <img src='./material/logo/iota-logo.png' height='60' width='60' alt='iota logo'/>
                                     </div>
                                 </div>
-                                <div className='container-transactions'>
-                                    <Transactions ref={this.transactions}
-                                        transfers={this.state.account.data.transfers}
-                                        onGoDetails={this.onGoDetails}
-                                        onReload={this.onReload}
-                                    />
+
+                                <div className="row mt-2">
+                                    <div className='col-12 text-center text-black text-md'>
+                                        { Utils.iotaReducer(this.state.account.data.balance) }
+                                    </div>
                                 </div>
+
+                                <div className='row mt-3 mb-3'>
+                                    <div className="col-2"></div>
+                                    <div className='col-4 text-center'>
+                                        <button onClick={this.onClickReceive} className='btn btn-border-blue'>Receive</button>
+                                    </div>
+                                    <div className='col-4 text-center'>
+                                        <button onClick={this.onClickSend} className='btn btn-border-blue'>Send</button>
+                                    </div>
+                                    <div className="col-2"></div>
+                                </div>
+                                
+                                <Transactions ref={this.transactions}
+                                    transfers={this.state.account.data.transfers}
+                                    onGoDetails={this.onGoDetails}
+                                    onReload={this.onReload}
+                                />  
                             </div>
                         ) : '' }
 

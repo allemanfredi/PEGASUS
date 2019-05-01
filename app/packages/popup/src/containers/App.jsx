@@ -31,7 +31,7 @@ class App extends Component {
         PopupAPI.init(this.state.duplex);
 
         //check if the current network has been already set, if no => set to testnet (options[0])
-        let network = await PopupAPI.getCurrentNewtwork();
+        let network = await PopupAPI.getCurrentNetwork();
         if ( Object.entries(network).length === 0 && network.constructor === Object ) {
             network = options.network[ 0 ];
             await PopupAPI.setCurrentNetwork(options.network[ 0 ]);
@@ -69,8 +69,7 @@ class App extends Component {
                     {this.state.showHeader ? <Header isLogged={this.state.isLogged} changeNetwork={this.onHandleNetworkChanging}/> : '' }
                     <Main   showHeader={this.onShowHeader} 
                             ref={this.main} 
-                            currentNetwork={this.state.network}
-                            PopupAPI={PopupAPI}/>
+                            currentNetwork={this.state.network}/>
                 </div>
             </div>
 

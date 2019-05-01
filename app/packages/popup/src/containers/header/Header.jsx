@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
-import { getCurrentNewtwork } from '../../wallet/wallet';
+import { getCurrentNetwork } from '../../wallet/wallet';
 
 import options from '../../options/options';
-
-import './Header.css';
 
 class Header extends Component {
     constructor(props, context) {
@@ -19,7 +17,7 @@ class Header extends Component {
     }
 
     async componentWillMount() {
-        const network = await getCurrentNewtwork();
+        const network = await getCurrentNetwork();
         this.setState({ network });
     }
 
@@ -36,8 +34,8 @@ class Header extends Component {
                     <div className='col-2 container-header-logo'>
                         <img src='./material/logo/pegasus-64.png' height='40' width='40' alt='pegasus logo'/>
                     </div>
-                    <div className='col-1 col-sm-4'></div>
-                    <div className='col-8 col-sm-5'>
+                    <div className='col-1'></div>
+                    <div className='col-8'>
                         <div className='row container-selection'>
                             <div className='col-2'> <i className='fa fa-signal'></i></div>
                             <div className='col-8 text-center'>{this.state.network.name}</div>
@@ -52,8 +50,8 @@ class Header extends Component {
                 </div>
 
                 <div className='row'>
-                    <div className='col-2 col-sm-5'></div>
-                    <div className='col-9 col-sm-6 pr-2'>
+                    <div className='col-2'></div>
+                    <div className='col-9 '>
                         { this.state.showNetworks ?
                             <div className='container-hidden-network'>
                                 <div className='container-hidden-network-header'>Nodes</div>

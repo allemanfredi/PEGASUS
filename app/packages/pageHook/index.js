@@ -1,31 +1,28 @@
 
-import { composeAPI } from '@iota/core';
 //import ProxiedProvider from './handlers/ProxiedProvider';
 import RequestHandler from './handlers/RequestHandler';
 import EventChannel from '@pegasus/lib/EventChannel';
-
+import {composeAPI} from '@iota/core';
 
 const pageHook = {
 
-    proxiedMethods: {
-        setAddress: false,
-    },
-
-    selectedAddress : '',
 
     init() {
         this._bindIotaJs();
         this._bindEventChannel();
         this._bindEvents();
         
-        this.request('init').then(({ address, provider }) => {
-            if(address)
-                this.setAddress(address);
+        this.request('init').then(({ selectedAddress, selectedProvider }) => {
+            if(selectedAddress){
+                this.setAddress(selectedAddress);
+                this.selectedAddress = selectedAddress;
+            }
             
-            if(provider)
-                this.setProvider(provider);
+            if(selectedProvider){
+                this.setProvider(selectedProvider);
+            }
 
-            console.log(address);
+            console.log(selectedProvider);
             console.log('Pegasus initiated');
         }).catch(err => {
             console.log('Failed to initialise iotaJs', err);
@@ -36,14 +33,13 @@ const pageHook = {
         if(window.iotajs !== undefined)
             console.log('iotaJs is already initiated. Pegasus will overwrite the current instance');
 
-        const iotajs = composeAPI();
-        iotajs.getNodeInfo = () => (
-            this.getNodeInfo()
-        );
+        
+        const iotajs = this.getCustomIota(this.selectedProvider);
 
         const iota = {
             iotajs : iotajs,
-            selectedAddress : this.selectedAddress
+            selectedAddress : this.selectedAddress,
+            selectedProvider : this.selectedProvider
         }
         
         window.iota = iota;
@@ -65,16 +61,34 @@ const pageHook = {
     },
 
     setProvider(provider){
-        window.iota.iotajs = composeAPI({provider});
+        window.iota.selectedProvider = provider;
+        window.iota.iotajs = this.getCustomIota(provider);
     },
 
     setAddress(address) {
         window.iota.selectedAddress = address;
     },
+    
+    getCustomIota(provider){
+        const iotajs = composeAPI({provider});
+    
+        iotajs.prepareTransfers = (...args) => (
+            this.prepareTransfers(args)
+        );
+        return iotajs;
+    },
 
-    getNodeInfo(){
-        console.log("injection completed");
+    prepareTransfers(args){
+        this.request('prepareTransfer', {args})
+        .then(transaction => (
+            callback(null, transaction)
+        )).catch(err => {
+            console.log(err);
+            callback(err);
+        });
     }
+
+    
 
 };
 

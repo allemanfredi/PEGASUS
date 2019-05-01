@@ -6,19 +6,13 @@ const Utils = {
     requestHandler(target) {
         return new Proxy(target, {
             get(target, prop) {
-                // First, check if the property exists on the target
-                // If it doesn't, throw an error
+                
                 if(!Reflect.has(target, prop))
                     throw new Error(`Object does not have property '${ prop }'`);
 
-                // If the target is a variable or the internal 'on'
-                // method, simply return the standard function call
                 if(typeof target[ prop ] !== 'function' || prop === 'on')
                     return Reflect.get(target, prop);
 
-                // The 'req' object can be destructured into three components -
-                // { resolve, reject and data }. Call the function (and resolve it)
-                // so the result can then be passed back to the request.
                 return (...args) => {
                     if(!args.length)
                         args[ 0 ] = {};
@@ -135,7 +129,6 @@ const Utils = {
         const decipher = crypto.createDecipher('aes-256-ctr', key);
         let dec = decipher.update(text, 'hex', 'utf8');
         dec += decipher.final('utf8');
-        console.log(dec);
         return dec;
     },
 

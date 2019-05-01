@@ -1,19 +1,25 @@
 
 import EventEmitter from 'eventemitter3';
-
+import extensionizer from 'extensionizer';
 import Utils from '@pegasus/lib/utils';
+import {APP_STATE} from '@pegasus/lib/states';
 
 
 class Wallet extends EventEmitter {
     
     constructor() {
         super();
+
+        this.popup = false;
+
+        this.setState(APP_STATE.WALLET_NOT_INITIALIZED);
     }
 
     isWalletSetup(){
         try{
             const data = JSON.parse(localStorage.getItem('data'));
-            if ( data.mainnet.length > 0 || data.testnet.length > 0)
+            const state = this.getState();
+            if ( ( data.mainnet.length > 0 || data.testnet.length > 0 ) && state >= APP_STATE.WALLET_INITIALIZED)
                 return true;
             return false;
         }
@@ -25,9 +31,11 @@ class Wallet extends EventEmitter {
     setupWallet(){
         try{
             localStorage.setItem('data', JSON.stringify({ mainnet: [], testnet: [] }));
+            this.setState(APP_STATE.WALLET_INITIALIZED);
             return true;
         }
         catch(err) {
+            this.setState(APP_STATE.WALLET_NOT_INITIALIZED);
             return false;
         }
     };
@@ -82,7 +90,7 @@ class Wallet extends EventEmitter {
         }
     }
 
-    getCurrentNewtwork(){
+    getCurrentNetwork(){
         try{
             const options = JSON.parse(localStorage.getItem('options'));
             if ( !options ) {
@@ -180,6 +188,7 @@ class Wallet extends EventEmitter {
         }
         catch(err) {
             throw new Error(err);
+            console.log(err);
         }
     };
 
@@ -282,6 +291,7 @@ class Wallet extends EventEmitter {
         try{
             const date = new Date();
             localStorage.setItem('session', date.getTime());
+            this.setState(APP_STATE.WALLET_UNLOCKED);
             return true;
         }
         catch(err) {
@@ -293,11 +303,25 @@ class Wallet extends EventEmitter {
     checkSession(){
         try{
             const time = localStorage.getItem('session');
-            const date = new Date();
-            const currentTime = date.getTime();
-            if ( currentTime - time > 3600000 ) //greather than 1 our
+            if ( time ){
+                const date = new Date();
+                const currentTime = date.getTime();
+                if ( currentTime - time > 3600000 ){ //greather than 1 our
+                    this.setState(APP_STATE.WALLET_LOCKED);
+                    return false;
+                }
+                this.setState(APP_STATE.WALLET_UNLOCKED);
+                return true;
+            }
+
+            const currentState = this.getState();
+            if ( currentState <= APP_STATE.WALLET_INITIALIZED ){
+                return false
+            }else{
+                this.setState(APP_STATE.WALLET_LOCKED);
                 return false;
-            return true;
+            }
+            
         }
         catch(err) {
             console.log(err);
@@ -308,6 +332,7 @@ class Wallet extends EventEmitter {
     deleteSession(){
         try{
             localStorage.removeItem('session');
+            this.setState(APP_STATE.WALLET_LOCKED);
             return true;
         }
         catch(err) {
@@ -315,6 +340,33 @@ class Wallet extends EventEmitter {
             return false;
         }
     }
+
+    async openPopup() {
+
+        this.popup = await extensionizer.windows.create({
+            url: 'packages/popup/build/index.html',
+            type: 'popup',
+            width: 380,
+            height: 600,
+            left: 50,
+            top: 50
+        });
+    }
+
+    setState(state){
+        try{
+            localStorage.setItem('state',state);
+        }catch(err){
+            console.log(err);
+        }
+    }
+
+    getState(){
+        const state = localStorage.getItem('state');
+        return state;
+    }
+
+    
 
 }
 

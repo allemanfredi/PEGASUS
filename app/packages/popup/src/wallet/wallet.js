@@ -79,7 +79,7 @@ const setCurrentNetwork = async (network) => {
     });
 };
 
-const getCurrentNewtwork = async () => {
+const getCurrentNetwork = async () => {
     return new Promise((resolve, reject) => {
         try{
             const options = JSON.parse(localStorage.getItem('options'));
@@ -333,7 +333,7 @@ export { isWalletSetup,
     getKey,
     updateDataAccount,
     setCurrentNetwork,
-    getCurrentNewtwork,
+    getCurrentNetwork,
     getAllAccounts,
     setCurrentAccount,
     resetData,

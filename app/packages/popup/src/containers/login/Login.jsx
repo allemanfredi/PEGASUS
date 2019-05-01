@@ -4,7 +4,6 @@ import { checkPsw } from '../../wallet/wallet';
 import { PopupAPI } from '@pegasus/lib/api';
 import Utils from '@pegasus/lib/utils';
 
-import './Login.css';
 
 class InitPsw extends Component {
     constructor(props, context) {
@@ -22,7 +21,7 @@ class InitPsw extends Component {
 
     clickLogin() {
         PopupAPI.startSession();
-        this.props.onSuccess();//history.push('/home');
+        this.props.onSuccess();
     }
 
     async handleChangePsw(e) {
@@ -39,7 +38,7 @@ class InitPsw extends Component {
 
     render() {
         return (
-            <div className='container-login'>
+            <div className='container'>
                 <div className='container-logo-login mt-5'>
                     <img src='./material/logo/pegasus-128.png' height='80' width='80' alt='pegasus logo'/>
                 </div>
@@ -48,10 +47,10 @@ class InitPsw extends Component {
                 Pegasus
                     </div>
                 </div>
-                <div className='row'>
+                <div className='row mt-5'>
                     <div className='col-1'></div>
                     <div className='col-10'>
-                        <label htmlFor='inp-psw mt-5' className='inp'>
+                        <label htmlFor='inp-psw ' className='inp'>
                             <input onChange={this.handleChangePsw} type='password' id='inp-psw' placeholder='&nbsp;'/>
                             <span className='label'>password</span>
                             <span className='border'></span>
@@ -59,17 +58,17 @@ class InitPsw extends Component {
                     </div>
                     <div className='col-1'></div>
                 </div>
-                <div className='row'>
+                <div className='row mt-4'>
                     <div className='col-1'></div>
                     <div className='col-10 text-center'>
-                        <button disabled={!this.state.isLoginable} onClick={this.clickLogin} type='submit' className='btn btn-blue mt-4'>Login</button>
+                        <button disabled={!this.state.isLoginable} onClick={this.clickLogin} type='submit' className='btn btn-blue text-bold'>Login</button>
                     </div>
                     <div className='col-1'></div>
                 </div>
-                <div className='row'>
+                <div className='row mt-1'>
                     <div className='col-1'></div>
                     <div className='col-10 text-center'>
-                        <button onClick={e => { this.props.onRestore(); }} type='submit' className='btn btn-white mt-1'>restore from seed</button>
+                        <button onClick={e => { this.props.onRestore(); }} type='submit' className='btn btn-white '>restore from seed</button>
                     </div>
                     <div className='col-1'></div>
                 </div>

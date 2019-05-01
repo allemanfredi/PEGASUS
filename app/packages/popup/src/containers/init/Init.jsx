@@ -5,7 +5,6 @@ import Loader from '../../components/loader/Loader';
 import options from '../../options/options';
 
 import { PopupAPI } from '@pegasus/lib/api';
-import Utils from '@pegasus/lib/utils';
 
 import './Init.css';
 

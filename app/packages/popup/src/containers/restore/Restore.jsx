@@ -39,38 +39,36 @@ class Restore extends Component {
 
     render() {
         return (
-            <div>
-                { this.state.isLoading ? <Loader></Loader> : (
-                    <div className='container-center'>
-                        <div className='row'>
-                            <div className='col-1'></div>
-                            <div className='col-10 text-center'>
-                                <label htmlFor='inp-seed' className='inp '>
-                                    <input onChange={e => { this.setState({ seed: e.target.value }); }} type='text' id='inp-seed' placeholder='&nbsp;'/>
-                                    <span className='label'>seed</span>
-                                    <span className='border'></span>
-                                </label>
-                            </div>
-                            <div className='col-1'></div>
+                this.state.isLoading ? <Loader></Loader> : (
+                <div className='container container-center'>
+                    <div className='row'>
+                        <div className='col-1'></div>
+                        <div className='col-10 text-center'>
+                            <label htmlFor='inp-seed' className='inp '>
+                                <input onChange={e => { this.setState({ seed: e.target.value }); }} type='text' id='inp-seed' placeholder='&nbsp;'/>
+                                <span className='label'>seed</span>
+                                <span className='border'></span>
+                            </label>
                         </div>
-                        <div className='row'>
-                            <div className='col-1'></div>
-                            <div className='col-10 text-center'>
-                                <button disabled={isSeedValid(this.state.seed) ? false : true} onClick={this.onClickRestore} type='button' className='btn btn-blue mt-4'>Restore</button>
-                            </div>
-                            <div className='col-1'></div>
-                        </div>
-                        <div className='row'>
-                            <div className='col-1'></div>
-                            <div className='col-10 text-center'>
-                                <button onClick={e => { this.props.onBack(); }} type='submit' className='btn btn-white'>return to login</button>
-                            </div>
-                            <div className='col-1'></div>
-                        </div>
-
+                        <div className='col-1'></div>
                     </div>
-                )}
-            </div>
+                    <div className='row mt-4'>
+                        <div className='col-1'></div>
+                        <div className='col-10 text-center'>
+                            <button disabled={isSeedValid(this.state.seed) ? false : true} onClick={this.onClickRestore} type='button' className='btn btn-blue text-bold '>Restore</button>
+                        </div>
+                        <div className='col-1'></div>
+                    </div>
+                    <div className='row'>
+                        <div className='col-1'></div>
+                        <div className='col-10 text-center'>
+                            <button onClick={e => { this.props.onBack(); }} type='submit' className='btn btn-white'>return to login</button>
+                        </div>
+                        <div className='col-1'></div>
+                    </div>
+
+                </div>
+            )
         );
     }
 }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { prepareTransfer } from '../../core/core';
-import { getKey, getCurrentNewtwork } from '../../wallet/wallet';
+import { getKey, getCurrentNetwork } from '../../wallet/wallet';
 import { aes256decrypt } from '../../utils/crypto';
 
 import Loader from '../../components/loader/Loader';
@@ -43,6 +43,8 @@ class Send extends Component {
         const seed = Utils.aes256decrypt(this.props.account.seed, key);
         this.setState({ seed });
 
+        const currentNewtwork = await PopupAPI.getCurrentNetwork();
+
         //const address = ''
         const transfer = {
             seed,
@@ -50,7 +52,7 @@ class Send extends Component {
             to: this.state.dstAddress,
             value: this.state.value,
             message: this.state.message,
-            difficulty: PopupAPI.getCurrentNewtwork().type === 'mainnet' ? 14 : 9
+            difficulty: currentNewtwork.difficulty
         };
         prepareTransfer(transfer, (bundle, error) => {
             if (bundle) {
