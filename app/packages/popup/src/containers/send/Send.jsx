@@ -36,43 +36,20 @@ class Send extends Component {
     }
 
     async clickTransfer() {
-        this.setState({ isLoading: true });
 
-        //decrypt seed;
-        const key = await PopupAPI.getKey();
-        const seed = Utils.aes256decrypt(this.props.account.seed, key);
-        this.setState({ seed });
-
-        const currentNewtwork = await PopupAPI.getCurrentNetwork();
-
-        //const address = ''
-        const transfer = {
-            seed,
+        const transfer = [{
             tag: '',
-            to: this.state.dstAddress,
+            address: this.state.dstAddress,
             value: this.state.value,
             message: this.state.message,
-            difficulty: currentNewtwork.difficulty
+        }];
+        const data = {
+            args : [
+                transfer
+            ]
         };
-        prepareTransfer(transfer, (bundle, error) => {
-            if (bundle) {
-                console.log(bundle);
-                this.setState({ status: bundle });
-                this.setState({ alertText: `Bundle : ${bundle}` });
-                this.setState({ alertType: 'success' });
-                this.setState({ showAlert: true });
-            }
-            if (error) {
-                this.setState({ alertText: error.message });
-                this.setState({ alertType: 'error' });
-                this.setState({ showAlert: true });
-            }
-
-            this.setState({ dstAddress: '' });
-            this.setState({ value: '' });
-            this.setState({ message: '' });
-            this.setState({ isLoading: false });
-        });
+        await PopupAPI.pushPayments(data,true);
+        this.props.onAskConfirm();
     }
 
     render() {

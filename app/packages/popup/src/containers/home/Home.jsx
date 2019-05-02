@@ -250,7 +250,9 @@ class Home extends Component {
                                                                 onLogout={this.onLogout}
                                                                 onClose={this.onCloseSettings}/> ) : ''}
 
-                        { this.state.showSend ? (       <Send account={this.state.account} network={this.state.network} /> ) : ''}
+                        { this.state.showSend ? (       <Send   account={this.state.account} 
+                                                                network={this.state.network}
+                                                                onAskConfirm={ () => this.props.onAskConfirm()} /> ) : ''}
                         { this.state.showReceive ? (    <Receive account={this.state.account} network={this.state.network} /> ) : '' }
                         { this.state.showAdd ? (        <Add network={this.state.network} onChangeAccount={this.onChangeAccount}/>) : ''}
                         { this.state.showInteract ? (   <Interact ref={this.interact}

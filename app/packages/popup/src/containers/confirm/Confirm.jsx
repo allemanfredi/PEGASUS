@@ -27,7 +27,7 @@ class Confirm extends Component {
         const payments = await PopupAPI.getPayments();
         this.setState({payments});
         if (payments.length === 0)
-            this.props.onClose();
+            this.props.onNotConfirms();
     }
 
     changePayments(payments){
@@ -51,7 +51,7 @@ class Confirm extends Component {
     
                         <div className="row ">
                             <div className="col-2 text-left text-xs text-blue">To</div>
-                            <div className="col-10 text-right break-text"><div className="">{payment.args[1][0].address}</div></div>
+                            <div className="col-10 text-right break-text"><div className="">{payment.args[0][0].address}</div></div>
                         </div>
     
                         <div className="row mt-2">
@@ -59,12 +59,12 @@ class Confirm extends Component {
                         </div>
     
                         <div className="row">
-                            <div className="col-12 text-center text-bold text-black text-md">{Utils.iotaReducer(payment.args[1][0].value)}</div>
+                            <div className="col-12 text-center text-bold text-black text-md">{Utils.iotaReducer(payment.args[0][0].value)}</div>
                         </div>
     
                         <div className="row mt-2">
                             <div className="col-2 text-left text-xs text-blue">Message</div>
-                            <div className="col-10 text-right break-text"><div className="">{payment.args[1][0].message ? payment.args[1][0].message : '-'}</div></div>
+                            <div className="col-10 text-right break-text"><div className="">{payment.args[0][0].message ? payment.args[0][0].message : '-'}</div></div>
                         </div>
     
                         <hr className="mt-2 mb-2"/>

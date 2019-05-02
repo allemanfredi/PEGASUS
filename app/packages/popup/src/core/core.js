@@ -63,6 +63,7 @@ const getAllTransactions = async addresses => {
 };
 
 const prepareTransfer = async (transfer, ret) => {
+    console.log(transfer);
     const transfers = [{
         address: transfer.to,
         value: parseInt(transfer.value),
@@ -76,9 +77,8 @@ const prepareTransfer = async (transfer, ret) => {
     // Minimum value on mainnet & spamnet is `14`, `9` on devnet and other testnets.
     const minWeightMagnitude = transfer.difficulty;
 
-    const inputs = await iota.getInputs(transfer.seed);
     try{
-        iota.prepareTransfers(transfer.seed, transfers, inputs)
+        iota.prepareTransfers(transfer.seed, transfers)
             .then(trytes => {
                 return iota.sendTrytes(trytes, depth, minWeightMagnitude);
             })

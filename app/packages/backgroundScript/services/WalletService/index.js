@@ -415,13 +415,26 @@ class Wallet extends EventEmitter {
         return state;
     }
 
-    pushPayment(payment){
+    pushPayment({payment,isPopup}){
+        
+        const currentState = this.getState();
+        if ( currentState != APP_STATE.WALLET_LOCKED ){
+            this.setState(APP_STATE.WALLET_TRANSFERS_IN_QUEUE);
+        }else{
+            console.log("locked");
+        }
+
+        console.log(payment);
 
         this.payments = [ payment , ...this.payments];
-        if (!this.popup )
+        console.log(this.payments);
+        if (!this.popup && !isPopup){
             this.openPopup();
+        }
         
-        BackgroundAPI.setPayments(this.payments);
+        if ( currentState != APP_STATE.WALLET_LOCKED )
+            BackgroundAPI.setPayments(this.payments);
+        
         return;
     }
 
@@ -442,6 +455,7 @@ class Wallet extends EventEmitter {
             this.closePopup();
         }
     }
+
     
 
 }

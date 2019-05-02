@@ -21,6 +21,8 @@ class Main extends Component {
         this.onRestore = this.onRestore.bind(this);
         this.onBack = this.onBack.bind(this);   
         this.onRejectAll = this.onRejectAll.bind(this);
+        this.onAskConfirm = this.onAskConfirm.bind(this);
+        this.onNotConfirms = this.onNotConfirms.bind(this);
 
         this.home = React.createRef();
         this.confirm = React.createRef();
@@ -48,9 +50,17 @@ class Main extends Component {
         this.setState({appState:state});
     }
 
-    onSuccessFromLogin() {
-        this.props.showHeader(true);
+    async onSuccessFromLogin() {
         PopupAPI.startSession();
+        const payments = await PopupAPI.getPayments();
+        if ( payments.length > 0 ){
+            this.props.showHeader(false);
+            this.setState({appState:APP_STATE.WALLET_TRANSFERS_IN_QUEUE});
+            PopupAPI.setState(APP_STATE.WALLET_TRANSFERS_IN_QUEUE);
+            this.changePayments(payments);
+            return;
+        }
+        this.props.showHeader(true);
         this.setState({appState:APP_STATE.WALLET_UNLOCKED});
         PopupAPI.setState(APP_STATE.WALLET_UNLOCKED);
     }
@@ -92,6 +102,10 @@ class Main extends Component {
         this.setState({appState:APP_STATE.WALLET_UNLOCKED});
         PopupAPI.rejectAllPayments();
     }
+    onNotConfirms(){
+        this.props.showHeader(true);
+        this.setState({appState:APP_STATE.WALLET_UNLOCKED});
+    }
 
     //called by App.js component in order to reload-data
     changeNetwork(network) {
@@ -101,6 +115,12 @@ class Main extends Component {
 
     changePayments(payments){
         this.confirm.current.changePayments(payments);
+    }
+
+    onAskConfirm(){
+        this.props.showHeader(false);
+        this.setState({appState:APP_STATE.WALLET_TRANSFERS_IN_QUEUE});
+        PopupAPI.setState(APP_STATE.WALLET_TRANSFERS_IN_QUEUE);
     }
 
     render() {
@@ -113,9 +133,9 @@ class Main extends Component {
             case APP_STATE.WALLET_RESTORE:
                 return <Restore network={this.state.network} onSuccess={this.onSuccessFromRestore} onBack={this.onBack}/>;
             case APP_STATE.WALLET_UNLOCKED:
-                return <Home ref={this.home} onLogout={this.onLogout}/>
+                return <Home ref={this.home} onLogout={this.onLogout} onAskConfirm={this.onAskConfirm}/>
             case APP_STATE.WALLET_TRANSFERS_IN_QUEUE:
-                return <Confirm ref={this.confirm} onClose={this.onBack} onRejectAll={this.onRejectAll}/>
+                return <Confirm ref={this.confirm} onNotConfirms={this.onNotConfirms} onRejectAll={this.onRejectAll}/>
             default:
                 return '';
         }

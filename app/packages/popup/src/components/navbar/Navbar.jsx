@@ -23,7 +23,7 @@ export default class Navbar extends Component {
                             <button onClick={() => this.props.onBack()} className='btn btn-icon'><i className='fa fa-arrow-left'></i></button>
                         </div>
                         : ''}
-                    <div className='col-8 text-center '>
+                    <div className='col-8 text-center my-auto'>
                         <div className='text-white text-sm'>{this.props.text}</div>
                     </div>
                     { this.props.showBtnMarker ?

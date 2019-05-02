@@ -47,7 +47,6 @@ export default class Alert extends Component {
 
                 </div>
             </div>
-
         );
     }
 }
