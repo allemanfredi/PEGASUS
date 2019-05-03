@@ -15,7 +15,8 @@ class Confirm extends Component {
         this.state = {
             payments : [],
             currentTransactionIndex : 0,
-            isLoading : false
+            isLoading : false,
+            error : false
         }
     }
 
@@ -38,13 +39,15 @@ class Confirm extends Component {
     setConfirmationLoading(isLoading){
         this.setState({isLoading});
     }
+    setConfirmationError(error){
+        this.setState({error});
+    }
 
     async confirm(payment){
         await PopupAPI.confirmPayment(payment);
     }
 
     
-
     render() {      
         return(
             
@@ -77,10 +80,20 @@ class Confirm extends Component {
                             <div className="col-2 text-left text-xs text-blue">Message</div>
                             <div className="col-10 text-right break-text"><div className="">{obj.payment.args[0][0].message ? obj.payment.args[0][0].message : '-'}</div></div>
                         </div>
+
+                        {this.state.error ? 
+                            <div className="row mt-2">
+                                <div className="col-12 text-xs">
+                                    <div class="alert alert-danger" role="alert">
+                                        {this.state.error}
+                                    </div>
+                                </div>
+                            </div>
+                        :''}
     
                         <hr className="mt-2 mb-2"/>
                         
-                        <div className="row mt-9">
+                        <div className={this.state.error ? "row mt-3" : "row mt-9"}>
                             <div className="col-6">
                                 <button onClick={() => this.reject(obj)} className="btn btn-border-blue text-sm text-bold">Reject</button>
                             </div>

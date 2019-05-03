@@ -472,16 +472,17 @@ class Wallet extends EventEmitter {
                     this.setState(APP_STATE.WALLET_UNLOCKED);
 
                     BackgroundAPI.setConfirmationLoading(false);
-
-                    callback({data:bundle,success : true,uuid: payment.uuid});
+                    callback({data:bundle,success:true,uuid: payment.uuid});
                 })
                 .catch(err => {
 
+                    BackgroundAPI.setConfirmationError(err.message);
                     BackgroundAPI.setConfirmationLoading(false);
-                    callback({ data:err.message, success : false,uuid: payment.uuid});
+                    callback({ data:err.message, success:false,uuid: payment.uuid});
                 });
         }catch(err) {
 
+            BackgroundAPI.setConfirmationError(err.message);
             BackgroundAPI.setConfirmationLoading(false);
             callback({data:err.message,success : false,uuid: payment.uuid});
         }

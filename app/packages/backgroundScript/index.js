@@ -111,6 +111,10 @@ const backgroundScript = {
         this.walletService.on('setConfirmationLoading', isLoading => (
             BackgroundAPI.setConfirmationLoading(isLoading)
         ));
+
+        this.walletService.on('setConfirmationError', error => (
+            BackgroundAPI.setConfirmationError(error)
+        ));
     }
 };
 

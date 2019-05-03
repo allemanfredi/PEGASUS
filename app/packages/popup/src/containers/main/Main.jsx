@@ -113,11 +113,15 @@ class Main extends Component {
         this.setState({ network });
     }
 
+    //duplex function
     changePayments(payments){
         this.confirm.current.changePayments(payments);
     }
     setConfirmationLoading(isLoading){
         this.confirm.current.setConfirmationLoading(isLoading);
+    }
+    setConfirmationError(error){
+        this.confirm.current.setConfirmationError(error);
     }
 
     onAskConfirm(){

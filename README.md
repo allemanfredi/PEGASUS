@@ -63,7 +63,7 @@ if (window.iota) {
     
     const transfers = [{
         address: 'address here',
-        value: 10, // 1Ki
+        value: 10, 
         tag: '', // optional tag of `0-27` trytes
         message: '' // optional message in trytes
     }];

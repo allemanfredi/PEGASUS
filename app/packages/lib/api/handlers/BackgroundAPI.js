@@ -1,5 +1,4 @@
 export default {
-    currentAddress: false,
 
     init(duplex) {
         this.duplex = duplex;
@@ -12,5 +11,9 @@ export default {
     setConfirmationLoading(isLoading) {
         this.duplex.send('popup', 'setConfirmationLoading', isLoading, false);
     },
+
+    setConfirmationError(error){
+        this.duplex.send('popup', 'setConfirmationError', error , false);
+    }
 
 };
