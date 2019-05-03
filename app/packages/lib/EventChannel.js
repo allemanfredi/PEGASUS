@@ -32,6 +32,7 @@ class EventChannel extends EventEmitter {
         if(!action)
             return { success: false, error: 'Function requires action {string} parameter' };
 
+        data = JSON.parse(JSON.stringify(data));
         window.postMessage({
             message: {
                 action,

@@ -6,6 +6,8 @@ import Utils from '@pegasus/lib/utils';
 import { BackgroundAPI } from '@pegasus/lib/api';
 import {APP_STATE} from '@pegasus/lib/states';
 
+import { composeAPI } from '@iota/core';
+
 
 class Wallet extends EventEmitter {
     
@@ -14,6 +16,8 @@ class Wallet extends EventEmitter {
 
         this.popup = false;
         this.payments = [];
+
+        this.selectedProvider = ''
 
         this.setState(APP_STATE.WALLET_NOT_INITIALIZED);
     }
@@ -415,7 +419,7 @@ class Wallet extends EventEmitter {
         return state;
     }
 
-    pushPayment({payment,isPopup}){
+    pushPayment(payment, uuid, callback){
         
         const currentState = this.getState();
         if ( currentState != APP_STATE.WALLET_LOCKED ){
@@ -424,11 +428,14 @@ class Wallet extends EventEmitter {
             console.log("locked");
         }
 
-        console.log(payment);
-
-        this.payments = [ payment , ...this.payments];
-        console.log(this.payments);
-        if (!this.popup && !isPopup){
+        const obj = {
+            payment,
+            uuid,
+            callback
+        }
+        
+        this.payments.push(obj);
+        if (!this.popup){
             this.openPopup();
         }
         
@@ -438,8 +445,55 @@ class Wallet extends EventEmitter {
         return;
     }
 
+    confirmPayment(payment){
+
+        const transfer = payment.payment.args[0][0];
+        const network = this.getCurrentNetwork();
+        const iota = composeAPI({provider:network.provider});
+        const callback = this.payments.filter( obj => obj.uuid === payment.uuid )[0].callback;
+        
+        const key = this.getKey();
+        const account = this.getCurrentAccount(network);
+        const seed = Utils.aes256decrypt(account.seed, key);
+
+        const depth = 3;
+        const minWeightMagnitude = network.difficulty;
+
+        try{
+            iota.prepareTransfers(seed, [transfer])
+                .then(trytes => {
+                    return iota.sendTrytes(trytes, depth, minWeightMagnitude);
+                })
+                .then(bundle => {
+                    console.log(bundle);
+                    callback({
+                        data:bundle,
+                        success : true,
+                        uuid: payment.uuid
+                    });
+                })
+                .catch(err => {
+                    console.log(err);
+                    callback({
+                        data:err.message,
+                        success : false,
+                        uuid: payment.uuid
+                    });
+                });
+        }catch(err) {
+            callback({
+                data:err.message,
+                success : false,
+                uuid: payment.uuid
+            });
+        }
+        
+    }
+
     getPayments(){
-        return this.payments;
+        //remove callback 
+        const payments = this.payments.map(obj => {return {payment:obj.payment,uuid:obj.uuid}});
+        return payments;
     }
 
     rejectAllPayments(){
@@ -456,8 +510,15 @@ class Wallet extends EventEmitter {
         }
     }
 
-    
-
 }
 
 export default Wallet;
+
+/*this.payments.forEach(obj => {
+            if ( obj.uuid === payment.uuid )
+                obj.callback({
+                    data:"ciao",
+                    isSuccess : true,
+                    uuid: payment.uuid
+                });
+        })*/

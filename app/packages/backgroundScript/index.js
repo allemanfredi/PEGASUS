@@ -56,6 +56,7 @@ const backgroundScript = {
         duplex.on('pushPayment', this.walletService.pushPayment);
         duplex.on('rejectAllPayments', this.walletService.rejectAllPayments);
         duplex.on('rejectPayment', this.walletService.rejectPayment);
+        duplex.on('confirmPayment', this.walletService.confirmPayment);
 
     },
 
@@ -72,6 +73,7 @@ const backgroundScript = {
                     if ( this.walletService.getState() >= APP_STATE.WALLET_INITIALIZED ){
                         const currentNetwork = this.walletService.getCurrentNetwork();
                         const account = this.walletService.getCurrentAccount(currentNetwork);
+                        this.walletService.selectedProvider(currentNetwork.provider);
                         response = {
                             selectedAddress : account.data.latestAddress,
                             selectedProvider : currentNetwork.provider
@@ -92,9 +94,7 @@ const backgroundScript = {
                     const key = this.walletService.getKey();
                     const dseed = Utils.aes256decrypt(account.seed, key);
 
-                    console.log(data);
-                    this.walletService.pushPayment({payment:data,isPopup:false});
-
+                    this.walletService.pushPayment(data,uuid,resolve);
                     break;
                 }
             }

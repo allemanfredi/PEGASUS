@@ -93,14 +93,21 @@ export default {
     getPayments(){
         return this.duplex.send('getPayments');
     },
+
     pushPayments(payment,isPopup){
         return this.duplex.send('pushPayment',{payment,isPopup});
     },
+    
     rejectPayment(payment){
         return this.duplex.send('rejectPayment',payment);
     },
+
     rejectAllPayments(){
         return this.duplex.send('rejectAllPayments');
-    }
+    },
+
+    confirmPayment(payment){
+        return this.duplex.send('confirmPayment',payment);
+    },
 
 };

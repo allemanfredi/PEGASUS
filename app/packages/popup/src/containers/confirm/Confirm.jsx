@@ -10,6 +10,7 @@ class Confirm extends Component {
         super(props, context);
 
         this.reject = this.reject.bind(this);
+        this.confirm = this.confirm.bind(this);
 
         this.state = {
             payments : [],
@@ -19,6 +20,7 @@ class Confirm extends Component {
 
     async componentWillMount(){
         const payments = await PopupAPI.getPayments();
+        console.log(payments);
         this.setState({payments});
     }
 
@@ -34,10 +36,14 @@ class Confirm extends Component {
         this.setState({payments});
     }
 
+    async confirm(payment){
+        await PopupAPI.confirmPayment(payment);
+    }
+
     render() {      
         return(
             
-            this.state.payments.filter( (obj,index) => index === this.state.currentTransactionIndex ).map( payment =>  {
+            this.state.payments.filter( (obj,index) => index === this.state.currentTransactionIndex ).map( obj =>  {
                 return (
                     <div className="container">
                         <div className="row mt-3">
@@ -51,7 +57,7 @@ class Confirm extends Component {
     
                         <div className="row ">
                             <div className="col-2 text-left text-xs text-blue">To</div>
-                            <div className="col-10 text-right break-text"><div className="">{payment.args[0][0].address}</div></div>
+                            <div className="col-10 text-right break-text"><div className="">{obj.payment.args[0][0].address}</div></div>
                         </div>
     
                         <div className="row mt-2">
@@ -59,22 +65,22 @@ class Confirm extends Component {
                         </div>
     
                         <div className="row">
-                            <div className="col-12 text-center text-bold text-black text-md">{Utils.iotaReducer(payment.args[0][0].value)}</div>
+                            <div className="col-12 text-center text-bold text-black text-md">{Utils.iotaReducer(obj.payment.args[0][0].value)}</div>
                         </div>
     
                         <div className="row mt-2">
                             <div className="col-2 text-left text-xs text-blue">Message</div>
-                            <div className="col-10 text-right break-text"><div className="">{payment.args[0][0].message ? payment.args[0][0].message : '-'}</div></div>
+                            <div className="col-10 text-right break-text"><div className="">{obj.payment.args[0][0].message ? obj.payment.args[0][0].message : '-'}</div></div>
                         </div>
     
                         <hr className="mt-2 mb-2"/>
                         
                         <div className="row mt-9">
                             <div className="col-6">
-                                <button onClick={() => this.reject(payment)} className="btn btn-border-blue text-sm text-bold">Reject</button>
+                                <button onClick={() => this.reject(obj)} className="btn btn-border-blue text-sm text-bold">Reject</button>
                             </div>
                             <div className="col-6">
-                                <button className="btn btn-blue text-sm text-bold">Confirm</button>
+                                <button onClick={() => this.confirm(obj)} className="btn btn-blue text-sm text-bold">Confirm</button>
                             </div>
                         </div>
 
