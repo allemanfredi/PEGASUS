@@ -465,27 +465,15 @@ class Wallet extends EventEmitter {
                     return iota.sendTrytes(trytes, depth, minWeightMagnitude);
                 })
                 .then(bundle => {
-                    console.log(bundle);
-                    callback({
-                        data:bundle,
-                        success : true,
-                        uuid: payment.uuid
-                    });
+                    this.closePopup();
+                    this.setState(APP_STATE.WALLET_UNLOCKED);
+                    callback({data:bundle,success : true,uuid: payment.uuid});
                 })
                 .catch(err => {
-                    console.log(err);
-                    callback({
-                        data:err.message,
-                        success : false,
-                        uuid: payment.uuid
-                    });
+                    callback({ data:err.message, success : false,uuid: payment.uuid});
                 });
         }catch(err) {
-            callback({
-                data:err.message,
-                success : false,
-                uuid: payment.uuid
-            });
+            callback({data:err.message,success : false,uuid: payment.uuid});
         }
         
     }
@@ -503,7 +491,16 @@ class Wallet extends EventEmitter {
     }
 
     rejectPayment(rejectedPayment){
+        
+        const callback = this.payments.filter( obj => rejectedPayment.uuid === obj.uuid )[0].callback;
         this.payments = this.payments.filter( payment => payment.uuid !== rejectedPayment.uuid);
+
+        callback({
+            data:"Transaction has been rejected",
+            success : false,
+            uuid: rejectedPayment.uuid
+        });
+
         if ( this.payments.length === 0 ){
             this.setState(APP_STATE.WALLET_UNLOCKED);
             this.closePopup();
