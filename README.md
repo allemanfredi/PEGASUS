@@ -60,9 +60,19 @@ iotaJs injection.
 if (window.iota) {
     const iotajs = window.iota.iotajs;
     const selectedAddress = window.iota.selectedAddress
-    .
-    .
-    .
+    
+    const transfers = [{
+        address: 'address here',
+        value: 10, // 1Ki
+        tag: '', // optional tag of `0-27` trytes
+        message: '' // optional message in trytes
+    }];
+
+    iotajs.prepareTransfers(transfers , (bundle,err) => {
+        if (!err){
+            console.log(bundle);
+        }
+    });
 }
 ```
 

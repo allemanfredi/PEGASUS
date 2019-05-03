@@ -447,6 +447,8 @@ class Wallet extends EventEmitter {
 
     confirmPayment(payment){
 
+        BackgroundAPI.setConfirmationLoading(true);
+
         const transfer = payment.payment.args[0][0];
         const network = this.getCurrentNetwork();
         const iota = composeAPI({provider:network.provider});
@@ -465,17 +467,35 @@ class Wallet extends EventEmitter {
                     return iota.sendTrytes(trytes, depth, minWeightMagnitude);
                 })
                 .then(bundle => {
-                    this.closePopup();
+                    this.removePayment(payment);
+                    BackgroundAPI.setPayments(this.payments);
                     this.setState(APP_STATE.WALLET_UNLOCKED);
+
+                    BackgroundAPI.setConfirmationLoading(false);
+
                     callback({data:bundle,success : true,uuid: payment.uuid});
                 })
                 .catch(err => {
+
+                    BackgroundAPI.setConfirmationLoading(false);
                     callback({ data:err.message, success : false,uuid: payment.uuid});
                 });
         }catch(err) {
+
+            BackgroundAPI.setConfirmationLoading(false);
             callback({data:err.message,success : false,uuid: payment.uuid});
         }
+
+        return;
         
+    }
+
+    removePayment(paymentToRemove){
+        this.payments = this.payments.filter( payment => payment.uuid !== paymentToRemove.uuid);
+        if ( this.payments.length === 0 ){
+            this.setState(APP_STATE.WALLET_UNLOCKED);
+            this.closePopup();
+        }
     }
 
     getPayments(){

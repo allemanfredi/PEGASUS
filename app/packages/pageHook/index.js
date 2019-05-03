@@ -89,10 +89,9 @@ const pageHook = {
         args = [args[0]];
         this.request('prepareTransfer', {args})
         .then(transaction => (
-            callback(null, transaction)
+            callback(transaction,null)
         )).catch(err => {
-            console.log(err);
-            callback(err);
+            callback(null,err);
         });
     }
 

@@ -73,7 +73,7 @@ const backgroundScript = {
                     if ( this.walletService.getState() >= APP_STATE.WALLET_INITIALIZED ){
                         const currentNetwork = this.walletService.getCurrentNetwork();
                         const account = this.walletService.getCurrentAccount(currentNetwork);
-                        this.walletService.selectedProvider(currentNetwork.provider);
+                        this.walletService.selectedProvider = currentNetwork.provider;
                         response = {
                             selectedAddress : account.data.latestAddress,
                             selectedProvider : currentNetwork.provider
@@ -106,6 +106,10 @@ const backgroundScript = {
 
         this.walletService.on('setPayments', payments => (
             BackgroundAPI.setPayments(payments)
+        ));
+
+        this.walletService.on('setConfirmationLoading', isLoading => (
+            BackgroundAPI.setConfirmationLoading(isLoading)
         ));
     }
 };

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { PopupAPI } from '@pegasus/lib/api';
 
 import Utils from '@pegasus/lib/utils';
-
+import Loader from '../../components/loader/Loader';
 
 class Confirm extends Component {
     
@@ -15,12 +15,12 @@ class Confirm extends Component {
         this.state = {
             payments : [],
             currentTransactionIndex : 0,
+            isLoading : false
         }
     }
 
     async componentWillMount(){
         const payments = await PopupAPI.getPayments();
-        console.log(payments);
         this.setState({payments});
     }
 
@@ -35,15 +35,20 @@ class Confirm extends Component {
     changePayments(payments){
         this.setState({payments});
     }
+    setConfirmationLoading(isLoading){
+        this.setState({isLoading});
+    }
 
     async confirm(payment){
         await PopupAPI.confirmPayment(payment);
     }
 
+    
+
     render() {      
         return(
             
-            this.state.payments.filter( (obj,index) => index === this.state.currentTransactionIndex ).map( obj =>  {
+            !this.state.isLoading ? this.state.payments.filter( (obj,index) => index === this.state.currentTransactionIndex ).map( obj =>  {
                 return (
                     <div className="container">
                         <div className="row mt-3">
@@ -95,7 +100,7 @@ class Confirm extends Component {
                         </div>
                     </div>
                 )
-            })
+            }) : <Loader/>
             
         )
     }

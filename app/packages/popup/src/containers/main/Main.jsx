@@ -116,6 +116,9 @@ class Main extends Component {
     changePayments(payments){
         this.confirm.current.changePayments(payments);
     }
+    setConfirmationLoading(isLoading){
+        this.confirm.current.setConfirmationLoading(isLoading);
+    }
 
     onAskConfirm(){
         this.props.showHeader(false);

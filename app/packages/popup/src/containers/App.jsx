@@ -61,6 +61,7 @@ class App extends Component {
 
     bindDuplexRequests(){
         this.state.duplex.on('setPayments', payments => this.main.current.changePayments(payments));
+        this.state.duplex.on('setConfirmationLoading', isLoading => this.main.current.setConfirmationLoading(isLoading));
     }
 
     render() {
