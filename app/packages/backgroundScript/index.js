@@ -36,6 +36,7 @@ const backgroundScript = {
         
         duplex.on('addAccount', this.walletService.addAccount);
         duplex.on('getCurrentAccount', this.walletService.getCurrentAccount);
+        duplex.on('getAllAccounts', this.walletService.getAllAccounts);
         duplex.on('setCurrentAccount', this.walletService.setCurrentAccount);
         duplex.on('updateDataAccount', this.walletService.updateDataAccount);
         duplex.on('deleteAccount', this.walletService.deleteAccount);
@@ -89,11 +90,6 @@ const backgroundScript = {
                 } 
 
                 case 'prepareTransfer': {
-                    const currentNetwork = this.walletService.getCurrentNetwork();
-                    const account = this.walletService.getCurrentAccount(currentNetwork);
-                    const key = this.walletService.getKey();
-                    const dseed = Utils.aes256decrypt(account.seed, key);
-
                     this.walletService.pushPayment(data,uuid,resolve);
                     break;
                 }

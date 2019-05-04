@@ -126,7 +126,7 @@ class Wallet extends EventEmitter {
             seed: eseed,
             data: account.data,
             current: isCurrent ? true : false,
-            id: Utils.sha256(name),
+            id: Utils.sha256(account.name),
             network: account.network, //mainnet or testnet
             marketplace: { keys: Utils.generateKeys(), channels: [] }
         };
@@ -169,9 +169,10 @@ class Wallet extends EventEmitter {
     }
 
     setCurrentAccount({currentAccount, network}){
-        const data = JSON.parse(localStorage.getItem('data'));
+        let data = JSON.parse(localStorage.getItem('data'));
         data[ network.type ].forEach( account => { account.current = false; });
         localStorage.setItem('data', JSON.stringify(data));
+
 
         try{
             const data = JSON.parse(localStorage.getItem('data'));
@@ -179,6 +180,7 @@ class Wallet extends EventEmitter {
                 if ( account.id === currentAccount.id)
                     account.current = true;
             });
+
             localStorage.setItem('data', JSON.stringify(data));
             return currentAccount;
         }

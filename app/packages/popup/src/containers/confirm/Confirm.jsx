@@ -65,7 +65,7 @@ class Confirm extends Component {
     
                         <div className="row ">
                             <div className="col-2 text-left text-xs text-blue">To</div>
-                            <div className="col-10 text-right break-text"><div className="">{obj.payment.args[0][0].address}</div></div>
+                            <div className="col-10 text-right text-xxs break-text"><div className="">{obj.payment.args[0][0].address}</div></div>
                         </div>
     
                         <div className="row mt-2">
@@ -91,7 +91,7 @@ class Confirm extends Component {
                             </div>
                         :''}
     
-                        <hr className="mt-2 mb-2"/>
+                        <hr className="mt-1 mb-1"/>
                         
                         <div className={this.state.error ? "row mt-3" : "row mt-9"}>
                             <div className="col-6">

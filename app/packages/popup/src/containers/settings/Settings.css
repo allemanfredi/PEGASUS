@@ -26,7 +26,18 @@
   overflow-y: auto;
   z-index: 1000;
   transition: all 0.4s ease 0s;
+  animation-name: appear;
+  animation-duration: 0.2s;
+  animation-timing-function: ease-in;
+
 }
+
+@keyframes appear {
+  from {width: 0;}
+  to {width: 250px;}
+}
+
+
 
 #wrapper.active {
   padding-left: 0;
@@ -50,15 +61,14 @@
 }
 
 .sidebar-nav li {
-  line-height: 40px;
-  text-indent: 4px;
+  line-height: 30px;
+  text-indent: 5px;
   width: 100%;
 }
   
 .sidebar-nav li a {
   display: block;
   text-decoration: none;
-  padding-left: 28px;
 }
 
 .sidebar-nav li a span:before {
@@ -115,9 +125,7 @@
   background:#f6f6f6;
 }
 
-.container-sidebar-header{
-  margin-bottom: 20%;
-}
+
 .sidebar-header{
   color: black;
   text-align: center;
@@ -126,32 +134,14 @@
   margin-left: -4px;
 }
 
-.container-close{
-  text-indent: 10px;
-  margin-left: 1%;
-}
 
-hr {
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
-  border: 0;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-}
 
 .current-account , .current-balance{
-    margin-top:5%;
 }
 .current-account:hover{
   background: #f6f6f6;
   color: darkblue;
   cursor: pointer;
 }
-.span-text{
-  margin-bottom: 3%;
-}
 
-.address{
-  font-size: 12px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+

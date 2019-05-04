@@ -39,47 +39,47 @@ class Settings extends Component {
     render() {
         return (
             <div className='modal container'>
-
                 <div id='sidebar-wrapper'>
-
-                    <div className='container-sidebar-header'>
-                        <div className='container-close float-left'>
-                            <button onClick={() => { this.props.onClose(); }} type='button' className='close' aria-label='Close'>
-                                <span aria-hidden='true'>&times;</span>
-                            </button>
-                        </div>
-                    </div>
-
                     <nav id='spy'>
                         <ul className='sidebar-nav nav'>
 
                             <li className='sidebar-header'>
-                                <div className='row'>
-                                    <div className='col-12 text-center'>
-                                        <img src='./material/logo/iota-logo.png' height='50' width='50' alt='iota logo'/>
+
+                                <div className="row">
+                                    <div className="col-12 text-left">
+                                        <button onClick={() => { this.props.onClose(); }} type='button' className='close' aria-label='Close'>
+                                            <span aria-hidden='true'>&times;</span>
+                                        </button>
                                     </div>
                                 </div>
-                                <div className='row'>
+
+                                <div className='row mt-2'>
                                     <div className='col-12 text-center'>
-                                        <div onClick={() => { this.props.onShowEdit(); }}className='current-account'>
+                                        <img src='./material/logo/pegasus-64.png' height='40' width='40' alt='pegasus logo'/>
+                                    </div>
+                                </div>
+
+                                <div className='row mt-3'>
+                                    <div onClick={() => { this.props.onShowEdit(); }} className='col-12 text-center text-sm cursor-pointer'>
+                                        {this.props.currentAccount.name}
+                                        {/*<div onClick={() => { this.props.onShowEdit(); }}className='current-account'>
                                             {this.props.currentAccount.name}
-                                        </div>
+                                        </div>*/}
                                     </div>
                                 </div>
-                                <div className='row'>
-                                    <div className='col-2'></div>
-                                    <div className='col-8 text-center'>
-                                        <div onClick={() => { this.props.onShowEdit(); }} className='address'>
-                                            {this.props.currentAccount.data.latestAddress}
-                                        </div>
+                                <div className='row mt-1'>
+                                    <div className="col-2"></div>
+                                    <div className='col-8 text-center text-no-overflow text-xxs'>
+                                        {this.props.currentAccount.data.latestAddress}
                                     </div>
-                                    <div className='col-2'></div>
+                                    <div className="col-2"></div>
                                 </div>
-                                <div className='row'>
-                                    <div className='col-12 text-center'>
-                                        <div className='current-balance'>
-                                            { Utils.iotaReducer(this.props.currentAccount.data.balance) }
-                                        </div>
+                                <div className='row mt-3'>
+                                    <div className='col-6 text-right text-sm text text-bold pr-1'>
+                                        { Utils.iotaReducer(this.props.currentAccount.data.balance) }
+                                    </div>
+                                    <div className="col-6 text-left pl-1">
+                                        <img src='./material/logo/iota-logo.png' height='30' width='30' alt='iota logo'/>
                                     </div>
                                 </div>
                             </li>
@@ -90,7 +90,7 @@ class Settings extends Component {
                                         <div className='col-2'><i className='fa fa-user'></i></div>
                                         <div className='col-8'>
                                             <a href='#' onClick={() => this.switchAccount(account)} data-scroll>
-                                                <div className='span-text'>{account.name}</div>
+                                                <div className='text-xs text-black'>{account.name}</div>
                                             </a>
                                         </div>
                                     </div>
@@ -103,7 +103,7 @@ class Settings extends Component {
                                     <div className='col-2 text-center'><i className='fa fa-globe'></i></div>
                                     <div className='col-10 text-left'>
                                         <a href='#' onClick={() => { this.props.onShowMap(); }} data-scroll>
-                                            <div className='span-text'>buy data</div>
+                                            <div className='text-xs text-black'>buy data</div>
                                         </a>
                                     </div>
                                 </div>
@@ -113,7 +113,7 @@ class Settings extends Component {
                                     <div className='col-2 text-center'><i className='fa fa-plus'></i></div>
                                     <div className='col-10 text-left'>
                                         <a href='#' onClick={() => { this.props.onAddAccount(); }} data-scroll>
-                                            <div className='span-text'>add account</div>
+                                            <div className='text-xs text-black'>add account</div>
                                         </a>
                                     </div>
                                 </div>
@@ -123,7 +123,7 @@ class Settings extends Component {
                                     <div className='col-2 text-center'><i className='fa fa-sign-out'></i></div>
                                     <div className='col-10 text-left'>
                                         <a href='#' onClick={() => { this.props.onLogout(); }} data-scroll>
-                                            <div className='span-text'>logout</div>
+                                            <div className='text-xs text-black'>logout</div>
                                         </a>
                                     </div>
                                 </div>
