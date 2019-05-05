@@ -38,7 +38,7 @@ class Settings extends Component {
 
     render() {
         return (
-            <div className='modal container'>
+            <div className='modal'>
                 <div id='sidebar-wrapper'>
                     <nav id='spy'>
                         <ul className='sidebar-nav nav'>

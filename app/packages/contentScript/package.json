@@ -1,11 +1,11 @@
 {
-  "name": "@pegasus/contentScript",
+  "name": "@pegasus/contentscript",
   "main": "index.js",
   "author": "Alle <alle.manfredi@gmail.com>",
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "build": "webpack --config ../../webpack.config.js --progress --colors -o ../../dist/contentScript.js",
+    "build": "webpack --config ../../webpack.config.js --progress --colors -o ../../dist/contentscript.js",
     "lint": "npx eslint . --fix"
   },
   "dependencies": {

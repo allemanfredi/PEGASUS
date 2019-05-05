@@ -1,11 +1,11 @@
 {
-  "name": "@pegasus/pageHook",
+  "name": "@pegasus/hook",
   "main": "index.js",
   "author": "Alle <alle.manfredi@gmail.com>",
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "build": "webpack --config ../../webpack.config.js --progress --colors -o ../../dist/pageHook.js",
+    "build": "webpack --config ../../webpack.config.js --progress --colors -o ../../dist/hook.js",
     "lint": "npx eslint . --fix"
   },
   "dependencies": {

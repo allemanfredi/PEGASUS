@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Pegasus",
-    "description": "data marketplace",
+    "description": "IOTA wallet in the browser",
     "version": "0.0.1",
     "content_security_policy": "script-src 'self' 'unsafe-eval' 'sha256-GgRxrVOKNdB4LrRsVPDSbzvfdV4UqglmviH9GoBJ5jk=' 'sha256-IThiKMnsg0UHaLmP7sJxZpd/ohvINImwjxFJyxGFSlk='; object-src 'self'",
     "browser_action": {
@@ -20,7 +20,7 @@
     },
     "background": {
         "scripts": [
-            "dist/backgroundScript.js"
+            "dist/background.js"
         ],
         "persistent": true
     },
@@ -32,13 +32,13 @@
                 "https://*/*"
             ],
             "js": [
-                "dist/contentScript.js"
+                "dist/contentscript.js"
             ],
             "run_at": "document_start",
             "all_frames": false
         }
     ],
     "web_accessible_resources": [
-        "dist/pageHook.js"
+        "dist/hook.js"
     ]
 }

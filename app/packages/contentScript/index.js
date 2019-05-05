@@ -34,7 +34,7 @@ const contentScript = {
         const injectionSite = (document.head || document.documentElement);
         const container = document.createElement('script');
 
-        container.src = extensionizer.extension.getURL('dist/pageHook.js');
+        container.src = extensionizer.extension.getURL('dist/hook.js');
         container.onload = function() {
             this.parentNode.removeChild(this);
         };

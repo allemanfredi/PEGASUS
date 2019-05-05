@@ -1,5 +1,5 @@
 {
-  "name": "@pegasus/backgroundScript",
+  "name": "@pegasus/background",
   "main": "index.js",
   "author": "Alle <alle.manfredi@gmail.com>",
   "private": true,
@@ -14,7 +14,7 @@
     "@iota/http-client": "^1.0.0-beta.8"
   },
   "scripts": {
-    "build": "webpack --config ../../webpack.config.js --progress --colors -o ../../dist/backgroundScript.js",
+    "build": "webpack --config ../../webpack.config.js --progress --colors -o ../../dist/background.js",
     "lint": "npx eslint . --fix"
   },
   "devDependencies": {

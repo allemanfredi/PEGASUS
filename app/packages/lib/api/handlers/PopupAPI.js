@@ -94,8 +94,8 @@ export default {
         return this.duplex.send('getPayments');
     },
 
-    pushPayments(payment,isPopup){
-        return this.duplex.send('pushPayment',{payment,isPopup});
+    pushPayment(payment){
+        return this.duplex.send('pushPayment',payment);
     },
     
     rejectPayment(payment){

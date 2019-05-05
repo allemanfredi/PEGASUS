@@ -3,6 +3,7 @@ import EventEmitter from 'eventemitter3';
 import extensionizer from 'extensionizer';
 import Utils from '@pegasus/lib/utils';
 
+
 import { BackgroundAPI } from '@pegasus/lib/api';
 import {APP_STATE} from '@pegasus/lib/states';
 
@@ -91,6 +92,12 @@ class Wallet extends EventEmitter {
             const options = JSON.parse(localStorage.getItem('options'));
             options.network = network;
             localStorage.setItem('options', JSON.stringify(options));
+
+            //change pagehook
+            const account = this.getCurrentAccount();
+            this.emit('setProvider', network.provider);
+            this.emit('setAddress', account.data.latestAddress);
+
             return;
         }catch(e) {
             throw new Error(err);
@@ -133,6 +140,10 @@ class Wallet extends EventEmitter {
         try{
             const data = JSON.parse(localStorage.getItem('data'));
             data[ network.type ].push(obj);
+            
+            const network = this.getCurrentNetwork();
+            this.emit('setProvider', network.provider);
+            this.emit('setAddress', account.data.latestAddress);
 
             localStorage.setItem('data', JSON.stringify(data));
             return obj;
@@ -177,8 +188,13 @@ class Wallet extends EventEmitter {
         try{
             const data = JSON.parse(localStorage.getItem('data'));
             data[ network.type ].forEach(account => {
-                if ( account.id === currentAccount.id)
+                if ( account.id === currentAccount.id){
                     account.current = true;
+                    
+                    const network = this.getCurrentNetwork();
+                    this.emit('setProvider', network.provider);
+                    this.emit('setAddress', account.data.latestAddress);
+                }
             });
 
             localStorage.setItem('data', JSON.stringify(data));
@@ -421,7 +437,7 @@ class Wallet extends EventEmitter {
         return state;
     }
 
-    pushPayment(payment, uuid, callback){
+    pushPayment(payment,uuid,callback){
         
         const currentState = this.getState();
         if ( currentState != APP_STATE.WALLET_LOCKED ){
@@ -437,7 +453,7 @@ class Wallet extends EventEmitter {
         }
         
         this.payments.push(obj);
-        if (!this.popup){
+        if (!this.popup && !payment.isPopup){
             this.openPopup();
         }
         

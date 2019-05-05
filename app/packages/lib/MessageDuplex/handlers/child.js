@@ -23,7 +23,7 @@ class MessageDuplexChild extends EventEmitter {
     }
 
     connectToHost() {
-        this.channel = extensionizer.runtime.connect(/*this.extensionID, */{
+        this.channel = extensionizer.runtime.connect({
             name: this.type
         });
 
@@ -114,9 +114,11 @@ class MessageDuplexChild extends EventEmitter {
     }
 
     send(action, data, requiresAck = true) {
+
         const { governor } = this;
 
         if(!governor.isConnected && !governor.hasTimedOut) {
+            
             return new Promise((resolve, reject) => governor.queue.push({
                 action,
                 data,

@@ -83,7 +83,6 @@ const pageHook = {
         const callback = args[1];
         if ( callback === undefined ){
             throw new Error("not callback provided");
-            return;
         }
 
         args = [args[0]];

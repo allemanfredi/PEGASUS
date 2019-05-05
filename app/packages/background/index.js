@@ -1,6 +1,8 @@
 import MessageDuplex from '@pegasus/lib/MessageDuplex';
 import WalletService from './services/WalletService';
 import Utils from '@pegasus/lib/utils';
+import randomUUID from 'uuid/v4';
+
 
 import { BackgroundAPI } from '@pegasus/lib/api';
 import {APP_STATE} from '@pegasus/lib/states';
@@ -54,7 +56,11 @@ const backgroundScript = {
         duplex.on('setState', this.walletService.setState);
 
         duplex.on('getPayments', this.walletService.getPayments);
-        duplex.on('pushPayment', this.walletService.pushPayment);
+        duplex.on('pushPayment', ({ hostname , data , resolve , reject }) => {
+            
+            const uuid = randomUUID();
+            this.walletService.pushPayment(data,uuid,resolve);
+        });
         duplex.on('rejectAllPayments', this.walletService.rejectAllPayments);
         duplex.on('rejectPayment', this.walletService.rejectPayment);
         duplex.on('confirmPayment', this.walletService.confirmPayment);
@@ -90,6 +96,9 @@ const backgroundScript = {
                 } 
 
                 case 'prepareTransfer': {
+
+                    // in order to not open extensionizer popup
+                    data['isPopup'] = false;
                     this.walletService.pushPayment(data,uuid,resolve);
                     break;
                 }

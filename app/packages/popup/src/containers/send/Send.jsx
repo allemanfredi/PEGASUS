@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { prepareTransfer } from '../../core/core';
-import { getKey, getCurrentNetwork } from '../../wallet/wallet';
-import { aes256decrypt } from '../../utils/crypto';
+
+import randomUUID from 'uuid/v4';
+
 
 import Loader from '../../components/loader/Loader';
 import Alert from '../../components/alert/Alert';
@@ -45,10 +45,12 @@ class Send extends Component {
         }];
         const data = {
             args : [
-                transfer
-            ]
+                transfer,
+            ],
+            isPopup:true
         };
-        await PopupAPI.pushPayments(data,true);
+        
+        const func = PopupAPI.pushPayment(data);
         this.props.onAskConfirm();
     }
 

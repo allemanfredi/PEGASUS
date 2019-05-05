@@ -26,6 +26,7 @@ class Confirm extends Component {
     }
 
     async reject(payment){
+
         await PopupAPI.rejectPayment(payment);
         const payments = await PopupAPI.getPayments();
         this.setState({payments});
@@ -41,6 +42,9 @@ class Confirm extends Component {
     }
     setConfirmationError(error){
         this.setState({error});
+    }
+    setConfirmationCallback(callback){
+        this.setState({callback});
     }
 
     async confirm(payment){

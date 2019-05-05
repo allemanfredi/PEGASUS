@@ -131,8 +131,6 @@ class MessageDuplexHost extends EventEmitter {
         if(!this.channels.has(target))
             return;
 
-        // return Promise.reject('Target channel does not exist');
-
         if(!requiresAck) {
             return this.channels.get(target).forEach(({ channel }) => (
                 channel.postMessage({ action, data, noAck: true })
