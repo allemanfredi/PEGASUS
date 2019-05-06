@@ -49,7 +49,7 @@ class Wallet extends EventEmitter {
         }
     };
 
-    storePsw(psw){
+    storePassword(psw){
         const hash = Utils.sha256(psw);
         try{
             this.password = psw;
@@ -66,7 +66,7 @@ class Wallet extends EventEmitter {
         this.password = password;
     }
 
-    checkPsw(psw){
+    checkPassword(psw){
         const hash = Utils.sha256(psw);
         try{
             let pswToCompare;

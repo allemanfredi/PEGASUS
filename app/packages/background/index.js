@@ -29,9 +29,9 @@ const backgroundScript = {
         //Wallet Service
         duplex.on('isWalletSetup', this.walletService.isWalletSetup);
         duplex.on('setupWallet', this.walletService.setupWallet);
-        duplex.on('checkPsw', this.walletService.checkPsw);
+        duplex.on('checkPassword', this.walletService.checkPassword);
         duplex.on('getKey', this.walletService.getKey);
-        duplex.on('storePsw', this.walletService.storePsw);
+        duplex.on('storePassword', this.walletService.storePassword);
         duplex.on('setPassword', this.walletService.setPassword);
 
         duplex.on('setCurrentNetwork', this.walletService.setCurrentNetwork);

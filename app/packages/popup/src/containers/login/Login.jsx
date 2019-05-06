@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { checkPsw } from '../../wallet/wallet';
+import { checkPassword } from '../../wallet/wallet';
 
 import { PopupAPI } from '@pegasus/lib/api';
 import Utils from '@pegasus/lib/utils';
@@ -14,21 +14,26 @@ class InitPsw extends Component {
         this.state = {
             psw: '',
             error: '',
+            shake : false
         };
     }
 
     async clickLogin() {
-        const canAccess = await PopupAPI.checkPsw(this.state.psw)
+        this.setState({shake:false});
+        
+        const canAccess = await PopupAPI.checkPassword(this.state.psw)
         if ( canAccess ){
             PopupAPI.setPassword(this.state.psw);
             PopupAPI.startSession();
             this.props.onSuccess();
+        }else{
+            this.setState({shake:true});
         }
     }
 
     render() {
         return (
-            <div className='container'>
+            <div className={this.state.shake ? 'container shake' : 'container'}>
                 <div className='container-logo-login mt-5'>
                     <img src='./material/logo/pegasus-128.png' height='80' width='80' alt='pegasus logo'/>
                 </div>

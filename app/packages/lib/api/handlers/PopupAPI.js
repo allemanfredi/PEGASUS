@@ -11,16 +11,16 @@ export default {
         return this.duplex.send('setupWallet');
     },
 
-    storePsw(psw) {
-        return this.duplex.send('storePsw', psw);
+    storePassword(psw) {
+        return this.duplex.send('storePassword', psw);
     },
 
     setPassword(psw) {
         return this.duplex.send('setPassword', psw);
     },
 
-    checkPsw(psw) {
-        return this.duplex.send('checkPsw', psw);
+    checkPassword(psw) {
+        return this.duplex.send('checkPassword', psw);
     },
 
     getKey() {

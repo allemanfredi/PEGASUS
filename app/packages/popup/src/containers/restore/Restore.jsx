@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { isSeedValid, checkPsw, resetData } from '../../wallet/wallet';
+import { isSeedValid, checkPassword, resetData } from '../../wallet/wallet';
 import { getAccountData } from '../../core/core';
 import { aes256encrypt, sha256 } from '../../utils/crypto';
 import { addAccount, setCurrentNetwork } from '../../wallet/wallet';

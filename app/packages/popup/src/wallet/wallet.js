@@ -23,7 +23,7 @@ const setupWallet = () => {
     }
 };
 
-const storePsw = (psw) => {
+const storePassword = (psw) => {
     const hash = sha256(psw);
     try{
         localStorage.setItem('hpsw', hash);
@@ -36,7 +36,7 @@ const storePsw = (psw) => {
     }
 };
 
-const checkPsw = (psw) => {
+const checkPassword = (psw) => {
     const hash = sha256(psw);
     try{
         let pswToCompare;
@@ -324,10 +324,10 @@ const getChannels = async network => {
 };
 
 export { isWalletSetup,
-    storePsw,
+    storePassword,
     addAccount,
     setupWallet,
-    checkPsw,
+    checkPassword,
     generateSeed,
     getCurrentAccount,
     getKey,

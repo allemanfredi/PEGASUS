@@ -100,7 +100,7 @@ class Init extends Component {
             try{
                 if ( await PopupAPI.setupWallet() ) {
                     //store the psw
-                    PopupAPI.storePsw(this.state.psw);
+                    PopupAPI.storePassword(this.state.psw);
 
                     const promisedSeed = await PopupAPI.generateSeed()
                     const seed = promisedSeed.toString().replace(/,/g, '');
