@@ -15,6 +15,10 @@ export default {
         return this.duplex.send('storePsw', psw);
     },
 
+    setPassword(psw) {
+        return this.duplex.send('setPassword', psw);
+    },
+
     checkPsw(psw) {
         return this.duplex.send('checkPsw', psw);
     },

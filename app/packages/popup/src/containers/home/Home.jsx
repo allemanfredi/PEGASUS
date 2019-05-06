@@ -67,8 +67,8 @@ class Home extends Component {
             const account = await PopupAPI.getCurrentAccount(network);
 
             const key = await PopupAPI.getKey();
+            console.log("kedu " + key);
             const dseed = Utils.aes256decrypt(account.seed, key);
-            console.log(dseed);
             this.setState({ decryptedSeed: dseed });
 
             //check account data after 40 seconds in order to receive the transaction
@@ -95,9 +95,7 @@ class Home extends Component {
         let account = await PopupAPI.getCurrentAccount(network);
         if (Object.entries(account.data).length === 0 && account.data.constructor === Object ) { //can happens only for the first switch when the wallet is generated on the mainnet and the user switch to the testnet
             const key = await PopupAPI.getKey();
-            console.log(key);
             const dseed = Utils.aes256decrypt(account.seed, key);
-            console.log(dseed);
 
             this.setState({ decryptedSeed: dseed });
             account.data = await getAccountData(dseed);

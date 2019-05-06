@@ -32,6 +32,7 @@ const backgroundScript = {
         duplex.on('checkPsw', this.walletService.checkPsw);
         duplex.on('getKey', this.walletService.getKey);
         duplex.on('storePsw', this.walletService.storePsw);
+        duplex.on('setPassword', this.walletService.setPassword);
 
         duplex.on('setCurrentNetwork', this.walletService.setCurrentNetwork);
         duplex.on('getCurrentNetwork', this.walletService.getCurrentNetwork);
@@ -57,7 +58,6 @@ const backgroundScript = {
 
         duplex.on('getPayments', this.walletService.getPayments);
         duplex.on('pushPayment', ({ hostname , data , resolve , reject }) => {
-            
             const uuid = randomUUID();
             this.walletService.pushPayment(data,uuid,resolve);
         });

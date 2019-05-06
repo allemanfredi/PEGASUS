@@ -17,6 +17,7 @@ class Wallet extends EventEmitter {
 
         this.popup = false;
         this.payments = [];
+        this.password = false;
 
         this.selectedProvider = ''
 
@@ -51,6 +52,7 @@ class Wallet extends EventEmitter {
     storePsw(psw){
         const hash = Utils.sha256(psw);
         try{
+            this.password = psw;
             localStorage.setItem('hpsw', hash);
             return true;
         }
@@ -58,6 +60,10 @@ class Wallet extends EventEmitter {
             console.log(err);
             return false;
         }
+    }
+
+    setPassword(password){
+        this.password = password;
     }
 
     checkPsw(psw){
@@ -77,13 +83,7 @@ class Wallet extends EventEmitter {
     }
 
     getKey(){
-        try{
-            const key = localStorage.getItem('hpsw');
-            return key;
-        }
-        catch(err) {
-            throw new Error(err);
-        } 
+        return this.password;
     }
 
     //return the account with current = true and the reletated network
@@ -94,12 +94,12 @@ class Wallet extends EventEmitter {
             localStorage.setItem('options', JSON.stringify(options));
 
             //change pagehook
-            const account = this.getCurrentAccount();
+            /*const account = this.getCurrentAccount(network);
             this.emit('setProvider', network.provider);
-            this.emit('setAddress', account.data.latestAddress);
+            this.emit('setAddress', account.data.latestAddress);*/
 
             return;
-        }catch(e) {
+        }catch(err) {
             throw new Error(err);
         }
     }
@@ -141,9 +141,9 @@ class Wallet extends EventEmitter {
             const data = JSON.parse(localStorage.getItem('data'));
             data[ network.type ].push(obj);
             
-            const network = this.getCurrentNetwork();
+            /*const network = this.getCurrentNetwork();
             this.emit('setProvider', network.provider);
-            this.emit('setAddress', account.data.latestAddress);
+            this.emit('setAddress', account.data.latestAddress);*/
 
             localStorage.setItem('data', JSON.stringify(data));
             return obj;
@@ -191,9 +191,9 @@ class Wallet extends EventEmitter {
                 if ( account.id === currentAccount.id){
                     account.current = true;
                     
-                    const network = this.getCurrentNetwork();
+                    /*const network = this.getCurrentNetwork();
                     this.emit('setProvider', network.provider);
-                    this.emit('setAddress', account.data.latestAddress);
+                    this.emit('setAddress', account.data.latestAddress);*/
                 }
             });
 
@@ -332,6 +332,11 @@ class Wallet extends EventEmitter {
             if ( currentState == APP_STATE.WALLET_TRANSFERS_IN_QUEUE ){
                 return;
             }
+            
+            if ( !this.password ){
+                this.setState(APP_STATE.WALLET_LOCKED);
+                return;
+            }
 
             const time = localStorage.getItem('session');
             if ( time ){
@@ -343,7 +348,7 @@ class Wallet extends EventEmitter {
                 }
                 this.setState(APP_STATE.WALLET_UNLOCKED);
                 return;
-            }
+            }else this.password = false;
 
             if ( currentState <= APP_STATE.WALLET_INITIALIZED ){
                 return
@@ -363,6 +368,7 @@ class Wallet extends EventEmitter {
         try{
             localStorage.removeItem('session');
             this.setState(APP_STATE.WALLET_LOCKED);
+            this.password = false;
             return true;
         }
         catch(err) {
@@ -475,6 +481,7 @@ class Wallet extends EventEmitter {
         const key = this.getKey();
         const account = this.getCurrentAccount(network);
         const seed = Utils.aes256decrypt(account.seed, key);
+        console.log("ssed " +  seed);
 
         const depth = 3;
         const minWeightMagnitude = network.difficulty;

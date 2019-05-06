@@ -52,7 +52,7 @@ const pageHook = {
 
     _bindEvents() {
         this.eventChannel.on('setAddress', address => (
-            this.setAddress(address)
+            console.log(address)
         ));
 
         this.eventChannel.on('setProvider', provider => (

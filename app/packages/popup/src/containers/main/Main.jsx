@@ -37,7 +37,6 @@ class Main extends Component {
 
         await PopupAPI.checkSession();
         const state = await PopupAPI.getState();
-        console.log(state);
 
         if ( state >= APP_STATE.WALLET_LOCKED  ){
             const network = await PopupAPI.getCurrentNetwork();
