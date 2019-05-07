@@ -545,12 +545,14 @@ class Wallet extends EventEmitter {
         const callback = this.payments.filter( obj => rejectedPayment.uuid === obj.uuid )[0].callback;
         this.payments = this.payments.filter( payment => payment.uuid !== rejectedPayment.uuid);
 
-        callback({
-            data:"Transaction has been rejected",
-            success : false,
-            uuid: rejectedPayment.uuid
-        });
-
+        if ( callback ){
+            callback({
+                data:"Transaction has been rejected",
+                success : false,
+                uuid: rejectedPayment.uuid
+            });
+        }
+        
         if ( this.payments.length === 0 ){
             this.setState(APP_STATE.WALLET_UNLOCKED);
             this.closePopup();
