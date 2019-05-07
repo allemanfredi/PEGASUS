@@ -13,6 +13,7 @@ class EventChannel extends EventEmitter {
 
     _registerEventListener() {
         window.addEventListener('message', ({ data: { isPegasus = false, message, source } }) => {
+
             if(!isPegasus || (!message && !source))
                 return;
 

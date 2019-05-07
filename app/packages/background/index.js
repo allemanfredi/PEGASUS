@@ -120,6 +120,14 @@ const backgroundScript = {
         this.walletService.on('setConfirmationError', error => (
             BackgroundAPI.setConfirmationError(error)
         ));
+
+        this.walletService.on('setAddress', address => (
+            BackgroundAPI.setAddress(address)
+        ));
+
+        this.walletService.on('setProvider', provider => (
+            BackgroundAPI.setProvider(provider)
+        ));
     }
 };
 

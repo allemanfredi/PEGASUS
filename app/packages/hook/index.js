@@ -13,19 +13,17 @@ const pageHook = {
         this._bindEvents();
         
         this.request('init').then(({ selectedAddress, selectedProvider }) => {
+
             if(selectedAddress){
                 this.setAddress(selectedAddress);
-                this.selectedAddress = selectedAddress;
             }
-            
             if(selectedProvider){
                 this.setProvider(selectedProvider);
             }
 
-            console.log(selectedProvider);
             console.log('Pegasus initiated');
         }).catch(err => {
-            console.log('Failed to initialise iotaJs', err);
+            console.log('Failed to initialise Pegasus', err);
         });
     },
 
@@ -52,7 +50,7 @@ const pageHook = {
 
     _bindEvents() {
         this.eventChannel.on('setAddress', address => (
-            console.log(address)
+            this.setAddress(address)
         ));
 
         this.eventChannel.on('setProvider', provider => (

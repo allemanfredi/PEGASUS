@@ -14,6 +14,21 @@ export default {
 
     setConfirmationError(error){
         this.duplex.send('popup', 'setConfirmationError', error , false);
+    },
+
+    setAddress(address){
+        this.duplex.send('tab', 'tunnel', {
+            action: 'setAddress',
+            data: address
+        }, false);
+    },
+
+    setProvider(provider){
+        this.duplex.send('tab', 'tunnel', {
+            action: 'setProvider',
+            data: provider
+        }, false);
     }
+
 
 };

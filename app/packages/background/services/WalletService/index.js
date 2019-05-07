@@ -21,7 +21,7 @@ class Wallet extends EventEmitter {
 
         this.selectedProvider = ''
 
-        this.setState(APP_STATE.WALLET_NOT_INITIALIZED);
+        this.checkSession();
     }
 
     isWalletSetup(){
@@ -94,9 +94,9 @@ class Wallet extends EventEmitter {
             localStorage.setItem('options', JSON.stringify(options));
 
             //change pagehook
-            /*const account = this.getCurrentAccount(network);
+            const account = this.getCurrentAccount(network);
             this.emit('setProvider', network.provider);
-            this.emit('setAddress', account.data.latestAddress);*/
+            this.emit('setAddress', account.data.latestAddress);
 
             return;
         }catch(err) {
@@ -141,9 +141,9 @@ class Wallet extends EventEmitter {
             const data = JSON.parse(localStorage.getItem('data'));
             data[ network.type ].push(obj);
             
-            /*const network = this.getCurrentNetwork();
+            const network = this.getCurrentNetwork();
             this.emit('setProvider', network.provider);
-            this.emit('setAddress', account.data.latestAddress);*/
+            this.emit('setAddress', account.data.latestAddress);
 
             localStorage.setItem('data', JSON.stringify(data));
             return obj;
@@ -191,9 +191,9 @@ class Wallet extends EventEmitter {
                 if ( account.id === currentAccount.id){
                     account.current = true;
                     
-                    /*const network = this.getCurrentNetwork();
+                    const network = this.getCurrentNetwork();
                     this.emit('setProvider', network.provider);
-                    this.emit('setAddress', account.data.latestAddress);*/
+                    this.emit('setAddress', account.data.latestAddress);
                 }
             });
 
@@ -333,6 +333,11 @@ class Wallet extends EventEmitter {
                 return;
             }
             
+            if ( !this.password && !this.isWalletSetup()){
+                this.setState(APP_STATE.WALLET_NOT_INITIALIZED);
+                return;
+            }
+
             if ( !this.password ){
                 this.setState(APP_STATE.WALLET_LOCKED);
                 return;
@@ -481,7 +486,6 @@ class Wallet extends EventEmitter {
         const key = this.getKey();
         const account = this.getCurrentAccount(network);
         const seed = Utils.aes256decrypt(account.seed, key);
-        console.log("ssed " +  seed);
 
         const depth = 3;
         const minWeightMagnitude = network.difficulty;
