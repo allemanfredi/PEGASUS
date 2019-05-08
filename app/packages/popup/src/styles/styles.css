@@ -48,6 +48,16 @@
     position: relative;
 }
 
+.container-letter{
+    height: 33px;
+}
+.container-letter:hover{
+    color: darkblue;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
 .container-center-absolute{
     margin: 0;
     background : #fff;
@@ -57,6 +67,15 @@
     margin-right: -50%;
     transform: translate(-50%, -50%)
 }
+
+.container-menu-init {
+    bottom: 0px;
+    position: absolute;
+    width: 100%;
+}
+
+
+
 
 .modal {
     position: fixed;
@@ -153,7 +172,11 @@ input#inp-edit {
     width: 100%;
     cursor: pointer;
 }
-.btn-blue:hover{
+.btn-light-blue{
+    background: lightskyblue;
+    color: #fff;
+    width: 100%;
+    cursor: pointer;
 }
 
 .btn-white{
@@ -282,6 +305,9 @@ input#inp-edit {
 }
 .text-gray{
     color: lightgrey;
+}
+.text-red{
+    color: red;
 }
 
 .text-underline{
