@@ -8,6 +8,7 @@ import { BackgroundAPI } from '@pegasus/lib/api';
 import {APP_STATE} from '@pegasus/lib/states';
 
 import { composeAPI } from '@iota/core';
+import { getAccountData } from '../../../popup/src/core/core';
 
 
 class Wallet extends EventEmitter {
@@ -500,6 +501,9 @@ class Wallet extends EventEmitter {
                     BackgroundAPI.setPayments(this.payments);
                     this.setState(APP_STATE.WALLET_UNLOCKED);
 
+                    //since every transaction is generated a new address, it's necessary to modify the hook
+                    const data = iota.getAccountData(seed).then( data =>  BackgroundAPI.setAddress(data.latestAddress));
+                   
                     BackgroundAPI.setConfirmationLoading(false);
                     callback({data:bundle,success:true,uuid: payment.uuid});
                 })

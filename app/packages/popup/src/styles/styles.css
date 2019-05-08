@@ -487,6 +487,7 @@ header{
     flex-direction: column;
     flex: 1;
     overflow-y: auto;
+    overflow-x: hidden;
     height: 230px;
     padding-right: 5px;
     padding-left: 5px;
