@@ -42,6 +42,7 @@ const backgroundScript = {
         duplex.on('getAllAccounts', this.walletService.getAllAccounts);
         duplex.on('setCurrentAccount', this.walletService.setCurrentAccount);
         duplex.on('updateDataAccount', this.walletService.updateDataAccount);
+        duplex.on('updateNameAccount', this.walletService.updateNameAccount);
         duplex.on('deleteAccount', this.walletService.deleteAccount);
 
         duplex.on('resetData', this.walletService.resetData);

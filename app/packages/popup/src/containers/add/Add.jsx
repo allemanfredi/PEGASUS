@@ -229,7 +229,7 @@ class Add extends Component {
                                 </div>
                                 <div className='col-6 text-center padding-0'>
                                     <button disabled={this.state.initialization[ 0 ] ? (this.state.name.length > 0 ? false : true ) :
-                                        this.state.initialization[ 2 ] ? (this.state.randomLetters === 0 ? false : true) : ''}
+                                                      this.state.initialization[ 1 ] ? (this.state.randomLetters === 0 ? false : true) : ''}
                                     onClick={this.goOn}
                                     type='submit'
                                     className='btn btn-menu-init-option'

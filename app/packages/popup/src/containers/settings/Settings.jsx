@@ -5,17 +5,19 @@ import Utils from '@pegasus/lib/utils';
 import { PopupAPI } from '@pegasus/lib/api';
 
 
-import './Settings.css';
-
 class Settings extends Component {
     constructor(props, context) {
         super(props, context);
 
         this.switchAccount = this.switchAccount.bind(this);
         this.updateData = this.updateData.bind(this);
+        this.handleClick = this.handleClick.bind(this);
+        this.onChangeName = this.onChangeName.bind(this);
 
         this.state = {
-            accounts: []
+            accounts: [],
+            showEdit : false,
+            editedName : this.props.currentAccount.name
         };
     }
 
@@ -36,10 +38,22 @@ class Settings extends Component {
         this.setState({ accounts });
     }
 
+    handleClick(e){
+        if ( !this.edit.contains(e.target)){
+            this.setState({showEdit:false});
+        }
+    }
+
+    onChangeName(e){
+        this.setState({editedName:e.target.value});
+        this.props.onChangeName(e.target.value);
+    }
+
+
     render() {
         return (
             <div className='modal'>
-                <div id='sidebar-wrapper'>
+                <div onClick={this.handleClick} id='sidebar-wrapper'>
                     <nav id='spy'>
                         <ul className='sidebar-nav nav'>
 
@@ -60,12 +74,17 @@ class Settings extends Component {
                                 </div>
 
                                 <div className='row mt-3'>
-                                    <div onClick={() => { this.props.onShowEdit(); }} className='col-12 text-center text-sm cursor-pointer'>
-                                        {this.props.currentAccount.name}
-                                        {/*<div onClick={() => { this.props.onShowEdit(); }}className='current-account'>
-                                            {this.props.currentAccount.name}
-                                        </div>*/}
+                                    <div className="col-2"></div>
+                                    <div ref={ edit => this.edit = edit} onClick={() => this.setState({showEdit:true})} className='col-8 text-center text-sm cursor-text'>
+                                        {this.state.showEdit ? 
+                                            <label htmlFor='inp-edit' className='inp'>
+                                                <input  onChange={this.onChangeName} 
+                                                        value={this.state.editedName} autoFocus type='text' id='inp-edit'/>
+                                            </label> 
+                                        : this.props.currentAccount.name }
+                                        
                                     </div>
+                                    <div className="col-2"></div>
                                 </div>
                                 <div className='row mt-1'>
                                     <div className="col-2"></div>
@@ -84,7 +103,7 @@ class Settings extends Component {
                                 </div>
                             </li>
 
-                            {this.state.accounts.map( account => {
+                            { this.state.accounts.map( account => {
                                 return (<li className='sidebar-brand'>
                                     <div className='row'>
                                         <div className='col-2'><i className='fa fa-user'></i></div>
@@ -98,7 +117,7 @@ class Settings extends Component {
                             })}
 
                             <hr/>
-                            <li className='sidebar-brand-logout'>
+                            <li className='sidebar-brand'>
                                 <div className='row'>
                                     <div className='col-2 text-center'><i className='fa fa-globe'></i></div>
                                     <div className='col-10 text-left'>
@@ -108,7 +127,7 @@ class Settings extends Component {
                                     </div>
                                 </div>
                             </li>
-                            <li className='sidebar-brand-add-account'>
+                            <li className='sidebar-brand'>
                                 <div className='row'>
                                     <div className='col-2 text-center'><i className='fa fa-plus'></i></div>
                                     <div className='col-10 text-left'>
@@ -118,7 +137,7 @@ class Settings extends Component {
                                     </div>
                                 </div>
                             </li>
-                            <li className='sidebar-brand-logout'>
+                            <li className='sidebar-brand'>
                                 <div className='row'>
                                     <div className='col-2 text-center'><i className='fa fa-sign-out'></i></div>
                                     <div className='col-10 text-left'>

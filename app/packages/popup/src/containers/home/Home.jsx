@@ -5,7 +5,6 @@ import Receive from '../receive/Receive';
 import Settings from '../settings/Settings';
 import Transactions from '../transactions/Transactions';
 import Add from '../add/Add';
-import Edit from '../edit/Edit';
 import Interact from '../marketplace/interact/Interact';
 
 import Loader from '../../components/loader/Loader';
@@ -32,8 +31,6 @@ class Home extends Component {
         this.onSwitchAccount = this.onSwitchAccount.bind(this);
         this.onAddAccount = this.onAddAccount.bind(this);
         this.onLogout = this.onLogout.bind(this);
-        this.onShowEdit = this.onShowEdit.bind(this);
-        this.onCloseEdit = this.onCloseEdit.bind(this);
         this.onChangeAccount = this.onChangeAccount.bind(this);
         this.onChangeName = this.onChangeName.bind(this);
         this.onDeleteAccount = this.onDeleteAccount.bind(this);
@@ -55,7 +52,6 @@ class Home extends Component {
             showSettings: false,
             showInteract: false,
             showAdd: false,
-            showEdit: false,
             interval: {},
         };
     }
@@ -142,9 +138,8 @@ class Home extends Component {
 
     async onChangeName(newName) {
         //change the name of the current account
-        await PopupAPI.updateNameAccount(this.state.account, this.state.network, newName);
-        this.setState(prevState => ({ account: { ...prevState.account, name: newName } }));
-        this.setState({ showEdit: false });
+        const updateAccount = await PopupAPI.updateNameAccount(this.state.account, this.state.network, newName);
+        this.setState({account:updateAccount});
     }
 
     async onDeleteAccount() {
@@ -153,7 +148,6 @@ class Home extends Component {
 
         this.transactions.current.updateData();
 
-        this.setState({ showEdit: false });
         this.setState({ showSettings: false });
     }
 
@@ -186,9 +180,7 @@ class Home extends Component {
     }
 
     onClickSettings() { this.setState({ showSettings: true }); }
-
     onCloseSettings() { this.setState({ showSettings: false }); }
-
 
     onAddAccount() {
         clearInterval(this.state.interval);
@@ -209,10 +201,6 @@ class Home extends Component {
         this.props.onLogout();
     }
 
-    onShowEdit() { this.setState({ showEdit: true }); }
-
-    onCloseEdit() { this.setState({ showEdit: false }); }
-
     onClickMap() {
         clearInterval(this.state.interval);
         this.setState({ showHome: false });
@@ -226,15 +214,14 @@ class Home extends Component {
         return (
             <div>
                 <Navbar showBtnSettings={this.state.showHome}
-                    showBtnMarker={this.state.showHome}
-                    showBtnBack={!this.state.showHome}
-                    showBtnData={this.state.showInteract}
-                    text={this.state.showHome ? this.state.account.name : (this.state.showSend ? 'Send' : (this.state.showReceive ? 'Receive' : this.state.showAdd ? 'Add account' : (this.state.showInteract ? 'Buy data' : '')))}
-                    onClickSettings={this.onClickSettings}
-                    onClickMap={this.onClickMap}
-                    onClickShowData={this.onClickShowData}
-                    onBack={this.onBack}
-                >
+                        showBtnMarker={this.state.showHome}
+                        showBtnBack={!this.state.showHome}
+                        showBtnData={this.state.showInteract}
+                        text={this.state.showHome ? this.state.account.name : (this.state.showSend ? 'Send' : (this.state.showReceive ? 'Receive' : this.state.showAdd ? 'Add account' : (this.state.showInteract ? 'Buy data' : '')))}
+                        onClickSettings={this.onClickSettings}
+                        onClickMap={this.onClickMap}
+                        onClickShowData={this.onClickShowData}
+                        onBack={this.onBack}>
                 </Navbar>
 
                 { !(Object.keys(this.state.account).length === 0 && this.state.account.constructor === Object) ? ( //!
@@ -243,8 +230,8 @@ class Home extends Component {
                                                                 currentAccount={this.state.account}
                                                                 onAddAccount={this.onAddAccount}
                                                                 onSwitchAccount={this.onSwitchAccount}
+                                                                onChangeName={this.onChangeName}
                                                                 onShowMap={this.onClickMap}
-                                                                onShowEdit={this.onShowEdit}
                                                                 onLogout={this.onLogout}
                                                                 onClose={this.onCloseSettings}/> ) : ''}
 
@@ -257,11 +244,6 @@ class Home extends Component {
                                                                     network={this.state.network}
                                                                     account={this.state.account}/>) : ''}
 
-                        { this.state.showEdit ? ( <Edit account={this.state.account}
-                                                        network={this.state.network}
-                                                        onClose={this.onCloseEdit}
-                                                        onChangeName={this.onChangeName}
-                                                        onDeleteAccount={this.onDeleteAccount}/>) : ''}
 
                         { this.state.showHome ? (
                             <div>

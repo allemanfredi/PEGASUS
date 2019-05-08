@@ -60,7 +60,7 @@ class Send extends Component {
             <div className="container">
                 {!this.state.isLoading ?
                     <div>
-                        <div className='row'>
+                        <div className='row mt-4'>
                             <div className='col-12'>
                                 <label htmlFor='inp-address' className='inp'>
                                     <input value={this.state.dstAddress} onChange={e => this.setState({ dstAddress: e.target.value })} type='text' id='inp-address' placeholder='&nbsp;' />
@@ -70,7 +70,7 @@ class Send extends Component {
                             </div>
                         </div>
 
-                        <div className='row'>
+                        <div className='row mt-4'>
                             <div className='col-12'>
                                 <label htmlFor='inp-value' className='inp'>
                                     <input value={this.state.value} onChange={e => this.setState({ value: e.target.value })} type='text' id='inp-value' placeholder='&nbsp;' />
@@ -80,7 +80,7 @@ class Send extends Component {
                             </div>
                         </div>
 
-                        <div className='row'>
+                        <div className='row mt-4'>
                             <div className='col-12'>
                                 <label htmlFor='inp-message' className='inp'>
                                     <input value={this.state.message} onChange={e => this.setState({ message: e.target.value })} type='text' id='inp-message' placeholder='&nbsp;' />
@@ -90,7 +90,7 @@ class Send extends Component {
                             </div>
                         </div>
 
-                        <div className='row mt-5 '>
+                        <div className='row mt-6'>
                             <div className='col-12 text-center'>
                                 <button disabled={this.state.dstAddress === '' ? true : false} onClick={this.clickTransfer} className='btn btn-blue text-bold btn-big'>Send</button>
                             </div>

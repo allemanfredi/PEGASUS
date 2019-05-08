@@ -42,7 +42,7 @@ class InitPsw extends Component {
                 Pegasus
                     </div>
                 </div>
-                <div className='row mt-5'>
+                <div className='row mt-8'>
                     <div className='col-1'></div>
                     <div className='col-10'>
                         <label htmlFor='inp-psw ' className='inp'>
