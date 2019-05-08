@@ -3,7 +3,7 @@
   "main": "index.js",
   "author": "Alle <alle.manfredi@gmail.com>",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "dependencies": {
     "eventemitter3": "^3.1.0",
     "extensionizer": "^1.0.1",
