@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { getCurrentNetwork } from '../../wallet/wallet';
+import { PopupAPI } from '@pegasus/lib/api';
 
-import options from '../../options/options';
+import options from '@pegasus/lib/options';
 
 class Header extends Component {
     constructor(props, context) {
@@ -17,7 +17,7 @@ class Header extends Component {
     }
 
     async componentWillMount() {
-        const network = await getCurrentNetwork();
+        const network = await PopupAPI.getCurrentNetwork();
         this.setState({ network });
     }
 

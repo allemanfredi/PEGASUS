@@ -26,17 +26,11 @@ export default class Navbar extends Component {
                     <div className='col-8 text-center my-auto'>
                         <div className='text-white text-sm'>{this.props.text}</div>
                     </div>
-                    { this.props.showBtnMarker ?
-                        <div className='col-2'>
-                            <button onClick={() => this.props.onClickMap()} className='btn btn-icon'><i className='fa fa-map-marker'></i></button>
-                        </div>
-                        : ''}
-
-                    { this.props.showBtnData ?
-                        <div className='col-2'>
-                            <button onClick={() => this.props.onClickShowData()} className='btn btn-icon'><i className='fa fa-database'></i></button>
-                        </div>
-                        : ''}
+                    
+                    <div className='col-2'>
+                        <button onClick={() => this.props.onAccountDetails()} className='btn btn-icon'><i className='fa fa-ellipsis-h'></i></button>
+                    </div>
+                    
                 </div>
             </div>
         );

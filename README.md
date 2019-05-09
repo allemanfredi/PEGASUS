@@ -36,21 +36,6 @@ After having built the application, it needs to be loaded on chrome.
 * Click the Load unpacked extension button and select the build folder for your extension to install it.
 
 
-## Run Daemon
-
-
-```
-cd PEGASUS/daemon
-```
-
-```
-npm install
-```
-
-```
-node index.js deviceName latitude longitude price description
-```
-
 ## In development
 
 iotaJs injection. 

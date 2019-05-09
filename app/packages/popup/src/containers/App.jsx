@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
-import { iotaInit } from '../core/core';
-import Header from './header/Header';
-import Main from './main/Main';
-import options from '../options/options';
-
 import MessageDuplex from '@pegasus/lib/MessageDuplex';
 import { PopupAPI } from '@pegasus/lib/api';
+import IOTA from '@pegasus/lib/iota';
+
+
+import Header from './header/Header';
+import Main from './main/Main';
+import options from '@pegasus/lib/options';
+
+
 
 class App extends Component {
     constructor(props, context) {
@@ -33,14 +36,7 @@ class App extends Component {
 
         //check if the current network has been already set, if no => set to testnet (options[0])
         let network = await PopupAPI.getCurrentNetwork();
-        if ( Object.entries(network).length === 0 && network.constructor === Object ) {
-            network = options.network[ 0 ];
-            await PopupAPI.setCurrentNetwork(options.network[ 0 ]);
-            await iotaInit(options.network[ 0 ].provider);
-        }
-        else
-            await iotaInit(network.provider);
-        
+        IOTA.init(network.provider);
         this.setState({ network });
     }
 
@@ -53,8 +49,8 @@ class App extends Component {
     }
 
     async onHandleNetworkChanging(network) {
-        await iotaInit(network.provider);
-        await PopupAPI.setCurrentNetwork(network);
+        IOTA.changeProvider(network.provider);
+        PopupAPI.setCurrentNetwork(network);
 
         this.main.current.changeNetwork(network);
     }

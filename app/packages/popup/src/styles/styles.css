@@ -412,6 +412,10 @@ hr {
     display: flex
 }
 
+.no-border{
+    border-radius: 0px;
+}
+
 
 /*HEADERS*/
 header{

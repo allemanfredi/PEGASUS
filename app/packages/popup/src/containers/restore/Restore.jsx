@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { isSeedValid, checkPassword, resetData } from '../../wallet/wallet';
-import { getAccountData } from '../../core/core';
-import { aes256encrypt, sha256 } from '../../utils/crypto';
-import { addAccount, setCurrentNetwork } from '../../wallet/wallet';
+
+import IOTA from '@pegasus/lib/iota';
+import { PopupAPI } from '@pegasus/lib/api';
+import Utils from '@pegasus/lib/utils';
+
 
 import Loader from '../../components/loader/Loader';
 
@@ -11,30 +12,40 @@ class Restore extends Component {
         super(props, context);
 
         this.onClickRestore = this.onClickRestore.bind(this);
+        this.onChangeSeed = this.onChangeSeed.bind(this);
 
         this.state = {
             seed: '',
             psw: '',
-            isLoading: false
+            isLoading: false,
+            seedIsValid : true
         };
     }
 
     async onClickRestore() {
         this.setState({ isLoading: true });
-        await resetData();
-        const pswHash = sha256(this.state.psw);
-        const eseed = aes256encrypt(this.state.seed, pswHash);
-        const data = await getAccountData(this.state.seed);
+        await PopupAPI.resetData();
+        const pswHash = Utils.sha256(this.state.psw);
+        const eseed = Utils.aes256encrypt(this.state.seed, pswHash);
+        const data = await IOTA.getAccountData(this.state.seed);
         const account = {
             name: 'restored account',
             seed: eseed,
             data,
             network: this.props.network
         };
-        await addAccount(account);
-        await setCurrentNetwork(this.props.network);
+        await PopupAPI.addAccount(account);
+        await PopupAPI.setCurrentNetwork(this.props.network);
         this.setState({ isLoading: false });
         this.props.onSuccess();
+    }
+
+    onChangeSeed(e){
+        this.setState({seed : e.target.value});
+        const isValid = PopupAPI.isSeedValid(this.state.seed);
+        if ( isValid ){
+            this.setState({seedIsValid:true});
+        }else this.setState({seedIsValid:false});
     }
 
     render() {
@@ -45,7 +56,7 @@ class Restore extends Component {
                         <div className='col-1'></div>
                         <div className='col-10 text-center'>
                             <label htmlFor='inp-seed' className='inp '>
-                                <input onChange={e => { this.setState({ seed: e.target.value }); }} type='text' id='inp-seed' placeholder='&nbsp;'/>
+                                <input onChange={this.onChangeSeed} type='text' id='inp-seed' placeholder='&nbsp;'/>
                                 <span className='label'>seed</span>
                                 <span className='border'></span>
                             </label>
@@ -55,7 +66,7 @@ class Restore extends Component {
                     <div className='row mt-4'>
                         <div className='col-1'></div>
                         <div className='col-10 text-center'>
-                            <button disabled={isSeedValid(this.state.seed) ? false : true} onClick={this.onClickRestore} type='button' className='btn btn-blue text-bold btn-big'>Restore</button>
+                            <button disabled={ this.state.seedIsValid ? false : true} onClick={this.onClickRestore} type='button' className='btn btn-blue text-bold btn-big'>Restore</button>
                         </div>
                         <div className='col-1'></div>
                     </div>

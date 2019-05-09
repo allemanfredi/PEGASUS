@@ -1,7 +1,8 @@
 
 const options = {
     network: [
-        { name: 'nodes.thetangle.org',
+        { 
+            name: 'nodes.thetangle.org',
             provider: 'https://nodes.thetangle.org:443',
             link : 'https://thetangle.org/',
             id: 0,

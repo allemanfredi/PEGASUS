@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 
-import randomUUID from 'uuid/v4';
-
+import { PopupAPI } from '@pegasus/lib/api';
+import Utils from '@pegasus/lib/utils';
 
 import Loader from '../../components/loader/Loader';
 import Alert from '../../components/alert/Alert';
 
-import { PopupAPI } from '@pegasus/lib/api';
-import Utils from '@pegasus/lib/utils';
 
 class Send extends Component {
     constructor(props, context) {

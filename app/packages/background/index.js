@@ -3,7 +3,6 @@ import WalletService from './services/WalletService';
 import Utils from '@pegasus/lib/utils';
 import randomUUID from 'uuid/v4';
 
-
 import { BackgroundAPI } from '@pegasus/lib/api';
 import {APP_STATE} from '@pegasus/lib/states';
 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { getAccountData } from '../../core/core';
+import IOTA from '@pegasus/lib/iota';
 
 import Loader from '../../components/loader/Loader';
 
@@ -94,7 +94,7 @@ class Add extends Component {
             try{
                 const promisedSeed = await PopupAPI.generateSeed()
                 const seed = promisedSeed.toString().replace(/,/g, '');
-                const data = await getAccountData(seed);
+                const data = await  IOTA.getAccountData(seed);
                 const account = {
                     seed : seed,
                     name : this.state.name,

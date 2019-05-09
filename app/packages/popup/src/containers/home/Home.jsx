@@ -5,14 +5,13 @@ import Receive from '../receive/Receive';
 import Settings from '../settings/Settings';
 import Transactions from '../transactions/Transactions';
 import Add from '../add/Add';
-import Interact from '../marketplace/interact/Interact';
 
 import Loader from '../../components/loader/Loader';
 import Navbar from '../../components/navbar/Navbar';
 
 import { PopupAPI } from '@pegasus/lib/api';
 import Utils from '@pegasus/lib/utils';
-import { getAccountData } from '../../core/core';
+import IOTA from '@pegasus/lib/iota';
 
 
 class Home extends Component {
@@ -21,7 +20,6 @@ class Home extends Component {
 
         //transactions components
         this.transactions = React.createRef();
-        this.interact = React.createRef();
 
         this.onClickSend = this.onClickSend.bind(this);
         this.onClickSettings = this.onClickSettings.bind(this);
@@ -34,9 +32,7 @@ class Home extends Component {
         this.onChangeAccount = this.onChangeAccount.bind(this);
         this.onChangeName = this.onChangeName.bind(this);
         this.onDeleteAccount = this.onDeleteAccount.bind(this);
-        this.onClickMap = this.onClickMap.bind(this);
         this.onReload = this.onReload.bind(this);
-        this.onClickShowData = this.onClickShowData.bind(this);
         this.changeNetwork = this.changeNetwork.bind(this);
 
         this.state = {
@@ -50,7 +46,6 @@ class Home extends Component {
             showHome: true,
             showReceive: false,
             showSettings: false,
-            showInteract: false,
             showAdd: false,
             interval: {},
         };
@@ -61,9 +56,7 @@ class Home extends Component {
             const network = await PopupAPI.getCurrentNetwork();
             this.setState({ network });
             const account = await PopupAPI.getCurrentAccount(network);
-
             const key = await PopupAPI.getKey();
-            console.log("kedu " + key);
             const dseed = Utils.aes256decrypt(account.seed, key);
             this.setState({ decryptedSeed: dseed });
 
@@ -94,7 +87,7 @@ class Home extends Component {
             const dseed = Utils.aes256decrypt(account.seed, key);
 
             this.setState({ decryptedSeed: dseed });
-            account.data = await getAccountData(dseed);
+            account.data = await IOTA.getAccountData(dseed);
             PopupAPI.updateDataAccount(account.data,network);
         }
 
@@ -110,13 +103,14 @@ class Home extends Component {
     }
 
     async getData() {
-        const data = await getAccountData(this.state.decryptedSeed);
-
-        //update table
-        const newAccount = await PopupAPI.updateDataAccount(data, this.state.network);
-        this.setState({ account: newAccount });
-        if ( this.state.showHome && !this.state.showSettings )
-            this.transactions.current.updateData();
+        IOTA.getAccountData(this.state.decryptedSeed)
+        .then( async data => {
+            //update table
+            const newAccount = await PopupAPI.updateDataAccount(data, this.state.network);
+            this.setState({ account: newAccount });
+            if ( this.state.showHome && !this.state.showSettings )
+                this.transactions.current.updateData();
+        }) 
     }
 
     async onReload() {
@@ -147,7 +141,6 @@ class Home extends Component {
         this.setState({ account: newAccount });
 
         this.transactions.current.updateData();
-
         this.setState({ showSettings: false });
     }
 
@@ -175,7 +168,6 @@ class Home extends Component {
         this.setState({ showReceive: false });
         this.setState({ showDetails: false });
         this.setState({ showAdd: false });
-        this.setState({ showInteract: false });
         this.setState({ showHome: true });
     }
 
@@ -201,14 +193,6 @@ class Home extends Component {
         this.props.onLogout();
     }
 
-    onClickMap() {
-        clearInterval(this.state.interval);
-        this.setState({ showHome: false });
-        this.setState({ showSettings: false });
-        this.setState({ showInteract: true });
-    }
-
-    onClickShowData() { this.interact.current.showData(); }
 
     render() {
         return (
@@ -216,11 +200,10 @@ class Home extends Component {
                 <Navbar showBtnSettings={this.state.showHome}
                         showBtnMarker={this.state.showHome}
                         showBtnBack={!this.state.showHome}
-                        showBtnData={this.state.showInteract}
-                        text={this.state.showHome ? this.state.account.name : (this.state.showSend ? 'Send' : (this.state.showReceive ? 'Receive' : this.state.showAdd ? 'Add account' : (this.state.showInteract ? 'Buy data' : '')))}
+                        text={this.state.showHome ? this.state.account.name : (this.state.showSend ? 'Send' : (this.state.showReceive ? 'Receive' : this.state.showAdd ? 'Add account' : ''))}
                         onClickSettings={this.onClickSettings}
                         onClickMap={this.onClickMap}
-                        onClickShowData={this.onClickShowData}
+                        /*onAccountDetails={this.onAccountDetails}*/
                         onBack={this.onBack}>
                 </Navbar>
 
@@ -240,9 +223,6 @@ class Home extends Component {
                                                                 onAskConfirm={ () => this.props.onAskConfirm()} /> ) : ''}
                         { this.state.showReceive ? (    <Receive account={this.state.account} network={this.state.network} /> ) : '' }
                         { this.state.showAdd ? (        <Add network={this.state.network} onChangeAccount={this.onChangeAccount}/>) : ''}
-                        { this.state.showInteract ? (   <Interact ref={this.interact}
-                                                                    network={this.state.network}
-                                                                    account={this.state.account}/>) : ''}
 
 
                         { this.state.showHome ? (

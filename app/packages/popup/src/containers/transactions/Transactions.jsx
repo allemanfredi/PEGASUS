@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Utils from '@pegasus/lib/utils';
-import { promoteTransaction, replayBundle } from '../../core/core';
+import IOTA from '@pegasus/lib/iota';
 import Details from '../details/Details';
 
 
@@ -50,7 +50,8 @@ class Transactions extends Component {
     async updateData() {
         const arr = [];
         const doubleBundle = [];
-        this.setState({ transactions: [] });
+        //this.setState({ transactions: [] });
+        const currentTransactions = this.state.transactions;
         this.props.transfers.forEach(transfer => {
             //https://domschiener.gitbooks.io/iota-guide/content/chapter1/bundles.html
             //da gestire le meta tx
@@ -65,13 +66,22 @@ class Transactions extends Component {
                 value = -transfer[0].value;
             }
 
+            //in order to keep open the opened card after data refreshing
+            const txApp = currentTransactions.filter( tx => tx.bundle === transfer[0].bundle);
+            let showDetails = false;
+            if ( txApp.length === 1 ){
+                if ( txApp[0].showDetails )
+                    showDetails = true;
+            }
+            
+
             const obj = {
                 timestamp: transfer[0].attachmentTimestamp,
                 value,
                 status: transfer[0].persistence,
                 bundle: transfer[0].bundle,
                 index: transfer[0].currentIndex,
-                showDetails : false,
+                showDetails, 
                 transfer
             };
 
@@ -94,14 +104,14 @@ class Transactions extends Component {
 
     async promoteTransaction(hash) {
         try {
-            await promoteTransaction(hash);
+            await IOTA.promoteTransaction(hash);
         } catch (err) {
         }
     }
 
     async replayBundle(hash) {
         try {
-            await replayBundle(hash);
+            await IOTA.replayBundle(hash);
         } catch (err) {
         }
     }
@@ -160,11 +170,10 @@ class Transactions extends Component {
                                 </div>
 
                                 { transaction.showDetails ? 
-                                    <Details details={transaction.transfer}
-                                    promoteTransaction={this.promoteTransaction}
-                                    onReplayBundle={this.replayBundle} />
-                                    : ''
-                                }
+                                    <Details    details={transaction.transfer}
+                                                promoteTransaction={this.promoteTransaction}
+                                                onReplayBundle={this.replayBundle} />
+                                    : ''}
                             </div>
                         );
                     }) :

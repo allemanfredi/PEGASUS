@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { checkPassword } from '../../wallet/wallet';
 
 import { PopupAPI } from '@pegasus/lib/api';
 import Utils from '@pegasus/lib/utils';

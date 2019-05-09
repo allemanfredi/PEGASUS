@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { getAccountData } from '../../core/core';
 import { PopupAPI } from '@pegasus/lib/api';
+import  IOTA  from '@pegasus/lib/iota';
 
 import Loader from '../../components/loader/Loader';
-import options from '../../options/options';
 
 import * as  passwordValidator from 'password-validator';
 
@@ -26,6 +25,7 @@ class Init extends Component {
         this.passwordValidator
         .is().min(8)                                    // Minimum length 8
         .has().uppercase()                              // Must have uppercase letters
+        .has().lowercase()                              // Must have lowercase letters
         .has().symbols()                                // Must have symbols 
         .has().digits()                                 // Must have numbers
 
@@ -57,6 +57,7 @@ class Init extends Component {
             switch(error){
                 case 'min':         return 'Password must contains at least 8 characters';
                 case 'uppercase':   return 'Password must contains at least 1 uppercase character';
+                case 'lowercase':   return 'Password must contains at least 1 lowercase character';
                 case 'symbols':     return 'Password must contains at least 1 symbol';
                 case 'digits':      return 'Password must contains at least 1 digit';
             }
@@ -131,24 +132,24 @@ class Init extends Component {
     async createWallet() {
         return new Promise( async (resolve, reject) => {
             try{
-                if ( await PopupAPI.setupWallet() ) {
-                    //store the psw
-                    PopupAPI.storePassword(this.state.psw);
+                
+                //store the psw
+                PopupAPI.storePassword(this.state.psw);
 
-                    const promisedSeed = await PopupAPI.generateSeed()
-                    const seed = promisedSeed.toString().replace(/,/g, '');
-                    const data = await getAccountData(seed);
-                    const account = {
-                        seed : seed,
-                        name : this.state.name,
-                        network : options.network[ 0 ],
-                        data : data
-                    };
+                const promisedSeed = await PopupAPI.generateSeed()
+                const seed = promisedSeed.toString().replace(/,/g, '');
+                const data = await IOTA.getAccountData(seed);
+                const network = await PopupAPI.getCurrentNetwork();
 
-                    await PopupAPI.addAccount(account, options.network[ 0 ], true);
-                    await PopupAPI.setCurrentNetwork(options.network[ 0 ]);
-                    resolve();
-                }
+                const account = {
+                    seed : seed,
+                    name : this.state.name,
+                    network,
+                    data : data
+                };
+                
+                await PopupAPI.addAccount(account, network, true);
+                resolve(); 
             }catch(err) {
                 console.log(err);
                 reject('Impossible to create the wallet');
@@ -288,7 +289,7 @@ class Init extends Component {
                                 <div className='col-6 text-center pl-0 pr-0'>
                                     <button disabled={this.state.initialization[ 0 ] ? true : false} onClick={this.goBack} 
                                             type='submit' 
-                                            className='btn btn-light-blue text-bold'><span className='fa fa-arrow-left'></span></button>
+                                            className='btn btn-light-blue text-bold no-border   '><span className='fa fa-arrow-left'></span></button>
                                 </div>
                                 <div className='col-6 text-center pl-0 pr-0'>
                                     <button disabled={  this.state.initialization[ 0 ] ? (this.state.name.length > 0 ? false : true ) :
@@ -296,7 +297,7 @@ class Init extends Component {
                                                         this.state.initialization[ 2 ] ? (this.state.randomLetters === 0 ? false : true) : ''}
                                     onClick={this.goOn}
                                     type='submit'
-                                    className='btn btn-blue text-bold'
+                                    className='btn btn-blue text-bold no-border'
                                     ><span className='fa fa-arrow-right'></span>
                                     </button>
                                 </div>

@@ -3,13 +3,11 @@ import EventEmitter from 'eventemitter3';
 import extensionizer from 'extensionizer';
 import Utils from '@pegasus/lib/utils';
 
-
 import { BackgroundAPI } from '@pegasus/lib/api';
 import {APP_STATE} from '@pegasus/lib/states';
 
 import { composeAPI } from '@iota/core';
-import { getAccountData } from '../../../popup/src/core/core';
-
+import settings from '@pegasus/lib/options';
 
 class Wallet extends EventEmitter {
     
@@ -20,7 +18,14 @@ class Wallet extends EventEmitter {
         this.payments = [];
         this.password = false;
 
-        this.selectedProvider = ''
+        if ( !this.isWalletSetup() ){
+            this.setupWallet();
+        }
+
+        const currentNetwork = this.getCurrentNetwork();
+        if (  Object.entries(currentNetwork).length === 0 && currentNetwork.constructor === Object ) {
+           this.setCurrentNetwork(settings.network[ 0 ]);
+        }
 
         this.checkSession();
     }
@@ -28,6 +33,9 @@ class Wallet extends EventEmitter {
     isWalletSetup(){
         try{
             const data = JSON.parse(localStorage.getItem('data'));
+            if ( !data )
+                return false;
+
             const state = this.getState();
             if ( ( data.mainnet.length > 0 || data.testnet.length > 0 ) && state >= APP_STATE.WALLET_INITIALIZED)
                 return true;
@@ -41,7 +49,7 @@ class Wallet extends EventEmitter {
     setupWallet(){
         try{
             localStorage.setItem('data', JSON.stringify({ mainnet: [], testnet: [] }));
-            this.setState(APP_STATE.WALLET_INITIALIZED);
+            this.setState(APP_STATE.WALLET_NOT_INITIALIZED);
             return true;
         }
         catch(err) {
@@ -95,9 +103,11 @@ class Wallet extends EventEmitter {
             localStorage.setItem('options', JSON.stringify(options));
 
             //change pagehook
-            const account = this.getCurrentAccount(network);
             this.emit('setProvider', network.provider);
-            this.emit('setAddress', account.data.latestAddress);
+            //handle the init phase ( yes network no account )
+            const account = this.getCurrentAccount(network);
+            if ( account )
+                this.emit('setAddress', account.data.latestAddress);
 
             return;
         }catch(err) {
@@ -119,7 +129,7 @@ class Wallet extends EventEmitter {
     }
 
     addAccount({account, network, isCurrent}){
-        //preparing object to store
+
         if ( isCurrent ) {
             const data = JSON.parse(localStorage.getItem('data'));
             data[ network.type ].forEach( account => { account.current = false; });
@@ -136,13 +146,12 @@ class Wallet extends EventEmitter {
             current: isCurrent ? true : false,
             id: Utils.sha256(account.name),
             network: account.network, //mainnet or testnet
-            marketplace: { keys: Utils.generateKeys(), channels: [] }
         };
+        
         try{
             const data = JSON.parse(localStorage.getItem('data'));
             data[ network.type ].push(obj);
-            
-            const network = this.getCurrentNetwork();
+
             this.emit('setProvider', network.provider);
             this.emit('setAddress', account.data.latestAddress);
 
@@ -157,13 +166,19 @@ class Wallet extends EventEmitter {
     getCurrentAccount(network){
         try{
             const accounts = JSON.parse(localStorage.getItem('data'))[ network.type ];
+            const state = this.getState();
+            console.log("states " +  state);
+            if ( accounts.length === 0 && state == APP_STATE.WALLET_NOT_INITIALIZED ){
+                return null;
+            }
+
             for ( let account of accounts){
                 if ( account.current ){
                     return account;
                 }
             }
 
-            //create an account for testnet
+            //create an account for testnet if user switch to testnet and there is no accounts
             const isCurrent = true;
             const seed = this.generateSeed()
             const account = {

@@ -1,6 +1,5 @@
 
 import React, { Component } from 'react';
-import { getAllAccounts } from '../../wallet/wallet';
 import Utils from '@pegasus/lib/utils';
 import { PopupAPI } from '@pegasus/lib/api';
 
