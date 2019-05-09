@@ -10,7 +10,7 @@ git clone https://github.com/allemanfredi/PEGASUS.git
 ```
 
 ```
-cd PEGASUS/app
+cd PEGASUS
 ```
 
 ```
