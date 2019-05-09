@@ -167,7 +167,6 @@ class Wallet extends EventEmitter {
         try{
             const accounts = JSON.parse(localStorage.getItem('data'))[ network.type ];
             const state = this.getState();
-            console.log("states " +  state);
             if ( accounts.length === 0 && state == APP_STATE.WALLET_NOT_INITIALIZED ){
                 return null;
             }

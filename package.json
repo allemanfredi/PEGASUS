@@ -6,7 +6,7 @@
   ],
   "scripts": {
     "build": "lerna run build",
-    "build:react": "lerna run build --scope @pegasus/popup",
+    "build:popup": "lerna run build --scope @pegasus/popup",
     "build:core": "lerna run build --ignore @pegasus/popup",
     "update-version": "lerna publish --skip-git --skip-npm --force-publish '*'",
     "lint": "lerna run lint",

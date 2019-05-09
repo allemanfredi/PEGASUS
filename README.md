@@ -10,7 +10,7 @@ git clone https://github.com/allemanfredi/PEGASUS.git
 ```
 
 ```
-cd PEGASUS/app
+cd PEGASUS
 ```
 
 ```
@@ -25,7 +25,13 @@ yarn build
 If you want to build only the popup:
 
 ```
-yarn build:react
+yarn build:popup
+```
+
+if you want to build background, contentScript and lib
+
+```
+yarn build:core
 ```
 
 
