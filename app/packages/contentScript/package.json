@@ -3,7 +3,7 @@
   "main": "index.js",
   "author": "Alle <alle.manfredi@gmail.com>",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.0.2",
   "scripts": {
     "build": "webpack --config ../../webpack.config.js --progress --colors -o ../../dist/contentscript.js",
     "lint": "npx eslint . --fix"
