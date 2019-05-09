@@ -118,16 +118,6 @@ class Settings extends Component {
                             <hr/>
                             <li className='sidebar-brand'>
                                 <div className='row'>
-                                    <div className='col-2 text-center'><i className='fa fa-globe'></i></div>
-                                    <div className='col-10 text-left'>
-                                        <a href='#' onClick={() => { this.props.onShowMap(); }} data-scroll>
-                                            <div className='text-xs text-black'>buy data</div>
-                                        </a>
-                                    </div>
-                                </div>
-                            </li>
-                            <li className='sidebar-brand'>
-                                <div className='row'>
                                     <div className='col-2 text-center'><i className='fa fa-plus'></i></div>
                                     <div className='col-10 text-left'>
                                         <a href='#' onClick={() => { this.props.onAddAccount(); }} data-scroll>

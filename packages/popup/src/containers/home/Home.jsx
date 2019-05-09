@@ -49,7 +49,7 @@ class Home extends Component {
             showAdd: false,
             interval: {},
         };
-    }
+    } 
 
     async componentDidMount() {
         try{
