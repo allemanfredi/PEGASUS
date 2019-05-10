@@ -1,5 +1,6 @@
 import MessageDuplex from '@pegasus/lib/MessageDuplex';
 import WalletService from './services/WalletService';
+
 import Utils from '@pegasus/lib/utils';
 import randomUUID from 'uuid/v4';
 
@@ -28,7 +29,7 @@ const backgroundScript = {
         //Wallet Service
         duplex.on('isWalletSetup', this.walletService.isWalletSetup);
         duplex.on('setupWallet', this.walletService.setupWallet);
-        duplex.on('checkPassword', this.walletService.checkPassword);
+        duplex.on('unlockWallet', this.walletService.unlockWallet);
         duplex.on('getKey', this.walletService.getKey);
         duplex.on('storePassword', this.walletService.storePassword);
         duplex.on('setPassword', this.walletService.setPassword);
@@ -65,6 +66,8 @@ const backgroundScript = {
         duplex.on('rejectPayment', this.walletService.rejectPayment);
         duplex.on('confirmPayment', this.walletService.confirmPayment);
 
+        duplex.on('startHandleAccountData', this.walletService.startHandleAccountData);
+        duplex.on('stopHandleAccountData', this.walletService.stopHandleAccountData);
     },
 
     bindTabDuplex() {
@@ -111,6 +114,10 @@ const backgroundScript = {
 
         this.walletService.on('setPayments', payments => (
             BackgroundAPI.setPayments(payments)
+        ));
+
+        this.walletService.on('setAccount', account => (
+            BackgroundAPI.setAccount(account)
         ));
 
         this.walletService.on('setConfirmationLoading', isLoading => (

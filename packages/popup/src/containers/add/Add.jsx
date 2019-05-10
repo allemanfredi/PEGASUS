@@ -45,9 +45,9 @@ class Add extends Component {
 
         if ( this.state.indexInitialization === 2) {
             this.setState({ isLoading: true });
-            const newAccount = await this.addAccount();
+            await this.addAccount();
             this.setState({ isLoading: false });
-            this.props.onChangeAccount(newAccount);
+            this.props.onBack();
         }
     }
 
@@ -196,14 +196,14 @@ class Add extends Component {
                         <div className='container-menu-init'>
                             <div className='row'>
                                 <div className='col-6 text-center pl-0 pr-0'>
-                                    <button disabled={this.state.initialization[ 0 ] ? true : false} onClick={this.goBack} type='submit' className='btn btn-light-blue text-bold'><span className='fa fa-arrow-left'></span></button>
+                                    <button disabled={this.state.initialization[ 0 ] ? true : false} onClick={this.goBack} type='submit' className='btn btn-light-blue text-bold no-border'><span className='fa fa-arrow-left'></span></button>
                                 </div>
                                 <div className='col-6 text-center pl-0 pr-0'>
                                     <button disabled={  this.state.initialization[ 0 ] ? (this.state.name.length > 0 ? false : true ) :
                                                         this.state.initialization[ 1 ] ? (this.state.randomLetters === 0 ? false : true) : ''}
                                     onClick={this.goOn}
                                     type='submit'
-                                    className='btn btn-blue text-bold'
+                                    className='btn btn-blue text-bold no-border'
                                     ><span className='fa fa-arrow-right'></span>
                                     </button>
                                 </div>

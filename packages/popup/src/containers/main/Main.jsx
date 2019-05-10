@@ -28,7 +28,6 @@ class Main extends Component {
         this.confirm = React.createRef();
 
         this.state = {
-            network: {},
             appState : APP_STATE.WALLET_WITHOUT_STATE
         };
     }
@@ -39,9 +38,9 @@ class Main extends Component {
         const state = await PopupAPI.getState();
 
         if ( state >= APP_STATE.WALLET_LOCKED  ){
-            const network = await PopupAPI.getCurrentNetwork();
-            this.setState({ network });
             this.props.showHeader(true);
+
+            PopupAPI.startHandleAccountData();
         }
         if ( state == APP_STATE.WALLET_TRANSFERS_IN_QUEUE )
             this.props.showHeader(false);
@@ -51,6 +50,7 @@ class Main extends Component {
 
     async onSuccessFromLogin() {
         PopupAPI.startSession();
+
         const payments = await PopupAPI.getPayments();
         if ( payments.length > 0 ){
             this.props.showHeader(false);
@@ -59,6 +59,7 @@ class Main extends Component {
             this.changePayments(payments);
             return;
         }
+        PopupAPI.startHandleAccountData();
         this.props.showHeader(true);
         this.setState({appState:APP_STATE.WALLET_UNLOCKED});
         PopupAPI.setState(APP_STATE.WALLET_UNLOCKED);
@@ -66,20 +67,23 @@ class Main extends Component {
 
     onSuccessFromInit() {
         this.props.showHeader(true);
-        PopupAPI.startSession();
         this.setState({appState:APP_STATE.WALLET_UNLOCKED});
+        PopupAPI.startHandleAccountData();
         PopupAPI.setState(APP_STATE.WALLET_UNLOCKED);
+        PopupAPI.startSession();
     }
 
     onSuccessFromRestore() {
         this.props.showHeader(true);
-        PopupAPI.startSession();
         this.setState({appState:APP_STATE.WALLET_UNLOCKED});
         PopupAPI.setState(APP_STATE.WALLET_UNLOCKED);
+        PopupAPI.startHandleAccountData();
+        PopupAPI.startSession();
     }
 
     onLogout() {
         PopupAPI.deleteSession();
+        PopupAPI.stopHandleAccountData();
         this.props.showHeader(true);
         this.setState({appState:APP_STATE.WALLET_LOCKED});
         PopupAPI.setState(APP_STATE.WALLET_LOCKED);
@@ -106,11 +110,6 @@ class Main extends Component {
         this.setState({appState:APP_STATE.WALLET_UNLOCKED});
     }
 
-    //called by App.js component in order to reload-data
-    changeNetwork(network) {
-        this.home.current.changeNetwork(network);
-        this.setState({ network });
-    }
 
     //duplex function
     changePayments(payments){
@@ -139,7 +138,7 @@ class Main extends Component {
             case APP_STATE.WALLET_RESTORE:
                 return <Restore network={this.state.network} onSuccess={this.onSuccessFromRestore} onBack={this.onBack}/>;
             case APP_STATE.WALLET_UNLOCKED:
-                return <Home ref={this.home} onLogout={this.onLogout} onAskConfirm={this.onAskConfirm}/>
+                return <Home ref={this.home} account={this.props.account} network={this.props.network} onLogout={this.onLogout} onAskConfirm={this.onAskConfirm}/>
             case APP_STATE.WALLET_TRANSFERS_IN_QUEUE:
                 return <Confirm ref={this.confirm} onNotConfirms={this.onNotConfirms} onRejectAll={this.onRejectAll}/>
             default:

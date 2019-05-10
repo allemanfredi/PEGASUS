@@ -20,7 +20,7 @@ class InitPsw extends Component {
     async clickLogin() {
         this.setState({shake:false});
         
-        const canAccess = await PopupAPI.checkPassword(this.state.psw)
+        const canAccess = await PopupAPI.unlockWallet(this.state.psw)
         if ( canAccess ){
             PopupAPI.setPassword(this.state.psw);
             PopupAPI.startSession();

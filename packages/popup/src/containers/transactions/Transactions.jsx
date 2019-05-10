@@ -9,52 +9,20 @@ class Transactions extends Component {
         super(props, context);
 
         this.state = {
-            transactions: []
+            opened: {}
         };
 
         this.promoteTransaction = this.promoteTransaction.bind(this);
         this.replayBundle = this.replayBundle.bind(this);
+        this.handleShowDetails = this.handleShowDetails.bind(this);
         this.clickShowDetails = this.clickShowDetails.bind(this);
-    }
-
-    componentDidMount() {
-        this.updateData();
-    }
-
-    /* async updateData(){
-
-        //get all txs
-        console.log(this.props.addresses);
-        const txs = await getAllTransactions(this.props.addresses);
-        console.log("txxx");
-        console.log(txs);
-
-        //separate txs in base of their bundle
-        // per check txs basta che almeno una tx all'interno di un bundle sia confirmed
-        let obj = {};
-        txs.forEach((tx,index) => {
-            obj[tx.bundle] = txs.filter( item => item.bundle === tx.bundle);
-        })
-        console.log(obj);
-
-        //prepare hashed
-        const hashes = Array.from(txs , tx => tx.hash );
-
-        //set the status
-        const states = await getLatestInclusion(hashes);
-        txs.forEach ( (tx , index) => tx['confirmed'] = states[index]);
-        this.setState({transactions : txs});
-
-    }*/
-
-    async updateData(transactions) {
-        this.setState({ transactions});
     }
 
     async promoteTransaction(hash) {
         try {
             await IOTA.promoteTransaction(hash);
         } catch (err) {
+            console.log(err);
         }
     }
 
@@ -62,18 +30,35 @@ class Transactions extends Component {
         try {
             await IOTA.replayBundle(hash);
         } catch (err) {
+            console.log(err);
         }
     }
 
-    clickShowDetails(tx){
-        this.setState( prevState => {
-            const transactions = prevState.transactions.map( transaction => {
-                if ( transaction.bundle === tx.bundle )
-                    transaction.showDetails = !transaction.showDetails;
-                return transaction;
-            })
-            return{
-                transactions
+    componentWillMount(){
+        this.handleShowDetails();
+    }
+    
+    componentWillReceiveProps(prevProps){
+        this.handleShowDetails();
+    }
+
+    //keep open the opened cards
+    handleShowDetails() {
+        const opened = this.state.opened;
+        this.props.account.transactions.map(transaction => {
+            if (!opened[transaction.bundle]) {
+                opened[transaction.bundle] = false;
+            }else opened[transaction.bundle] = true;
+        });
+        this.setState({ opened });
+    }
+
+    clickShowDetails(transaction) {
+        this.setState(prevState => {
+            const opened = prevState.opened;
+            opened[transaction.bundle] = !opened[transaction.bundle];
+            return {
+                opened
             }
         })
     }
@@ -89,7 +74,7 @@ class Transactions extends Component {
                 </div>
                 <hr />
                 <div className='transaction-list'>
-                    {this.state.transactions.length > 0 ? this.state.transactions.map((transaction, index) => {
+                    {this.props.account.transactions.length > 0 ? this.props.account.transactions.map((transaction, index) => {
                         return (
                             <div key={index} className='transaction-list-item mt-1' >
                                 <div className='row'>
@@ -114,19 +99,18 @@ class Transactions extends Component {
                                         <a href={this.props.network.link + 'bundle/' + transaction.bundle} target="_blank">View on the explorer</a>
                                     </div>
                                     <div className="col-6 text-right text-xxs text-underline">
-                                        <a className="cursor-pointer" onClick={() => this.clickShowDetails(transaction)}>View details <i className={transaction.showDetails ? 'fa fa-eye': 'fa fa-eye-slash'} ></i></a>
+                                        <a className="cursor-pointer" onClick={() => this.clickShowDetails(transaction)}>View details <i className={transaction.showDetails ? 'fa fa-eye' : 'fa fa-eye-slash'} ></i></a>
                                     </div>
                                 </div>
 
-                                { transaction.showDetails ? 
-                                    <Details    details={transaction.transfer}
-                                                promoteTransaction={this.promoteTransaction}
-                                                onReplayBundle={this.replayBundle} />
+                                {this.state.opened[transaction.bundle] ?
+                                    <Details details={transaction.transfer}
+                                        promoteTransaction={this.promoteTransaction}
+                                        onReplayBundle={this.replayBundle} />
                                     : ''}
                             </div>
                         );
                     }) :
-
                         <div className='row mt-9'>
                             <div className='col-12 text-center text-xs  text-black'>
                                 No Transactions

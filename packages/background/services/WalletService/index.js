@@ -9,6 +9,8 @@ import {APP_STATE} from '@pegasus/lib/states';
 import { composeAPI } from '@iota/core';
 import settings from '@pegasus/lib/options';
 
+import AccountDataService from '../AccountDataService'
+
 class Wallet extends EventEmitter {
     
     constructor() {
@@ -17,6 +19,7 @@ class Wallet extends EventEmitter {
         this.popup = false;
         this.payments = [];
         this.password = false;
+        this.accountDataHandler = false;
 
         if ( !this.isWalletSetup() ){
             this.setupWallet();
@@ -75,14 +78,19 @@ class Wallet extends EventEmitter {
         this.password = password;
     }
 
-    checkPassword(psw){
+    unlockWallet(psw){
         const hash = Utils.sha256(psw);
         try{
             let pswToCompare;
             if ( ( pswToCompare = localStorage.getItem('hpsw')) === null )
                 return false;
-            if ( pswToCompare === hash )
+            if ( pswToCompare === hash ){
+                const network = this.getCurrentNetwork();
+                const account = this.getCurrentAccount(network);
+                this.emit('setAccount',account);
+
                 return true;
+            }
             return false;
         }
         catch(err) {
@@ -93,6 +101,14 @@ class Wallet extends EventEmitter {
 
     getKey(){
         return this.password;
+    }
+
+    _getCurrentSeed(){
+        const network = this.getCurrentNetwork();
+        const account = this.getCurrentAccount(network);
+        const key =  this.getKey();
+        const seed = Utils.aes256decrypt(account.seed, key);
+        return seed;
     }
 
     //return the account with current = true and the reletated network
@@ -106,11 +122,14 @@ class Wallet extends EventEmitter {
             this.emit('setProvider', network.provider);
             //handle the init phase ( yes network no account )
             const account = this.getCurrentAccount(network);
-            if ( account )
+            if ( account ){
                 this.emit('setAddress', account.data.latestAddress);
+                this.emit('setAccount', account);
+            }
 
             return;
         }catch(err) {
+            console.log(err);
             throw new Error(err);
         }
     }
@@ -142,6 +161,7 @@ class Wallet extends EventEmitter {
         const obj = {
             name: account.name,
             seed: eseed,
+            transactions : [],
             data: account.data,
             current: isCurrent ? true : false,
             id: Utils.sha256(account.name),
@@ -151,11 +171,12 @@ class Wallet extends EventEmitter {
         try{
             const data = JSON.parse(localStorage.getItem('data'));
             data[ network.type ].push(obj);
+            localStorage.setItem('data', JSON.stringify(data));
 
             this.emit('setProvider', network.provider);
             this.emit('setAddress', account.data.latestAddress);
+            this.emit('setAccount', obj);
 
-            localStorage.setItem('data', JSON.stringify(data));
             return obj;
         }
         catch(err) {
@@ -209,13 +230,13 @@ class Wallet extends EventEmitter {
                     const network = this.getCurrentNetwork();
                     this.emit('setProvider', network.provider);
                     this.emit('setAddress', account.data.latestAddress);
+                    this.emit('setAccount', account);
                 }
             });
-
             localStorage.setItem('data', JSON.stringify(data));
-            return currentAccount;
         }
         catch(err) {
+            console.log(err);
             throw new Error(err);
         }
        
@@ -237,7 +258,7 @@ class Wallet extends EventEmitter {
             const data = JSON.parse(localStorage.getItem('data'));
             let updatedAccount = {};
             data[ network.type ].forEach(account => {
-                if ( account.current ) {
+                if ( account.current  ) {
                     account.data = newData;
                     updatedAccount = account;
                 }
@@ -247,8 +268,25 @@ class Wallet extends EventEmitter {
         }
         catch(err) {
             throw new Error(err);
+        }  
+    }
+
+    updateTransactionsAccount({transactions, network}){
+        try{
+            const data = JSON.parse(localStorage.getItem('data'));
+            let updatedAccount = {};
+            data[ network.type ].forEach(account => {
+                if ( account.current ) {
+                    account.transactions = transactions;
+                    updatedAccount = account;
+                }
+            });
+            localStorage.setItem('data', JSON.stringify(data));
+            return updatedAccount;
         }
-        
+        catch(err) {
+            throw new Error(err);
+        }  
     }
 
     updateNameAccount({current, network, newName}){
@@ -263,7 +301,7 @@ class Wallet extends EventEmitter {
                 }
             });
             localStorage.setItem('data', JSON.stringify(data));
-            return updatedAccount;
+            this.emit('setAccount', updatedAccount);
         }
         catch(err) {
             throw new Error(err);
@@ -577,15 +615,36 @@ class Wallet extends EventEmitter {
         }
     }
 
+    //Account Data Handling
+    async loadAccountData(){
+        console.log("load");
+        const seed = this._getCurrentSeed();
+        const network = this.getCurrentNetwork();
+        const {transactions , newData} = await AccountDataService.retrieveAccountData(seed,network.provider);
+
+        //store txs in the localstorage
+        this.updateTransactionsAccount({transactions,network});
+        const updatedAccount = this.updateDataAccount({newData,network});
+        this.emit('setAccount', updatedAccount);
+    }
+
+    startHandleAccountData(){
+
+        if ( this.accountDataHandler )
+            return;
+
+        //first time without loading from the iotajs since are store in the localstorage
+        const network = this.getCurrentNetwork();
+        const account = this.getCurrentAccount(network);
+        this.emit('setAccount', account);
+        
+        this.accountDataHandler = setInterval( this.loadAccountData , 20000);
+    }
+
+    stopHandleAccountData(){
+        clearInterval(this.accountDataHandler);
+    }
+
 }
 
 export default Wallet;
-
-/*this.payments.forEach(obj => {
-            if ( obj.uuid === payment.uuid )
-                obj.callback({
-                    data:"ciao",
-                    isSuccess : true,
-                    uuid: payment.uuid
-                });
-        })*/

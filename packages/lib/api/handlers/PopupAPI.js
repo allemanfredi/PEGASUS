@@ -19,8 +19,8 @@ export default {
         return this.duplex.send('setPassword', psw);
     },
 
-    checkPassword(psw) {
-        return this.duplex.send('checkPassword', psw);
+    unlockWallet(psw) {
+        return this.duplex.send('unlockWallet', psw);
     },
 
     getKey() {
@@ -112,6 +112,14 @@ export default {
 
     confirmPayment(payment){
         return this.duplex.send('confirmPayment',payment);
+    },
+
+    startHandleAccountData(){
+        return this.duplex.send('startHandleAccountData');
+    },
+
+    stopHandleAccountData(){
+        return this.duplex.send('stopHandleAccountData');
     },
 
 };

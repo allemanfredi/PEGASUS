@@ -27,10 +27,12 @@ export default class Navbar extends Component {
                         <div className='text-white text-sm'>{this.props.text}</div>
                     </div>
                     
-                    <div className='col-2'>
-                        <button onClick={() => this.props.onAccountDetails()} className='btn btn-icon'><i className='fa fa-ellipsis-h'></i></button>
-                    </div>
-                    
+                    { this.props.showBtnEllipse ? 
+                        <div className='col-2'>
+                            <button onClick={() => this.props.onAccountDetails()} className='btn btn-icon'><i className='fa fa-ellipsis-h'></i></button>
+                        </div>
+                    : ''}
+                        
                 </div>
             </div>
         );

@@ -24,6 +24,7 @@ class App extends Component {
         this.state = {
             isLogged: false,
             network: {},
+            account : {},
             showHeader: false,
             duplex: new MessageDuplex.Popup(),
         };
@@ -49,16 +50,19 @@ class App extends Component {
     }
 
     async onHandleNetworkChanging(network) {
-        IOTA.changeProvider(network.provider);
+        IOTA.setProvider(network.provider);
         PopupAPI.setCurrentNetwork(network);
-
-        this.main.current.changeNetwork(network);
+        
+        //transactions handler for new network
+        PopupAPI.stopHandleAccountData();
+        PopupAPI.startHandleAccountData();
     }
 
     bindDuplexRequests(){
         this.state.duplex.on('setPayments', payments => this.main.current.changePayments(payments));
         this.state.duplex.on('setConfirmationLoading', isLoading => this.main.current.setConfirmationLoading(isLoading));
         this.state.duplex.on('setConfirmationError', error => this.main.current.setConfirmationError(error));
+        this.state.duplex.on('setAccount', account => this.setState({account}));
     }
 
     render() {
@@ -68,7 +72,8 @@ class App extends Component {
                     {this.state.showHeader ? <Header isLogged={this.state.isLogged} changeNetwork={this.onHandleNetworkChanging}/> : '' }
                     <Main   showHeader={this.onShowHeader} 
                             ref={this.main} 
-                            currentNetwork={this.state.network}/>
+                            network={this.state.network}
+                            account={this.state.account}/>
                 </div>
             </div>
 

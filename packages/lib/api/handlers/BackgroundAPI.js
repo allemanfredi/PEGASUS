@@ -16,6 +16,10 @@ export default {
         this.duplex.send('popup', 'setConfirmationError', error , false);
     },
 
+    setAccount(account){
+        this.duplex.send('popup', 'setAccount', account , false);
+    },
+
     setAddress(address){
         this.duplex.send('tab', 'tunnel', {
             action: 'setAddress',
@@ -29,6 +33,4 @@ export default {
             data: provider
         }, false);
     }
-
-
 };

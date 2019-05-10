@@ -16,7 +16,7 @@ class Settings extends Component {
         this.state = {
             accounts: [],
             showEdit : false,
-            editedName : this.props.currentAccount.name
+            editedName : this.props.account.name
         };
     }
 
@@ -25,14 +25,14 @@ class Settings extends Component {
     }
 
     async switchAccount(newAccount) {
-        let accounts = await PopupAPI.getAllAccounts(this.props.currentNetwork);
+        let accounts = await PopupAPI.getAllAccounts(this.props.network);
         accounts = accounts.filter( account => account.id !== newAccount.id );
         this.setState({ accounts });
         this.props.onSwitchAccount(newAccount);
     }
 
     async updateData() {
-        let accounts = await PopupAPI.getAllAccounts(this.props.currentNetwork);
+        let accounts = await PopupAPI.getAllAccounts(this.props.network);
         accounts = accounts.filter( account => !account.current );
         this.setState({ accounts });
     }
@@ -80,7 +80,7 @@ class Settings extends Component {
                                                 <input  onChange={this.onChangeName} 
                                                         value={this.state.editedName} autoFocus type='text' id='inp-edit'/>
                                             </label> 
-                                        : this.props.currentAccount.name }
+                                        : this.props.account.name }
                                         
                                     </div>
                                     <div className="col-2"></div>
@@ -88,13 +88,13 @@ class Settings extends Component {
                                 <div className='row mt-1'>
                                     <div className="col-2"></div>
                                     <div className='col-8 text-center text-no-overflow text-xxs'>
-                                        {this.props.currentAccount.data.latestAddress}
+                                        {this.props.account.data.latestAddress}
                                     </div>
                                     <div className="col-2"></div>
                                 </div>
                                 <div className='row mt-3'>
                                     <div className='col-6 text-right text-sm text text-bold pr-1'>
-                                        { Utils.iotaReducer(this.props.currentAccount.data.balance) }
+                                        { Utils.iotaReducer(this.props.account.data.balance) }
                                     </div>
                                     <div className="col-6 text-left pl-1">
                                         <img src='./material/logo/iota-logo.png' height='30' width='30' alt='iota logo'/>

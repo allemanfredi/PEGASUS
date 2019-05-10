@@ -6,11 +6,10 @@ import { extractJson } from '@iota/extract-json';
 export default  {
 
     init(provider){
-        
         this.iota = composeAPI({provider});
     },
 
-    changeProvider(provider){
+    setProvider(provider){
         this.iota = composeAPI({provider});
     },
 
