@@ -321,7 +321,7 @@ class Wallet extends EventEmitter {
         try{
             const data = JSON.parse(localStorage.getItem('data'));
             if ( data[ network.type ].length === 1)
-                reject(new Error('Impossibile to delete this account'));
+                return null;
             else{
                 //remove account
                 const app = data[ network.type ].filter( acc => acc.id !== account.id);
@@ -334,7 +334,8 @@ class Wallet extends EventEmitter {
                 data[ network.type ] = app;
 
                 localStorage.setItem('data', JSON.stringify(data));
-                return account;
+                this.emit('setAccount',app[ 0 ]);
+                return app[ 0 ];
             }
         }
         catch(err) {

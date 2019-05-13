@@ -8,6 +8,8 @@ import Add from '../add/Add';
 
 import Loader from '../../components/loader/Loader';
 import Navbar from '../../components/navbar/Navbar';
+import Alert from '../../components/alert/Alert';
+
 
 import { PopupAPI } from '@pegasus/lib/api';
 import Utils from '@pegasus/lib/utils';
@@ -32,6 +34,9 @@ class Home extends Component {
         this.onChangeName = this.onChangeName.bind(this);
         this.onDeleteAccount = this.onDeleteAccount.bind(this);
         this.onReload = this.onReload.bind(this);
+        this.onConfirm = this.onConfirm.bind(this);
+        this.onViewAccountOnExplorer = this.onViewAccountOnExplorer.bind(this);
+        this.onExportSeed = this.onExportSeed.bind(this);
 
         this.state = {
             error: '',
@@ -45,6 +50,10 @@ class Home extends Component {
             showReceive: false,
             showSettings: false,
             showAdd: false,
+            showAlert : false,
+            alertType : '',
+            alertText : '',
+            actionToConfirm : ''
         };
     } 
 
@@ -62,7 +71,43 @@ class Home extends Component {
     }
 
     async onDeleteAccount() {
-       //TODO
+        this.setState(() => {
+            return {
+                showAlert:true,
+                alertText:'Are you sure you want delete this account?',
+                alertType:'confirm',
+                actionToConfirm:'deleteAccount'
+            }
+
+        })
+    }
+
+    onViewAccountOnExplorer(){
+        //TODO
+    }
+
+    onExportSeed(){
+        //TODO
+    }
+
+    async onConfirm(){
+        switch(this.state.actionToConfirm){
+            case 'deleteAccount' :{
+                const account = await PopupAPI.deleteAccount(this.props.account,this.props.account.network);
+                if ( !account  ){
+                    this.setState( () => {
+                        return {
+                            showAlert:true,
+                            alertText:'Impossible to delete this account',
+                            alertType:'error'
+                        }
+                    })
+                }else this.setState({showAlert:false});
+
+                break;
+            }
+        } 
+
     }
 
     onClickSend() {
@@ -79,6 +124,7 @@ class Home extends Component {
         this.setState({ showSend: false });
         this.setState({ showReceive: false });
         this.setState({ showDetails: false });
+        this.setState({ showAlert: false });
         this.setState({ showAdd: false });
         this.setState({ showHome: true });
     }
@@ -104,7 +150,10 @@ class Home extends Component {
                         text={this.state.showHome ? this.props.account.name : (this.state.showSend ? 'Send' : (this.state.showReceive ? 'Receive' : this.state.showAdd ? 'Add account' : ''))}
                         onClickSettings={this.onClickSettings}
                         onClickMap={this.onClickMap}
-                        onBack={this.onBack}>
+                        onBack={this.onBack}
+                        onDeleteAccount={this.onDeleteAccount}
+                        onViewAccountOnExplorer={this.onViewAccountOnExplorer}
+                        onExportSeed={this.onExportSeed}>
                 </Navbar>
 
                 { !(Object.keys(this.props.account).length === 0 && this.props.account.constructor === Object) ? ( //!
@@ -123,6 +172,12 @@ class Home extends Component {
                                                                 onAskConfirm={ () => this.props.onAskConfirm()} /> ) : ''}
                         { this.state.showReceive ? (    <Receive account={this.props.account} network={this.state.network} /> ) : '' }
                         { this.state.showAdd ? (        <Add network={this.props.network} onBack={this.onBack}/>) : ''}
+
+                        { this.state.showAlert ? <Alert type={this.state.alertType} 
+                                                        text={this.state.alertText}
+                                                        onClose={this.onBack}
+                                                        onConfirm={this.onConfirm}
+                                                        /> : '' }
 
 
                         { this.state.showHome ? (

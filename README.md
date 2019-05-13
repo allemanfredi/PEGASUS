@@ -43,9 +43,7 @@ After having built the application, it needs to be loaded on chrome.
 * Click the Load unpacked extension button and select the build folder for your extension to install it.
 
 
-## In development
-
-iotaJs injection. 
+## In development : iotaJs injection.
 
 
 ```js

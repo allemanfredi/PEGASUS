@@ -41,6 +41,15 @@
     transform: translate(-50%, 0);
 }
 
+.container-alert{
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    margin-right: -50%;
+    width: 330px;
+    transform: translate(-50%, 0);
+}
+
 .container-logo-login{
     text-align: center;
     margin-top: 7%;
@@ -52,7 +61,7 @@
     height: 33px;
 }
 .container-letter:hover{
-    color: darkblue;
+    color: #00008b;
     font-size: 20px;
     font-weight: bold;
     cursor: pointer;
@@ -201,8 +210,8 @@ input#inp-edit {
     cursor: default;
 }
 .btn-border-blue:hover{
-    background: darkblue;
-    color: white;
+    /*background: darkblue;
+    color: white;*/
 }
 
 .btn-icon {
@@ -291,6 +300,10 @@ input#inp-edit {
 
 .pr-5{
     padding-right: 5px;
+}
+
+.border-radius-5{
+    border-radius: 5px;
 }
 
 /* DECORATION */
@@ -643,4 +656,17 @@ header{
     font-size: 25px;
     margin-bottom: 20%;
     margin-left: -4px;
+}
+
+/* container ellipse menu */
+
+.container-ellipse-menu {
+    width: 180px;
+    right: 0;
+    background: rgba(0,0,0,.8);
+    position: absolute;
+    height: 145px;
+    margin-top: -13px;
+    border-radius: 5px;
+    margin-right: 2px;
 }
