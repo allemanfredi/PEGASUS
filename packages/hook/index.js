@@ -25,7 +25,7 @@ const pageHook = {
                 this.setProvider(selectedProvider);
             }
 
-            console.log('Pegasus initiated');
+            console.log('Pegasus initiated succesfully');
         }).catch(err => {
             console.log('Failed to initialise Pegasus', err);
         });
