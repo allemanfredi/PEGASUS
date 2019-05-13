@@ -9,7 +9,6 @@
     "lint": "npx eslint . --fix"
   },
   "dependencies": {
-    "extensionizer": "^1.0.1",
-    "tronweb": "^2.1.30"
+    "extensionizer": "^1.0.1"
   }
 }

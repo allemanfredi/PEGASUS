@@ -144,7 +144,9 @@ class Home extends Component {
     render() {
         return (
             <div>
-                <Navbar showBtnSettings={this.state.showHome}
+                <Navbar account={this.props.account}
+                        network={this.props.network}
+                        showBtnSettings={this.state.showHome}
                         showBtnEllipse={this.state.showHome}
                         showBtnBack={!this.state.showHome}
                         text={this.state.showHome ? this.props.account.name : (this.state.showSend ? 'Send' : (this.state.showReceive ? 'Receive' : this.state.showAdd ? 'Add account' : ''))}

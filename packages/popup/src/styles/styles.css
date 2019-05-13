@@ -83,6 +83,18 @@
     width: 100%;
 }
 
+.container-ellipse-menu {
+    width: 180px;
+    right: 0;
+    background: rgba(0,0,0,.8);
+    position: absolute;
+    height: 145px;
+    margin-top: -13px;
+    border-radius: 5px;
+    margin-right: 2px;
+    z-index: 10000;
+}
+
 
 
 
@@ -658,15 +670,3 @@ header{
     margin-left: -4px;
 }
 
-/* container ellipse menu */
-
-.container-ellipse-menu {
-    width: 180px;
-    right: 0;
-    background: rgba(0,0,0,.8);
-    position: absolute;
-    height: 145px;
-    margin-top: -13px;
-    border-radius: 5px;
-    margin-right: 2px;
-}

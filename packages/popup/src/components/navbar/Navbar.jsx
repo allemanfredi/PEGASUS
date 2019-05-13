@@ -52,7 +52,9 @@ export default class Navbar extends Component {
 
                         <div className="row mt-1 cursor-pointer" onClick={() => this.props.onViewAccountOnExplorer()}>
                             <div className="col-2 text-white text-center text-xs"><span className='fa fa-wpexplorer'></span></div>
-                            <div className="col-10 text-white text-xs">View on explorer</div>
+                            <div className="col-10 ">
+                                <a className="text-white text-xs cursor-pointer" href={this.props.network.link + 'address/' + this.props.account.data.latestAddress} target="_blank">View on explorer</a>
+                            </div>
                         </div>
 
                         <div className="row mt-1 cursor-pointer" onClick={() => this.props.onExportSeed()}>
