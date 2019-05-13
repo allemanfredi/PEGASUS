@@ -199,8 +199,9 @@ class Wallet extends EventEmitter {
             }
 
             //create an account for testnet if user switch to testnet and there is no accounts
+            this.emit('setAccount',{});
             const isCurrent = true;
-            const seed = this.generateSeed()
+            const seed = this.generateSeed();
             const account = {
                 name : 'account-testnet',
                 network : network,
@@ -208,6 +209,7 @@ class Wallet extends EventEmitter {
                 data : {}
             }
             const res = this.addAccount({account, network, isCurrent});
+            const newData = this.loadAccountData();
             return res;
         }
         catch(err) {

@@ -2,15 +2,19 @@
 //import ProxiedProvider from './handlers/ProxiedProvider';
 import RequestHandler from './handlers/RequestHandler';
 import EventChannel from '@pegasus/lib/EventChannel';
-import {composeAPI} from '@iota/core';
+import Customizator from './customizators/Customizator'
 
 const pageHook = {
 
 
     init() {
-        this._bindIotaJs();
+
         this._bindEventChannel();
+
+        Customizator.init(this.request);
+
         this._bindEvents();
+        this._bindIotaJs();
         
         this.request('init').then(({ selectedAddress, selectedProvider }) => {
 
@@ -32,7 +36,7 @@ const pageHook = {
             console.log('iotaJs is already initiated. Pegasus will overwrite the current instance');
 
         
-        const iotajs = this.getCustomIota(this.selectedProvider);
+        const iotajs = Customizator.getCustomIota(this.selectedProvider);
 
         const iota = {
             iotajs : iotajs,
@@ -60,38 +64,12 @@ const pageHook = {
 
     setProvider(provider){
         window.iota.selectedProvider = provider;
-        window.iota.iotajs = this.getCustomIota(provider);
+        window.iota.iotajs = Customizator.getCustomIota(provider);
     },
 
     setAddress(address) {
         window.iota.selectedAddress = address;
     },
-    
-    getCustomIota(provider){
-        const iotajs = composeAPI({provider});
-    
-        iotajs.prepareTransfers = (...args) => (
-            this.prepareTransfers(args)
-        );
-        return iotajs;
-    },
-
-    prepareTransfers(args){
-
-        const callback = args[1];
-        if ( callback === undefined ){
-            throw new Error("not callback provided");
-        }
-
-        args = [args[0]];
-        this.request('prepareTransfer', {args})
-        .then(transaction => (
-            callback(transaction,null)
-        )).catch(err => {
-            callback(null,err);
-        });
-    }
-
     
 };
 
