@@ -617,7 +617,6 @@ class Wallet extends EventEmitter {
 
     //Account Data Handling
     async loadAccountData(){
-        console.log("load");
         const seed = this._getCurrentSeed();
         const network = this.getCurrentNetwork();
         const {transactions , newData} = await AccountDataService.retrieveAccountData(seed,network.provider);
@@ -629,20 +628,24 @@ class Wallet extends EventEmitter {
     }
 
     startHandleAccountData(){
-
-        if ( this.accountDataHandler )
-            return;
-
         //first time without loading from the iotajs since are store in the localstorage
         const network = this.getCurrentNetwork();
         const account = this.getCurrentAccount(network);
         this.emit('setAccount', account);
+
+        if ( this.accountDataHandler )
+            return;
         
-        this.accountDataHandler = setInterval( this.loadAccountData , 20000);
+        this.accountDataHandler = setInterval( () => this.loadAccountData , 20000);
     }
 
     stopHandleAccountData(){
         clearInterval(this.accountDataHandler);
+    }
+
+    reloadAccountData(){
+        this.emit('setAccount', {});
+        this.loadAccountData();
     }
 
 }

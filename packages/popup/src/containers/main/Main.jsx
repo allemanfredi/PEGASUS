@@ -39,7 +39,6 @@ class Main extends Component {
 
         if ( state >= APP_STATE.WALLET_LOCKED  ){
             this.props.showHeader(true);
-
             PopupAPI.startHandleAccountData();
         }
         if ( state == APP_STATE.WALLET_TRANSFERS_IN_QUEUE )

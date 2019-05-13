@@ -50,7 +50,7 @@ class Home extends Component {
 
 
     async onReload() {
-        //TODO
+        PopupAPI.reloadAccountData();
     }
 
     async onSwitchAccount(account) {

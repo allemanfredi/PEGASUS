@@ -122,4 +122,12 @@ export default {
         return this.duplex.send('stopHandleAccountData');
     },
 
+    loadAccountData(){
+        return this.duplex.send('loadAccountData');
+    },
+
+    reloadAccountData(){
+        return this.duplex.send('reloadAccountData');
+    }
+
 };

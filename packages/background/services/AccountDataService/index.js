@@ -3,7 +3,6 @@ import IOTA from '@pegasus/lib/iota'
 const AccountDataService = {
 
     async retrieveAccountData(seed,provider){
-
         IOTA.setProvider(provider)
         const newData = await IOTA.getAccountData(seed);
         const transactions = this.mapTransactions(newData);
@@ -29,19 +28,12 @@ const AccountDataService = {
                 index: transfer[0].currentIndex,
                 transfer
             };
-
-            //remove double bundle (reattachemen txs)
-            //transactions = transactions.filter ( item => item.bundle != obj.bundle );
-            //in questo modo prendo la prima transazione con stesso bundle
-            //cosi da escludere le reattachment transaction
-            let add = true;
-            for (const tx of doubleBundle) {
-                if (tx.bundle === obj.bundle)
-                    add = false;
-            }
-            if (add) {
+            
+            //remove double bundle
+            const app = doubleBundle.filter ( bundle => bundle === obj.bundle );
+            if ( app.length === 0){
                 transactions.push(obj);
-                doubleBundle.push(obj);
+                doubleBundle.push(obj.bundle);
             }
         });
         return transactions;

@@ -68,6 +68,9 @@ const backgroundScript = {
 
         duplex.on('startHandleAccountData', this.walletService.startHandleAccountData);
         duplex.on('stopHandleAccountData', this.walletService.stopHandleAccountData);
+        duplex.on('loadAccountData', this.walletService.loadAccountData);
+        duplex.on('reloadAccountData', this.walletService.reloadAccountData);
+
     },
 
     bindTabDuplex() {
