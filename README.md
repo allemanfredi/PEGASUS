@@ -68,12 +68,18 @@ if (window.iota) {
 
 ## List of Supported injected functions
 
+### addNeighbors(uris,callback)
+
+| Param | Type | Description |
+| --- | --- | --- |
+| uris | <code>Array</code> | List of URI's |
+| callback | <code>function</code> | callback |
+
 ### getNodeInfo(callback)
 
 | Param | Type | Description |
 | --- | --- | --- |
 | callback | <code>function</code> | callback |
-
 
 
 ### prepareTransfers(transfers,callback)

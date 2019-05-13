@@ -658,8 +658,8 @@ class Wallet extends EventEmitter {
     }
 
     //CUSTOM iotajs functions
-    request(method , {uuid,resolve}){
-        CustomizatorService.request(method , {uuid , resolve})
+    request(method , {uuid,resolve,data}){
+        CustomizatorService.request(method , {uuid , resolve , data})
     }
 
 

@@ -9,15 +9,29 @@ export default {
 
     getCustomIota(provider){
         const iotajs = composeAPI({provider});
-    
+        
+        [ 'composeAPI' ].forEach(method => (
+            iotajs[ method ] = () => new Error('Pegasus does not allow to use this method')
+        ));
+
+        iotajs.addNeighbors = (...args) => this.addNeighbors(args)
         iotajs.prepareTransfers = (...args) => this.prepareTransfers(args);
         iotajs.getNodeInfo = (...args) => this.getNodeInfo(args);
         
         return iotajs;
     },
 
+    addNeighbors(args){
+        const callback = args[1];
+        if ( callback === undefined )
+            throw new Error("not callback provided");
+        
+        this.request('addNeighbors',{args})
+        .then(numAdded  => callback(numAdded,null))
+        .catch(err => callback(null,err));
+    },
+
     getNodeInfo(args){
-        console.log(args);
         const callback = args[0];
         if ( callback === undefined )
             throw new Error("not callback provided");

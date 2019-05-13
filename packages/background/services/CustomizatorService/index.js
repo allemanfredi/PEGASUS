@@ -10,16 +10,20 @@ const CustomizatorService = {
         this.iota = composeAPI({provider});
     },
 
-    //callback({ data:err.message, success:false,uuid: payment.uuid});
-
-    async request(method , { uuid , resolve , seed , options }){
+    async request(method , { uuid , resolve , seed , data }){
         switch (method){
+            case 'addNeighbors':{
+                this.iota.addNeighbors(data.args[0])
+                .then(numAdded => resolve({ data:numAdded, success:true,uuid }))
+                .catch(err => resolve({ data:err, success:false,uuid }))
+                break
+            }
             case 'getNodeInfo' : {
                 this.iota.getNodeInfo()
                 .then(info => resolve({ data:info, success:true,uuid }))
                 .catch(err => resolve({ data:err, success:false,uuid }))
                 break;
-            }
+            }  
         }
     }
     

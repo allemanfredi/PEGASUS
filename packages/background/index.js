@@ -101,6 +101,11 @@ const backgroundScript = {
                     break;
                 } 
 
+                case 'addNeighbors':{
+                    this.walletService.request('addNeighbors', {uuid,resolve,data})
+                    break;
+                }
+
                 case 'getNodeInfo' : {
                     this.walletService.request('getNodeInfo', {uuid,resolve})
                     break;
