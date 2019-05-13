@@ -32,6 +32,7 @@ class Wallet extends EventEmitter {
         }
 
         this.checkSession();
+        this.setInterval ( this.checkSession , 900000);
         
         //iotajs injection service
         CustomizatorService.init(currentNetwork.provider);
