@@ -68,3 +68,28 @@ if (window.iota) {
 }
 ```
 
+## List of Supported injected functions
+
+### getNodeInfo(callback)
+
+| Param | Type | Description |
+| --- | --- | --- |
+| callback | <code>function</code> | callback |
+
+
+
+### prepareTransfers(transfers,callback)
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| transfers | <code>object</code> |  |  |
+| [options] | <code>object</code> |  |  |
+| [options.inputs] | <code>Array.&lt;Input&gt;</code> |  | Inputs used for signing. Needs to have correct security, keyIndex and address value |
+| [options.inputs[].address] | <code>Hash</code> |  | Input address trytes |
+| [options.inputs[].keyIndex] | <code>number</code> |  | Key index at which address was generated |
+| [options.inputs[].security] | <code>number</code> | <code>2</code> | Security level |
+| [options.inputs[].balance] | <code>number</code> |  | Balance in iotas |
+| [options.address] | <code>Hash</code> |  | Remainder address |
+| [options.security] | <code>Number</code> |  | Security level to be used for getting inputs and reminder address |
+| callback | <code>function</code> |  | callback |
+

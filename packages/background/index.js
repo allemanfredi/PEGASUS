@@ -101,6 +101,11 @@ const backgroundScript = {
                     break;
                 } 
 
+                case 'getNodeInfo' : {
+                    this.walletService.request('getNodeInfo', {uuid,resolve})
+                    break;
+                }
+
                 case 'prepareTransfer': {
 
                     // in order to not open extensionizer popup

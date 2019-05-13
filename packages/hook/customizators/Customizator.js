@@ -10,19 +10,29 @@ export default {
     getCustomIota(provider){
         const iotajs = composeAPI({provider});
     
-        iotajs.prepareTransfers = (...args) => (
-            this.prepareTransfers(args)
-        );
+        iotajs.prepareTransfers = (...args) => this.prepareTransfers(args);
+        iotajs.getNodeInfo = (...args) => this.getNodeInfo(args);
+        
         return iotajs;
+    },
+
+    getNodeInfo(args){
+        console.log(args);
+        const callback = args[0];
+        if ( callback === undefined )
+            throw new Error("not callback provided");
+
+        this.request('getNodeInfo', {args})
+        .then(info => callback(info,null))
+        .catch( err => callback(null,err));
     },
 
     prepareTransfers(args){
 
         const callback = args[1];
-        if ( callback === undefined ){
+        if ( callback === undefined )
             throw new Error("not callback provided");
-        }
-
+        
         args = [args[0]];
         this.request('prepareTransfer', {args})
         .then(transaction => (
@@ -31,5 +41,7 @@ export default {
             callback(null,err);
         });
     }
+
+
 
 }

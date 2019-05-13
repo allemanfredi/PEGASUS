@@ -10,6 +10,7 @@ import { composeAPI } from '@iota/core';
 import settings from '@pegasus/lib/options';
 
 import AccountDataService from '../AccountDataService'
+import CustomizatorService from '../CustomizatorService'
 
 class Wallet extends EventEmitter {
     
@@ -31,6 +32,9 @@ class Wallet extends EventEmitter {
         }
 
         this.checkSession();
+        
+        //iotajs injection service
+        CustomizatorService.init(currentNetwork.provider);
     }
 
     isWalletSetup(){
@@ -120,6 +124,8 @@ class Wallet extends EventEmitter {
 
             //change pagehook
             this.emit('setProvider', network.provider);
+            CustomizatorService.setProvider(network.provider);
+            
             //handle the init phase ( yes network no account )
             const account = this.getCurrentAccount(network);
             if ( account ){
@@ -649,6 +655,12 @@ class Wallet extends EventEmitter {
         this.emit('setAccount', {});
         this.loadAccountData();
     }
+
+    //CUSTOM iotajs functions
+    request(method , {uuid,resolve}){
+        CustomizatorService.request(method , {uuid , resolve})
+    }
+
 
 }
 
