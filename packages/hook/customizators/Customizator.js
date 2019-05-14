@@ -20,6 +20,7 @@ export default {
         iotajs.broadcastBundle = (...args) => this.broadcastBundle(args);
         iotajs.broadcastTransactions = (...args) => this.broadcastTransactions(args);
         iotajs.checkConsistency = (...args) => this.checkConsistency(args);
+        iotajs.findTransactionObjects = (...args) => this.findTransactionObjects(args);
         iotajs.prepareTransfers = (...args) => this.prepareTransfers(args);
         iotajs.getNodeInfo = (...args) => this.getNodeInfo(args);
         
