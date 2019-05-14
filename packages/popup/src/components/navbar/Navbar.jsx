@@ -6,6 +6,7 @@ export default class Navbar extends Component {
         super(props);
 
         this.deleteAccount = this.deleteAccount.bind(this);
+        this.deleteNetwork = this.deleteNetwork.bind(this);
 
         this.state = {
             showEllipseMenu : false
@@ -15,6 +16,11 @@ export default class Navbar extends Component {
     deleteAccount(){
         this.setState({showEllipseMenu:false});
         this.props.onDeleteAccount()
+    }
+
+    deleteNetwork(){
+        this.setState({showEllipseMenu:false});
+        this.props.onDeleteCurrentNetwork();
     }
 
     render() {
@@ -50,7 +56,7 @@ export default class Navbar extends Component {
                             <div className="col-10 text-white text-xs">Delete account</div>
                         </div>
 
-                        <div className="row mt-1 cursor-pointer" onClick={() => this.props.onViewAccountOnExplorer()}>
+                        <div className="row mt-1 cursor-pointer">
                             <div className="col-2 text-white text-center text-xs"><span className='fa fa-wpexplorer'></span></div>
                             <div className="col-10 ">
                                 <a className="text-white text-xs cursor-pointer" href={this.props.network.link + 'address/' + this.props.account.data.latestAddress} target="_blank">View on explorer</a>
@@ -61,6 +67,15 @@ export default class Navbar extends Component {
                             <div className="col-2 text-white text-center text-xs"><span className='fa fa-share'></span></div>
                             <div className="col-10 text-white text-xs">Export seed</div>
                         </div>
+
+                        {!this.props.network.default ?  <hr className="bg-white mt-1 mb-1"/> : '' }
+                        {!this.props.network.default ? 
+                                <div className="row mt-1 cursor-pointer" onClick={this.deleteNetwork}>
+                                    <div className="col-2 text-white text-center text-xs"><span className='fa fa-trash-o'></span></div>
+                                    <div className="col-10 text-white text-xs">Delete current network</div>
+                                </div>: ''}
+                        
+
                     </div>
                     : '' }
                     

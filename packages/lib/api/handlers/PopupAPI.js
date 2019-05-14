@@ -43,6 +43,10 @@ export default {
         return this.duplex.send('getAllNetworks');
     },
 
+    deleteCurrentNetwork(){
+        return this.duplex.send('deleteCurrentNetwork');
+    },
+
     addAccount(account, network, isCurrent) {
         return this.duplex.send('addAccount', {account, network, isCurrent});
     },

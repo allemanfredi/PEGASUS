@@ -38,6 +38,7 @@ const backgroundScript = {
         duplex.on('getCurrentNetwork', this.walletService.getCurrentNetwork);
         duplex.on('addNetwork', this.walletService.addNetwork);
         duplex.on('getAllNetworks', this.walletService.getAllNetworks);
+        duplex.on('deleteCurrentNetwork', this.walletService.deleteCurrentNetwork);
         
         duplex.on('addAccount', this.walletService.addAccount);
         duplex.on('getCurrentAccount', this.walletService.getCurrentAccount);

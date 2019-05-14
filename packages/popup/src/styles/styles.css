@@ -88,14 +88,12 @@
     right: 0;
     background: rgba(0,0,0,.8);
     position: absolute;
-    height: 145px;
+    height: 180px;
     margin-top: -13px;
     border-radius: 5px;
     margin-right: 2px;
     z-index: 10000;
 }
-
-
 
 
 .modal {
@@ -432,6 +430,7 @@ input#inp-edit {
 hr {
     border: 0 !important;
     border-top: 1px solid rgba(0, 0, 0, 0.1) !important;
+    margin: 0 0 0 0 !important;
 }
 
 .text-no-overflow{

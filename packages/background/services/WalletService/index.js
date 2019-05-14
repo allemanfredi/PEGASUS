@@ -194,6 +194,31 @@ class Wallet extends EventEmitter {
         }
     }
 
+    deleteCurrentNetwork(){
+        try{
+            let options = JSON.parse(localStorage.getItem('options'));
+            const currentNetwork = options.selectedNetwork;
+
+            const networks = options.networks.filter( network => currentNetwork.name !== network.name);
+            options.networks = networks;
+
+            //set the first network with the same type (mainnet/testnet)
+            const selectedNetwork = options.networks.filter( network => network.type === currentNetwork.type)[0];
+            options.selectedNetwork = selectedNetwork;
+
+            localStorage.setItem('options', JSON.stringify(options));
+
+            this.emit('setNetworks',options.networks);
+            this.emit('setNetwork',selectedNetwork);
+            this.emit('setProvider',selectedNetwork.provider);
+            
+            return currentNetwork;
+        }catch(err) {
+            console.log(err);
+            throw new Error(err);
+        }
+    }
+
     addAccount({account, network, isCurrent}){
 
         if ( isCurrent ) {

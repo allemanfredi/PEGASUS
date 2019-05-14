@@ -11,10 +11,8 @@ import Loader from '../../components/loader/Loader';
 import Navbar from '../../components/navbar/Navbar';
 import Alert from '../../components/alert/Alert';
 
-
 import { PopupAPI } from '@pegasus/lib/api';
 import Utils from '@pegasus/lib/utils';
-import IOTA from '@pegasus/lib/iota';
 
 
 class Home extends Component {
@@ -36,9 +34,9 @@ class Home extends Component {
         this.onDeleteAccount = this.onDeleteAccount.bind(this);
         this.onReload = this.onReload.bind(this);
         this.onConfirm = this.onConfirm.bind(this);
-        this.onViewAccountOnExplorer = this.onViewAccountOnExplorer.bind(this);
         this.onExportSeed = this.onExportSeed.bind(this);
         this.onAddNetwork = this.onAddNetwork.bind(this);
+        this.onDeleteCurrentNetwork = this.onDeleteCurrentNetwork.bind(this);
 
         this.state = {
             error: '',
@@ -85,8 +83,16 @@ class Home extends Component {
         })
     }
 
-    onViewAccountOnExplorer(){
-        //TODO
+    onDeleteCurrentNetwork(){
+        this.setState(() => {
+            return {
+                showAlert:true,
+                alertText:'Are you sure you want delete this network?',
+                alertType:'confirm',
+                actionToConfirm:'deleteNetwork'
+            }
+        })
+        
     }
 
     onExportSeed(){
@@ -107,6 +113,11 @@ class Home extends Component {
                     })
                 }else this.setState({showAlert:false});
 
+                break;
+            }
+            case 'deleteNetwork' : {
+                PopupAPI.deleteCurrentNetwork();
+                this.setState({showAlert:false});
                 break;
             }
         } 
@@ -180,6 +191,8 @@ class Home extends Component {
         await PopupAPI.getCurrentAccount(network);
     }
 
+    
+
     render() {
         return (
             <div>
@@ -194,7 +207,8 @@ class Home extends Component {
                         onBack={this.onBack}
                         onDeleteAccount={this.onDeleteAccount}
                         onViewAccountOnExplorer={this.onViewAccountOnExplorer}
-                        onExportSeed={this.onExportSeed}>
+                        onExportSeed={this.onExportSeed}
+                        onDeleteCurrentNetwork={this.onDeleteCurrentNetwork}>
                 </Navbar>
 
                 { !(Object.keys(this.props.account).length === 0 && this.props.account.constructor === Object) ? ( //!

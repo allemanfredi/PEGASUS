@@ -70,7 +70,7 @@ class Header extends Component {
                                         );
                                     })}
 
-                                    <hr className="bg-grey ml-1 mr-1"/>
+                                    <hr className="bg-grey ml-1 mr-1 mt-1 mb-1"/>
 
                                     <div onClick={() => this.addCustomNetwork()} className='container-hidden-network-item'>
                                         <div className='container-hidden-network-item-name-not-selected'>Add custom Node</div>
