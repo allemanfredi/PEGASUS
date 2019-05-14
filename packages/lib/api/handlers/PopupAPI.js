@@ -31,8 +31,16 @@ export default {
         return this.duplex.send('setCurrentNetwork', network);
     },
 
+    addNetwork(network){
+        return this.duplex.send('addNetwork', network)
+    },
+
     getCurrentNetwork() {
         return this.duplex.send('getCurrentNetwork');
+    },
+
+    getAllNetworks() {
+        return this.duplex.send('getAllNetworks');
     },
 
     addAccount(account, network, isCurrent) {

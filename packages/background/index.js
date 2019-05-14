@@ -36,6 +36,8 @@ const backgroundScript = {
 
         duplex.on('setCurrentNetwork', this.walletService.setCurrentNetwork);
         duplex.on('getCurrentNetwork', this.walletService.getCurrentNetwork);
+        duplex.on('addNetwork', this.walletService.addNetwork);
+        duplex.on('getAllNetworks', this.walletService.getAllNetworks);
         
         duplex.on('addAccount', this.walletService.addAccount);
         duplex.on('getCurrentAccount', this.walletService.getCurrentAccount);
@@ -150,6 +152,14 @@ const backgroundScript = {
 
         this.walletService.on('setPayments', payments => (
             BackgroundAPI.setPayments(payments)
+        ));
+
+        this.walletService.on('setNetworks', networks => (
+            BackgroundAPI.setNetworks(networks)
+        ));
+
+        this.walletService.on('setNetwork', network => (
+            BackgroundAPI.setNetwork(network)
         ));
 
         this.walletService.on('setAccount', account => (

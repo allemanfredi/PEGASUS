@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { PopupAPI } from '@pegasus/lib/api';
 
 
 class Network extends Component {
@@ -15,8 +16,15 @@ class Network extends Component {
         }
     }
 
-    addNetwork(){
-        console.log(this.state);
+    async addNetwork(){
+        const network = {
+            name : this.state.name,
+            provider : this.state.url + ':' + this.state.port,
+            link : this.state.type === 'mainnet' ? 'https://thetangle.org/' : 'https://devnet.thetangle.org/',
+            type : this.state.type,
+            difficulty : this.state.type === 'mainnet' ? 14 : 9
+        }
+        this.props.onAddNetwork(network);
     }
 
     render() {
@@ -67,7 +75,10 @@ class Network extends Component {
                 <div className='row mt-8'>
                     <div className='col-1'></div>
                     <div className='col-10 text-center'>
-                        <button onClick={this.addNetwork} type='submit' className='btn btn-blue text-bold btn-big'>Add</button>
+                        <button disabled={  this.state.name === '' || 
+                                            this.state.url === ''  ||
+                                            this.state.port === '' ||
+                                            this.state.type === '' ? true : false} onClick={this.addNetwork} type='submit' className='btn btn-blue text-bold btn-big'>Add</button>
                     </div>
                     <div className='col-1'></div>
                 </div> 

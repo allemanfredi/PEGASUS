@@ -9,8 +9,8 @@ import {APP_STATE} from '@pegasus/lib/states';
 import { composeAPI } from '@iota/core';
 import settings from '@pegasus/lib/options';
 
-import AccountDataService from '../AccountDataService'
-import CustomizatorService from '../CustomizatorService'
+import AccountDataService from '../AccountDataService';
+import CustomizatorService from '../CustomizatorService';
 
 class Wallet extends EventEmitter {
     
@@ -28,16 +28,21 @@ class Wallet extends EventEmitter {
 
         const currentNetwork = this.getCurrentNetwork();
         if (  Object.entries(currentNetwork).length === 0 && currentNetwork.constructor === Object ) {
-           this.setCurrentNetwork(settings.network[ 0 ]);
+            //store the networks in the localstorage
+            settings.networks.forEach(network => this.addNetwork(network));
+            this.customizatorService =  Utils.requestHandler(
+                new CustomizatorService(settings.networks[ 0 ].provider)
+            )
+
+            this.setCurrentNetwork(settings.networks[ 0 ]);
+        }else {
+            this.customizatorService =  Utils.requestHandler(
+                new CustomizatorService(currentNetwork.provider)
+            )
         }
 
         this.checkSession();
-        setInterval ( this.checkSession , 900000);
-        
-        //iotajs injection service
-         this.customizatorService =  Utils.requestHandler(
-            new CustomizatorService(currentNetwork.provider)
-        )
+        setInterval ( this.checkSession , 900000);         
     }
 
     isWalletSetup(){
@@ -122,12 +127,13 @@ class Wallet extends EventEmitter {
     setCurrentNetwork(network){
         try{
             const options = JSON.parse(localStorage.getItem('options'));
-            options.network = network;
+            options.selectedNetwork = network;
             localStorage.setItem('options', JSON.stringify(options));
 
             //change pagehook
             this.emit('setProvider', network.provider);
-            CustomizatorService.setProvider(network.provider);
+            this.emit('setNetwork', network);
+            this.customizatorService.setProvider(network.provider);
             
             //handle the init phase ( yes network no account )
             const account = this.getCurrentAccount(network);
@@ -150,8 +156,40 @@ class Wallet extends EventEmitter {
                 localStorage.setItem('options', JSON.stringify({}));
                 return {};
             }
-            return options.network;
+            return options.selectedNetwork;
         }catch(e) {
+            throw new Error(err);
+        }
+    }
+
+    getAllNetworks(){
+        try{
+            const options = JSON.parse(localStorage.getItem('options'));
+            if ( !options ) {
+                localStorage.setItem('options', JSON.stringify({}));
+                return {};
+            }
+            return options.networks;
+        }catch(e) {
+            throw new Error(err);
+        }
+    }
+
+    addNetwork(network){
+        //TODO check that the name does not exists
+
+        try{
+            let options = JSON.parse(localStorage.getItem('options'));
+            if ( !options.networks )
+                options.networks = [];
+            
+            options.networks.push(network);
+            localStorage.setItem('options', JSON.stringify(options));
+
+            this.emit('setNetworks',options.networks);
+            return;
+        }catch(err) {
+            console.log(err);
             throw new Error(err);
         }
     }
@@ -174,7 +212,6 @@ class Wallet extends EventEmitter {
             data: account.data,
             current: isCurrent ? true : false,
             id: Utils.sha256(account.name),
-            network: account.network, //mainnet or testnet
         };
         
         try{
@@ -213,7 +250,6 @@ class Wallet extends EventEmitter {
             const seed = this.generateSeed();
             const account = {
                 name : 'account-testnet',
-                network : network,
                 seed : seed.toString().replace(/,/g, ''),
                 data : {}
             }
@@ -240,6 +276,7 @@ class Wallet extends EventEmitter {
                     
                     const network = this.getCurrentNetwork();
                     this.emit('setProvider', network.provider);
+                    this.emit('setNetwork', network);
                     this.emit('setAddress', account.data.latestAddress);
                     this.emit('setAccount', account);
                 }
@@ -282,6 +319,24 @@ class Wallet extends EventEmitter {
         }  
     }
 
+    updateNetworkAccount({newData, network}){
+        try{
+            const data = JSON.parse(localStorage.getItem('data'));
+            let updatedAccount = {};
+            data[ network.type ].forEach(account => {
+                if ( account.current  ) {
+                    account.network = network;
+                    updatedAccount = account;
+                }
+            });
+            localStorage.setItem('data', JSON.stringify(data));
+            return updatedAccount;
+        }
+        catch(err) {
+            throw new Error(err);
+        }  
+    }
+
     updateTransactionsAccount({transactions, network}){
         try{
             const data = JSON.parse(localStorage.getItem('data'));
@@ -305,7 +360,7 @@ class Wallet extends EventEmitter {
             const data = JSON.parse(localStorage.getItem('data'));
             let updatedAccount = {};
             data[ network.type ].forEach(account => {
-                if ( account.id === current.id && account.network.type === current.network.type) {
+                if ( account.id === current.id ) {
                     account.name = newName;
                     account.id = Utils.sha256(newName);
                     updatedAccount = account;

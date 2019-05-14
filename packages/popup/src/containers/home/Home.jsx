@@ -38,6 +38,7 @@ class Home extends Component {
         this.onConfirm = this.onConfirm.bind(this);
         this.onViewAccountOnExplorer = this.onViewAccountOnExplorer.bind(this);
         this.onExportSeed = this.onExportSeed.bind(this);
+        this.onAddNetwork = this.onAddNetwork.bind(this);
 
         this.state = {
             error: '',
@@ -167,6 +168,18 @@ class Home extends Component {
         });
     }
 
+    async onAddNetwork(network){
+        this.setState( () => {
+            return{
+                showNetwork:false,
+                showHome:true
+            }
+        });
+        await PopupAPI.addNetwork(network);
+        await PopupAPI.setCurrentNetwork(network);
+        await PopupAPI.getCurrentAccount(network);
+    }
+
     render() {
         return (
             <div>
@@ -200,7 +213,7 @@ class Home extends Component {
                                                                 onAskConfirm={ () => this.props.onAskConfirm()} />  : ''}
                         { this.state.showReceive ?    <Receive account={this.props.account} network={this.state.network} /> : '' }
                         { this.state.showAdd ?        <Add network={this.props.network} onBack={this.onBack}/> : ''}
-                        { this.state.showNetwork ?    <Network/> : ''}
+                        { this.state.showNetwork ?    <Network onAddNetwork={this.onAddNetwork}/> : ''}
 
 
                         { this.state.showAlert ? <Alert type={this.state.alertType} 

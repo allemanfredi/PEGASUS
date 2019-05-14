@@ -8,6 +8,14 @@ export default {
         this.duplex.send('popup', 'setPayments', payments, false);
     },
 
+    setNetworks(networks) {
+        this.duplex.send('popup', 'setNetworks', networks, false);
+    },
+
+    setNetwork(network) {
+        this.duplex.send('popup', 'setNetwork', network, false);
+    },
+
     setConfirmationLoading(isLoading) {
         this.duplex.send('popup', 'setConfirmationLoading', isLoading, false);
     },

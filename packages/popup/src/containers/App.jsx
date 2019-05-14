@@ -16,6 +16,7 @@ class App extends Component {
         super(props, context);
 
         this.main = React.createRef();
+        this.header = React.createRef();
 
         this.onHandleLogin = this.onHandleLogin.bind(this);
         this.onShowHeader = this.onShowHeader.bind(this);
@@ -26,6 +27,7 @@ class App extends Component {
         this.state = {
             isLogged: false,
             network: {},
+            networks : [],
             account : {},
             showHeader: false,
             duplex: new MessageDuplex.Popup(),
@@ -38,9 +40,15 @@ class App extends Component {
         this.bindDuplexRequests();
 
         //check if the current network has been already set, if no => set to testnet (options[0])
-        let network = await PopupAPI.getCurrentNetwork();
+        const network = await PopupAPI.getCurrentNetwork();
+        const networks = await PopupAPI.getAllNetworks();
         IOTA.init(network.provider);
-        this.setState({ network });
+        this.setState(() => {
+            return {
+                network,
+                networks
+            }
+        })
     }
 
     onHandleLogin(value) {
@@ -71,15 +79,20 @@ class App extends Component {
         this.state.duplex.on('setConfirmationLoading', isLoading => this.main.current.setConfirmationLoading(isLoading));
         this.state.duplex.on('setConfirmationError', error => this.main.current.setConfirmationError(error));
         this.state.duplex.on('setAccount', account => this.setState({account}));
+        this.state.duplex.on('setNetworks', networks => this.setState({networks}));
+        this.state.duplex.on('setNetwork', network => this.setState({network}));
     }
 
     render() {
         return (
             <div className="app-wrapper">
                 <div className="app chrome">
-                    {this.state.showHeader ? <Header isLogged={this.state.isLogged} 
-                                                     changeNetwork={this.onHandleNetworkChanging}
-                                                     addCustomNetwork={this.onAddCustomNetwork}/> : '' }
+                    {this.state.showHeader ? <Header    ref={this.header} 
+                                                        network={this.state.network}
+                                                        networks={this.state.networks}
+                                                        isLogged={this.state.isLogged} 
+                                                        changeNetwork={this.onHandleNetworkChanging}
+                                                        addCustomNetwork={this.onAddCustomNetwork}/> : '' }
                     <Main   showHeader={this.onShowHeader} 
                             ref={this.main} 
                             network={this.state.network}
