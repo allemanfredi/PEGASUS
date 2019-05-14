@@ -101,11 +101,17 @@ const backgroundScript = {
                     break;
                 } 
 
-                case 'addNeighbors':{
+                case 'addNeighbors': {
                     this.walletService.request('addNeighbors', {uuid,resolve,data})
                     break;
                 }
-
+                case 'attachToTangle': {
+                    this.walletService.request('attachToTangle', {uuid,resolve,data})
+                    break;
+                }
+                case 'broadcastBundle' : {
+                    this.walletService.request('broadcastBundle', {uuid,resolve,data})
+                }
                 case 'getNodeInfo' : {
                     this.walletService.request('getNodeInfo', {uuid,resolve})
                     break;

@@ -14,7 +14,9 @@ export default {
             iotajs[ method ] = () => new Error('Pegasus does not allow to use this method')
         ));
 
-        iotajs.addNeighbors = (...args) => this.addNeighbors(args)
+        iotajs.attachToTangle = (...args) => this.attachToTangle(args);
+        iotajs.addNeighbors = (...args) => this.addNeighbors(args);
+        iotajs.broadcastBundle = (...args) => this.broadcastBundle(args);
         iotajs.prepareTransfers = (...args) => this.prepareTransfers(args);
         iotajs.getNodeInfo = (...args) => this.getNodeInfo(args);
         
@@ -29,6 +31,26 @@ export default {
         this.request('addNeighbors',{args})
         .then(numAdded  => callback(numAdded,null))
         .catch(err => callback(null,err));
+    },
+
+    attachToTangle(args){
+        const callback = args[4];
+        if ( callback === undefined )
+            throw new Error("not callback provided");
+        
+        this.request('attachToTangle', {args})
+        .then(info => callback(info,null))
+        .catch( err => callback(null,err));
+    },
+
+    broadcastBundle(args){
+        const callback = args[1];
+        if ( callback === undefined )
+            throw new Error("not callback provided");
+        
+        this.request('broadcastBundle', {args})
+        .then(transactions => callback(transactions,null))
+        .catch( err => callback(null,err));
     },
 
     getNodeInfo(args){

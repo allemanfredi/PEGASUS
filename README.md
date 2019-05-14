@@ -78,6 +78,37 @@ if (window.iota) {
 | uris | <code>Array</code> | List of URI's |
 | callback | <code>function</code> | callback |
 
+### attachToTangle(trunkTransaction, branchTransaction, minWeightMagnitude, trytes, callback)
+
+| Param | Type | Description |
+| --- | --- | --- |
+| trunkTransaction | <code>Hash</code> | Trunk transaction as returned by [`getTransactionsToApprove`](#module_core.getTransactionsToApprove) |
+| branchTransaction | <code>Hash</code> | Branch transaction as returned by [`getTransactionsToApprove`](#module_core.getTransactionsToApprove) |
+| minWeightMagnitude | <code>number</code> | Number of minimun trailing zeros in tail transaction hash |
+| trytes | <code>Array.&lt;TransactionTrytes&gt;</code> | List of transaction trytes |
+| [callback] | <code>Callback</code> | Optional callback |
+
+Performs the Proof-of-Work required to attach a transaction to the Tangle by
+calling [`attachToTangle`](https://docs.iota.works/iri/api#endpoints/attachToTangle) command.
+Returns list of transaction trytes and overwrites the following fields:
+ - `hash`
+ - `nonce`
+ - `attachmentTimestamp`
+ - `attachmentTimsetampLowerBound`
+ - `attachmentTimestampUpperBound`
+
+ ### broadcastBundle(tailTransactionHash, callback)
+
+ | Param | Type | Description |
+| --- | --- | --- |
+| tailTransactionHash | <code>Hash</code> | Tail transaction hash |
+| [callback] | <code>Callback</code> | Optional callback |
+
+Re-broadcasts all transactions in a bundle given the tail transaction hash.
+It might be useful when transactions did not properly propagate,
+particularly in the case of large bundles.
+
+
 ### getNodeInfo(callback)
 
 | Param | Type | Description |
