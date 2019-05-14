@@ -127,6 +127,11 @@ class Main extends Component {
         PopupAPI.setState(APP_STATE.WALLET_TRANSFERS_IN_QUEUE);
     }
 
+    //add network
+    addCustomNetwork(){
+        this.home.current.addCustomNetwork();
+    }
+
     render() {
                  
         switch(parseInt(this.state.appState)){

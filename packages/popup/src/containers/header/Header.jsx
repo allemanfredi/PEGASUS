@@ -8,6 +8,7 @@ class Header extends Component {
         super(props, context);
 
         this.switchNetwork = this.switchNetwork.bind(this);
+        this.addCustomNetwork = this.addCustomNetwork.bind(this);
 
         this.state = {
             value: '',
@@ -25,6 +26,11 @@ class Header extends Component {
         this.setState({ showNetworks: false });
         this.setState({ network });
         this.props.changeNetwork(network);
+    }
+
+    addCustomNetwork(){
+        this.setState({ showNetworks: false });
+        this.props.addCustomNetwork();
     }
 
     render() {
@@ -71,6 +77,12 @@ class Header extends Component {
                                             </div>
                                         );
                                     })}
+
+                                    <hr className="bg-grey ml-1 mr-1"/>
+
+                                    <div onClick={() => this.addCustomNetwork()} className='container-hidden-network-item'>
+                                        <div className='container-hidden-network-item-name-not-selected'>Add custom Node</div>
+                                    </div>
                                 </div>
                             </div>
                             : ''}

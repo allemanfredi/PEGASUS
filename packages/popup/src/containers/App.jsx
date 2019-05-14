@@ -7,6 +7,7 @@ import IOTA from '@pegasus/lib/iota';
 import Header from './header/Header';
 import Main from './main/Main';
 import options from '@pegasus/lib/options';
+import { APP_STATE } from '@pegasus/lib/states';
 
 
 
@@ -20,6 +21,7 @@ class App extends Component {
         this.onShowHeader = this.onShowHeader.bind(this);
         this.onHandleNetworkChanging = this.onHandleNetworkChanging.bind(this);
         this.bindDuplexRequests = this.bindDuplexRequests.bind(this);
+        this.onAddCustomNetwork = this.onAddCustomNetwork.bind(this);
 
         this.state = {
             isLogged: false,
@@ -49,13 +51,19 @@ class App extends Component {
         this.setState({ showHeader: value });
     }
 
-    async onHandleNetworkChanging(network) {
+    onHandleNetworkChanging(network) {
         IOTA.setProvider(network.provider);
         PopupAPI.setCurrentNetwork(network);
         
         //transactions handler for new network
         PopupAPI.stopHandleAccountData();
         PopupAPI.startHandleAccountData();
+    }
+
+    async onAddCustomNetwork(){
+        const state = await PopupAPI.getState();
+        if ( state >= APP_STATE.WALLET_UNLOCKED )
+            this.main.current.addCustomNetwork();
     }
 
     bindDuplexRequests(){
@@ -69,7 +77,9 @@ class App extends Component {
         return (
             <div className="app-wrapper">
                 <div className="app chrome">
-                    {this.state.showHeader ? <Header isLogged={this.state.isLogged} changeNetwork={this.onHandleNetworkChanging}/> : '' }
+                    {this.state.showHeader ? <Header isLogged={this.state.isLogged} 
+                                                     changeNetwork={this.onHandleNetworkChanging}
+                                                     addCustomNetwork={this.onAddCustomNetwork}/> : '' }
                     <Main   showHeader={this.onShowHeader} 
                             ref={this.main} 
                             network={this.state.network}

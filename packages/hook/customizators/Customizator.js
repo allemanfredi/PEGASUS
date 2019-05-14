@@ -9,11 +9,6 @@ export default {
 
     getCustomIota(provider){
         const iotajs = composeAPI({provider});
-        
-        ['composeAPI' , 'createAddNeighbors' , 'createAttachToTangle' , 'createBroadcastBundle' ,
-         'createBroadcastTransactions' , 'createCheckConsistency' ].forEach(method => (
-            iotajs[ method ] = () => new Error('Pegasus does not allow to use this method')
-        ));
 
         iotajs.attachToTangle = (...args) => this.attachToTangle(args);
         iotajs.addNeighbors = (...args) => this.addNeighbors(args);
@@ -21,6 +16,7 @@ export default {
         iotajs.broadcastTransactions = (...args) => this.broadcastTransactions(args);
         iotajs.checkConsistency = (...args) => this.checkConsistency(args);
         iotajs.findTransactionObjects = (...args) => this.findTransactionObjects(args);
+        iotajs.findTransactions = (...args) => this.findTransactions(args);
         iotajs.prepareTransfers = (...args) => this.prepareTransfers(args);
         iotajs.getNodeInfo = (...args) => this.getNodeInfo(args);
         
@@ -88,12 +84,22 @@ export default {
         .catch( err => callback(null,err));
     },
 
+    findTransactions(args){
+        const callback = args[1];
+        if ( callback === undefined )
+            throw new Error("not callback provided");
+
+        this.request('findTransactions', {args})
+        .then(transactions => callback(transactions,null))
+        .catch( err => callback(null,err));
+    },
+
     getNodeInfo(args){
         const callback = args[0];
         if ( callback === undefined )
             throw new Error("not callback provided");
 
-        this.request('getNodeInfo', {args})
+        this.request('getNodeInfo')
         .then(info => callback(info,null))
         .catch( err => callback(null,err));
     },

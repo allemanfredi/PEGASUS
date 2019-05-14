@@ -125,6 +125,10 @@ const backgroundScript = {
                     this.walletService.request('findTransactionObjects', {uuid,resolve,data});
                     break;
                 }
+                case 'findTransactions' : {
+                    this.walletService.request('findTransactions', {uuid,resolve,data});
+                    break;
+                }
                 case 'getNodeInfo' : {
                     this.walletService.request('getNodeInfo', {uuid,resolve});
                     break;

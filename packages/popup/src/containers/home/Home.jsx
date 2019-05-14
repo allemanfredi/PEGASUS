@@ -5,6 +5,7 @@ import Receive from '../receive/Receive';
 import Settings from '../settings/Settings';
 import Transactions from '../transactions/Transactions';
 import Add from '../add/Add';
+import Network from '../network/Network';
 
 import Loader from '../../components/loader/Loader';
 import Navbar from '../../components/navbar/Navbar';
@@ -49,6 +50,7 @@ class Home extends Component {
             showHome: true,
             showReceive: false,
             showSettings: false,
+            showNetwork : false,
             showAdd: false,
             showAlert : false,
             alertType : '',
@@ -111,35 +113,59 @@ class Home extends Component {
     }
 
     onClickSend() {
-        this.setState({ showSend: true });
-        this.setState({ showHome: false });
+        this.setState( () => {
+            return{
+                showSend : true,
+                showHome : false
+            }
+        })
     }
 
     onClickReceive() {
-        this.setState({ showReceive: true });
-        this.setState({ showHome: false });
+        this.setState( () => {
+            return{
+                showReceive : true,
+                showHome : false
+            }
+        })
     }
 
     onBack() {
-        this.setState({ showSend: false });
-        this.setState({ showReceive: false });
-        this.setState({ showDetails: false });
-        this.setState({ showAlert: false });
-        this.setState({ showAdd: false });
-        this.setState({ showHome: true });
+        this.setState( () => {
+            return {
+                showSend : false,
+                showReceive : false,
+                showDetails : false,
+                showAlert : false,
+                showAdd : false,
+                showNetwork : false,
+                showHome : true
+            }
+        })
     }
 
     onClickSettings() { this.setState({ showSettings: true }); }
     onCloseSettings() { this.setState({ showSettings: false }); }
 
     onAddAccount() {
-        this.setState({ showAdd: true });
-        this.setState({ showHome: false });
-        this.setState({ showSettings: false });
+        this.setState( () => {
+            return {
+                showAdd : true,
+                showHome : false,
+                showSettings : false
+            }
+        });
     }
-
-
     onLogout() {this.props.onLogout();}
+
+    addCustomNetwork(){
+        this.setState( () => {
+            return {
+                showHome : false,
+                showNetwork : true
+            }
+        });
+    }
 
     render() {
         return (
@@ -149,7 +175,7 @@ class Home extends Component {
                         showBtnSettings={this.state.showHome}
                         showBtnEllipse={this.state.showHome}
                         showBtnBack={!this.state.showHome}
-                        text={this.state.showHome ? this.props.account.name : (this.state.showSend ? 'Send' : (this.state.showReceive ? 'Receive' : this.state.showAdd ? 'Add account' : ''))}
+                        text={this.state.showHome ? this.props.account.name : (this.state.showSend ? 'Send' : (this.state.showReceive ? 'Receive' : this.state.showAdd ? 'Add account' : ( this.state.showNetwork ? 'Add custom node' : '' )))}
                         onClickSettings={this.onClickSettings}
                         onClickMap={this.onClickMap}
                         onBack={this.onBack}
@@ -169,11 +195,13 @@ class Home extends Component {
                                                                 onLogout={this.onLogout}
                                                                 onClose={this.onCloseSettings}/> ) : ''}
 
-                        { this.state.showSend ? (       <Send   account={this.props.account} 
+                        { this.state.showSend ?       <Send     account={this.props.account} 
                                                                 network={this.props.network}
-                                                                onAskConfirm={ () => this.props.onAskConfirm()} /> ) : ''}
-                        { this.state.showReceive ? (    <Receive account={this.props.account} network={this.state.network} /> ) : '' }
-                        { this.state.showAdd ? (        <Add network={this.props.network} onBack={this.onBack}/>) : ''}
+                                                                onAskConfirm={ () => this.props.onAskConfirm()} />  : ''}
+                        { this.state.showReceive ?    <Receive account={this.props.account} network={this.state.network} /> : '' }
+                        { this.state.showAdd ?        <Add network={this.props.network} onBack={this.onBack}/> : ''}
+                        { this.state.showNetwork ?    <Network/> : ''}
+
 
                         { this.state.showAlert ? <Alert type={this.state.alertType} 
                                                         text={this.state.alertText}
