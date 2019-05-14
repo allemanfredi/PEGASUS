@@ -71,63 +71,8 @@ if (window.iota) {
 
 ## List of Supported injected functions
 
-### addNeighbors(uris,callback)
-
-| Param | Type | Description |
-| --- | --- | --- |
-| uris | <code>Array</code> | List of URI's |
-| callback | <code>function</code> | callback |
-
-### attachToTangle(trunkTransaction, branchTransaction, minWeightMagnitude, trytes, callback)
-
-| Param | Type | Description |
-| --- | --- | --- |
-| trunkTransaction | <code>Hash</code> | Trunk transaction as returned by [`getTransactionsToApprove`](#module_core.getTransactionsToApprove) |
-| branchTransaction | <code>Hash</code> | Branch transaction as returned by [`getTransactionsToApprove`](#module_core.getTransactionsToApprove) |
-| minWeightMagnitude | <code>number</code> | Number of minimun trailing zeros in tail transaction hash |
-| trytes | <code>Array.&lt;TransactionTrytes&gt;</code> | List of transaction trytes |
-| [callback] | <code>Callback</code> | Optional callback |
-
-Performs the Proof-of-Work required to attach a transaction to the Tangle by
-calling [`attachToTangle`](https://docs.iota.works/iri/api#endpoints/attachToTangle) command.
-Returns list of transaction trytes and overwrites the following fields:
- - `hash`
- - `nonce`
- - `attachmentTimestamp`
- - `attachmentTimsetampLowerBound`
- - `attachmentTimestampUpperBound`
-
- ### broadcastBundle(tailTransactionHash, callback)
-
- | Param | Type | Description |
-| --- | --- | --- |
-| tailTransactionHash | <code>Hash</code> | Tail transaction hash |
-| [callback] | <code>Callback</code> | Optional callback |
-
-Re-broadcasts all transactions in a bundle given the tail transaction hash.
-It might be useful when transactions did not properly propagate,
-particularly in the case of large bundles.
-
-
-### getNodeInfo(callback)
-
-| Param | Type | Description |
-| --- | --- | --- |
-| callback | <code>function</code> | callback |
-
-
-### prepareTransfers(transfers,callback)
-
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| transfers | <code>object</code> |  |  |
-| [options] | <code>object</code> |  |  |
-| [options.inputs] | <code>Array.&lt;Input&gt;</code> |  | Inputs used for signing. Needs to have correct security, keyIndex and address value |
-| [options.inputs[].address] | <code>Hash</code> |  | Input address trytes |
-| [options.inputs[].keyIndex] | <code>number</code> |  | Key index at which address was generated |
-| [options.inputs[].security] | <code>number</code> | <code>2</code> | Security level |
-| [options.inputs[].balance] | <code>number</code> |  | Balance in iotas |
-| [options.address] | <code>Hash</code> |  | Remainder address |
-| [options.security] | <code>Number</code> |  | Security level to be used for getting inputs and reminder address |
-| callback | <code>function</code> |  | callback |
-
+ * .addNeighbors(uris, callback)
+ * .attachToTangle(trunkTransaction, branchTransaction, minWeightMagnitude, trytes, callback)
+ * .broadcastBundle(tailTransactionHash, callback)
+ * .getNodeInfo(callback)
+ * .prepareTransfers(seed, transfers, [options], callback)
