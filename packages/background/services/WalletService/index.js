@@ -35,7 +35,9 @@ class Wallet extends EventEmitter {
         setInterval ( this.checkSession , 900000);
         
         //iotajs injection service
-        CustomizatorService.init(currentNetwork.provider);
+         this.customizatorService =  Utils.requestHandler(
+            new CustomizatorService(currentNetwork.provider)
+        )
     }
 
     isWalletSetup(){
@@ -660,8 +662,9 @@ class Wallet extends EventEmitter {
 
     //CUSTOM iotajs functions
     request(method , {uuid,resolve,data}){
-        CustomizatorService.request(method , {uuid , resolve , data})
+        this.customizatorService.request(method , {uuid , resolve , data})
     }
+
 
 
 }

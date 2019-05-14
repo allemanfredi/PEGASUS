@@ -102,18 +102,31 @@ const backgroundScript = {
                 } 
 
                 case 'addNeighbors': {
-                    this.walletService.request('addNeighbors', {uuid,resolve,data})
+                    this.walletService.request('addNeighbors', {uuid,resolve,data});
                     break;
                 }
                 case 'attachToTangle': {
-                    this.walletService.request('attachToTangle', {uuid,resolve,data})
+                    this.walletService.request('attachToTangle', {uuid,resolve,data});
+                    break;
+                }
+                case 'broadcastTransactions' : {
+                    this.walletService.request('broadcastTransactions', {uuid,resolve,data});
                     break;
                 }
                 case 'broadcastBundle' : {
-                    this.walletService.request('broadcastBundle', {uuid,resolve,data})
+                    this.walletService.request('broadcastBundle', {uuid,resolve,data});
+                    break;
+                }
+                case 'checkConsistency' : {
+                    this.walletService.request('checkConsistency', {uuid,resolve,data});
+                    break;
+                }
+                case 'findTransactionObjects' : {
+                    this.walletService.request('findTransactionObjects', {uuid,resolve,data});
+                    break;
                 }
                 case 'getNodeInfo' : {
-                    this.walletService.request('getNodeInfo', {uuid,resolve})
+                    this.walletService.request('getNodeInfo', {uuid,resolve});
                     break;
                 }
 

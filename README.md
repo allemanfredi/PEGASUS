@@ -74,5 +74,9 @@ if (window.iota) {
  * .addNeighbors(uris, callback)
  * .attachToTangle(trunkTransaction, branchTransaction, minWeightMagnitude, trytes, callback)
  * .broadcastBundle(tailTransactionHash, callback)
+ * .broadcastTransactions(trytes, callback)
+ * .checkConsistency(transactions, [options], callback)
  * .getNodeInfo(callback)
  * .prepareTransfers(seed, transfers, [options], callback)
+ * .findTransactionObjects(query, callback)
+ 

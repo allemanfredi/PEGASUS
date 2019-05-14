@@ -10,13 +10,16 @@ export default {
     getCustomIota(provider){
         const iotajs = composeAPI({provider});
         
-        [ 'composeAPI' ].forEach(method => (
+        ['composeAPI' , 'createAddNeighbors' , 'createAttachToTangle' , 'createBroadcastBundle' ,
+         'createBroadcastTransactions' , 'createCheckConsistency' ].forEach(method => (
             iotajs[ method ] = () => new Error('Pegasus does not allow to use this method')
         ));
 
         iotajs.attachToTangle = (...args) => this.attachToTangle(args);
         iotajs.addNeighbors = (...args) => this.addNeighbors(args);
         iotajs.broadcastBundle = (...args) => this.broadcastBundle(args);
+        iotajs.broadcastTransactions = (...args) => this.broadcastTransactions(args);
+        iotajs.checkConsistency = (...args) => this.checkConsistency(args);
         iotajs.prepareTransfers = (...args) => this.prepareTransfers(args);
         iotajs.getNodeInfo = (...args) => this.getNodeInfo(args);
         
@@ -49,6 +52,37 @@ export default {
             throw new Error("not callback provided");
         
         this.request('broadcastBundle', {args})
+        .then(transactions => callback(transactions,null))
+        .catch( err => callback(null,err));
+    },
+
+    broadcastTransactions(args){
+        const callback = args[1];
+        if ( callback === undefined )
+            throw new Error("not callback provided");
+        
+        this.request('broadcastBundle', {args})
+        .then(trytes => callback(trytes,null))
+        .catch( err => callback(null,err));
+    },
+
+    checkConsistency(args){
+        let callback;
+        args[2] ? callback = args[2] : callback = args[1];
+        if ( callback === undefined )
+            throw new Error("not callback provided");
+        
+        this.request('checkConsistency', {args})
+        .then(trytes => callback(trytes,null))
+        .catch( err => callback(null,err));
+    },
+
+    findTransactionObjects(args){
+        const callback = args[1];
+        if ( callback === undefined )
+            throw new Error("not callback provided");
+
+        this.request('findTransactionObjects', {args})
         .then(transactions => callback(transactions,null))
         .catch( err => callback(null,err));
     },
