@@ -22,7 +22,8 @@ class Network extends Component {
             provider : this.state.url + ':' + this.state.port,
             link : this.state.type === 'mainnet' ? 'https://thetangle.org/' : 'https://devnet.thetangle.org/',
             type : this.state.type,
-            difficulty : this.state.type === 'mainnet' ? 14 : 9
+            difficulty : this.state.type === 'mainnet' ? 14 : 9,
+            default : false
         }
         this.props.onAddNetwork(network);
     }
