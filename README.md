@@ -46,7 +46,7 @@ After having built the application, it needs to be loaded on chrome.
 An user during the initialization phase will have to enter a password that will be used as a key to encrypt the seed. Of this password the hash will be saved in the localStorage in order to use it during login. The plain text of the password (encryption key) will be saved in a variable within the background script. After 15 minutes of inactivity, the wallet will delete this variable so that the key has not been saved anywhere. In this way the seed encryption key is saved only in the user's mind and in a variable when using the wallet.
 
 
-## In development : iotaJs injection.
+##IOTAjs injection.
 
 
 ```js
@@ -104,4 +104,5 @@ if (window.iota) {
  * .traverseBundle(trunkTransaction, [bundle], callback)
  * .generateAddress(seed, index, [security], [checksum] , callback)
 
+## In development : Deep link support
 
