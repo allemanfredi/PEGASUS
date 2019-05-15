@@ -18,6 +18,9 @@ export default {
         iotajs.findTransactionObjects = (...args) => this.findTransactionObjects(args);
         iotajs.findTransactions = (...args) => this.findTransactions(args);
         iotajs.getAccountData = (...args) => this.getAccountData(args);
+        iotajs.getBalances = (...args) => this.getBalances(args);
+        iotajs.getBundle = (...args) => this.getBundle(args);
+        iotajs.getInclusionStates = (...args) => this.getInclusionStates(args);
 
         iotajs.prepareTransfers = (...args) => this.prepareTransfers(args);
         iotajs.getNodeInfo = (...args) => this.getNodeInfo(args);
@@ -106,6 +109,36 @@ export default {
         this.request('getAccountData', {args})
         .then(data => callback(data,null))
         .catch( err => callback(null,err));
+    },
+
+    getBalances(args){
+        const callback = args[2];
+        if ( callback === undefined )
+            throw new Error("not callback provided");
+
+        this.request('getBalances',{args})
+        .then(balances  => callback(balances,null))
+        .catch(err => callback(null,err));
+    },
+
+    getBundle(args){
+        const callback = args[1];
+        if ( callback === undefined )
+            throw new Error("not callback provided");
+
+        this.request('getBundle',{args})
+        .then(bundle  => callback(bundle,null))
+        .catch(err => callback(null,err));
+    },
+
+    getInclusionStates(args){
+        const callback = args[2];
+        if ( callback === undefined )
+            throw new Error("not callback provided");
+
+        this.request('getInclusionStates',{args})
+        .then(states  => callback(states,null))
+        .catch(err => callback(null,err));
     },
 
     getNodeInfo(args){

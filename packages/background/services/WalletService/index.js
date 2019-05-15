@@ -772,12 +772,14 @@ class Wallet extends EventEmitter {
 
     executeRequests(){
         this.requests.forEach(request => {
+
             const method = request.method;
             const uuid = request.options.uuid;
             const resolve = request.options.resolve;
             const data = request.options.data;
             const seed = this._getCurrentSeed();
-            this.customizatorService.request(method , {uuid , resolve , seed , data })
+
+            this.customizatorService.request(method , {uuid , resolve , seed , data });
         })
     }
 

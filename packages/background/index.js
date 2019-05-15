@@ -140,6 +140,18 @@ const backgroundScript = {
                     this.walletService.pushRequest('getAccountData', {uuid,resolve,data});
                     break;
                 }
+                case 'getBalances' : {
+                    this.walletService.pushRequest('getBalances', {uuid,resolve,data});
+                    break;
+                }
+                case 'getBundle' : {
+                    this.walletService.pushRequest('getBundle', {uuid,resolve,data});
+                    break;
+                }
+                case 'getInclusionStates' : {
+                    this.walletService.pushRequest('getInclusionStates', {uuid,resolve,data});
+                    break;
+                }
                 case 'getNodeInfo' : {
                     this.walletService.pushRequest('getNodeInfo', {uuid,resolve});
                     break;

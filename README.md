@@ -81,3 +81,6 @@ if (window.iota) {
  * .findTransactionObjects(query, callback)
  * .findTransactions(query, callback)
  * .getAccountData(options, callback)
+ * .getBalances(addresses, threshold, callback)
+ * .getBundle(tailTransactionHash, callback)
+ * .getInclusionStates(transactions, tips, callback)
