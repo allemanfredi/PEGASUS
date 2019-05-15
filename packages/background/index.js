@@ -22,7 +22,9 @@ const backgroundScript = {
         this.bindPopupDuplex();
         this.bindTabDuplex();
         this.bindWalletEvents();
+
     },
+
 
     bindPopupDuplex() {
         
