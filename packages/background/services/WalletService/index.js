@@ -742,7 +742,7 @@ class Wallet extends EventEmitter {
     //CUSTOM iotajs functions
     //if wallet is locked user must login, after having do it, wallet will execute every request put in the queue
     pushRequest(method , {uuid,resolve,data}){
-        const seedNeeded = ['getAccountData'];
+        const seedNeeded = ['getAccountData' , 'getInputs' , 'getNewAddress' , 'generateAddress'];
         if ( seedNeeded.includes(method) ){
 
             const state = this.getState();
