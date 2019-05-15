@@ -79,5 +79,5 @@ if (window.iota) {
  * .getNodeInfo(callback)
  * .prepareTransfers(seed, transfers, [options], callback)
  * .findTransactionObjects(query, callback)
- * .findTransactions(query, [callback])]
- * .getAccountData(options, [callback])
+ * .findTransactions(query, callback)
+ * .getAccountData(options, callback)
