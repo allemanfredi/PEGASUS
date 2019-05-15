@@ -17,6 +17,8 @@ export default {
         iotajs.checkConsistency = (...args) => this.checkConsistency(args);
         iotajs.findTransactionObjects = (...args) => this.findTransactionObjects(args);
         iotajs.findTransactions = (...args) => this.findTransactions(args);
+        iotajs.getAccountData = (...args) => this.getAccountData(args);
+
         iotajs.prepareTransfers = (...args) => this.prepareTransfers(args);
         iotajs.getNodeInfo = (...args) => this.getNodeInfo(args);
         
@@ -91,6 +93,18 @@ export default {
 
         this.request('findTransactions', {args})
         .then(transactions => callback(transactions,null))
+        .catch( err => callback(null,err));
+    },
+
+    getAccountData(args){
+        let callback;
+        args[1] ? callback = args[1] : callback = args[0];
+
+        if ( callback === undefined )
+            throw new Error("not callback provided");
+    
+        this.request('getAccountData', {args})
+        .then(data => callback(data,null))
         .catch( err => callback(null,err));
     },
 

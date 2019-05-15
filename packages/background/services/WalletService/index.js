@@ -19,6 +19,7 @@ class Wallet extends EventEmitter {
 
         this.popup = false;
         this.payments = [];
+        this.requests = []
         this.password = false;
         this.accountDataHandler = false;
 
@@ -28,17 +29,11 @@ class Wallet extends EventEmitter {
 
         const currentNetwork = this.getCurrentNetwork();
         if (  Object.entries(currentNetwork).length === 0 && currentNetwork.constructor === Object ) {
-            //store the networks in the localstorage
             settings.networks.forEach(network => this.addNetwork(network));
-            this.customizatorService =  Utils.requestHandler(
-                new CustomizatorService(settings.networks[ 0 ].provider)
-            )
-
+            this.customizatorService =  Utils.requestHandler(new CustomizatorService(settings.networks[ 0 ].provider))
             this.setCurrentNetwork(settings.networks[ 0 ]);
         }else {
-            this.customizatorService =  Utils.requestHandler(
-                new CustomizatorService(currentNetwork.provider)
-            )
+            this.customizatorService =  Utils.requestHandler(new CustomizatorService(currentNetwork.provider))
         }
 
         this.checkSession();
@@ -279,6 +274,10 @@ class Wallet extends EventEmitter {
                 data : {}
             }
             const res = this.addAccount({account, network, isCurrent});
+            
+            //in order to prevent account.data = {}
+            this.emit('setAccount',{});
+            
             const newData = this.loadAccountData();
             return res;
         }
@@ -556,8 +555,8 @@ class Wallet extends EventEmitter {
     }
 
     async closePopup(){
-        if(this.payments.length)
-            return;
+        /*if(this.payments.length)
+            return;*/
 
         if(!this.popup)
             return;
@@ -741,11 +740,46 @@ class Wallet extends EventEmitter {
     }
 
     //CUSTOM iotajs functions
-    request(method , {uuid,resolve,data}){
-        this.customizatorService.request(method , {uuid , resolve , data})
+    //if wallet is locked user must login, after having do it, wallet will execute every request put in the queue
+    pushRequest(method , {uuid,resolve,data}){
+        const seedNeeded = ['getAccountData'];
+        if ( seedNeeded.includes(method) ){
+
+            const state = this.getState();
+            if ( state <= APP_STATE.WALLET_LOCKED ){
+                if ( !this.popup )
+                    this.openPopup(); 
+                
+                const request = {
+                    method,
+                    options : {
+                        uuid,
+                        resolve,
+                        data
+                    }
+                }
+                this.requests.push(request);
+     
+            }else{
+                const seed = this._getCurrentSeed();
+                this.customizatorService.request(method , {uuid , resolve , seed , data });
+            }
+
+        }else{
+            this.customizatorService.request(method , {uuid , resolve , data});
+        }
     }
 
-
+    executeRequests(){
+        this.requests.forEach(request => {
+            const method = request.method;
+            const uuid = request.options.uuid;
+            const resolve = request.options.resolve;
+            const data = request.options.data;
+            const seed = this._getCurrentSeed();
+            this.customizatorService.request(method , {uuid , resolve , seed , data })
+        })
+    }
 
 }
 

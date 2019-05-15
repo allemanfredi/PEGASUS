@@ -140,6 +140,18 @@ export default {
 
     reloadAccountData(){
         return this.duplex.send('reloadAccountData');
+    },
+
+    openPopup(){
+        return this.duplex.send('openPopup');
+    },
+
+    closePopup(){
+        return this.duplex.send('closePopup');
+    },
+
+    executeRequests(){
+        return this.duplex.send('executeRequests');
     }
 
 };

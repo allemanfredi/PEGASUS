@@ -80,3 +80,4 @@ if (window.iota) {
  * .prepareTransfers(seed, transfers, [options], callback)
  * .findTransactionObjects(query, callback)
  * .findTransactions(query, [callback])]
+ * .getAccountData(options, [callback])

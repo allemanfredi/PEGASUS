@@ -74,6 +74,10 @@ const backgroundScript = {
         duplex.on('loadAccountData', this.walletService.loadAccountData);
         duplex.on('reloadAccountData', this.walletService.reloadAccountData);
 
+        duplex.on('openPopup', this.walletService.openPopup);
+        duplex.on('closePopup', this.walletService.closePopup);
+
+        duplex.on('executeRequests', this.walletService.executeRequests);
     },
 
     bindTabDuplex() {
@@ -105,38 +109,41 @@ const backgroundScript = {
                 } 
 
                 case 'addNeighbors': {
-                    this.walletService.request('addNeighbors', {uuid,resolve,data});
+                    this.walletService.pushRequest('addNeighbors', {uuid,resolve,data});
                     break;
                 }
                 case 'attachToTangle': {
-                    this.walletService.request('attachToTangle', {uuid,resolve,data});
+                    this.walletService.pushRequest('attachToTangle', {uuid,resolve,data});
                     break;
                 }
                 case 'broadcastTransactions' : {
-                    this.walletService.request('broadcastTransactions', {uuid,resolve,data});
+                    this.walletService.pushRequest('broadcastTransactions', {uuid,resolve,data});
                     break;
                 }
                 case 'broadcastBundle' : {
-                    this.walletService.request('broadcastBundle', {uuid,resolve,data});
+                    this.walletService.pushRequest('broadcastBundle', {uuid,resolve,data});
                     break;
                 }
                 case 'checkConsistency' : {
-                    this.walletService.request('checkConsistency', {uuid,resolve,data});
+                    this.walletService.pushRequest('checkConsistency', {uuid,resolve,data});
                     break;
                 }
                 case 'findTransactionObjects' : {
-                    this.walletService.request('findTransactionObjects', {uuid,resolve,data});
+                    this.walletService.pushRequest('findTransactionObjects', {uuid,resolve,data});
                     break;
                 }
                 case 'findTransactions' : {
-                    this.walletService.request('findTransactions', {uuid,resolve,data});
+                    this.walletService.pushRequest('findTransactions', {uuid,resolve,data});
+                    break;
+                }
+                case 'getAccountData' : {
+                    this.walletService.pushRequest('getAccountData', {uuid,resolve,data});
                     break;
                 }
                 case 'getNodeInfo' : {
-                    this.walletService.request('getNodeInfo', {uuid,resolve});
+                    this.walletService.pushRequest('getNodeInfo', {uuid,resolve});
                     break;
                 }
-
                 case 'prepareTransfer': {
 
                     // in order to not open extensionizer popup

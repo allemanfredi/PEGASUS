@@ -87,7 +87,7 @@ class Home extends Component {
         this.setState(() => {
             return {
                 showAlert:true,
-                alertText:'Are you sure you want delete this network?',
+                alertText:'Are you sure you want delete this node?',
                 alertType:'confirm',
                 actionToConfirm:'deleteNetwork'
             }
@@ -211,7 +211,7 @@ class Home extends Component {
                         onDeleteCurrentNetwork={this.onDeleteCurrentNetwork}>
                 </Navbar>
 
-                { !(Object.keys(this.props.account).length === 0 && this.props.account.constructor === Object) ? ( //!
+                { !(Object.keys(this.props.account).length === 0 && this.props.account.constructor === Object ) ? ( //!
                     <div>
                         { this.state.showSettings ? ( <Settings network={this.props.network}
                                                                 account={this.props.account}
@@ -239,7 +239,7 @@ class Home extends Component {
 
                         { this.state.showHome ? (
                             <div>
-                                <div className='row mt-2'>
+                                <div className='row mt-4'>
                                     <div className='col-12 text-center'>
                                         <img src='./material/logo/iota-logo.png' height='60' width='60' alt='iota logo'/>
                                     </div>
@@ -251,7 +251,7 @@ class Home extends Component {
                                     </div>
                                 </div>
 
-                                <div className='row mt-1 mb-2'>
+                                <div className='row mt-1 mb-4'>
                                     <div className="col-2"></div>
                                     <div className='col-4 text-center'>
                                         <button onClick={this.onClickReceive} className='btn btn-border-blue btn-big'>Receive</button>

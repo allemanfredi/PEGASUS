@@ -50,6 +50,8 @@ class Main extends Component {
     async onSuccessFromLogin() {
         PopupAPI.startSession();
 
+        PopupAPI.setState(APP_STATE.WALLET_UNLOCKED);
+
         const payments = await PopupAPI.getPayments();
         if ( payments.length > 0 ){
             this.props.showHeader(false);
@@ -57,11 +59,17 @@ class Main extends Component {
             PopupAPI.setState(APP_STATE.WALLET_TRANSFERS_IN_QUEUE);
             this.changePayments(payments);
             return;
+        }else {
+            PopupAPI.closePopup();
+
+            //enable all requets from injections exept payments
+            PopupAPI.executeRequests();
         }
+
+
         PopupAPI.startHandleAccountData();
         this.props.showHeader(true);
         this.setState({appState:APP_STATE.WALLET_UNLOCKED});
-        PopupAPI.setState(APP_STATE.WALLET_UNLOCKED);
     }
 
     onSuccessFromInit() {

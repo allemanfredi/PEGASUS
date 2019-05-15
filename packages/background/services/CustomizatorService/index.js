@@ -56,6 +56,12 @@ class CustomizatorService {
                     .catch(err => resolve({ data:err.message, success:false, uuid }))
                     break
                 }
+                case 'getAccountData' : {
+                    this.iota.getAccountData(seed , ...data.args)
+                    .then(data => resolve({ data , success:true, uuid }))
+                    .catch(err => resolve({ data:err.message, success:false, uuid }))
+                    break
+                }
                 case 'getNodeInfo' : {
                     this.iota.getNodeInfo()
                     .then(info => resolve({ data:info, success:true, uuid }))
