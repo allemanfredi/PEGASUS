@@ -8,12 +8,26 @@ class Header extends Component {
 
         this.switchNetwork = this.switchNetwork.bind(this);
         this.addCustomNetwork = this.addCustomNetwork.bind(this);
+        this.handleClickOutside = this.handleClickOutside.bind(this);
 
         this.state = {
             showNetworks: false
         };
     }
 
+    componentDidMount() {
+        document.addEventListener('mousedown', this.handleClickOutside);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('mousedown', this.handleClickOutside);
+    }
+
+    handleClickOutside(event) {
+        if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
+            this.setState({ showNetworks: false });
+        }
+    }
 
     switchNetwork(network) {
         this.setState({ showNetworks: false });
@@ -51,7 +65,7 @@ class Header extends Component {
                     <div className='col-2'></div>
                     <div className='col-9 '>
                         { this.state.showNetworks ?
-                            <div className='container-hidden-network'>
+                            <div ref={ ref => this.wrapperRef = ref} className='container-hidden-network'>
                                 <div className='container-hidden-network-header'>Nodes</div>
                                 <div className='container-hidden-network-body'>
                                     {this.props.networks.map( (network, index) => {

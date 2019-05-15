@@ -7,10 +7,25 @@ export default class Navbar extends Component {
 
         this.deleteAccount = this.deleteAccount.bind(this);
         this.deleteNetwork = this.deleteNetwork.bind(this);
+        this.handleClickOutside = this.handleClickOutside.bind(this);
 
         this.state = {
             showEllipseMenu : false
         };
+    }
+
+    componentDidMount() {
+        document.addEventListener('mousedown', this.handleClickOutside);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('mousedown', this.handleClickOutside);
+    }
+
+    handleClickOutside(event) {
+        if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
+            this.setState({ showEllipseMenu: false });
+        }
     }
     
     deleteAccount(){
@@ -25,7 +40,7 @@ export default class Navbar extends Component {
 
     render() {
         return (
-            <div className='bg-darkblue'>
+            <div ref={ref => this.wrapperRef = ref} className='bg-darkblue'>
                 <div className='row text-center '>
                     { this.props.showBtnSettings ?
                         <div className='col-2'>
