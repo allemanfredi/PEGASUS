@@ -102,7 +102,7 @@ class Home extends Component {
     async onConfirm(){
         switch(this.state.actionToConfirm){
             case 'deleteAccount' :{
-                const account = await PopupAPI.deleteAccount(this.props.account,this.props.account.network);
+                const account = await PopupAPI.deleteAccount(this.props.account,this.props.network);
                 if ( !account  ){
                     this.setState( () => {
                         return {
