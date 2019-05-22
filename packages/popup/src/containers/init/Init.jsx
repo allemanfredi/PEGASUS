@@ -20,6 +20,8 @@ class Init extends Component {
         this.copyToClipboard = this.copyToClipboard.bind(this);
         this.onChangePassword = this.onChangePassword.bind(this);
         this.onChangeRePassword = this.onChangeRePassword.bind(this);
+        this.checkPassword = this.checkPassword.bind(this);
+        this.getPasswordErrors = this.getPasswordErrors.bind(this);
 
         this.passwordValidator = new passwordValidator();
         this.passwordValidator
@@ -52,7 +54,27 @@ class Init extends Component {
     }
 
     onChangePassword(e){
-        const err = this.passwordValidator.validate(e.target.value, { list: true });
+        this.setState({psw : e.target.value});
+        this.checkPassword(e.target.value,this.state.repsw);
+    }
+
+    onChangeRePassword(e){
+        this.setState({repsw : e.target.value})
+        this.checkPassword(this.state.psw,e.target.value);
+    }
+
+    checkPassword(psw,rePsw){
+        
+        const errors = this.getPasswordErrors(psw);
+        this.setState({pswErrors : errors})
+
+        if ( psw === rePsw && this.state.pswErrors.length === 0){
+            this.setState({pswAcceptable:true});
+        }else this.setState({pswAcceptable:false});
+    }
+
+    getPasswordErrors(psw){
+        const err = this.passwordValidator.validate(psw, { list: true });
         const errors = err.map( error => {
             switch(error){
                 case 'min':         return 'Password must contains at least 8 characters';
@@ -62,15 +84,7 @@ class Init extends Component {
                 case 'digits':      return 'Password must contains at least 1 digit';
             }
         })
-        this.setState({pswErrors : errors})
-        this.setState({psw : e.target.value});
-    }
-
-    onChangeRePassword(e){
-        this.setState({repsw : e.target.value})
-        if ( this.state.psw === e.target.value && this.state.pswErrors.length === 0){
-            this.setState({pswAcceptable:true})
-        }
+        return errors;
     }
 
     //action = true -> goOn, action = false = goBack
