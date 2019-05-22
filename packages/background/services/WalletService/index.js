@@ -37,7 +37,7 @@ class Wallet extends EventEmitter {
         }
 
         this.checkSession();
-        setInterval ( this.checkSession , 900000);         
+        setInterval ( () => this.checkSession() , 9000000);         
     }
 
     isWalletSetup(){
@@ -470,6 +470,7 @@ class Wallet extends EventEmitter {
     }
 
     checkSession(){
+        console.log("checkSession");
         try{
 
             const currentState = this.getState();
@@ -727,7 +728,7 @@ class Wallet extends EventEmitter {
         if ( this.accountDataHandler )
             return;
         
-        this.accountDataHandler = setInterval( () => this.loadAccountData() , 20000);
+        this.accountDataHandler = setInterval( this.loadAccountData , 20000);
     }
 
     stopHandleAccountData(){

@@ -1,6 +1,6 @@
 
 import {composeAPI} from '@iota/core';
-import iota from '@pegasus/lib/iota';
+import Utils from '@pegasus/lib/utils'; 
 
 export default {
 
@@ -204,6 +204,7 @@ export default {
     getNodeInfo(args){
         const callback = args[0];
         if ( callback === undefined )
+            //return Utils.injectPromise(this.getNodeInfo.bind(this), args);
             throw new Error("not callback provided");
 
         this.request('getNodeInfo')
