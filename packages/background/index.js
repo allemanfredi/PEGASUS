@@ -22,25 +22,6 @@ const backgroundScript = {
         this.bindPopupDuplex();
         this.bindTabDuplex();
         this.bindWalletEvents();
-
-        this.bindProtocolHandler();
-    },
-
-    bindProtocolHandler(){
-
-        console.log(chrome.runtime.id);
-        chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-            if (request.message == 'deepLink') {
-                console.log("deepLink");
-            // Create a new tab with options page
-           }
-        });
-
-        const url = chrome.runtime.getURL('dist/background.js')
-        console.log(url);
-        navigator.registerProtocolHandler("web+iota",
-                                  "https://burgers.example.com/?burger=%s",
-                                  "Burger handler");
     },
 
     bindPopupDuplex() {
