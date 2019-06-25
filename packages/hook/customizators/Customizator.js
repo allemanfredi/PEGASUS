@@ -11,36 +11,12 @@ export default {
     getCustomIota(provider){
         const iotajs = composeAPI({provider});
 
-        iotajs.attachToTangle = (...args) => this.attachToTangle(args);
-        iotajs.addNeighbors = (...args) => this.addNeighbors(args);
-        iotajs.broadcastBundle = (...args) => this.broadcastBundle(args);
-        iotajs.broadcastTransactions = (...args) => this.broadcastTransactions(args);
-        iotajs.checkConsistency = (...args) => this.checkConsistency(args);
-        iotajs.findTransactionObjects = (...args) => this.findTransactionObjects(args);
-        iotajs.findTransactions = (...args) => this.findTransactions(args);
-        iotajs.getAccountData = (...args) => this.getAccountData(args);
-        iotajs.getBalances = (...args) => this.getBalances(args);
-        iotajs.getBundle = (...args) => this.getBundle(args);
-        iotajs.getInclusionStates = (...args) => this.getInclusionStates(args);
-        iotajs.getInputs = (...args) => this.getInputs(args);
-        iotajs.getLatestInclusion = (...args) => this.getLatestInclusion(args);
-        iotajs.getNeighbors = (...args) => this.getNeighbors(args);
-        iotajs.getNewAddress = (...args) => this.getNewAddress(args);
-        iotajs.getNodeInfo = (...args) => this.getNodeInfo(args);
-        iotajs.getTips = (...args) => this.getTips(args);
-        iotajs.getTransactionObjects = (...args) => this.getTransactionObjects(args);
-        iotajs.getTransactionsToApprove = (...args) => this.getTransactionsToApprove(args);
-        iotajs.getTrytes = (...args) => this.getTrytes(args);
-        iotajs.isPromotable = (...args) => this.isPromotable(args);
-        iotajs.prepareTransfers = (...args) => this.prepareTransfers(args);
-        iotajs.promoteTransaction = (...args) => this.promoteTransaction(args);
-        iotajs.removeNeighbors = (...args) => this.removeNeighbors(args);
-        iotajs.replayBundle = (...args) => this.replayBundle(args);
-        iotajs.sendTrytes = (...args) => this.sendTrytes(args);
-        iotajs.storeAndBroadcast = (...args) => this.storeAndBroadcast(args);
-        iotajs.storeTransactions = (...args) => this.storeTransactions(args);
-        iotajs.traverseBundle = (...args) => this.traverseBundle(args);
-        iotajs.generateAddress = (...args) => this.generateAddress(args);
+        Object.entries(iotajs).forEach( ([method]) => {
+            console.log(method)
+            iotajs[method] = (...args) => this[method](args)
+        });
+
+        console.log(iotajs);
         
         return iotajs;
     },
