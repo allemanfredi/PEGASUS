@@ -106,8 +106,8 @@ if (window.iota) {
 
 ## Some screenshots
 ### Iotajs injection
-![Iotajs Injection](/images/injection.png =400x500)
+![Iotajs Injection](./images/injection.png =400x500)
 
 ### Mam explorer
-![Mam Explorer](/images/mam-explorer.png =320x500) 
+![Mam Explorer](./images/mam-explorer.png =320x500) 
 
