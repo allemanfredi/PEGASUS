@@ -54,7 +54,6 @@ class Confirm extends Component {
     
     render() {      
         return(
-            
             !this.state.isLoading ? this.state.payments.filter( (obj,index) => index === this.state.currentTransactionIndex ).map( obj =>  {
                 return (
                     <div className="container">
@@ -118,7 +117,6 @@ class Confirm extends Component {
                     </div>
                 )
             }) : <Loader/>
-            
         )
     }
 }

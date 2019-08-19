@@ -3,10 +3,8 @@ import MessageDuplex from '@pegasus/lib/MessageDuplex';
 import { PopupAPI } from '@pegasus/lib/api';
 import IOTA from '@pegasus/lib/iota';
 
-
 import Header from './header/Header';
 import Main from './main/Main';
-import options from '@pegasus/lib/options';
 import { APP_STATE } from '@pegasus/lib/states';
 
 

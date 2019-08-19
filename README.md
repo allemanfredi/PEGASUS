@@ -104,5 +104,10 @@ if (window.iota) {
  * .traverseBundle(trunkTransaction, [bundle], callback)
  * .generateAddress(seed, index, [security], [checksum] , callback)
 
-## In development : Deep link support
+## Some screenshots
+### Iotajs injection
+![Iotajs Injection](/images/injection.png =400x500)
+
+### Mam explorer
+![Mam Explorer](/images/mam-explorer.png =320x500) 
 

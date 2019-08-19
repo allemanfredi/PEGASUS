@@ -78,6 +78,8 @@ const backgroundScript = {
         duplex.on('closePopup', this.walletService.closePopup);
 
         duplex.on('executeRequests', this.walletService.executeRequests);
+
+        duplex.on('startFetchMam' , this.walletService.startFetchMam );
     },
 
     bindTabDuplex() {

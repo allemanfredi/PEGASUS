@@ -6,6 +6,7 @@ import Settings from '../settings/Settings';
 import Transactions from '../transactions/Transactions';
 import Add from '../add/Add';
 import Network from '../network/Network';
+import MamExplorer from '../mamExplorer/MamExplorer';
 
 import Loader from '../../components/loader/Loader';
 import Navbar from '../../components/navbar/Navbar';
@@ -37,6 +38,7 @@ class Home extends Component {
         this.onExportSeed = this.onExportSeed.bind(this);
         this.onAddNetwork = this.onAddNetwork.bind(this);
         this.onDeleteCurrentNetwork = this.onDeleteCurrentNetwork.bind(this);
+        this.onMamExplorer = this.onMamExplorer.bind(this);
 
         this.state = {
             error: '',
@@ -52,6 +54,7 @@ class Home extends Component {
             showNetwork : false,
             showAdd: false,
             showAlert : false,
+            showMam : false,
             alertType : '',
             alertText : '',
             actionToConfirm : ''
@@ -151,6 +154,7 @@ class Home extends Component {
                 showAlert : false,
                 showAdd : false,
                 showNetwork : false,
+                showMam : false,
                 showHome : true
             }
         })
@@ -191,6 +195,16 @@ class Home extends Component {
         await PopupAPI.getCurrentAccount(network);
     }
 
+    onMamExplorer(){
+        this.setState( () => {
+            return{
+                showMam : true,
+                showHome : false,
+                showSettings : false
+            }
+        })
+    }
+
     
 
     render() {
@@ -201,7 +215,7 @@ class Home extends Component {
                         showBtnSettings={this.state.showHome}
                         showBtnEllipse={this.state.showHome}
                         showBtnBack={!this.state.showHome}
-                        text={this.state.showHome ? this.props.account.name : (this.state.showSend ? 'Send' : (this.state.showReceive ? 'Receive' : this.state.showAdd ? 'Add account' : ( this.state.showNetwork ? 'Add custom node' : '' )))}
+                        text={this.state.showHome ? this.props.account.name : (this.state.showSend ? 'Send' : (this.state.showReceive ? 'Receive' : this.state.showAdd ? 'Add account' : ( this.state.showNetwork ? 'Add custom node' : ( this.state.showMam ? 'MAM Explorer' : '') )))}
                         onClickSettings={this.onClickSettings}
                         onClickMap={this.onClickMap}
                         onBack={this.onBack}
@@ -220,7 +234,8 @@ class Home extends Component {
                                                                 onChangeName={this.onChangeName}
                                                                 onShowMap={this.onClickMap}
                                                                 onLogout={this.onLogout}
-                                                                onClose={this.onCloseSettings}/> ) : ''}
+                                                                onClose={this.onCloseSettings}
+                                                                onMamExplorer={this.onMamExplorer}/> ) : ''}
 
                         { this.state.showSend ?       <Send     account={this.props.account} 
                                                                 network={this.props.network}
@@ -228,6 +243,10 @@ class Home extends Component {
                         { this.state.showReceive ?    <Receive account={this.props.account} network={this.state.network} /> : '' }
                         { this.state.showAdd ?        <Add network={this.props.network} onBack={this.onBack}/> : ''}
                         { this.state.showNetwork ?    <Network onAddNetwork={this.onAddNetwork}/> : ''}
+                        
+                        { this.state.showMam ?         <MamExplorer account={this.props.account}
+                                                                    network={this.props.network} 
+                                                                    onBack={this.onBack}/> : ''}
 
 
                         { this.state.showAlert ? <Alert type={this.state.alertType} 

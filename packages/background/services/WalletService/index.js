@@ -11,6 +11,8 @@ import settings from '@pegasus/lib/options';
 
 import AccountDataService from '../AccountDataService';
 import CustomizatorService from '../CustomizatorService';
+import MamService from '../MamService';
+
 
 class Wallet extends EventEmitter {
     
@@ -110,7 +112,7 @@ class Wallet extends EventEmitter {
         return this.password;
     }
 
-    _getCurrentSeed(){
+    getCurrentSeed(){
         const network = this.getCurrentNetwork();
         const account = this.getCurrentAccount(network);
         const key =  this.getKey();
@@ -278,7 +280,7 @@ class Wallet extends EventEmitter {
             //in order to prevent account.data = {}
             this.emit('setAccount',{});
             
-            const newData = this.loadAccountData();
+            this.loadAccountData();
             return res;
         }
         catch(err) {
@@ -470,7 +472,6 @@ class Wallet extends EventEmitter {
     }
 
     checkSession(){
-        console.log("checkSession");
         try{
 
             const currentState = this.getState();
@@ -709,7 +710,7 @@ class Wallet extends EventEmitter {
 
     //Account Data Handling
     async loadAccountData(){
-        const seed = this._getCurrentSeed();
+        const seed = this.getCurrentSeed();
         const network = this.getCurrentNetwork();
         const {transactions , newData} = await AccountDataService.retrieveAccountData(seed,network.provider);
 
@@ -728,7 +729,7 @@ class Wallet extends EventEmitter {
         if ( this.accountDataHandler )
             return;
         
-        this.accountDataHandler = setInterval( this.loadAccountData , 20000);
+        this.accountDataHandler = setInterval( () => this.loadAccountData() , 20000);
     }
 
     stopHandleAccountData(){
@@ -762,7 +763,7 @@ class Wallet extends EventEmitter {
                 this.requests.push(request);
      
             }else{
-                const seed = this._getCurrentSeed();
+                const seed = this.getCurrentSeed();
                 this.customizatorService.request(method , {uuid , resolve , seed , data });
             }
 
@@ -778,10 +779,17 @@ class Wallet extends EventEmitter {
             const uuid = request.options.uuid;
             const resolve = request.options.resolve;
             const data = request.options.data;
-            const seed = this._getCurrentSeed();
+            const seed = this.getCurrentSeed();
 
             this.customizatorService.request(method , {uuid , resolve , seed , data });
         })
+    }
+
+    startFetchMam(options){
+        const network = this.getCurrentNetwork();
+        MamService.fetch(network.provider , options.root , options.mode , options.sideKey , data => {
+            BackgroundAPI.newMamData(data);
+        });
     }
 
 }

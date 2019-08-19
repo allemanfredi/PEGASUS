@@ -1,4 +1,3 @@
-import NodeRSA from 'node-rsa';
 import crypto from 'crypto';
 
 const Utils = {
@@ -132,16 +131,6 @@ const Utils = {
         return dec;
     },
 
-    generateKeys(){
-        const key = new NodeRSA();
-        key.generateKeyPair();
-        const keys = {
-            privateKey: key.exportKey('pkcs8-private'),
-            publicKey: key.exportKey('pkcs8-public')
-        };
-        return keys;
-    },
-
     iotaReducer(amount){
         if (amount < Math.pow(10, 3)) {
           const num = amount;
@@ -165,7 +154,17 @@ const Utils = {
           return num + 'Ti';
         }
       },
-    
+
+    isValidAddress(address){
+        const values = ['9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+        if ( address.length !== 81 )
+            return false;
+        [...address].forEach(c => {
+            if ( values.indexOf(c) === -1)
+                return false;
+        });
+        return true;
+    }
     
 };
 

@@ -12,11 +12,8 @@ export default {
         const iotajs = composeAPI({provider});
 
         Object.entries(iotajs).forEach( ([method]) => {
-            console.log(method)
             iotajs[method] = (...args) => this[method](args)
         });
-
-        console.log(iotajs);
         
         return iotajs;
     },

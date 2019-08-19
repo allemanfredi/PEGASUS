@@ -102,6 +102,7 @@ export default {
     getState(){
         return this.duplex.send('getState');
     },
+
     setState(state){
         return this.duplex.send('setState',state);
     },
@@ -152,6 +153,10 @@ export default {
 
     executeRequests(){
         return this.duplex.send('executeRequests');
+    },
+
+    startFetchMam(options){
+        return this.duplex.send('startFetchMam',options);
     }
 
 };

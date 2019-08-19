@@ -28,6 +28,10 @@ export default {
         this.duplex.send('popup', 'setAccount', account , false);
     },
 
+    newMamData(data){
+        this.duplex.send('popup', 'newMamData', data, false);
+    },
+
     setAddress(address){
         this.duplex.send('tab', 'tunnel', {
             action: 'setAddress',
@@ -40,5 +44,5 @@ export default {
             action: 'setProvider',
             data: provider
         }, false);
-    }
+    },
 };

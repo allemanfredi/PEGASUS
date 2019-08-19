@@ -1,7 +1,7 @@
 {
   "name": "@pegasus/hook",
   "main": "index.js",
-  "author": "Alle <alle.manfredi@gmail.com>",
+  "author": "allemanfredi <alle.manfredi@gmail.com>",
   "private": true,
   "version": "0.0.2",
   "scripts": {

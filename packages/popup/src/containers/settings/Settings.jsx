@@ -15,8 +15,8 @@ class Settings extends Component {
 
         this.state = {
             accounts: [],
-            showEdit : false,
-            editedName : this.props.account.name
+            showEdit: false,
+            editedName: this.props.account.name
         };
     }
 
@@ -26,25 +26,25 @@ class Settings extends Component {
 
     async switchAccount(newAccount) {
         let accounts = await PopupAPI.getAllAccounts(this.props.network);
-        accounts = accounts.filter( account => account.id !== newAccount.id );
+        accounts = accounts.filter(account => account.id !== newAccount.id);
         this.setState({ accounts });
         this.props.onSwitchAccount(newAccount);
     }
 
     async updateData() {
         let accounts = await PopupAPI.getAllAccounts(this.props.network);
-        accounts = accounts.filter( account => !account.current );
+        accounts = accounts.filter(account => !account.current);
         this.setState({ accounts });
     }
 
-    handleClick(e){
-        if ( !this.edit.contains(e.target)){
-            this.setState({showEdit:false});
+    handleClick(e) {
+        if (!this.edit.contains(e.target)) {
+            this.setState({ showEdit: false });
         }
     }
 
-    onChangeName(e){
-        this.setState({editedName:e.target.value});
+    onChangeName(e) {
+        this.setState({ editedName: e.target.value });
         this.props.onChangeName(e.target.value);
     }
 
@@ -68,23 +68,24 @@ class Settings extends Component {
 
                                 <div className='row mt-2'>
                                     <div className='col-12 text-center'>
-                                        <img src='./material/logo/pegasus-64.png' height='40' width='40' alt='pegasus logo'/>
+                                        <img src='./material/logo/pegasus-64.png' height='40' width='40' alt='pegasus logo' />
                                     </div>
                                 </div>
 
                                 <div className='row mt-3'>
                                     <div className="col-2"></div>
-                                    <div ref={ edit => this.edit = edit} onClick={() => this.setState({showEdit:true})} className='col-8 text-center text-sm cursor-text'>
-                                        {this.state.showEdit ? 
+                                    <div ref={edit => this.edit = edit} onClick={() => this.setState({ showEdit: true })} className='col-8 text-center text-sm cursor-text'>
+                                        {this.state.showEdit ?
                                             <label htmlFor='inp-edit' className='inp'>
-                                                <input  onChange={this.onChangeName} 
-                                                        value={this.state.editedName} autoFocus type='text' id='inp-edit'/>
-                                            </label> 
-                                        : this.props.account.name }
-                                        
+                                                <input onChange={this.onChangeName}
+                                                    value={this.state.editedName} autoFocus type='text' id='inp-edit' />
+                                            </label>
+                                            : this.props.account.name}
+
                                     </div>
                                     <div className="col-2"></div>
                                 </div>
+                                
                                 <div className='row mt-1'>
                                     <div className="col-2"></div>
                                     <div className='col-8 text-center text-no-overflow text-xxs'>
@@ -94,15 +95,15 @@ class Settings extends Component {
                                 </div>
                                 <div className='row mt-3'>
                                     <div className='col-6 text-right text-sm text text-bold pr-1'>
-                                        { Utils.iotaReducer(this.props.account.data.balance) }
+                                        {Utils.iotaReducer(this.props.account.data.balance)}
                                     </div>
                                     <div className="col-6 text-left pl-1">
-                                        <img src='./material/logo/iota-logo.png' height='30' width='30' alt='iota logo'/>
+                                        <img src='./material/logo/iota-logo.png' height='30' width='30' alt='iota logo' />
                                     </div>
                                 </div>
                             </li>
 
-                            { this.state.accounts.map( account => {
+                            {this.state.accounts.map(account => {
                                 return (<li className='sidebar-brand'>
                                     <div className='row'>
                                         <div className='col-2'><i className='fa fa-user'></i></div>
@@ -112,10 +113,24 @@ class Settings extends Component {
                                             </a>
                                         </div>
                                     </div>
-                                        </li>);
+                                </li>);
                             })}
 
-                            <hr/>
+                            <hr />
+
+                            <li className='sidebar-brand mt-1 mb-1'>
+                                <div className='row'>
+                                    <div className='col-2 text-center'><i className='fa fa-wpexplorer'></i></div>
+                                    <div className='col-10 text-left'>
+                                        <a href='#' onClick={() => { this.props.onMamExplorer() }} data-scroll>
+                                            <div className='text-xs text-black'>MAM explorer</div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <hr />
+
                             <li className='sidebar-brand'>
                                 <div className='row'>
                                     <div className='col-2 text-center'><i className='fa fa-plus'></i></div>

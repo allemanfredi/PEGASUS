@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-
 import { PopupAPI } from '@pegasus/lib/api';
-import Utils from '@pegasus/lib/utils';
 
 import Loader from '../../components/loader/Loader';
 import Alert from '../../components/alert/Alert';
@@ -48,7 +46,7 @@ class Send extends Component {
             isPopup:true
         };
         
-        const func = PopupAPI.pushPayment(data);
+        PopupAPI.pushPayment(data);
         this.props.onAskConfirm();
     }
 

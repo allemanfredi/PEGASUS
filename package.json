@@ -1,5 +1,14 @@
 {
   "name": "pegasus",
+  "keywords": [
+    "iota",
+    "wallet",
+    "mam explorer",
+    "javascript",
+    "react",
+    "chrome extension",
+    "iota-js injection"
+  ],
   "private": true,
   "workspaces": [
     "packages/*"
@@ -25,6 +34,7 @@
     "lerna": "^3.4.3"
   },
   "dependencies": {
-    "@babel/runtime": "^7.1.2"
+    "@babel/runtime": "^7.1.2",
+    "styled-components": "^4.3.2"
   }
 }
