@@ -68,7 +68,7 @@ if (window.iota) {
         }
     });
 
-    //async/await
+    //async/await 
     const bundle = await iotajs.prepareTransfers(transfers);
     console.log(bundle)
 }
@@ -113,8 +113,8 @@ It's possible to interact with the functions both with __callbacks__ and __async
 
 ## Some screenshots
 ### Iotajs injection
-![Iotajs Injection](./images/injection.png =400x500)
+<img src="./images/injection.png" width="400" height="500">
 
 ### Mam explorer
-![Mam Explorer](./images/mam-explorer.png =320x500) 
+<img src="./images/mam-explorer.png" width="320" height="500">
 
