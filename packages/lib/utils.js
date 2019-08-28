@@ -37,11 +37,9 @@ const Utils = {
 
     injectPromise(func, ...args) {
         return new Promise((resolve, reject) => {
-            func(...args, (err, res) => {
-                if(err)
-                    reject(err);
-                else resolve(res);
-            });
+            func(...args )
+            .then( res => resolve(res))
+            .catch( err => reject(err))
         });
     },
 

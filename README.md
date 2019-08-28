@@ -61,48 +61,55 @@ if (window.iota) {
         message: '' // optional message in trytes
     }];
 
+    //callback
     iotajs.prepareTransfers(transfers , (bundle,err) => {
         if (!err){
             console.log(bundle);
         }
     });
+
+    //async/await
+    const bundle = await iotajs.prepareTransfers(transfers);
+    console.log(bundle)
 }
 ```
 
 ## List of Supported injected functions
 
- * .addNeighbors(uris, callback)
- * .attachToTangle(trunkTransaction, branchTransaction, minWeightMagnitude, trytes, callback)
- * .broadcastBundle(tailTransactionHash, callback)
- * .broadcastTransactions(trytes, callback)
- * .checkConsistency(transactions, [options], callback)
- * .getNodeInfo(callback)
- * .prepareTransfers(seed, transfers, [options], callback)
- * .findTransactionObjects(query, callback)
- * .findTransactions(query, callback)
- * .getAccountData(options, callback)
- * .getBalances(addresses, threshold, callback)
- * .getBundle(tailTransactionHash, callback)
- * .getInclusionStates(transactions, tips, callback)
- * .getInputs(seed, [options], callback)
- * .getLatestInclusion(transactions, tips, callback)
- * .getNeighbors(callback)
- * .getNewAddress(seed, [options], callback)
- * .getNodeInfo(callback)
- * .getTips(callback)
- * .getTransactionObjects(hashes, callback)
- * .getTransactionsToApprove(depth, [reference], callback)
- * .getTrytes(hashes, callback)
- * .isPromotable(tail, callback)
- * .prepareTransfers(transfers, [options], callback)
- * .promoteTransaction(tail, depth, minWeightMagnitude, transfer, [options], callback)
- * .removeNeighbors(uris, callback)
- * .replayBundle(tail, depth, minWeightMagnitude, callback)
- * .sendTrytes(trytes, depth, minWeightMagnitude, [reference], callback)
- * .storeAndBroadcast(trytes, callback)
- * .storeTransactions(trytes, callback)
- * .traverseBundle(trunkTransaction, [bundle], callback)
- * .generateAddress(seed, index, [security], [checksum] , callback)
+It's possible to interact with the functions both with __callbacks__ and __async/await__
+
+ * .addNeighbors(uris, [callback])
+ * .attachToTangle(trunkTransaction, branchTransaction, minWeightMagnitude, trytes, [callback])
+ * .broadcastBundle(tailTransactionHash, [callback])
+ * .broadcastTransactions(trytes, [callback])
+ * .checkConsistency(transactions, [options], [callback])
+ * .getNodeInfo([callback])
+ * .prepareTransfers(seed, transfers, [options], [callback])
+ * .findTransactionObjects(query, [callback])
+ * .findTransactions(query, [callback])
+ * .getAccountData(options, [callback])
+ * .getBalances(addresses, threshold, [callback])
+ * .getBundle(tailTransactionHash, [callback])
+ * .getInclusionStates(transactions, tips, [callback])
+ * .getInputs(seed, [options], [callback])
+ * .getLatestInclusion(transactions, tips, [callback])
+ * .getNeighbors([callback])
+ * .getNewAddress(seed, [options], [callback])
+ * .getNodeInfo([callback])
+ * .getTips([callback])
+ * .getTransactionObjects(hashes, [callback])
+ * .getTransactionsToApprove(depth, [reference], [callback])
+ * .getTrytes(hashes, [callback])
+ * .isPromotable(tail, [callback])
+ * .prepareTransfers(transfers, [options], [callback])
+ * .promoteTransaction(tail, depth, minWeightMagnitude, transfer, [options], [callback])
+ * .removeNeighbors(uris, [callback])
+ * .replayBundle(tail, depth, minWeightMagnitude, [callback])
+ * .sendTrytes(trytes, depth, minWeightMagnitude, [reference], [callback])
+ * .storeAndBroadcast(trytes, [callback])
+ * .storeTransactions(trytes, [callback])
+ * .traverseBundle(trunkTransaction, [bundle], [callback])
+ * .generateAddress(seed, index, [security], [checksum] , [callback])
 
 ## Some screenshots
 ### Iotajs injection

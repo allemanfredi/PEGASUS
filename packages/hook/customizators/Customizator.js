@@ -21,7 +21,7 @@ export default {
     addNeighbors(args){
         const callback = args[1];
         if ( callback === undefined )
-            throw new Error("not callback provided");
+            return Utils.injectPromise(this.request, 'addNeighbors');
         
         this.request('addNeighbors',{args})
         .then(numAdded  => callback(numAdded,null))
@@ -31,8 +31,8 @@ export default {
     attachToTangle(args){
         const callback = args[4];
         if ( callback === undefined )
-            throw new Error("not callback provided");
-        
+            return Utils.injectPromise(this.request, 'attachToTangle', {args});
+
         this.request('attachToTangle', {args})
         .then(info => callback(info,null))
         .catch( err => callback(null,err));
@@ -41,7 +41,7 @@ export default {
     broadcastBundle(args){
         const callback = args[1];
         if ( callback === undefined )
-            throw new Error("not callback provided");
+            return Utils.injectPromise(this.request, 'broadcastBundle', {args});
         
         this.request('broadcastBundle', {args})
         .then(transactions => callback(transactions,null))
@@ -51,9 +51,9 @@ export default {
     broadcastTransactions(args){
         const callback = args[1];
         if ( callback === undefined )
-            throw new Error("not callback provided");
+            return Utils.injectPromise(this.request, 'broadcastTransactions', {args});
         
-        this.request('broadcastBundle', {args})
+        this.request('broadcastTransactions', {args})
         .then(trytes => callback(trytes,null))
         .catch( err => callback(null,err));
     },
@@ -62,7 +62,7 @@ export default {
         let callback;
         args[2] ? callback = args[2] : callback = args[1];
         if ( callback === undefined )
-            throw new Error("not callback provided");
+            return Utils.injectPromise(this.request, 'checkConsistency', {args});
         
         this.request('checkConsistency', {args})
         .then(trytes => callback(trytes,null))
@@ -72,7 +72,7 @@ export default {
     findTransactionObjects(args){
         const callback = args[1];
         if ( callback === undefined )
-            throw new Error("not callback provided");
+            return Utils.injectPromise(this.request, 'findTransactionObjects', {args});
 
         this.request('findTransactionObjects', {args})
         .then(transactions => callback(transactions,null))
@@ -82,7 +82,7 @@ export default {
     findTransactions(args){
         const callback = args[1];
         if ( callback === undefined )
-            throw new Error("not callback provided");
+            return Utils.injectPromise(this.request, 'findTransactions', {args});
 
         this.request('findTransactions', {args})
         .then(transactions => callback(transactions,null))
@@ -94,7 +94,7 @@ export default {
         args[1] ? callback = args[1] : callback = args[0];
 
         if ( callback === undefined )
-            throw new Error("not callback provided");
+            return Utils.injectPromise(this.request, 'getAccountData', {args});
     
         this.request('getAccountData', {args})
         .then(data => callback(data,null))
@@ -104,7 +104,7 @@ export default {
     getBalances(args){
         const callback = args[2];
         if ( callback === undefined )
-            throw new Error("not callback provided");
+            return Utils.injectPromise(this.request, 'getBalances', {args});
 
         this.request('getBalances',{args})
         .then(balances  => callback(balances,null))
@@ -114,7 +114,7 @@ export default {
     getBundle(args){
         const callback = args[1];
         if ( callback === undefined )
-            throw new Error("not callback provided");
+            return Utils.injectPromise(this.request, 'getBundle', {args});
 
         this.request('getBundle',{args})
         .then(bundle  => callback(bundle,null))
@@ -124,7 +124,7 @@ export default {
     getInclusionStates(args){
         const callback = args[2];
         if ( callback === undefined )
-            throw new Error("not callback provided");
+            return Utils.injectPromise(this.request, 'getInclusionStates', {args});
 
         this.request('getInclusionStates',{args})
         .then(states  => callback(states,null))
@@ -135,7 +135,7 @@ export default {
         let callback;
         args[1] ? callback = args[1] : callback = args[0];
         if ( callback === undefined )
-            throw new Error("not callback provided");
+            return Utils.injectPromise(this.request, 'getInputs', {args});
     
         this.request('getInputs', {args})
         .then(data => callback(data,null))
@@ -146,7 +146,7 @@ export default {
         let callback;
         args[2] ? callback = args[2] : callback = args[1];
         if ( callback === undefined )
-            throw new Error("not callback provided");
+            return Utils.injectPromise(this.request, 'getLatestInclusion', {args});
     
         this.request('getLatestInclusion', {args})
         .then(states => callback(states,null))
@@ -156,7 +156,7 @@ export default {
     getNeighbors(args){
         const callback = args[0];
         if ( callback === undefined )
-            throw new Error("not callback provided");
+            return Utils.injectPromise(this.request, 'getNeighbors', {args});
 
         this.request('getNeighbors')
         .then(info => callback(info,null))
@@ -167,7 +167,7 @@ export default {
         let callback;
         args[1] ? callback = args[1] : callback = args[0];
         if ( callback === undefined )
-            throw new Error("not callback provided");
+            return Utils.injectPromise(this.request, 'getNewAddress', {args});
     
         this.request('getNewAddress', {args})
         .then(address => callback(address,null))
@@ -177,8 +177,7 @@ export default {
     getNodeInfo(args){
         const callback = args[0];
         if ( callback === undefined )
-            //return Utils.injectPromise(this.getNodeInfo.bind(this), args);
-            throw new Error("not callback provided");
+            return Utils.injectPromise(this.request, 'getNodeInfo');
 
         this.request('getNodeInfo')
         .then(info => callback(info,null))
@@ -188,7 +187,7 @@ export default {
     getTips(args){
         const callback = args[0];
         if ( callback === undefined )
-            throw new Error("not callback provided");
+            return Utils.injectPromise(this.request, 'getTips');
 
         this.request('getTips')
         .then(tips => callback(tips,null))
@@ -198,7 +197,7 @@ export default {
     getTransactionObjects(args){
         const callback = args[1];
         if ( callback === undefined )
-            throw new Error("not callback provided");
+            return Utils.injectPromise(this.request, 'getTransactionObjects', {args});
 
         this.request('getTransactionObjects',{args})
         .then(transaction  => callback(transaction,null))
@@ -209,7 +208,7 @@ export default {
         let callback;
         args[2] ? callback = args[2] : callback = args[1];
         if ( callback === undefined )
-            throw new Error("not callback provided");
+            return Utils.injectPromise(this.request, 'getTransactionsToApprove', {args});
     
         this.request('getTransactionsToApprove', {args})
         .then(transactions => callback(transactions,null))
@@ -219,7 +218,7 @@ export default {
     getTrytes(args){
         const callback = args[1];
         if ( callback === undefined )
-            throw new Error("not callback provided");
+            return Utils.injectPromise(this.request, 'getTrytes', {args});
 
         this.request('getTrytes',{args})
         .then(trytes  => callback(trytes,null))
@@ -229,7 +228,7 @@ export default {
     isPromotable(args){
         const callback = args[1];
         if ( callback === undefined )
-            throw new Error("not callback provided");
+            return Utils.injectPromise(this.request, 'isPromotable', {args});   
 
         this.request('isPromotable',{args})
         .then(isPromotable  => callback(isPromotable,null))
@@ -239,10 +238,10 @@ export default {
     prepareTransfers(args){
         let callback;
         args[2] ? callback = args[2] : callback = args[1];
+        args = [args[0]]; 
         if ( callback === undefined )
-            throw new Error("not callback provided");
+            return Utils.injectPromise(this.request, 'prepareTransfer', {args});        
         
-        args = [args[0]];
         this.request('prepareTransfer', {args})
         .then(transaction => {
             callback(transaction,null)
@@ -254,10 +253,10 @@ export default {
     promoteTransaction(args){
         let callback;
         args[5] ? callback = args[5] : callback = args[4];
-        if ( callback === undefined )
-            throw new Error("not callback provided");
-        
         args = [args[0]];
+        if ( callback === undefined )
+            return Utils.injectPromise(this.request, 'promoteTransaction', {args});        
+
         this.request('promoteTransaction', {args})
         .then(tail => {
             callback(tail,null)
@@ -269,7 +268,7 @@ export default {
     removeNeighbors(args){
         const callback = args[1];
         if ( callback === undefined )
-            throw new Error("not callback provided");
+            return Utils.injectPromise(this.request, 'removeNeighbors', {args});
 
         this.request('removeNeighbors',{args})
         .then(state  => callback(state,null))
@@ -279,7 +278,7 @@ export default {
     replayBundle(args){
         const callback = args[3];
         if ( callback === undefined )
-            throw new Error("not callback provided");
+            return Utils.injectPromise(this.request, 'replayBundle', {args});
 
         this.request('replayBundle',{args})
         .then(reattachedTail  => callback(reattachedTail,null))
@@ -289,10 +288,10 @@ export default {
     sendTrytes(args){
         let callback;
         args[4] ? callback = args[4] : callback = args[3];
-        if ( callback === undefined )
-            throw new Error("not callback provided");
-        
         args = [args[0]];
+        if ( callback === undefined )
+            return Utils.injectPromise(this.request, 'sendTrytes', {args});
+        
         this.request('sendTrytes', {args})
         .then(trytes => {
             callback(trytes,null)
@@ -304,7 +303,7 @@ export default {
     storeAndBroadcast(args){
         const callback = args[1];
         if ( callback === undefined )
-            throw new Error("not callback provided");
+            return Utils.injectPromise(this.request, 'storeAndBroadcast', {args});
 
         this.request('storeAndBroadcast',{args})
         .then(trytes  => callback(trytes,null))
@@ -314,7 +313,7 @@ export default {
     storeTransactions(args){
         const callback = args[1];
         if ( callback === undefined )
-            throw new Error("not callback provided");
+            return Utils.injectPromise(this.request, 'storeTransactions', {args});
 
         this.request('storeTransactions',{args})
         .then(trytes  => callback(trytes,null))
@@ -325,7 +324,7 @@ export default {
         let callback;
         args[2] ? callback = args[2] : callback = args[1];
         if ( callback === undefined )
-            throw new Error("not callback provided");
+            return Utils.injectPromise(this.request, 'traverseBundle', {args});
         
         this.request('traverseBundle', {args})
         .then(bundle => {
@@ -339,7 +338,7 @@ export default {
         let callback;
         args[3] ? callback = args[3] : (args[2] ? callback = args[2] : callback = args[1]);
         if ( callback === undefined )
-            throw new Error("not callback provided");
+            return Utils.injectPromise(this.request, 'generateAddress', {args});
         
         this.request('generateAddress', {args})
         .then(address => {
