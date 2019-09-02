@@ -16,6 +16,7 @@ class Send extends Component {
             address: '',
             seed: '',
             dstAddress: '',
+            tag : '',
             value: '',
             message: '',
             isLoading: false,
@@ -34,7 +35,7 @@ class Send extends Component {
     async clickTransfer() {
 
         const transfer = [{
-            tag: '',
+            tag: this.state.tag,
             address: this.state.dstAddress,
             value: this.state.value,
             message: this.state.message,
@@ -68,19 +69,26 @@ class Send extends Component {
 
                         <div className='row mt-4'>
                             <div className='col-12'>
-                                <label htmlFor='inp-value' className='inp'>
-                                    <input value={this.state.value} onChange={e => this.setState({ value: e.target.value })} type='text' id='inp-value' placeholder='&nbsp;' />
-                                    <span className='label'>value</span>
+                                <label htmlFor='inp-message' className='inp'>
+                                    <input value={this.state.message} onChange={e => this.setState({ message: e.target.value })} type='text' id='inp-message' placeholder='&nbsp;' />
+                                    <span className='label'>message</span>
                                     <span className='border'></span>
                                 </label>
                             </div>
                         </div>
 
                         <div className='row mt-4'>
-                            <div className='col-12'>
-                                <label htmlFor='inp-message' className='inp'>
-                                    <input value={this.state.message} onChange={e => this.setState({ message: e.target.value })} type='text' id='inp-message' placeholder='&nbsp;' />
-                                    <span className='label'>message</span>
+                            <div className='col-6'>
+                                <label htmlFor='inp-tag' className='inp'>
+                                    <input value={this.state.tag} onChange={e => this.setState({ tag: e.target.value })} type='text' id='inp-message' placeholder='&nbsp;' />
+                                    <span className='label'>tag</span>
+                                    <span className='border'></span>
+                                </label>
+                            </div>
+                            <div className="col-6">
+                                <label htmlFor='inp-value' className='inp'>
+                                    <input value={this.state.value} onChange={e => this.setState({ value: e.target.value })} type='text' id='inp-value' placeholder='&nbsp;' />
+                                    <span className='label'>value</span>
                                     <span className='border'></span>
                                 </label>
                             </div>
@@ -90,6 +98,10 @@ class Send extends Component {
                             <div className='col-12 text-center'>
                                 <button disabled={this.state.dstAddress === '' ? true : false} onClick={this.clickTransfer} className='btn btn-blue text-bold btn-big'>Send</button>
                             </div>
+                        </div>
+
+                        <div className="row mt-3">
+                            <div className="col-12 text-center text-xs text-blue">Address is mandatory. if value is empty it's interpreted as 0 and the wallet will generate a 0 value transaction</div>
                         </div>
                     </div>
                     : <Loader />}
