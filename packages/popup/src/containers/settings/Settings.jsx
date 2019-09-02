@@ -16,7 +16,7 @@ class Settings extends Component {
         this.state = {
             accounts: [],
             showEdit: false,
-            editedName: this.props.account.name
+            editedName: this.props.account.name,
         };
     }
 
@@ -131,7 +131,7 @@ class Settings extends Component {
 
                             <hr />
 
-                            <li className='sidebar-brand'>
+                            <li className='sidebar-brand mt-1'>
                                 <div className='row'>
                                     <div className='col-2 text-center'><i className='fa fa-plus'></i></div>
                                     <div className='col-10 text-left'>

@@ -23,6 +23,10 @@ export default {
         return this.duplex.send('unlockWallet', psw);
     },
 
+    unlockSeed(psw) {
+        return this.duplex.send('unlockSeed', psw);
+    },
+
     getKey() {
         return this.duplex.send('getKey');
     },

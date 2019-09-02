@@ -12,7 +12,8 @@
         "storage",
         "unlimitedStorage",
         "clipboardWrite",
-        "activeTab"
+        "activeTab",
+        "usb"
     ],
     "icons": { 
         "64": "packages/popup/build/material/logo/pegasus-64.png",

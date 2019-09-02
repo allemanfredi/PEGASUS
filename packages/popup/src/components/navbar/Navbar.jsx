@@ -7,6 +7,7 @@ export default class Navbar extends Component {
 
         this.deleteAccount = this.deleteAccount.bind(this);
         this.deleteNetwork = this.deleteNetwork.bind(this);
+        this.exportSeed = this.exportSeed.bind(this);
         this.handleClickOutside = this.handleClickOutside.bind(this);
 
         this.state = {
@@ -36,6 +37,11 @@ export default class Navbar extends Component {
     deleteNetwork(){
         this.setState({showEllipseMenu:false});
         this.props.onDeleteCurrentNetwork();
+    }
+
+    exportSeed(){
+        this.setState({showEllipseMenu:false});
+        this.props.onExportSeed();
     }
 
     render() {
@@ -78,7 +84,7 @@ export default class Navbar extends Component {
                             </div>
                         </div>
 
-                        <div className="row mt-1 cursor-pointer" onClick={() => this.props.onExportSeed()}>
+                        <div className="row mt-1 cursor-pointer" onClick={this.exportSeed}>
                             <div className="col-2 text-white text-center text-xs"><span className='fa fa-share'></span></div>
                             <div className="col-10 text-white text-xs">Export seed</div>
                         </div>

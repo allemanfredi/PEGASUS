@@ -7,12 +7,8 @@ class Details extends Component {
     constructor(props, context) {
         super(props, context);
 
-        this.state = {
-
-        };
+        this.state = {};
     }
-
-
 
     render() {
         return (

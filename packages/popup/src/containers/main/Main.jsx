@@ -41,7 +41,8 @@ class Main extends Component {
             this.props.showHeader(true);
             PopupAPI.startHandleAccountData();
         }
-        if ( state == APP_STATE.WALLET_TRANSFERS_IN_QUEUE )
+        //==
+        if ( state === APP_STATE.WALLET_TRANSFERS_IN_QUEUE )
             this.props.showHeader(false);
         
         this.setState({appState:state});

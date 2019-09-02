@@ -13,7 +13,6 @@ import AccountDataService from '../AccountDataService';
 import CustomizatorService from '../CustomizatorService';
 import MamService from '../MamService';
 
-
 class Wallet extends EventEmitter {
     
     constructor() {
@@ -105,6 +104,24 @@ class Wallet extends EventEmitter {
         catch(err) {
             console.log(err);
             return false;
+        }
+    }
+
+    unlockSeed(psw){
+        const hash = Utils.sha256(psw);
+        try{
+            let pswToCompare;
+            if ( ( pswToCompare = localStorage.getItem('hpsw')) === null )
+                return false;
+            if ( pswToCompare === hash ){
+                const seed = this.getCurrentSeed();
+                return seed;
+            }
+            return null;
+        }
+        catch(err) {
+            console.log(err);
+            return null;
         }
     }
 
@@ -345,7 +362,7 @@ class Wallet extends EventEmitter {
         }  
     }
 
-    updateNetworkAccount({newData, network}){
+    updateNetworkAccount({network}){
         try{
             const data = JSON.parse(localStorage.getItem('data'));
             let updatedAccount = {};
@@ -647,13 +664,12 @@ class Wallet extends EventEmitter {
                     this.setState(APP_STATE.WALLET_UNLOCKED);
 
                     //since every transaction is generated a new address, it's necessary to modify the hook
-                    const data = iota.getAccountData(seed).then( data =>  BackgroundAPI.setAddress(data.latestAddress));
+                    iota.getAccountData(seed).then( data =>  BackgroundAPI.setAddress(data.latestAddress));
                    
                     BackgroundAPI.setConfirmationLoading(false);
                     callback({data:bundle,success:true,uuid: payment.uuid});
                 })
                 .catch(err => {
-
                     BackgroundAPI.setConfirmationError(err.message);
                     BackgroundAPI.setConfirmationLoading(false);
                     callback({ data:err.message, success:false,uuid: payment.uuid});

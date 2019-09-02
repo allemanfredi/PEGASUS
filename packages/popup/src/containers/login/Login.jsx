@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-
 import { PopupAPI } from '@pegasus/lib/api';
-import Utils from '@pegasus/lib/utils';
 
 
 class InitPsw extends Component {

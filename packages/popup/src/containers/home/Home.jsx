@@ -7,6 +7,8 @@ import Transactions from '../transactions/Transactions';
 import Add from '../add/Add';
 import Network from '../network/Network';
 import MamExplorer from '../mamExplorer/MamExplorer';
+import ExportSeed from '../exportSeed/ExportSeed';
+
 
 import Loader from '../../components/loader/Loader';
 import Navbar from '../../components/navbar/Navbar';
@@ -55,6 +57,7 @@ class Home extends Component {
             showAdd: false,
             showAlert : false,
             showMam : false,
+            showExportSeed : false,
             alertType : '',
             alertText : '',
             actionToConfirm : ''
@@ -99,7 +102,10 @@ class Home extends Component {
     }
 
     onExportSeed(){
-        //TODO
+        this.setState({
+            showExportSeed : true,
+            showHome : false
+        })
     }
 
     async onConfirm(){
@@ -155,6 +161,7 @@ class Home extends Component {
                 showAdd : false,
                 showNetwork : false,
                 showMam : false,
+                showExportSeed : false,
                 showHome : true
             }
         })
@@ -215,7 +222,7 @@ class Home extends Component {
                         showBtnSettings={this.state.showHome}
                         showBtnEllipse={this.state.showHome}
                         showBtnBack={!this.state.showHome}
-                        text={this.state.showHome ? this.props.account.name : (this.state.showSend ? 'Send' : (this.state.showReceive ? 'Receive' : this.state.showAdd ? 'Add account' : ( this.state.showNetwork ? 'Add custom node' : ( this.state.showMam ? 'MAM Explorer' : '') )))}
+                        text={this.state.showHome ? this.props.account.name : (this.state.showSend ? 'Send' : (this.state.showReceive ? 'Receive' : this.state.showAdd ? 'Add account' : ( this.state.showNetwork ? 'Add custom node' : ( this.state.showMam ? 'MAM Explorer' : ( this.state.showExportSeed ? 'Export Seed ' : '') ) )))}
                         onClickSettings={this.onClickSettings}
                         onClickMap={this.onClickMap}
                         onBack={this.onBack}
@@ -247,6 +254,10 @@ class Home extends Component {
                         { this.state.showMam ?         <MamExplorer account={this.props.account}
                                                                     network={this.props.network} 
                                                                     onBack={this.onBack}/> : ''}
+
+                        { this.state.showExportSeed ?  <ExportSeed account={this.props.account}
+                                                                   network={this.props.network} 
+                                                                   onBack={this.onBack}/> : ''}
 
 
                         { this.state.showAlert ? <Alert type={this.state.alertType} 

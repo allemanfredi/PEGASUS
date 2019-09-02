@@ -82,6 +82,7 @@ class Init extends Component {
                 case 'lowercase':   return 'Password must contains at least 1 lowercase character';
                 case 'symbols':     return 'Password must contains at least 1 symbol';
                 case 'digits':      return 'Password must contains at least 1 digit';
+                default :           return '';
             }
         })
         return errors;

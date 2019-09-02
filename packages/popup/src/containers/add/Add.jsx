@@ -2,9 +2,7 @@ import React, { Component } from 'react';
 import IOTA from '@pegasus/lib/iota';
 
 import Loader from '../../components/loader/Loader';
-
 import { PopupAPI } from '@pegasus/lib/api';
-import Utils from '@pegasus/lib/utils';
 
 
 class Add extends Component {

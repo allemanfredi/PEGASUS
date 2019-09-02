@@ -9,7 +9,7 @@
     height: 100%;
     width: 100%;
     overflow: hidden;
-    font-family: "HelveticaNeue-Light", "HelveticaNeue-CondensedBold" ,"Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif !important;
+    font-family: 'Ubuntu', sans-serif;
 }
 
 .app.web{
@@ -580,15 +580,21 @@ header{
     height: 100%;
     overflow-y: auto;
     z-index: 1000;
-    transition: all 0.4s ease 0s;
+    transition: all 0.4s ease 0s; 
     animation-name: appear;
     animation-duration: 0.1s;
     animation-timing-function: ease-in;
-  }
+}
+
   
 @keyframes appear {
     from {width: 0;}
     to {width: 250px;}
+}
+
+@keyframes disappear {
+    from {width: 250px;}
+    to {width: 0}
 }
   
 

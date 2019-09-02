@@ -99,7 +99,7 @@ class Transactions extends Component {
                                         <a href={this.props.network.link + 'bundle/' + transaction.bundle} target="_blank">View on the explorer</a>
                                     </div>
                                     <div className="col-6 text-right text-xxs text-underline">
-                                        <a className="cursor-pointer" onClick={() => this.clickShowDetails(transaction)}>View details <i className={transaction.showDetails ? 'fa fa-eye' : 'fa fa-eye-slash'} ></i></a>
+                                        <a className="cursor-pointer" onClick={() => this.clickShowDetails(transaction)}>View details <i className={this.state.opened[transaction.bundle]  ? 'fa fa-eye' : 'fa fa-eye-slash'} ></i></a>
                                     </div>
                                 </div>
 
