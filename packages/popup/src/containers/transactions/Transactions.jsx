@@ -65,14 +65,18 @@ class Transactions extends Component {
 
     render() {
         return (
-            <div className="container">
-                <div className='row'>
-                    <div className='col-6 text-left text-black text-gray text-xs'>History</div>
-                    <div className='col-6 text-right'>
-                        <button onClick={() => this.props.onReload()} className='btn btn-icon-inverted '><i className='fa fa-refresh' ></i></button>
+            <React.Fragment>
+                <div className="container">
+                    <div className='row'>
+                        <div className='col-6 text-left text-black text-gray text-xs'>History</div>
+                        <div className='col-6 text-right'>
+                            <button onClick={() => this.props.onReload()} className='btn btn-icon-inverted '><i className='fa fa-refresh' ></i></button>
+                        </div>
                     </div>
                 </div>
+
                 <hr />
+
                 <div className='transaction-list'>
                     {this.props.account.transactions.length > 0 ? this.props.account.transactions.map((transaction, index) => {
                         return (
@@ -118,7 +122,7 @@ class Transactions extends Component {
                         </div>
                     }
                 </div>
-            </div>
+            </React.Fragment>
         );
     }
 }
