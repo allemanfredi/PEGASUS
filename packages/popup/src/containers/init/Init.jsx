@@ -151,6 +151,9 @@ class Init extends Component {
                 //store the psw
                 PopupAPI.storePassword(this.state.psw);
 
+                //start encryption storage service
+                PopupAPI.initStorageDataService(this.state.psw);
+
                 const promisedSeed = await PopupAPI.generateSeed()
                 const seed = promisedSeed.toString().replace(/,/g, '');
                 const data = await IOTA.getAccountData(seed);
@@ -164,6 +167,7 @@ class Init extends Component {
                 };
                 
                 await PopupAPI.addAccount(account, network, true);
+                console.log("account created");
                 resolve(); 
             }catch(err) {
                 console.log(err);

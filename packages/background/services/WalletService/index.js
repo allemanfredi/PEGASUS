@@ -12,6 +12,7 @@ import settings from '@pegasus/lib/options';
 import AccountDataService from '../AccountDataService';
 import CustomizatorService from '../CustomizatorService';
 import MamService from '../MamService';
+import StorageDataService from '../StorageDataService'
 
 class Wallet extends EventEmitter {
     
@@ -31,10 +32,10 @@ class Wallet extends EventEmitter {
         const currentNetwork = this.getCurrentNetwork();
         if (  Object.entries(currentNetwork).length === 0 && currentNetwork.constructor === Object ) {
             settings.networks.forEach(network => this.addNetwork(network));
-            this.customizatorService =  Utils.requestHandler(new CustomizatorService(settings.networks[ 0 ].provider))
+            this.customizatorService = Utils.requestHandler(new CustomizatorService(settings.networks[ 0 ].provider))
             this.setCurrentNetwork(settings.networks[ 0 ]);
         }else {
-            this.customizatorService =  Utils.requestHandler(new CustomizatorService(currentNetwork.provider))
+            this.customizatorService = Utils.requestHandler(new CustomizatorService(currentNetwork.provider))
         }
 
         this.checkSession();
@@ -43,12 +44,13 @@ class Wallet extends EventEmitter {
 
     isWalletSetup(){
         try{
-            const data = JSON.parse(localStorage.getItem('data'));
+           /* const data = this.storageDataService.getData();
+            console.log(data);
             if ( !data )
-                return false;
+                return false;*/
 
             const state = this.getState();
-            if ( ( data.mainnet.length > 0 || data.testnet.length > 0 ) && state >= APP_STATE.WALLET_INITIALIZED)
+            if ( state >= APP_STATE.WALLET_INITIALIZED)
                 return true;
             return false;
         }
@@ -59,7 +61,6 @@ class Wallet extends EventEmitter {
 
     setupWallet(){
         try{
-            localStorage.setItem('data', JSON.stringify({ mainnet: [], testnet: [] }));
             this.setState(APP_STATE.WALLET_NOT_INITIALIZED);
             return true;
         }
@@ -68,6 +69,11 @@ class Wallet extends EventEmitter {
             return false;
         }
     };
+
+    initStorageDataService(key){
+        //allow to encrypt/decrypt the wallet
+        this.storageDataService = new StorageDataService(key);
+    }
 
     storePassword(psw){
         const hash = Utils.sha256(psw);
@@ -82,6 +88,14 @@ class Wallet extends EventEmitter {
         }
     }
 
+    comparePassword(psw){
+        let pswToCompare;
+        if ( ( pswToCompare = localStorage.getItem('hpsw')) === null )
+            return false;
+        if ( pswToCompare === Utils.sha256(psw))
+            return true
+    }
+
     setPassword(password){
         this.password = password;
     }
@@ -93,6 +107,7 @@ class Wallet extends EventEmitter {
             if ( ( pswToCompare = localStorage.getItem('hpsw')) === null )
                 return false;
             if ( pswToCompare === hash ){
+
                 const network = this.getCurrentNetwork();
                 const account = this.getCurrentAccount(network);
                 this.emit('setAccount',account);
@@ -236,9 +251,9 @@ class Wallet extends EventEmitter {
     addAccount({account, network, isCurrent}){
 
         if ( isCurrent ) {
-            const data = JSON.parse(localStorage.getItem('data'));
+            const data = this.storageDataService.getData()//JSON.parse(localStorage.getItem('data'));
             data[ network.type ].forEach( account => { account.current = false; });
-            localStorage.setItem('data', JSON.stringify(data));
+            this.storageDataService.setData(data);
         }
 
         const key = this.getKey();
@@ -254,9 +269,9 @@ class Wallet extends EventEmitter {
         };
         
         try{
-            const data = JSON.parse(localStorage.getItem('data'));
+            const data = this.storageDataService.getData()
             data[ network.type ].push(obj);
-            localStorage.setItem('data', JSON.stringify(data));
+            this.storageDataService.setData(data);
 
             this.emit('setProvider', network.provider);
             this.emit('setAddress', account.data.latestAddress);
@@ -271,7 +286,11 @@ class Wallet extends EventEmitter {
 
     getCurrentAccount(network){
         try{
-            const accounts = JSON.parse(localStorage.getItem('data'))[ network.type ];
+            //check the user has already logged in
+            if ( !this.storageDataService )
+                return null;
+
+            const accounts = this.storageDataService.getData()[ network.type ];
             const state = this.getState();
             if ( accounts.length === 0 && state == APP_STATE.WALLET_NOT_INITIALIZED ){
                 return null;
@@ -306,13 +325,13 @@ class Wallet extends EventEmitter {
     }
 
     setCurrentAccount({currentAccount, network}){
-        let data = JSON.parse(localStorage.getItem('data'));
+        let data = this.storageDataService.getData();
         data[ network.type ].forEach( account => { account.current = false; });
-        localStorage.setItem('data', JSON.stringify(data));
+        this.storageDataService.setData(data);
 
 
         try{
-            const data = JSON.parse(localStorage.getItem('data'));
+            const data = this.storageDataService.getData();
             data[ network.type ].forEach(account => {
                 if ( account.id === currentAccount.id){
                     account.current = true;
@@ -324,7 +343,7 @@ class Wallet extends EventEmitter {
                     this.emit('setAccount', account);
                 }
             });
-            localStorage.setItem('data', JSON.stringify(data));
+            this.storageDataService.setData(data);
         }
         catch(err) {
             console.log(err);
@@ -335,18 +354,18 @@ class Wallet extends EventEmitter {
 
     resetData(){
         try{
-            localStorage.setItem('data', JSON.stringify({ mainnet: [], testnet: [] }));
+            this.storageDataService.setData({ mainnet: [], testnet: [] });
             return;
         }
         catch(err) {
-            throw new Error(err);
             console.log(err);
+            throw new Error(err);
         }
     };
 
     updateDataAccount({newData, network}){
         try{
-            const data = JSON.parse(localStorage.getItem('data'));
+            const data = this.storageDataService.getData();
             let updatedAccount = {};
             data[ network.type ].forEach(account => {
                 if ( account.current  ) {
@@ -354,7 +373,7 @@ class Wallet extends EventEmitter {
                     updatedAccount = account;
                 }
             });
-            localStorage.setItem('data', JSON.stringify(data));
+            this.storageDataService.setData(data);
             return updatedAccount;
         }
         catch(err) {
@@ -364,7 +383,7 @@ class Wallet extends EventEmitter {
 
     updateNetworkAccount({network}){
         try{
-            const data = JSON.parse(localStorage.getItem('data'));
+            const data = this.storageDataService.getData();
             let updatedAccount = {};
             data[ network.type ].forEach(account => {
                 if ( account.current  ) {
@@ -372,7 +391,7 @@ class Wallet extends EventEmitter {
                     updatedAccount = account;
                 }
             });
-            localStorage.setItem('data', JSON.stringify(data));
+            this.storageDataService.setData(data);
             return updatedAccount;
         }
         catch(err) {
@@ -382,7 +401,7 @@ class Wallet extends EventEmitter {
 
     updateTransactionsAccount({transactions, network}){
         try{
-            const data = JSON.parse(localStorage.getItem('data'));
+            const data = this.storageDataService.getData();
             let updatedAccount = {};
             data[ network.type ].forEach(account => {
                 if ( account.current ) {
@@ -390,7 +409,7 @@ class Wallet extends EventEmitter {
                     updatedAccount = account;
                 }
             });
-            localStorage.setItem('data', JSON.stringify(data));
+            this.storageDataService.setData(data);
             return updatedAccount;
         }
         catch(err) {
@@ -400,7 +419,7 @@ class Wallet extends EventEmitter {
 
     updateNameAccount({current, network, newName}){
         try{
-            const data = JSON.parse(localStorage.getItem('data'));
+            const data = this.storageDataService.getData();
             let updatedAccount = {};
             data[ network.type ].forEach(account => {
                 if ( account.id === current.id ) {
@@ -409,7 +428,7 @@ class Wallet extends EventEmitter {
                     updatedAccount = account;
                 }
             });
-            localStorage.setItem('data', JSON.stringify(data));
+            this.storageDataService.setData(data);
             this.emit('setAccount', updatedAccount);
         }
         catch(err) {
@@ -420,7 +439,7 @@ class Wallet extends EventEmitter {
 
     deleteAccount({account, network}){
         try{
-            const data = JSON.parse(localStorage.getItem('data'));
+            const data = this.storageDataService.getData();
             if ( data[ network.type ].length === 1)
                 return null;
             else{
@@ -434,7 +453,7 @@ class Wallet extends EventEmitter {
                 app[ 0 ].current = true;
                 data[ network.type ] = app;
 
-                localStorage.setItem('data', JSON.stringify(data));
+                this.storageDataService.setData(data);
                 this.emit('setAccount',app[ 0 ]);
                 return app[ 0 ];
             }
@@ -448,7 +467,7 @@ class Wallet extends EventEmitter {
     getAllAccounts(network){
         const accounts = [];
         try{
-            JSON.parse(localStorage.getItem('data'))[ network.type ].forEach(account => {
+            this.storageDataService.getData()[ network.type ].forEach(account => {
                 accounts.push(account);
             });
             return accounts;

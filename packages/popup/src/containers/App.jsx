@@ -8,7 +8,6 @@ import Main from './main/Main';
 import { APP_STATE } from '@pegasus/lib/states';
 
 
-
 class App extends Component {
     constructor(props, context) {
         super(props, context);

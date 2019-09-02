@@ -42,12 +42,16 @@ After having built the application, it needs to be loaded on chrome.
 * Go to chrome://extensions/ and check the box for Developer mode in the top right.
 * Click the Load unpacked extension button and select the build folder for your extension to install it.
 
-## How the seed is stored?
-An user during the initialization phase will have to enter a password that will be used as a key to encrypt the seed. Of this password the hash will be saved in the localStorage in order to use it during login. The plain text of the password (encryption key) will be saved in a variable within the background script. After 15 minutes of inactivity, the wallet will delete this variable so that the key has not been saved anywhere. In this way the seed encryption key is saved only in the user's mind and in a variable when using the wallet.
+## How the data is stored?
+An user during the initialization phase will have to enter a password that will be used as a key to encrypt the data (seed, address, transactions etc.. togheter). Of this password the hash will be saved in the localStorage in order to use it during login. The plain text of the password (encryption key) will be saved in a variable within the background script. After 15 minutes of inactivity, the wallet will delete this variable so that the key has not been saved anywhere. In this way the data encryption key is saved only in the user's mind and in a variable when using the wallet.
 
+```js
 
-## IOTAjs injection.
+ const encryptedData = aes256(JSON.stringify("transactions, seed, accountData etc.."), loginPassword)
 
+```
+
+## iota-js injection
 
 ```js
 if (window.iota) {

@@ -19,8 +19,16 @@ export default {
         return this.duplex.send('setPassword', psw);
     },
 
+    comparePassword(psw) {
+        return this.duplex.send('comparePassword', psw);
+    },
+
     unlockWallet(psw) {
         return this.duplex.send('unlockWallet', psw);
+    },
+
+    initStorageDataService(key){
+        return this.duplex.send('initStorageDataService', key);
     },
 
     unlockSeed(psw) {

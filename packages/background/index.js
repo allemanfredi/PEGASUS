@@ -29,11 +29,13 @@ const backgroundScript = {
         //Wallet Service
         duplex.on('isWalletSetup', this.walletService.isWalletSetup);
         duplex.on('setupWallet', this.walletService.setupWallet);
+        duplex.on('initStorageDataService', this.walletService.initStorageDataService);
         duplex.on('unlockWallet', this.walletService.unlockWallet);
         duplex.on('unlockSeed', this.walletService.unlockSeed);
         duplex.on('getKey', this.walletService.getKey);
         duplex.on('storePassword', this.walletService.storePassword);
         duplex.on('setPassword', this.walletService.setPassword);
+        duplex.on('comparePassword', this.walletService.comparePassword);
 
         duplex.on('setCurrentNetwork', this.walletService.setCurrentNetwork);
         duplex.on('getCurrentNetwork', this.walletService.getCurrentNetwork);
