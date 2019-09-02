@@ -35,7 +35,7 @@ class Main extends Component {
     async componentDidMount() {
 
         await PopupAPI.checkSession();
-        const state = await PopupAPI.getState();
+        let state = await PopupAPI.getState();
 
         if ( state >= APP_STATE.WALLET_LOCKED  ){
             this.props.showHeader(true);
@@ -44,6 +44,13 @@ class Main extends Component {
         if ( state >= APP_STATE.WALLET_UNLOCKED ){
             PopupAPI.startHandleAccountData();
         }
+
+        //payment queue not empty during an extension hard reload cause show confirm view with 0 payment since the payments are deleted during the hard rel
+        /*const payments = await PopupAPI.getPayments();
+        if ( state == APP_STATE.WALLET_TRANSFERS_IN_QUEUE && payments.length === 0 ){
+            state = APP_STATE.WALLET_LOCKED;
+            PopupAPI.setState(APP_STATE.WALLET_LOCKED);
+        }*/
 
         if ( state == APP_STATE.WALLET_TRANSFERS_IN_QUEUE )
             this.props.showHeader(false);

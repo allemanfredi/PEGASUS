@@ -7,6 +7,8 @@ import { BackgroundAPI } from '@pegasus/lib/api';
 import {APP_STATE} from '@pegasus/lib/states';
 
 import { composeAPI } from '@iota/core';
+import { asciiToTrytes } from '@iota/converter';
+
 import settings from '@pegasus/lib/options';
 
 import AccountDataService from '../AccountDataService';
@@ -511,6 +513,13 @@ class Wallet extends EventEmitter {
         try{
 
             const currentState = this.getState();
+           
+            //payment queue not empty during an extension hard reload cause show confirm view with 0 payment since the payments are deleted during the hard rel
+            if ( currentState == APP_STATE.WALLET_TRANSFERS_IN_QUEUE && this.getPayments().length === 0 && !this.password ){
+                this.setState(APP_STATE.WALLET_UNLOCKED);
+                return;
+            } 
+            
             if ( currentState == APP_STATE.WALLET_TRANSFERS_IN_QUEUE ){
                 return;
             }
@@ -539,7 +548,7 @@ class Wallet extends EventEmitter {
 
             if ( currentState <= APP_STATE.WALLET_INITIALIZED ){
                 return
-            }else{
+            } else {
                 this.setState(APP_STATE.WALLET_LOCKED);
                 return;
             }
@@ -660,7 +669,8 @@ class Wallet extends EventEmitter {
 
         BackgroundAPI.setConfirmationLoading(true);
 
-        const transfer = payment.payment.args[0][0];
+        let transfer = payment.payment.args[0][0];
+        console.log("transfer ",transfer);
         const network = this.getCurrentNetwork();
         const iota = composeAPI({provider:network.provider});
         const callback = this.payments.filter( obj => obj.uuid === payment.uuid )[0].callback;
@@ -671,6 +681,14 @@ class Wallet extends EventEmitter {
 
         const depth = 3;
         const minWeightMagnitude = network.difficulty;
+
+        //convert message and tag from char to trits
+        transfer.value = parseInt(transfer.value);
+        transfer.tag = asciiToTrytes(JSON.stringify(transfer.tag));
+        transfer.message = asciiToTrytes(JSON.stringify(transfer.message));
+        
+        console.log("seed ",seed)
+        console.log(transfer);
 
         try{
             iota.prepareTransfers(seed, [transfer])

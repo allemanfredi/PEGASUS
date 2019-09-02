@@ -37,7 +37,7 @@ class Send extends Component {
         const transfer = [{
             tag: this.state.tag,
             address: this.state.dstAddress,
-            value: this.state.value,
+            value: this.state.value ? this.state.value : 0,
             message: this.state.message,
         }];
         const data = {
