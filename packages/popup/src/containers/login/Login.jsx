@@ -15,7 +15,9 @@ class InitPsw extends Component {
         };
     }
 
-    async clickLogin() {
+    async clickLogin(e) {
+        e.preventDefault();
+        
         this.setState({shake:false});
         
         const canAccess = await PopupAPI.comparePassword(this.state.psw)
@@ -48,11 +50,13 @@ class InitPsw extends Component {
                 <div className='row mt-8'>
                     <div className='col-1'></div>
                     <div className='col-10'>
-                        <label htmlFor='inp-psw ' className='inp'>
-                            <input onChange={e => this.setState({ psw: e.target.value })} type='password' id='inp-psw' placeholder='&nbsp;'/>
-                            <span className='label'>password</span>
-                            <span className='border'></span>
-                        </label>
+                        <form onSubmit={this.clickLogin}>
+                            <label htmlFor='inp-psw ' className='inp'>
+                                <input onChange={e => this.setState({ psw: e.target.value })} type='password' id='inp-psw' placeholder='&nbsp;'/>
+                                <span className='label'>password</span>
+                                <span className='border'></span>
+                            </label>
+                        </form>
                     </div>
                     <div className='col-1'></div>
                 </div>

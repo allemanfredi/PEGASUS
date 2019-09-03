@@ -670,7 +670,6 @@ class Wallet extends EventEmitter {
         BackgroundAPI.setConfirmationLoading(true);
 
         let transfer = payment.payment.args[0][0];
-        console.log("transfer ",transfer);
         const network = this.getCurrentNetwork();
         const iota = composeAPI({provider:network.provider});
         const callback = this.payments.filter( obj => obj.uuid === payment.uuid )[0].callback;
@@ -686,6 +685,7 @@ class Wallet extends EventEmitter {
         transfer.value = parseInt(transfer.value);
         transfer.tag = asciiToTrytes(JSON.stringify(transfer.tag));
         transfer.message = asciiToTrytes(JSON.stringify(transfer.message));
+        
         
         console.log("seed ",seed)
         console.log(transfer);

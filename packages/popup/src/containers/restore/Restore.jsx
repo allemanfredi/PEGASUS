@@ -24,6 +24,10 @@ class Restore extends Component {
 
     async onClickRestore() {
         this.setState({ isLoading: true });
+
+        //start encryption storage service
+        PopupAPI.initStorageDataService(this.state.psw)
+
         await PopupAPI.resetData();
         const pswHash = Utils.sha256(this.state.psw);
         const eseed = Utils.aes256encrypt(this.state.seed, pswHash);
