@@ -665,14 +665,14 @@ class Wallet extends EventEmitter {
         return;
     }
 
-    confirmPayment(payment){
+    confirmPayment(obj){
 
         BackgroundAPI.setConfirmationLoading(true);
 
-        let transfer = payment.payment.args[0][0];
+        let transfers = obj.payment.args[0];
         const network = this.getCurrentNetwork();
         const iota = composeAPI({provider:network.provider});
-        const callback = this.payments.filter( obj => obj.uuid === payment.uuid )[0].callback;
+        const callback = this.payments.filter( obj => obj.uuid === obj.uuid )[0].callback;
         
         const key = this.getKey();
         const account = this.getCurrentAccount(network);
@@ -682,17 +682,19 @@ class Wallet extends EventEmitter {
         const minWeightMagnitude = network.difficulty;
 
         //convert message and tag from char to trits
-        transfer.value = parseInt(transfer.value);
-        transfer.tag = asciiToTrytes(JSON.stringify(transfer.tag));
-        transfer.message = asciiToTrytes(JSON.stringify(transfer.message));
+        transfers.forEach( transfer => {
+            transfer.value = parseInt(transfer.value);
+            transfer.tag = asciiToTrytes(JSON.stringify(transfer.tag));
+            transfer.message = asciiToTrytes(JSON.stringify(transfer.message));
+        });
         
         try{
-            iota.prepareTransfers(seed, [transfer])
+            iota.prepareTransfers(seed, transfers )
                 .then(trytes => {
                     return iota.sendTrytes(trytes, depth, minWeightMagnitude);
                 })
                 .then(async bundle => {
-                    this.removePayment(payment);
+                    this.removePayment(obj);
                     BackgroundAPI.setPayments(this.payments);
                     this.setState(APP_STATE.WALLET_UNLOCKED);
 
@@ -704,22 +706,21 @@ class Wallet extends EventEmitter {
                     BackgroundAPI.setAppState(APP_STATE.WALLET_UNLOCKED);
                    
                     BackgroundAPI.setConfirmationLoading(false);
-                    callback({data:bundle,success:true,uuid: payment.uuid});
+                    callback({data:bundle,success:true, uuid: obj.uuid});
                 })
                 .catch(err => {
                     BackgroundAPI.setConfirmationError(err.message);
                     BackgroundAPI.setConfirmationLoading(false);
-                    callback({ data:err.message, success:false,uuid: payment.uuid});
+                    callback({ data:err.message, success:false, uuid: obj.uuid});
                 });
         }catch(err) {
 
             BackgroundAPI.setConfirmationError(err.message);
             BackgroundAPI.setConfirmationLoading(false);
-            callback({data:err.message,success : false,uuid: payment.uuid});
+            callback({data:err.message,success : false, uuid: obj.uuid});
         }
 
         return;
-        
     }
 
     removePayment(paymentToRemove){
