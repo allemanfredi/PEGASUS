@@ -667,16 +667,12 @@ class Wallet extends EventEmitter {
 
     confirmPayment(payment){
 
-        console.log("payment" , payment);
-
         BackgroundAPI.setConfirmationLoading(true);
 
         let transfer = payment.payment.args[0][0];
         const network = this.getCurrentNetwork();
         const iota = composeAPI({provider:network.provider});
         const callback = this.payments.filter( obj => obj.uuid === payment.uuid )[0].callback;
-
-        console.log("callbacke" , callback);
         
         const key = this.getKey();
         const account = this.getCurrentAccount(network);
