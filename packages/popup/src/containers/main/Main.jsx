@@ -6,6 +6,7 @@ import Init from '../init/Init';
 import Restore from '../restore/Restore';
 import Confirm from '../confirm/Confirm';
 
+import MessageDuplex from '@pegasus/lib/MessageDuplex';
 import { PopupAPI } from '@pegasus/lib/api';
 import {APP_STATE} from '@pegasus/lib/states';
 
@@ -14,6 +15,7 @@ class Main extends Component {
     constructor(props, context) {
         super(props, context);
 
+        this.bindDuplexRequests = this.bindDuplexRequests.bind(this);
         this.onSuccessFromInit = this.onSuccessFromInit.bind(this);
         this.onSuccessFromLogin = this.onSuccessFromLogin.bind(this);
         this.onSuccessFromRestore = this.onSuccessFromRestore.bind(this);
@@ -28,7 +30,8 @@ class Main extends Component {
         this.confirm = React.createRef();
 
         this.state = {
-            appState : APP_STATE.WALLET_WITHOUT_STATE
+            appState : APP_STATE.WALLET_WITHOUT_STATE,
+            duplex: new MessageDuplex.Popup(),
         };
     }
 
@@ -56,6 +59,17 @@ class Main extends Component {
             this.props.showHeader(false);
         
         this.setState({appState:state});
+
+        this.bindDuplexRequests();
+    }
+
+    bindDuplexRequests(){
+        this.state.duplex.on('setAppState', appState => {
+            this.setState({appState});
+            if ( appState > APP_STATE.WALLET_LOCKED )
+                this.props.showHeader(true);
+            else this.props.showHeader(false);
+        });
     }
 
     async onSuccessFromLogin() {

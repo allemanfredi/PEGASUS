@@ -45,4 +45,8 @@ export default {
             data: provider
         }, false);
     },
+
+    setAppState(state){
+        this.duplex.send('popup', 'setAppState', state, false);
+    }
 };

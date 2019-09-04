@@ -56,7 +56,7 @@ class Confirm extends Component {
         return(
             !this.state.isLoading ? this.state.payments.filter( (obj,index) => index === this.state.currentTransactionIndex ).map( obj =>  {
                 return (
-                    <div className="container">
+                    <div className="container overflow-auto-600h">
                         <div className="row mt-3">
                             <div className='col-2'>
                                 <img src='./material/logo/pegasus-64.png' height='30' width='30' alt='pegasus logo'/>

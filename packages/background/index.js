@@ -274,6 +274,10 @@ const backgroundScript = {
         this.walletService.on('setProvider', provider => (
             BackgroundAPI.setProvider(provider)
         ));
+
+        this.walletService.on('setAppState', state => (
+            BackgroundAPI.setAppState(state)
+        ));
     }
 };
 

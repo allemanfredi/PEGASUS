@@ -667,12 +667,16 @@ class Wallet extends EventEmitter {
 
     confirmPayment(payment){
 
+        console.log("payment" , payment);
+
         BackgroundAPI.setConfirmationLoading(true);
 
         let transfer = payment.payment.args[0][0];
         const network = this.getCurrentNetwork();
         const iota = composeAPI({provider:network.provider});
         const callback = this.payments.filter( obj => obj.uuid === payment.uuid )[0].callback;
+
+        console.log("callbacke" , callback);
         
         const key = this.getKey();
         const account = this.getCurrentAccount(network);
@@ -686,22 +690,22 @@ class Wallet extends EventEmitter {
         transfer.tag = asciiToTrytes(JSON.stringify(transfer.tag));
         transfer.message = asciiToTrytes(JSON.stringify(transfer.message));
         
-        
-        console.log("seed ",seed)
-        console.log(transfer);
-
         try{
             iota.prepareTransfers(seed, [transfer])
                 .then(trytes => {
                     return iota.sendTrytes(trytes, depth, minWeightMagnitude);
                 })
-                .then(bundle => {
+                .then(async bundle => {
                     this.removePayment(payment);
                     BackgroundAPI.setPayments(this.payments);
                     this.setState(APP_STATE.WALLET_UNLOCKED);
 
                     //since every transaction is generated a new address, it's necessary to modify the hook
-                    iota.getAccountData(seed).then( data =>  BackgroundAPI.setAddress(data.latestAddress));
+                    const data = await iota.getAccountData(seed)//.then( data =>  BackgroundAPI.setAddress(data.latestAddress));
+                    BackgroundAPI.setAddress(data.latestAddress)
+
+                    //comunicates to the popup the new app State
+                    BackgroundAPI.setAppState(APP_STATE.WALLET_UNLOCKED);
                    
                     BackgroundAPI.setConfirmationLoading(false);
                     callback({data:bundle,success:true,uuid: payment.uuid});
@@ -782,7 +786,7 @@ class Wallet extends EventEmitter {
         if ( this.accountDataHandler )
             return;
         
-        this.accountDataHandler = setInterval( () => this.loadAccountData() , 20000);
+        this.accountDataHandler = setInterval( () => this.loadAccountData() , 40000);
     }
 
     stopHandleAccountData(){
