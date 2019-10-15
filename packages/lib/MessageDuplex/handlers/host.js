@@ -4,149 +4,149 @@ import extensionizer from 'extensionizer';
 
 
 class MessageDuplexHost extends EventEmitter {
-    constructor() {
-        super();
+  constructor() {
+    super();
 
-        this.channels = new Map();
-        this.incoming = new Map(); // Incoming message replies
-        this.outgoing = new Map(); // Outgoing message replies
+    this.channels = new Map();
+    this.incoming = new Map(); // Incoming message replies
+    this.outgoing = new Map(); // Outgoing message replies
 
-        extensionizer.runtime.onConnect.addListener(channel => (
-            this.handleNewConnection(channel)
-        ));
+    extensionizer.runtime.onConnect.addListener(channel => (
+      this.handleNewConnection(channel)
+    ));
+  }
+
+  handleNewConnection(channel) {
+    const extensionID = channel.sender.id;
+    const uuid = randomUUID();
+
+    if (extensionID !== extensionizer.runtime.id) {
+      channel.disconnect();
+      return console.log(`Dropped unsolicited connection from ${extensionID}`);
     }
 
-    handleNewConnection(channel) {
-        const extensionID = channel.sender.id;
-        const uuid = randomUUID();
+    const {
+      name,
+      sender: {
+        url
+      }
+    } = channel;
 
-        if(extensionID !== extensionizer.runtime.id) {
-            channel.disconnect();
-            return console.log(`Dropped unsolicited connection from ${ extensionID }`);
-        }
+    if (!this.channels.has(name))
+      this.emit(`${name}:connect`);
 
-        const {
-            name,
-            sender: {
-                url
-            }
-        } = channel;
+    const channelList = (this.channels.get(name) || new Map());
+    const hostname = new URL(url).hostname;
 
-        if(!this.channels.has(name))
-            this.emit(`${ name }:connect`);
+    this.channels.set(name, channelList.set(uuid, {
+      channel,
+      url
+    }));
 
-        const channelList = (this.channels.get(name) || new Map());
-        const hostname = new URL(url).hostname;
+    channel.onMessage.addListener(message => (
+      this.handleMessage(name, {
+        ...message,
+        hostname
+      })
+    ));
 
-        this.channels.set(name, channelList.set(uuid, {
-            channel,
-            url
-        }));
+    channel.onDisconnect.addListener(() => {
+      const channelList = this.channels.get(name);
 
-        channel.onMessage.addListener(message => (
-            this.handleMessage(name, {
-                ...message,
-                hostname
-            })
-        ));
+      if (!channelList)
+        return;
 
-        channel.onDisconnect.addListener(() => {
-            const channelList = this.channels.get(name);
+      channelList.delete(uuid);
 
-            if(!channelList)
-                return;
+      if (!channelList.size) {
+        this.channels.delete(name);
+        this.emit(`${name}:disconnect`);
+      }
+    });
+  }
 
-            channelList.delete(uuid);
+  handleMessage(source, message) {
+    const {
+      noAck = false,
+      hostname,
+      messageID,
+      action,
+      data
+    } = message;
 
-            if(!channelList.size) {
-                this.channels.delete(name);
-                this.emit(`${ name }:disconnect`);
-            }
-        });
+    if (action == 'messageReply')
+      return this.handleReply(data);
+
+    if (source == 'tab' && !['tabRequest'].includes(action))
+      return console.log(`Droping unauthorized tab request: ${action}`, data);
+
+    if (noAck)
+      return this.emit(action, { hostname, data });
+
+    this.incoming.set(messageID, res => (
+      this.send(source, 'messageReply', {
+        messageID,
+        ...res
+      }, false)
+    ));
+
+    this.emit(action, {
+      resolve: res => {
+        if (!this.incoming.get(messageID))
+          return console.log(`Message ${messageID} expired`);
+
+        this.incoming.get(messageID)({ error: false, res });
+        this.incoming.delete(messageID);
+      },
+      reject: res => {
+        if (!this.incoming.get(messageID))
+          return console.log(`Message ${messageID} expired`);
+
+        this.incoming.get(messageID)({ error: true, res });
+        this.incoming.delete(messageID);
+      },
+      data,
+      hostname
+    });
+  }
+
+  handleReply({ messageID, error, res }) {
+    if (!this.outgoing.has(messageID))
+      return;
+
+    if (error)
+      this.outgoing.get(messageID)(Promise.reject(res));
+    else this.outgoing.get(messageID)(res);
+
+    this.outgoing.delete(messageID);
+  }
+
+  broadcast(action, data, requiresAck = true) {
+    return Promise.all([...this.channels.keys()].map(channelGroup => (
+      this.send(channelGroup, action, data, requiresAck)
+    )));
+  }
+
+  send(target = false, action, data, requiresAck = true) {
+    if (!this.channels.has(target))
+      return;
+
+    if (!requiresAck) {
+      return this.channels.get(target).forEach(({ channel }) => (
+        channel.postMessage({ action, data, noAck: true })
+      ));
     }
 
-    handleMessage(source, message) {
-        const {
-            noAck = false,
-            hostname,
-            messageID,
-            action,
-            data
-        } = message;
+    return new Promise((resolve, reject) => {
+      const messageID = randomUUID();
 
-        if(action == 'messageReply')
-            return this.handleReply(data);
+      this.outgoing.set(messageID, resolve);
 
-        if(source == 'tab' && ![ 'tabRequest' ].includes(action))
-            return console.log(`Droping unauthorized tab request: ${ action }`, data);
-
-        if(noAck)
-            return this.emit(action, { hostname, data });
-
-        this.incoming.set(messageID, res => (
-            this.send(source, 'messageReply', {
-                messageID,
-                ...res
-            }, false)
-        ));
-
-        this.emit(action, {
-            resolve: res => {
-                if(!this.incoming.get(messageID))
-                    return console.log(`Message ${ messageID } expired`);
-
-                this.incoming.get(messageID)({ error: false, res });
-                this.incoming.delete(messageID);
-            },
-            reject: res => {
-                if(!this.incoming.get(messageID))
-                    return console.log(`Message ${ messageID } expired`);
-
-                this.incoming.get(messageID)({ error: true, res });
-                this.incoming.delete(messageID);
-            },
-            data,
-            hostname
-        });
-    }
-
-    handleReply({ messageID, error, res }) {
-        if(!this.outgoing.has(messageID))
-            return;
-
-        if(error)
-            this.outgoing.get(messageID)(Promise.reject(res));
-        else this.outgoing.get(messageID)(res);
-
-        this.outgoing.delete(messageID);
-    }
-
-    broadcast(action, data, requiresAck = true) {
-        return Promise.all([ ...this.channels.keys() ].map(channelGroup => (
-            this.send(channelGroup, action, data, requiresAck)
-        )));
-    }
-
-    send(target = false, action, data, requiresAck = true) {
-        if(!this.channels.has(target))
-            return;
-
-        if(!requiresAck) {
-            return this.channels.get(target).forEach(({ channel }) => (
-                channel.postMessage({ action, data, noAck: true })
-            ));
-        }
-
-        return new Promise((resolve, reject) => {
-            const messageID = randomUUID();
-
-            this.outgoing.set(messageID, resolve);
-
-            this.channels.get(target).forEach(({ channel }) => (
-                channel.postMessage({ action, data, messageID, noAck: false })
-            ));
-        });
-    }
+      this.channels.get(target).forEach(({ channel }) => (
+        channel.postMessage({ action, data, messageID, noAck: false })
+      ));
+    });
+  }
 }
 
 export default MessageDuplexHost;

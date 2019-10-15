@@ -5,7 +5,7 @@ const Tab = Child.bind(null, 'tab');
 const Popup = Child.bind(null, 'popup');
 
 export default {
-    Host,
-    Tab,
-    Popup
+  Host,
+  Tab,
+  Popup
 };
