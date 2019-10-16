@@ -1,174 +1,174 @@
 export default {
-  init(duplex) {
-    this.duplex = duplex;
+  init (duplex) {
+    this.duplex = duplex
   },
 
-  isWalletSetup() {
-    return this.duplex.send('isWalletSetup');
+  isWalletSetup () {
+    return this.duplex.send('isWalletSetup')
   },
 
-  setupWallet() {
-    return this.duplex.send('setupWallet');
+  setupWallet () {
+    return this.duplex.send('setupWallet')
   },
 
-  storePassword(psw) {
-    return this.duplex.send('storePassword', psw);
+  storePassword (psw) {
+    return this.duplex.send('storePassword', psw)
   },
 
-  setPassword(psw) {
-    return this.duplex.send('setPassword', psw);
+  setPassword (psw) {
+    return this.duplex.send('setPassword', psw)
   },
 
-  comparePassword(psw) {
-    return this.duplex.send('comparePassword', psw);
+  comparePassword (psw) {
+    return this.duplex.send('comparePassword', psw)
   },
 
-  unlockWallet(psw) {
-    return this.duplex.send('unlockWallet', psw);
+  unlockWallet (psw) {
+    return this.duplex.send('unlockWallet', psw)
   },
 
-  initStorageDataService(key) {
-    return this.duplex.send('initStorageDataService', key);
+  initStorageDataService (key) {
+    return this.duplex.send('initStorageDataService', key)
   },
 
-  unlockSeed(psw) {
-    return this.duplex.send('unlockSeed', psw);
+  unlockSeed (psw) {
+    return this.duplex.send('unlockSeed', psw)
   },
 
-  getKey() {
-    return this.duplex.send('getKey');
+  getKey () {
+    return this.duplex.send('getKey')
   },
 
-  setCurrentNetwork(network) {
-    return this.duplex.send('setCurrentNetwork', network);
+  setCurrentNetwork (network) {
+    return this.duplex.send('setCurrentNetwork', network)
   },
 
-  addNetwork(network) {
+  addNetwork (network) {
     return this.duplex.send('addNetwork', network)
   },
 
-  getCurrentNetwork() {
-    return this.duplex.send('getCurrentNetwork');
+  getCurrentNetwork () {
+    return this.duplex.send('getCurrentNetwork')
   },
 
-  getAllNetworks() {
-    return this.duplex.send('getAllNetworks');
+  getAllNetworks () {
+    return this.duplex.send('getAllNetworks')
   },
 
-  deleteCurrentNetwork() {
-    return this.duplex.send('deleteCurrentNetwork');
+  deleteCurrentNetwork () {
+    return this.duplex.send('deleteCurrentNetwork')
   },
 
-  addAccount(account, network, isCurrent) {
-    return this.duplex.send('addAccount', { account, network, isCurrent });
+  addAccount (account, network, isCurrent) {
+    return this.duplex.send('addAccount', { account, network, isCurrent })
   },
 
-  setCurrentAccount(currentAccount, network) {
-    return this.duplex.send('setCurrentAccount', { currentAccount, network });
+  setCurrentAccount (currentAccount) {
+    return this.duplex.send('setCurrentAccount', { currentAccount })
   },
 
-  resetData() {
-    return this.duplex.send('resetData');
+  resetData () {
+    return this.duplex.send('resetData')
   },
 
-  updateDataAccount(newData, network) {
-    return this.duplex.send('updateDataAccount', { newData, network });
+  updateDataAccount (newData) {
+    return this.duplex.send('updateDataAccount', { newData })
   },
 
-  updateNameAccount(current, network, newName) {
-    return this.duplex.send('updateNameAccount', { current, network, newName });
+  updateNameAccount (current, newName) {
+    return this.duplex.send('updateNameAccount', { current, newName })
   },
 
-  deleteAccount(account, network) {
-    return this.duplex.send('deleteAccount', { account, network });
+  deleteAccount (account) {
+    return this.duplex.send('deleteAccount', { account })
   },
 
-  getCurrentAccount(network) {
-    return this.duplex.send('getCurrentAccount', network);
+  getCurrentAccount () {
+    return this.duplex.send('getCurrentAccount')
   },
 
-  getAllAccounts(network) {
-    return this.duplex.send('getAllAccounts', network);
+  getAllAccounts () {
+    return this.duplex.send('getAllAccounts')
   },
 
-  generateSeed(length) {
-    return this.duplex.send('generateSeed', length);
+  generateSeed (length) {
+    return this.duplex.send('generateSeed', length)
   },
 
-  isSeedValid(seed) {
-    return this.duplex.send('isSeedValid', seed);
+  isSeedValid (seed) {
+    return this.duplex.send('isSeedValid', seed)
   },
 
-  startSession(network) {
-    return this.duplex.send('startSession', network);
+  startSession () {
+    return this.duplex.send('startSession')
   },
 
-  checkSession() {
-    return this.duplex.send('checkSession');
+  checkSession () {
+    return this.duplex.send('checkSession')
   },
 
-  deleteSession(seed) {
-    return this.duplex.send('deleteSession', seed);
+  deleteSession (seed) {
+    return this.duplex.send('deleteSession', seed)
   },
 
-  getState() {
-    return this.duplex.send('getState');
+  getState () {
+    return this.duplex.send('getState')
   },
 
-  setState(state) {
-    return this.duplex.send('setState', state);
+  setState (state) {
+    return this.duplex.send('setState', state)
   },
 
-  getPayments() {
-    return this.duplex.send('getPayments');
+  getPayments () {
+    return this.duplex.send('getPayments')
   },
 
-  pushPayment(payment) {
-    return this.duplex.send('pushPayment', payment);
+  pushPayment (payment) {
+    return this.duplex.send('pushPayment', payment)
   },
 
-  rejectPayment(payment) {
-    return this.duplex.send('rejectPayment', payment);
+  rejectPayment (payment) {
+    return this.duplex.send('rejectPayment', payment)
   },
 
-  rejectAllPayments() {
-    return this.duplex.send('rejectAllPayments');
+  rejectAllPayments () {
+    return this.duplex.send('rejectAllPayments')
   },
 
-  confirmPayment(payment) {
-    return this.duplex.send('confirmPayment', payment);
+  confirmPayment (payment) {
+    return this.duplex.send('confirmPayment', payment)
   },
 
-  startHandleAccountData() {
-    return this.duplex.send('startHandleAccountData');
+  startHandleAccountData () {
+    return this.duplex.send('startHandleAccountData')
   },
 
-  stopHandleAccountData() {
-    return this.duplex.send('stopHandleAccountData');
+  stopHandleAccountData () {
+    return this.duplex.send('stopHandleAccountData')
   },
 
-  loadAccountData() {
-    return this.duplex.send('loadAccountData');
+  loadAccountData () {
+    return this.duplex.send('loadAccountData')
   },
 
-  reloadAccountData() {
-    return this.duplex.send('reloadAccountData');
+  reloadAccountData () {
+    return this.duplex.send('reloadAccountData')
   },
 
-  openPopup() {
-    return this.duplex.send('openPopup');
+  openPopup () {
+    return this.duplex.send('openPopup')
   },
 
-  closePopup() {
-    return this.duplex.send('closePopup');
+  closePopup () {
+    return this.duplex.send('closePopup')
   },
 
-  executeRequests() {
-    return this.duplex.send('executeRequests');
+  executeRequests () {
+    return this.duplex.send('executeRequests')
   },
 
-  startFetchMam(options) {
-    return this.duplex.send('startFetchMam', options);
+  startFetchMam (options) {
+    return this.duplex.send('startFetchMam', options)
   }
 
-};
+}

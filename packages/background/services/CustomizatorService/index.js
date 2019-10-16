@@ -1,17 +1,15 @@
-import { composeAPI } from '@iota/core';
+import { composeAPI } from '@iota/core'
 
 class CustomizatorService {
-
-  constructor(provider) {
-    this.iota = composeAPI({ provider });
+  constructor (provider) {
+    this.iota = composeAPI({ provider })
   }
 
-  setProvider(provider) {
-    this.iota = composeAPI({ provider });
+  setProvider (provider) {
+    this.iota = composeAPI({ provider })
   }
 
-  async request(method, { uuid, resolve, seed, data }) {
-
+  async request (method, { uuid, resolve, seed, data }) {
     try {
       switch (method) {
         case 'addNeighbors': {
@@ -108,13 +106,13 @@ class CustomizatorService {
           this.iota.getNodeInfo()
             .then(info => resolve({ data: info, success: true, uuid }))
             .catch(err => resolve({ data: err.message, success: false, uuid }))
-          break;
+          break
         }
         case 'getTips': {
           this.iota.getTips()
             .then(tips => resolve({ data: tips, success: true, uuid }))
             .catch(err => resolve({ data: err.message, success: false, uuid }))
-          break;
+          break
         }
         case 'getTransactionObjects': {
           this.iota.getTransactionObjects(...data.args)
@@ -183,17 +181,15 @@ class CustomizatorService {
           break
         }
         case 'generateAddress': {
-          const address = this.iota.generateAddress(...data.args);
-          resolve({ data: address, success: true, uuid });
+          const address = this.iota.generateAddress(...data.args)
+          resolve({ data: address, success: true, uuid })
           break
         }
       }
     } catch (err) {
-      resolve({ data: err.message, success: false, uuid });
+      resolve({ data: err.message, success: false, uuid })
     }
-
   }
-
 }
 
-export default CustomizatorService;
+export default CustomizatorService

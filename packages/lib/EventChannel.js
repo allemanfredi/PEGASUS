@@ -1,39 +1,38 @@
-import EventEmitter from 'eventemitter3';
+import EventEmitter from 'eventemitter3'
 
 class EventChannel extends EventEmitter {
-  constructor(channelKey = false) {
-    super();
+  constructor (channelKey = false) {
+    super()
 
     if (!channelKey)
-      throw 'No channel scope provided';
+      throw new Error('No channel scope provided')
 
-    this._channelKey = channelKey;
-    this._registerEventListener();
+    this._channelKey = channelKey
+    this._registerEventListener()
   }
 
-  _registerEventListener() {
+  _registerEventListener () {
     window.addEventListener('message', ({ data: { isPegasus = false, message, source } }) => {
-
-      if (!isPegasus || (!message && !source))
-        return;
+      if (!isPegasus || !message && !source)
+        return
 
       if (source === this._channelKey)
-        return;
+        return
 
       const {
         action,
         data
-      } = message;
+      } = message
 
-      this.emit(action, data);
-    });
+      this.emit(action, data)
+    })
   }
 
-  send(action = false, data = {}) {
+  send (action = false, data = {}) {
     if (!action)
-      return { success: false, error: 'Function requires action {string} parameter' };
+      return { success: false, error: 'Function requires action {string} parameter' }
 
-    data = JSON.parse(JSON.stringify(data));
+    data = JSON.parse(JSON.stringify(data))
     window.postMessage({
       message: {
         action,
@@ -41,8 +40,8 @@ class EventChannel extends EventEmitter {
       },
       source: this._channelKey,
       isPegasus: true
-    }, '*');
+    }, '*')
   }
 }
 
-export default EventChannel;
+export default EventChannel

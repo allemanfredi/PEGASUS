@@ -1,169 +1,145 @@
-import crypto from 'crypto';
+import crypto from 'crypto'
 
 const Utils = {
 
-  requestHandler(target) {
+  requestHandler (target) {
     return new Proxy(target, {
-      get(target, prop) {
-
+      get (target, prop) {
         if (!Reflect.has(target, prop))
-          throw new Error(`Object does not have property '${prop}'`);
+          throw new Error(`Object does not have property '${prop}'`)
 
         if (typeof target[prop] !== 'function' || prop === 'on')
-          return Reflect.get(target, prop);
+          return Reflect.get(target, prop)
 
         return (...args) => {
           if (!args.length)
-            args[0] = {};
+            args[0] = {}
 
-          const [firstArg] = args;
+          const [firstArg] = args
 
           const {
             resolve = () => { },
             reject = ex => console.error(ex),
             data
-          } = firstArg;
+          } = firstArg
 
           if (typeof firstArg !== 'object' || !('data' in firstArg))
-            return target[prop].call(target, ...args);
+            return target[prop].call(target, ...args)
 
           Promise.resolve(target[prop].call(target, data))
             .then(resolve)
-            .catch(reject);
-        };
+            .catch(reject)
+        }
       }
-    });
+    })
   },
 
-  injectPromise(func, ...args) {
+  injectPromise (func, ...args) {
     return new Promise((resolve, reject) => {
       func(...args)
         .then(res => resolve(res))
         .catch(err => reject(err))
-    });
+    })
   },
 
-  isFunction(obj) {
-    return typeof obj === 'function';
+  isFunction (obj) {
+    return typeof obj === 'function'
   },
 
-  sha256(text) {
-    return crypto.createHash('sha256').update(text).digest('hex');
+  sha256 (text) {
+    return crypto.createHash('sha256').update(text).digest('hex')
   },
 
-  randomBytes(size, max) {
+  randomBytes (size, max) {
     if (size !== parseInt(size, 10) || size < 0)
-      return false;
+      return false
 
-    const bytes = crypto.randomBytes(size);
+    const bytes = crypto.randomBytes(size)
 
     for (let i = 0; i < bytes.length; i++) {
       while (bytes[i] >= 256 - 256 % max)
-        bytes[i] = this.randomBytes(1, max)[0];
+        bytes[i] = this.randomBytes(1, max)[0]
     }
 
-    return Array.from(bytes);
+    return Array.from(bytes)
   },
 
-  byteToChar(trit) {
-    return '9ABCDEFGHIJKLMNOPQRSTUVWXYZ'.charAt(trit % 27);
+  byteToChar (trit) {
+    return '9ABCDEFGHIJKLMNOPQRSTUVWXYZ'.charAt(trit % 27)
   },
 
-  charToByte(char) {
-    return '9ABCDEFGHIJKLMNOPQRSTUVWXYZ'.indexOf(char.toUpperCase());
+  charToByte (char) {
+    return '9ABCDEFGHIJKLMNOPQRSTUVWXYZ'.indexOf(char.toUpperCase())
   },
 
-  byteToTrit(byte) {
-    return trytesTrits[byte % 27];
+  timestampToDate (timestamp) {
+    const date = new Date(timestamp)
+    const todate = date.getDate()
+    const tomonth = date.getMonth() + 1
+    const toyear = date.getFullYear()
+    return `${tomonth}/${todate}/${toyear}`
   },
 
-  bytesToTrits(bytes) {
-    let trits = [];
-    for (let i = 0; i < bytes.length; i++)
-      trits = trits.concat(byteToTrit(bytes[i]));
-    return trits;
+  timestampToDateMilliseconds (timestamp) {
+    const date = new Date(timestamp)
+    const todate = date.getDate()
+    const tomonth = date.getMonth() + 1
+    const toyear = date.getFullYear()
+    const hours = date.getHours()
+    const minutes = `0${date.getMinutes()}`
+    const seconds = `0${date.getSeconds()}`
+    return `${hours}:${minutes.substr(-2)}:${seconds.substr(-2)} - ${tomonth}/${todate}/${toyear}`
   },
 
-  tritsToChars(trits) {
-    let seed = '';
-    for (let i = 0; i < trits.length; i += 3) {
-      const trit = trits.slice(i, i + 3).toString();
-      for (let x = 0; x < tritStrings.length; x++) {
-        if (tritStrings[x] === trit)
-          seed += '9ABCDEFGHIJKLMNOPQRSTUVWXYZ'.charAt(x);
-      }
-    }
-    return seed;
+  aes256encrypt (text, key) {
+    const cipher = crypto.createCipher('aes-256-ctr', key)
+    let crypted = cipher.update(text, 'utf8', 'hex')
+    crypted += cipher.final('hex')
+    return crypted
   },
 
-  timestampToDate(timestamp) {
-    const date = new Date(timestamp);
-    const todate = date.getDate();
-    const tomonth = date.getMonth() + 1;
-    const toyear = date.getFullYear();
-    return `${tomonth}/${todate}/${toyear}`;
+  aes256decrypt (text, key) {
+    const decipher = crypto.createDecipher('aes-256-ctr', key)
+    let dec = decipher.update(text, 'hex', 'utf8')
+    dec += decipher.final('utf8')
+    return dec
   },
 
-  timestampToDateMilliseconds(timestamp) {
-    const date = new Date(timestamp);
-    const todate = date.getDate();
-    const tomonth = date.getMonth() + 1;
-    const toyear = date.getFullYear();
-    const hours = date.getHours();
-    const minutes = `0${date.getMinutes()}`;
-    const seconds = `0${date.getSeconds()}`;
-    return `${hours}:${minutes.substr(-2)}:${seconds.substr(-2)} - ${tomonth}/${todate}/${toyear}`;
-  },
-
-  aes256encrypt(text, key) {
-    const cipher = crypto.createCipher('aes-256-ctr', key);
-    let crypted = cipher.update(text, 'utf8', 'hex');
-    crypted += cipher.final('hex');
-    return crypted;
-  },
-
-  aes256decrypt(text, key) {
-    const decipher = crypto.createDecipher('aes-256-ctr', key);
-    let dec = decipher.update(text, 'hex', 'utf8');
-    dec += decipher.final('utf8');
-    return dec;
-  },
-
-  iotaReducer(amount) {
+  iotaReducer (amount) {
     if (amount < Math.pow(10, 3)) {
-      const num = amount;
-      if (num % 1 !== 0) return num.toFixed(2) + 'i';
-      return num + 'i';
+      const num = amount
+      if (num % 1 !== 0) return num.toFixed(2) + 'i'
+      return num + 'i'
     } else if (amount < Math.pow(10, 6)) {
-      const num = amount / Math.pow(10, 3);
-      if (num % 1 !== 0) return num.toFixed(2) + 'Ki';
-      return num + 'Ki';
+      const num = amount / Math.pow(10, 3)
+      if (num % 1 !== 0) return num.toFixed(2) + 'Ki'
+      return num + 'Ki'
     } else if (amount < Math.pow(10, 9)) {
-      const num = amount / Math.pow(10, 6);
-      if (num % 1 !== 0) return num.toFixed(2) + 'Mi';
-      return num + 'Mi';
+      const num = amount / Math.pow(10, 6)
+      if (num % 1 !== 0) return num.toFixed(2) + 'Mi'
+      return num + 'Mi'
     } else if (amount < Math.pow(10, 12)) {
-      const num = amount / Math.pow(10, 9);
-      if (num % 1 !== 0) return num.toFixed(2) + 'Gi';
-      return num + 'Gi';
+      const num = amount / Math.pow(10, 9)
+      if (num % 1 !== 0) return num.toFixed(2) + 'Gi'
+      return num + 'Gi'
     } else if (amount < Math.pow(10, 15)) {
-      const num = amount / Math.pow(10, 12);
-      if (num % 1 !== 0) return num.toFixed(2) + 'Ti';
-      return num + 'Ti';
+      const num = amount / Math.pow(10, 12)
+      if (num % 1 !== 0) return num.toFixed(2) + 'Ti'
+      return num + 'Ti'
     }
   },
 
-  isValidAddress(address) {
-    const values = ['9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+  isValidAddress (address) {
+    const values = ['9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
     if (address.length !== 81)
       return false;
     [...address].forEach(c => {
       if (values.indexOf(c) === -1)
-        return false;
-    });
-    return true;
+        return false
+    })
+    return true
   }
 
-};
+}
 
-export default Utils;
+export default Utils
