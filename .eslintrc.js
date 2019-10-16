@@ -7,12 +7,23 @@ module.exports = {
   },
   extends: [
     'eslint:recommended',
-    'standard'
+    'plugin:react/recommended',
+    'standard',
   ],
+  parserOptions: {
+		'ecmaFeatures': {
+			'experimentalObjectRestSpread': true,
+			'jsx': true
+		},
+		'sourceType': 'module'
+	},
   env: {
     es6: true,
     node: true
   },
+  plugins: [
+		'react'
+	],
   rules: {
     quotes: [2, 'single', { avoidEscape: true }],
     'prefer-promise-reject-errors': 1,
