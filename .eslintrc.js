@@ -42,7 +42,7 @@ module.exports = {
     'no-new': 1,
     'no-new-func': 2,
     'no-new-wrappers': 1,
-    'no-param-reassign': 2,
+    'no-param-reassign': 1,
     'no-redeclare': [2, { 'builtinGlobals': true }],
     'no-return-await': 1,
     'no-script-url': 1,
