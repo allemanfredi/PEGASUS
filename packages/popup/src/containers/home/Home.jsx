@@ -64,17 +64,16 @@ class Home extends Component {
     };
   }
 
-
   async onReload() {
     PopupAPI.reloadAccountData();
   }
 
   async onSwitchAccount(account) {
-    PopupAPI.setCurrentAccount(account, this.props.network);
+    PopupAPI.setCurrentAccount(account);
   }
 
   async onChangeName(newName) {
-    PopupAPI.updateNameAccount(this.props.account, this.props.network, newName);
+    PopupAPI.updateNameAccount(this.props.account, newName);
   }
 
   async onDeleteAccount() {
@@ -111,7 +110,7 @@ class Home extends Component {
   async onConfirm() {
     switch (this.state.actionToConfirm) {
       case 'deleteAccount': {
-        const account = await PopupAPI.deleteAccount(this.props.account, this.props.network);
+        const account = await PopupAPI.deleteAccount(this.props.account);
         if (!account) {
           this.setState(() => {
             return {
@@ -205,7 +204,7 @@ class Home extends Component {
     });
     await PopupAPI.addNetwork(network);
     await PopupAPI.setCurrentNetwork(network);
-    await PopupAPI.getCurrentAccount(network);
+    await PopupAPI.getCurrentAccount();
   }
 
   onMamExplorer() {

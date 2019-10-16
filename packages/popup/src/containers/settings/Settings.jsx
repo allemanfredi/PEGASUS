@@ -24,14 +24,15 @@ class Settings extends Component {
   }
 
   async switchAccount(newAccount) {
-    let accounts = await PopupAPI.getAllAccounts(this.props.network);
+    let accounts = await PopupAPI.getAllAccounts();
     accounts = accounts.filter(account => account.id !== newAccount.id);
     this.setState({ accounts });
     this.props.onSwitchAccount(newAccount);
   }
 
   async updateData() {
-    let accounts = await PopupAPI.getAllAccounts(this.props.network);
+    let accounts = await PopupAPI.getAllAccounts();
+    console.log(accounts)
     accounts = accounts.filter(account => !account.current);
     this.setState({ accounts });
   }
