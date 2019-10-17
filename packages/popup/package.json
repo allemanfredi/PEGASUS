@@ -1,7 +1,7 @@
 {
   "name": "@pegasus/popup",
   "main": "index.js",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "author": "allemanfredi <alle.manfredi@gmail.com>",
   "private": true,
   "dependencies": {
@@ -13,9 +13,9 @@
     "qrcode.react": "^0.8.0",
     "react": "^16.8.1",
     "react-dom": "^16.4.2",
+    "react-json-view": "latest",
     "react-router-dom": "^4.1.1",
-    "react-scripts": "2.1.3",
-    "react-json-view": "latest"
+    "react-scripts": "2.1.3"
   },
   "scripts": {
     "start": "  react-scripts start",
