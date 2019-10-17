@@ -76,43 +76,47 @@ class Transactions extends Component {
         <hr />
         <div className='transaction-list'>
           {
-            this.props.account.transactions.length > 0 ? this.props.account.transactions.map((transaction, index) => {
-              return (
-                <div key={index} className='transaction-list-item mt-1' >
-                  <div className='row'>
-                    <div className='col-3 text-left text-xs text-blue'>
-                      {Utils.timestampToDate(transaction.timestamp)}
-                    </div>
-                    <div className='col-3 text-center text-xs'>
-                      {transaction.value > 0 ? 'received ' : 'sent'}
-                    </div>
-                    <div className='col-3 text-center'>
-                      <div className={transaction.status ? 'text-xs text-bold text-blue' : 'text-xs text-bold text-gray'} >{transaction.status ? 'confirmed ' : 'pending'}</div>
-                    </div>
-                    <div className='col-3 text-right'>
-                      <div className='text-xs text-bold'>
-                        {Utils.iotaReducer(transaction.value)}
+            this.props.account.transactions.length > 0 ? 
+              this.props.account.transactions.filter(transaction=> transaction.network.name === this.props.network.name )
+                .map((transaction, index) => {
+                  return (
+                    <div key={index} className='transaction-list-item mt-1' >
+                      <div className='row'>
+                        <div className='col-3 text-left text-xs text-blue'>
+                          {Utils.timestampToDate(transaction.timestamp)}
+                        </div>
+                        <div className='col-3 text-center text-xs'>
+                          {transaction.value > 0 ? 'received ' : 'sent'}
+                        </div>
+                        <div className='col-3 text-center'>
+                          <div className={transaction.status ? 'text-xs text-bold text-blue' : 'text-xs text-bold text-gray'} >
+                          {transaction.status ? 'confirmed ' : 'pending'}
+                        </div>
+                        </div>
+                        <div className='col-3 text-right'>
+                          <div className='text-xs text-bold'>
+                            {Utils.iotaReducer(transaction.value)}
+                          </div>
+                        </div>
                       </div>
+                      <div className="row mt-1">
+                        <div className="col-6 text-left text-xxs text-blue">
+                          <a href={this.props.network.link + 'bundle/' + transaction.bundle} target="_blank">View on the explorer</a>
+                        </div>
+                        <div className="col-6 text-right text-xxs text-underline">
+                          <a className="cursor-pointer" onClick={() => this.clickShowDetails(transaction)}>View details <i className={this.state.opened[transaction.bundle] ? 'fa fa-eye' : 'fa fa-eye-slash'} ></i></a>
+                        </div>
+                      </div>
+                      {
+                        this.state.opened[transaction.bundle] ?
+                          <Details details={transaction.transfer}
+                            promoteTransaction={this.promoteTransaction}
+                            onReplayBundle={this.replayBundle} />
+                        : ''
+                      }
                     </div>
-                  </div>
-                  <div className="row mt-1">
-                    <div className="col-6 text-left text-xxs text-blue">
-                      <a href={this.props.network.link + 'bundle/' + transaction.bundle} target="_blank">View on the explorer</a>
-                    </div>
-                    <div className="col-6 text-right text-xxs text-underline">
-                      <a className="cursor-pointer" onClick={() => this.clickShowDetails(transaction)}>View details <i className={this.state.opened[transaction.bundle] ? 'fa fa-eye' : 'fa fa-eye-slash'} ></i></a>
-                    </div>
-                  </div>
-                  {
-                    this.state.opened[transaction.bundle] ?
-                      <Details details={transaction.transfer}
-                        promoteTransaction={this.promoteTransaction}
-                        onReplayBundle={this.replayBundle} />
-                    : ''
-                  }
-                </div>
-              );
-            }) :
+                  );
+              }) :
             <div className='row mt-9'>
               <div className='col-12 text-center text-xs  text-black'>
                 No Transactions

@@ -2,14 +2,14 @@ import IOTA from '@pegasus/lib/iota'
 
 const AccountDataService = {
 
-  async retrieveAccountData (seed, provider) {
-    IOTA.setProvider(provider)
+  async retrieveAccountData (seed, network) {
+    IOTA.setProvider(network.provider)
     const newData = await IOTA.getAccountData(seed)
-    const transactions = this.mapTransactions(newData)
+    const transactions = this.mapTransactions(newData, network)
     return { transactions, newData }
   },
 
-  mapTransactions (data) {
+  mapTransactions (data, network) {
     const transactions = []
     const doubleBundle = []
     data.transfers.forEach(transfer => {
@@ -25,7 +25,8 @@ const AccountDataService = {
         status: transfer[0].persistence,
         bundle: transfer[0].bundle,
         index: transfer[0].currentIndex,
-        transfer
+        transfer,
+        network
       }
 
       // remove double bundle

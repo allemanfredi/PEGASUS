@@ -94,11 +94,11 @@ const backgroundScript = {
 
           if (this.walletService.getState() >= APP_STATE.WALLET_INITIALIZED) {
             const currentNetwork = this.walletService.getCurrentNetwork()
-            const account = this.walletService.getCurrentAccount(currentNetwork)
+            const account = this.walletService.getCurrentAccount()
             this.walletService.selectedProvider = currentNetwork.provider
             response = {
-              selectedAddress: account.data.latestAddress,
-              selectedProvider: currentNetwork.provider
+              selectedAddress: account.data ? account.data.latestAddress : null,
+              selectedProvider: currentNetwork ? currentNetwork.provider : null
             }
           }
 

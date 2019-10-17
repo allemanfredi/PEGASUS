@@ -105,7 +105,10 @@ class Wallet extends EventEmitter {
         return false
       if (pswToCompare === hash) {
         const account = this.getCurrentAccount()
+        const network = this.getCurrentNetwork()
         this.emit('setAccount', account)
+        this.emit('setAddress', account.data.latestAddress)
+        this.emit('setProvider', network.provider)
         return true
       }
       return false
@@ -344,13 +347,13 @@ class Wallet extends EventEmitter {
     }
   }
 
-  updateDataAccount ({ newData }) {
+  updateDataAccount ({ updatedData }) {
     try {
       const data = this.storageDataService.getData()
       let updatedAccount = {}
       data.forEach(account => {
         if (account.current) {
-          account.data = newData
+          account.data = updatedData
           updatedAccount = account
         }
       })
@@ -722,11 +725,34 @@ class Wallet extends EventEmitter {
   async loadAccountData () {
     const seed = this.getCurrentSeed()
     const network = this.getCurrentNetwork()
-    const { transactions, newData } = await AccountDataService.retrieveAccountData(seed, network.provider)
+    const { transactions, newData } = await AccountDataService.retrieveAccountData(seed, network)
+
+    //add only new txs
+    const account = this.getCurrentAccount()
+    const newTxs = []
+    for (let txToCheck of transactions) {
+      let isNew = true
+      for (let tx of account.transactions ) {
+        if (tx.bundle === txToCheck.bundle) {
+          isNew = false
+        }
+      }
+      if (isNew) {
+        newTxs.push(txToCheck)
+      }
+    }
+
+    const updatedData = Object.assign({}, newData, {
+      transactions: [...newTxs, ...account.transactions]
+    })
 
     // store txs in the localstorage
-    this.updateTransactionsAccount({ transactions, network })
-    const updatedAccount = this.updateDataAccount({ newData, network })
+    this.updateTransactionsAccount({ 
+      transactions: [...newTxs, ...account.transactions],
+      network
+    })
+
+    const updatedAccount = this.updateDataAccount({ updatedData, network })
     this.emit('setAccount', updatedAccount)
   }
 
