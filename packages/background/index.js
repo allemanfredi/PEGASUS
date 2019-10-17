@@ -91,15 +91,12 @@ const backgroundScript = {
             selectedAddress: '',
             selectedProvider: ''
           }
-
-          if (this.walletService.getState() >= APP_STATE.WALLET_INITIALIZED) {
-            const currentNetwork = this.walletService.getCurrentNetwork()
-            const account = this.walletService.getCurrentAccount()
-            this.walletService.selectedProvider = currentNetwork.provider
-            response = {
-              selectedAddress: account.data ? account.data.latestAddress : null,
-              selectedProvider: currentNetwork ? currentNetwork.provider : null
-            }
+          
+          const currentNetwork = this.walletService.getCurrentNetwork()
+          const account = this.walletService.getCurrentAccount()
+          response = {
+            selectedAddress: account ? account.data.latestAddress : null,
+            selectedProvider: currentNetwork.provider
           }
 
           resolve({

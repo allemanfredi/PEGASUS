@@ -15,12 +15,8 @@ const pageHook = {
     this._bindIotaJs()
 
     this.request('init').then(({ selectedAddress, selectedProvider }) => {
-      if (selectedAddress)
-        this.setAddress(selectedAddress)
-
-      if (selectedProvider)
-        this.setProvider(selectedProvider)
-
+      this.setAddress(selectedAddress)
+      this.setProvider(selectedProvider)
       console.log('Pegasus initiated succesfully')
     }).catch(err => {
       console.log('Failed to initialise Pegasus', err)

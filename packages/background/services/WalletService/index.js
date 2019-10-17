@@ -44,11 +44,6 @@ class Wallet extends EventEmitter {
 
   isWalletSetup () {
     try {
-      /* const data = this.storageDataService.getData();
-       console.log(data);
-       if ( !data )
-           return false; */
-
       const state = this.getState()
       if (state >= APP_STATE.WALLET_INITIALIZED)
         return true
@@ -107,6 +102,8 @@ class Wallet extends EventEmitter {
         const account = this.getCurrentAccount()
         const network = this.getCurrentNetwork()
         this.emit('setAccount', account)
+
+        //injection
         this.emit('setAddress', account.data.latestAddress)
         this.emit('setProvider', network.provider)
         return true
@@ -161,7 +158,6 @@ class Wallet extends EventEmitter {
       // handle the init phase ( yes network no account )
       const account = this.getCurrentAccount()
       if (account) {
-        this.emit('setAddress', account.data.latestAddress)
         this.emit('setAccount', account)
       }
 
@@ -530,6 +526,9 @@ class Wallet extends EventEmitter {
       localStorage.removeItem('session')
       this.setState(APP_STATE.WALLET_LOCKED)
       this.password = false
+
+      //injection
+      this.emit('setAddress', null)
       return true
     } catch (err) {
       console.log(err)
