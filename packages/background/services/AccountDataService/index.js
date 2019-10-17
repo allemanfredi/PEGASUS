@@ -17,7 +17,13 @@ const AccountDataService = {
         return
 
       let value
-      transfer[0].value < 0 ? value = -(transfer[0].value + transfer[3].value) : value = -transfer[0].value
+      
+      transfer[0].value < 0 ? value = -(transfer[0].value + transfer[3].value) : value = transfer[0].value
+
+      //if sent tx
+      if (!data.addresses.includes(transfer[0].address)){
+        value = -value
+      }
 
       const obj = {
         timestamp: transfer[0].attachmentTimestamp,
