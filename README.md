@@ -101,7 +101,7 @@ if (window.iota) {
 &nbsp;
 ### :page_with_curl: List of Supported injected functions
 
-It's possible to interact with the functions both with __callbacks__ and __async/await__
+It's possible to interact with the functions both with __callbacks__ and __promises__
 
  * .addNeighbors(uris, [callback])
  * .attachToTangle(trunkTransaction, branchTransaction, minWeightMagnitude, trytes, [callback])
