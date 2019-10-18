@@ -2,8 +2,13 @@
 # PEGASUS
  Pegasus is a chrome extension that implements a wallet for the IOTA cryptocurrency. In addition, Pegasus injects the iotajs library allowing developers to interact with IOTA Tangle without paying attention on how to keep the seed safe.
 
+&nbsp;
 
-### Installing
+***
+
+&nbsp;
+
+### :zap: Installing
 
 ```
 git clone https://github.com/allemanfredi/PEGASUS.git
@@ -34,15 +39,25 @@ if you want to build background, contentScript and lib
 yarn build:core
 ```
 
+&nbsp;
 
+***
+
+&nbsp;
 After having built the application, it needs to be loaded on chrome.
 
-## How to install Chrome extensions manually
+## :exclamation: How to install Chrome extensions manually
 
 * Go to chrome://extensions/ and check the box for Developer mode in the top right.
 * Click the Load unpacked extension button and select the build folder for your extension to install it.
 
-## How the data are stored?
+&nbsp;
+
+***
+
+&nbsp;
+
+## :fire: How data are stored?
 An user during the initialization phase will have to enter a password that will be used as a key to encrypt the data (seed, address, transactions etc.. togheter). Of this password the hash will be saved in the localStorage in order to use it during login. The plain text of the password (encryption key) will be saved in a variable within the background script. After 15 minutes of inactivity, the wallet will delete this variable so that the key has not been saved anywhere. In this way the data encryption key is saved only in the user's mind and in a variable when using the wallet.
 
 ```js
@@ -51,7 +66,13 @@ An user during the initialization phase will have to enter a password that will 
 
 ```
 
-## iota-js injection
+&nbsp;
+
+***
+
+&nbsp;
+
+## :syringe: iota-js injection
 
 ```js
 if (window.iota) {
@@ -78,7 +99,7 @@ if (window.iota) {
 }
 ```
 
-## List of Supported injected functions
+### :page_with_curl: List of Supported injected functions
 
 It's possible to interact with the functions both with __callbacks__ and __async/await__
 
@@ -115,10 +136,19 @@ It's possible to interact with the functions both with __callbacks__ and __async
  * .traverseBundle(trunkTransaction, [bundle], [callback])
  * .generateAddress(seed, index, [security], [checksum] , [callback])
 
-## Some screenshots
-### Iotajs injection
+&nbsp;
+
+***
+
+&nbsp;
+
+## :camera: Some screenshots
+
+__Iotajs injection__
+
 <img src="./images/injection.png" width="400" height="500">
 
-### Mam explorer
+__Mam explorer__
+
 <img src="./images/mam-explorer.png" width="320" height="500">
 
