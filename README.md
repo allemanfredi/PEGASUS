@@ -98,7 +98,7 @@ if (window.iota) {
     console.log(bundle)
 }
 ```
-
+&nbsp;
 ### :page_with_curl: List of Supported injected functions
 
 It's possible to interact with the functions both with __callbacks__ and __async/await__
