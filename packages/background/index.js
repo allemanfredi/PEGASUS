@@ -42,6 +42,7 @@ const backgroundScript = {
     duplex.on('deleteCurrentNetwork', this.walletService.deleteCurrentNetwork)
 
     duplex.on('addAccount', this.walletService.addAccount)
+    duplex.on('isAccountNameAlreadyExists', this.walletService.isAccountNameAlreadyExists)
     duplex.on('getCurrentAccount', this.walletService.getCurrentAccount)
     duplex.on('getAllAccounts', this.walletService.getAllAccounts)
     duplex.on('setCurrentAccount', this.walletService.setCurrentAccount)

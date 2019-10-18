@@ -8,12 +8,9 @@ import Add from '../add/Add';
 import Network from '../network/Network';
 import MamExplorer from '../mamExplorer/MamExplorer';
 import ExportSeed from '../exportSeed/ExportSeed';
-
-
 import Loader from '../../components/loader/Loader';
 import Navbar from '../../components/navbar/Navbar';
 import Alert from '../../components/alert/Alert';
-
 import { PopupAPI } from '@pegasus/lib/api';
 import Utils from '@pegasus/lib/utils';
 
@@ -33,7 +30,6 @@ class Home extends Component {
     this.onSwitchAccount = this.onSwitchAccount.bind(this);
     this.onAddAccount = this.onAddAccount.bind(this);
     this.onLogout = this.onLogout.bind(this);
-    this.onChangeName = this.onChangeName.bind(this);
     this.onDeleteAccount = this.onDeleteAccount.bind(this);
     this.onReload = this.onReload.bind(this);
     this.onConfirm = this.onConfirm.bind(this);
@@ -72,10 +68,6 @@ class Home extends Component {
     PopupAPI.setCurrentAccount(account);
   }
 
-  async onChangeName(newName) {
-    PopupAPI.updateNameAccount(this.props.account, newName);
-  }
-
   async onDeleteAccount() {
     this.setState(() => {
       return {
@@ -84,7 +76,6 @@ class Home extends Component {
         alertType: 'confirm',
         actionToConfirm: 'deleteAccount'
       }
-
     })
   }
 
@@ -240,7 +231,6 @@ class Home extends Component {
               account={this.props.account}
               onAddAccount={this.onAddAccount}
               onSwitchAccount={this.onSwitchAccount}
-              onChangeName={this.onChangeName}
               onShowMap={this.onClickMap}
               onLogout={this.onLogout}
               onClose={this.onCloseSettings}

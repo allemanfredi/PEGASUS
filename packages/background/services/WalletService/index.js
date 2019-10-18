@@ -2,15 +2,11 @@
 import EventEmitter from 'eventemitter3'
 import extensionizer from 'extensionizer'
 import Utils from '@pegasus/lib/utils'
-
 import { BackgroundAPI } from '@pegasus/lib/api'
 import { APP_STATE } from '@pegasus/lib/states'
-
 import { composeAPI } from '@iota/core'
 import { asciiToTrytes } from '@iota/converter'
-
 import settings from '@pegasus/lib/options'
-
 import AccountDataService from '../AccountDataService'
 import CustomizatorService from '../CustomizatorService'
 import MamService from '../MamService'
@@ -238,7 +234,18 @@ class Wallet extends EventEmitter {
     }
   }
 
+  isAccountNameAlreadyExists ({ name }) {
+    const data = this.storageDataService.getData()
+    const alreadyExists = data.filter(account => account.name === name)
+    if (alreadyExists.length > 0) {
+      return true
+    } else {
+      return false
+    }
+  }
+
   addAccount ({ account, network, isCurrent }) {
+
     if (isCurrent) {
       const data = this.storageDataService.getData()
       data.forEach(account => { account.current = false })
@@ -259,6 +266,12 @@ class Wallet extends EventEmitter {
 
     try {
       const data = this.storageDataService.getData()
+
+      const alreadyExists = data.filter(account => account.id === obj.id)
+      if (alreadyExists.length > 0) {
+        return null
+      }
+
       data.push(obj)
       this.storageDataService.setData(data)
 
@@ -287,23 +300,6 @@ class Wallet extends EventEmitter {
         if (account.current)
           return account
       }
-
-      // create an account for testnet if user switch to testnet and there is no accounts
-      /* this.emit('setAccount', {});
-      const isCurrent = true;
-      const seed = this.generateSeed();
-      const account = {
-        name: 'account-testnet',
-        seed: seed.toString().replace(/,/g, ''),
-        data: {}
-      }
-      const res = this.addAccount({ account, network, isCurrent });
-
-      //in order to prevent account.data = {}
-      this.emit('setAccount', {});
-
-      this.loadAccountData();
-      return res; */
     } catch (err) {
       throw new Error(err)
     }

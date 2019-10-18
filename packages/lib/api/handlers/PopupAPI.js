@@ -63,6 +63,10 @@ export default {
     return this.duplex.send('addAccount', { account, network, isCurrent })
   },
 
+  isAccountNameAlreadyExists (name) {
+    return this.duplex.send('isAccountNameAlreadyExists', { name })
+  },
+
   setCurrentAccount (currentAccount) {
     return this.duplex.send('setCurrentAccount', { currentAccount })
   },

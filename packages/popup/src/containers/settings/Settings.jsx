@@ -9,8 +9,8 @@ class Settings extends Component {
 
     this.switchAccount = this.switchAccount.bind(this);
     this.updateData = this.updateData.bind(this);
-    this.handleClick = this.handleClick.bind(this);
-    this.onChangeName = this.onChangeName.bind(this);
+    //this.handleClick = this.handleClick.bind(this);
+    //this.onChangeName = this.onChangeName.bind(this);
 
     this.state = {
       accounts: [],
@@ -32,21 +32,21 @@ class Settings extends Component {
 
   async updateData() {
     let accounts = await PopupAPI.getAllAccounts();
-    console.log(accounts)
     accounts = accounts.filter(account => !account.current);
     this.setState({ accounts });
   }
 
-  handleClick(e) {
+  /*handleClick(e) {
     if (!this.edit.contains(e.target)) {
       this.setState({ showEdit: false });
     }
   }
 
   onChangeName(e) {
-    this.setState({ editedName: e.target.value });
-    this.props.onChangeName(e.target.value);
-  }
+    this.setState({ editedName: e.target.value })
+    this.props.onChangeName(e.target.value)
+    PopupAPI.updateNameAccount(this.props.account, newName);
+  }*/
 
   render() {
     return (
@@ -69,14 +69,14 @@ class Settings extends Component {
                 </div>
                 <div className='row mt-3'>
                   <div className="col-2"></div>
-                  <div ref={edit => this.edit = edit} onClick={() => this.setState({ showEdit: true })} className='col-8 text-center text-sm cursor-text'>
-                    {
+                  <div /*ref={edit => this.edit = edit} onClick={() => this.setState({ showEdit: true })}*/ className='col-8 text-center text-sm cursor-text'>
+                    {/*
                       this.state.showEdit ?
                         <label htmlFor='inp-edit' className='inp'>
                           <input onChange={this.onChangeName}
                             value={this.state.editedName} autoFocus type='text' id='inp-edit' />
                         </label>
-                      : this.props.account.name
+                      : */this.props.account.name
                     }
                   </div>
                   <div className="col-2"></div>
@@ -127,7 +127,7 @@ class Settings extends Component {
                 <div className='row'>
                   <div className='col-2 text-center'><i className='fa fa-plus'></i></div>
                   <div className='col-10 text-left'>
-                    <a href='#' onClick={() => { this.props.onAddAccount(); }} data-scroll>
+                    <a href='#' onClick={() => { this.props.onAddAccount() }} data-scroll>
                       <div className='text-xs text-black'>add account</div>
                     </a>
                   </div>

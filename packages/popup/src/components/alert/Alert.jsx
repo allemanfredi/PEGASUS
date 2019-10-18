@@ -21,8 +21,8 @@ export default class Alert extends Component {
             <div className='col-12 text-center'>
               {
                 this.props.type === 'error' ? <img src='./material/img/error.png' height='90' width='90' alt='error' /> :
-                  this.props.type === 'success' ? <img src='./material/img/success.png' height='90' width='90' alt='success' /> :
-                    this.props.type === 'confirm' ? <img src='./material/img/question.png' height='90' width='90' alt='question' /> : ''
+                this.props.type == 'success' ? <img src='./material/img/success.png' height='90' width='90' alt='success' /> :
+                this.props.type === 'confirm' ? <img src='./material/img/question.png' height='90' width='90' alt='question' /> : ''
               }
             </div>
           </div>
@@ -31,20 +31,21 @@ export default class Alert extends Component {
               {this.props.text}
             </div>
           </div>
-          {this.props.type === 'confirm' ?
-            <div className="row mt-5 mb-2">
-              <div className="col-6">
-                <button onClick={() => this.props.onClose()} className='btn btn-border-blue btn-big'>Cancel</button>
+          {
+            this.props.type === 'confirm' ?
+              <div className="row mt-5 mb-2">
+                <div className="col-6">
+                  <button onClick={() => this.props.onClose()} className='btn btn-border-blue btn-big'>Cancel</button>
+                </div>
+                <div className="col-6">
+                  <button onClick={() => this.props.onConfirm()} className='btn btn-blue btn-big'>Confirm</button>
+                </div>
               </div>
-              <div className="col-6">
-                <button onClick={() => this.props.onConfirm()} className='btn btn-blue btn-big'>Confirm</button>
-              </div>
-            </div>
             : <div className="row mt-5 mb-2">
-              <div className="col-12">
-                <button onClick={() => this.props.onClose()} className='btn btn-border-blue btn-big'>Cancel</button>
+                <div className="col-12">
+                  <button onClick={() => this.props.onClose()} className='btn btn-border-blue btn-big'>OK</button>
+                </div>
               </div>
-            </div>
           }
         </div>
       </div>

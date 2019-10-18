@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import IOTA from '@pegasus/lib/iota';
-
+import Alert from '../../components/alert/Alert';
 import Loader from '../../components/loader/Loader';
 import { PopupAPI } from '@pegasus/lib/api';
 
@@ -9,12 +9,13 @@ class Add extends Component {
   constructor(props, context) {
     super(props, context);
 
-    this.addAccount = this.addAccount.bind(this);
-    this.goBack = this.goBack.bind(this);
-    this.goOn = this.goOn.bind(this);
-    this.updateStatusInitialization = this.updateStatusInitialization.bind(this);
-    this.randomiseSeedLetter = this.randomiseSeedLetter.bind(this);
-    this.copyToClipboard = this.copyToClipboard.bind(this);
+    this.addAccount = this.addAccount.bind(this)
+    this.goBack = this.goBack.bind(this)
+    this.goOn = this.goOn.bind(this)
+    this.updateStatusInitialization = this.updateStatusInitialization.bind(this)
+    this.randomiseSeedLetter = this.randomiseSeedLetter.bind(this)
+    this.copyToClipboard = this.copyToClipboard.bind(this)
+    this.onCloseAlert = this.onCloseAlert.bind(this)
 
     this.state = {
       name: '',
@@ -24,6 +25,9 @@ class Add extends Component {
       isLoading: false,
       initialization: [true, false, false],
       indexInitialization: 0,
+      showAlert: false,
+      alertType: '',
+      alertText: '',
     };
   }
 
@@ -38,14 +42,24 @@ class Add extends Component {
   }
 
   async goOn() {
+    if (this.state.indexInitialization === 0) {
+      const nameAlreadyExixts = await PopupAPI.isAccountNameAlreadyExists(this.state.name)
+      if (nameAlreadyExixts) {
+        this.setState({
+          showAlert: true,
+          alertText: 'Account name already exists',
+          alertType: 'error'
+        })
+        return
+      }
+    }
     this.updateStatusInitialization(this.state.indexInitialization, true);
     this.setState({ indexInitialization: this.state.indexInitialization + 1 });
-
     if (this.state.indexInitialization === 2) {
-      this.setState({ isLoading: true });
-      await this.addAccount();
-      this.setState({ isLoading: false });
-      this.props.onBack();
+      this.setState({ isLoading: true })
+      await this.addAccount()
+      this.setState({ isLoading: false })
+      this.props.onBack()
     }
   }
 
@@ -78,39 +92,52 @@ class Add extends Component {
 
   copyToClipboard(e) {
     const seed = this.state.seed.toString().replace(/,/g, '')
-    const textField = document.createElement('textarea');
+    const textField = document.createElement('textarea')
     textField.innerText = seed;
-    document.body.appendChild(textField);
-    textField.select();
-    document.execCommand('copy');
-    textField.remove();
-    this.setState({ isCopiedToClipboard: true });
+    document.body.appendChild(textField)
+    textField.select()
+    document.execCommand('copy')
+    textField.remove()
+    this.setState({ isCopiedToClipboard: true })
   }
 
   async addAccount() {
     return new Promise(async (resolve, reject) => {
       try {
         const promisedSeed = await PopupAPI.generateSeed()
-        const seed = promisedSeed.toString().replace(/,/g, '');
-        const data = await IOTA.getAccountData(seed);
+        const seed = promisedSeed.toString().replace(/,/g, '')
+        const data = await IOTA.getAccountData(seed)
         const account = {
           seed: seed,
           name: this.state.name,
           network: this.props.network,
           data: data
         };
-        await PopupAPI.addAccount(account, this.props.network, true);
+        PopupAPI.addAccount(account, this.props.network, true)
         resolve(account);
       } catch (err) {
-        console.log(err);
-        reject('Impossible to create the account');
+        reject('Impossible to create the account')
       }
     });
   }
 
+  onCloseAlert() {
+    this.setState({
+      showAlert: false
+    })
+  }
+
   render() {
     return (
-      <div>
+      <React.Fragment>
+        {
+          this.state.showAlert ?
+            <Alert type={this.state.alertType}
+              text={this.state.alertText}
+              onClose={this.onCloseAlert}
+            /> 
+          : ''
+        }
         {this.state.isLoading ?
           <Loader />
           : (<div>
@@ -205,7 +232,7 @@ class Add extends Component {
 
           </div>
           )}
-      </div>
+      </React.Fragment>
     );
   }
 }
