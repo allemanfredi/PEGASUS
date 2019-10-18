@@ -108,29 +108,28 @@ class Restore extends Component {
                 {
                   this.state.error ?
                     <div className="row mt-2">
-                      <div className='col-1'></div>
-                      <div className="col-10 text-xs">
+                      <div className="col-12 text-xs">
                         <div class="alert alert-danger" role="alert">
                           {this.state.error}
                         </div>
                       </div>
-                      <div className='col-1'></div>
                     </div>
                     : null
                 }
                 <div className='row mt-4'>
-                  <div className='col-1'></div>
-                  <div className='col-10 text-center'>
-                    <button disabled={this.state.seed.length > 0 ? false : true} onClick={this.onClickRestore} type='button' className='btn btn-blue text-bold btn-big'>Restore</button>
+                  <div className='col-12 text-center'>
+                    <button disabled={this.state.seed.length > 0 ? false : true}
+                      onClick={this.onClickRestore} 
+                      type='button' 
+                      className='btn btn-blue text-bold btn-big'>
+                        Restore</button>
                   </div>
-                  <div className='col-1'></div>
                 </div>
               </React.Fragment>
               :
               <React.Fragment>
                 <div className='row mt-11'>
-                  <div className='col-1'></div>
-                  <div className='col-10 text-center'>
+                  <div className='col-12 text-center'>
                     <form onSubmit={this.comparePassword}>
                       <label htmlFor='inp-psw' className='inp'>
                         <input value={this.state.psw} onChange={e => this.setState({ psw: e.target.value })} type='password' id='inp-psw' placeholder='&nbsp;' />
@@ -139,23 +138,18 @@ class Restore extends Component {
                       </label>
                     </form>
                   </div>
-                  <div className='col-1'></div>
                 </div>
                 <div className='row mt-4'>
-                  <div className='col-1'></div>
-                  <div className='col-10 text-center'>
+                  <div className='col-12 text-center'>
                     <button disabled={this.state.psw.length > 0 ? false : true} onClick={this.comparePassword} type='button' className='btn btn-blue text-bold btn-big'>Unlock</button>
                   </div>
-                  <div className='col-1'></div>
                 </div>
               </React.Fragment>
           }
           <div className='row mt-3'>
-            <div className='col-1'></div>
-            <div className='col-10 text-center'>
+            <div className='col-12 text-center'>
               <button onClick={e => { this.props.onBack(); }} type='submit' className='btn btn-white'>return to login</button>
             </div>
-            <div className='col-1'></div>
           </div>
         </div>
       )
