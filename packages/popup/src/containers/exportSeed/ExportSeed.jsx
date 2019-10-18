@@ -49,8 +49,7 @@ class ExportSeed extends Component {
           !this.state.seed ?
             <React.Fragment>
               <div className='row mt-11'>
-                <div className="col-1"></div>
-                <div className='col-10'>
+                <div className='col-12'>
                   <form onSubmit={this.getSeed}>
                     <label htmlFor='inp-psw' className='inp'>
                       <input value={this.state.psw} onChange={e => this.setState({ psw: e.target.value })} type='password' id='inp-psw' placeholder='&nbsp;' />
@@ -59,14 +58,11 @@ class ExportSeed extends Component {
                     </label>
                   </form>
                 </div>
-                <div className="col-1"></div>
               </div>
               <div className='row mt-3'>
-                <div className="col-1"></div>
-                <div className='col-10'>
+                <div className='col-12'>
                   <button disabled={!this.state.psw.length > 0} onClick={this.getSeed} type='submit' className='btn btn-blue text-bold btn-big'>Unlock</button>
                 </div>
-                <div className="col-1"></div>
               </div>
             </React.Fragment>
             :
@@ -80,11 +76,9 @@ class ExportSeed extends Component {
               </div>
 
               <div className='row mt-3'>
-                <div className="col-1"></div>
-                <div className='col-10'>
+                <div className='col-12'>
                   <button onClick={this.copyToClipboard} type='button' className='btn btn-blue text-bold btn-big'>Copy to clipboard</button>
                 </div>
-                <div className="col-1"></div>
               </div>
             </React.Fragment>
         }
