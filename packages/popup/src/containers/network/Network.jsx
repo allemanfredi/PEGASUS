@@ -67,14 +67,12 @@ class Network extends Component {
           </div>
         </div>
         <div className='row mt-8'>
-          <div className='col-1'></div>
-          <div className='col-10 text-center'>
+          <div className='col-12 text-center'>
             <button disabled={this.state.name === '' ||
               this.state.url === '' ||
               this.state.port === '' ||
               this.state.type === '' ? true : false} onClick={this.addNetwork} type='submit' className='btn btn-blue text-bold btn-big'>Add</button>
           </div>
-          <div className='col-1'></div>
         </div>
       </div>
     );

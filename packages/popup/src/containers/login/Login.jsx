@@ -48,8 +48,7 @@ class Login extends Component {
           </div>
         </div>
         <div className='row mt-8'>
-          <div className='col-1'></div>
-          <div className='col-10'>
+          <div className='col-12'>
             <form onSubmit={this.clickLogin}>
               <label htmlFor='inp-psw ' className='inp'>
                 <input onChange={e => this.setState({ psw: e.target.value })} type='password' id='inp-psw' placeholder='&nbsp;' />
@@ -58,21 +57,16 @@ class Login extends Component {
               </label>
             </form>
           </div>
-          <div className='col-1'></div>
         </div>
         <div className='row mt-4'>
-          <div className='col-1'></div>
-          <div className='col-10 text-center'>
+          <div className='col-12 text-center'>
             <button disabled={!this.state.psw.length > 0} onClick={this.clickLogin} type='submit' className='btn btn-blue text-bold btn-big'>Login</button>
           </div>
-          <div className='col-1'></div>
         </div>
         <div className='row mt-1'>
-          <div className='col-1'></div>
-          <div className='col-10 text-center'>
+          <div className='col-12 text-center'>
             <button onClick={e => { this.props.onRestore(); }} type='submit' className='btn btn-white '>Restore from seed</button>
           </div>
-          <div className='col-1'></div>
         </div>
       </div>
     );
