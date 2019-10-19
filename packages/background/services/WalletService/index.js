@@ -761,7 +761,7 @@ class Wallet extends EventEmitter {
     if (this.accountDataHandler)
       return
 
-    this.accountDataHandler = setInterval(() => this.loadAccountData(), 60000)
+    this.accountDataHandler = setInterval(() => this.loadAccountData(), 90000)
   }
 
   stopHandleAccountData () {
