@@ -11,6 +11,7 @@ import AccountDataService from '../AccountDataService'
 import CustomizatorService from '../CustomizatorService'
 import MamService from '../MamService'
 import StorageDataService from '../StorageDataService'
+import NotificationsService from '../NotificationsService'
 
 class Wallet extends EventEmitter {
   constructor () {
@@ -33,6 +34,8 @@ class Wallet extends EventEmitter {
     } else {
       this.customizatorService = Utils.requestHandler(new CustomizatorService(currentNetwork.provider))
     }
+
+    this.notificationsService = new NotificationsService()
 
     this.checkSession()
     setInterval(() => this.checkSession(), 9000000)
@@ -655,6 +658,8 @@ class Wallet extends EventEmitter {
           BackgroundAPI.setPayments(this.payments)
           this.setState(APP_STATE.WALLET_UNLOCKED)
 
+          cc({ data: bundle, success: true, uuid: obj.uuid })
+
           // since every transaction is generated a new address, it's necessary to modify the hook
           const data = await iota.getAccountData(seed)
           BackgroundAPI.setAddress(data.latestAddress)
@@ -663,7 +668,6 @@ class Wallet extends EventEmitter {
           BackgroundAPI.setAppState(APP_STATE.WALLET_UNLOCKED)
 
           BackgroundAPI.setConfirmationLoading(false)
-          cc({ data: bundle, success: true, uuid: obj.uuid })
         })
         .catch(err => {
           BackgroundAPI.setConfirmationError(err.message)
@@ -720,30 +724,28 @@ class Wallet extends EventEmitter {
   async loadAccountData () {
     const seed = this.getCurrentSeed()
     const network = this.getCurrentNetwork()
+    let account = this.getCurrentAccount()
     const { transactions, newData } = await AccountDataService.retrieveAccountData(seed, network)
 
-    //add only new txs
-    const account = this.getCurrentAccount()
-    const newTxs = []
-    for (let txToCheck of transactions) {
-      let isNew = true
-      for (let tx of account.transactions ) {
-        if (tx.bundle === txToCheck.bundle) {
-          isNew = false
-        }
-      }
-      if (isNew) {
-        newTxs.push(txToCheck)
-      }
-    }
+    //show notification
+    const transactionsJustConfirmed = this._getTransactionsJustConfirmed(account, transactions)
+    transactionsJustConfirmed.forEach(transaction => {
+      this.notificationsService.showNotification(
+        'Transaction Confirmed',
+        transaction.bundle,
+        network.link + 'bundle/' + transaction.bundle
+      )
+    })
+    
+    account = this._updateAccountTransactionsPersistence(account, transactions)
+    const newTransactions = this._getNewTransactionsFromAll(account, transactions)
 
     const updatedData = Object.assign({}, newData, {
-      transactions: [...newTxs, ...account.transactions]
+      transactions: [...newTransactions, ...account.transactions]
     })
-
     // store txs in the localstorage
     this.updateTransactionsAccount({ 
-      transactions: [...newTxs, ...account.transactions],
+      transactions: [...newTransactions, ...account.transactions],
       network
     })
 
@@ -759,7 +761,7 @@ class Wallet extends EventEmitter {
     if (this.accountDataHandler)
       return
 
-    this.accountDataHandler = setInterval(() => this.loadAccountData(), 40000)
+    this.accountDataHandler = setInterval(() => this.loadAccountData(), 60000)
   }
 
   stopHandleAccountData () {
@@ -816,6 +818,52 @@ class Wallet extends EventEmitter {
     MamService.fetch(network.provider, options.root, options.mode, options.sideKey, data => {
       BackgroundAPI.newMamData(data)
     })
+  }
+
+  _updateAccountTransactionsPersistence(account, transactions) {
+    for (let tx of transactions) {
+      for (let tx2 of account.transactions) {
+        if (
+          tx.bundle === tx2.bundle &&
+          tx.status !== tx2.status
+        ) {
+          tx2.status = tx.status
+        }
+      }
+    }
+    return account
+  }
+
+  _getTransactionsJustConfirmed(account, transactions) {
+    const transactionsJustConfirmed = []
+    for (let tx of transactions) {
+      for (let tx2 of account.transactions) {
+        if (
+          tx.bundle === tx2.bundle &&
+          tx.status !== tx2.status &&
+          tx.status === true
+        ) {
+          transactionsJustConfirmed.push(tx)
+        }
+      }
+    }
+    return transactionsJustConfirmed
+  }
+
+  _getNewTransactionsFromAll (account, transactions) {
+    const newTxs = []
+    for (let txToCheck of transactions) {
+      let isNew = true
+      for (let tx of account.transactions ) {
+        if (tx.bundle === txToCheck.bundle) {
+          isNew = false
+        }
+      }
+      if (isNew) {
+        newTxs.push(txToCheck)
+      }
+    }
+    return newTxs
   }
 }
 
