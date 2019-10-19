@@ -138,6 +138,12 @@ const Utils = {
         return false
     })
     return true
+  },
+
+  sleep (ms) {
+    return new Promise(resolve => 
+      setTimeout(resolve, ms)
+    )
   }
 
 }

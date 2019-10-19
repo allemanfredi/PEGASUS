@@ -242,6 +242,9 @@ input#inp-edit {
 }
 
 /* MARGINS */
+.mt-05{
+    margin-top: 5px;
+}
 .mt-1{
     margin-top:10px !important;
 }
@@ -308,6 +311,9 @@ input#inp-edit {
     margin-left: 10px !important;
 }
 
+.mr-05{
+    margin-right: 5px;
+}
 .mr-1{
     margin-left: 10px !important;
 }
@@ -444,7 +450,9 @@ hr {
 .display-flex{
     display: flex
 }
-
+.display-none{
+    display: none
+}
 .no-border{
     border-radius: 0px;
 }
@@ -582,11 +590,19 @@ header{
     z-index: 1000;
     transition: all 0.4s ease 0s; 
     animation-name: appear;
-    animation-duration: 0.4s;
+    animation-duration: 0.3s;
     animation-timing-function: ease-in;
+    margin-top: -10px;
+    box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
 }
 
-  
+.sidebar-wrapper-disappear {
+    transition: all 0.4s ease 0s !important; 
+    animation-name: disappear !important;
+    animation-duration: 0.3s !important;
+    animation-timing-function: ease-out !important;
+}
+
 @keyframes appear {
     from {width: 0;}
     to {width: 250px;}
@@ -807,5 +823,4 @@ header{
     height: 600px;
     max-height: 600px;
 }
-
 

@@ -58,7 +58,7 @@ class Login extends Component {
             </form>
           </div>
         </div>
-        <div className='row mt-4'>
+        <div className='row mt-3'>
           <div className='col-12 text-center'>
             <button disabled={!this.state.psw.length > 0} onClick={this.clickLogin} type='submit' className='btn btn-blue text-bold btn-big'>Login</button>
           </div>

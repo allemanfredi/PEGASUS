@@ -7,8 +7,9 @@ class Settings extends Component {
   constructor(props, context) {
     super(props, context);
 
-    this.switchAccount = this.switchAccount.bind(this);
-    this.updateData = this.updateData.bind(this);
+    this.switchAccount = this.switchAccount.bind(this)
+    this.updateData = this.updateData.bind(this)
+    this.onClose = this.onClose.bind(this)
     //this.handleClick = this.handleClick.bind(this);
     //this.onChangeName = this.onChangeName.bind(this);
 
@@ -16,6 +17,7 @@ class Settings extends Component {
       accounts: [],
       showEdit: false,
       editedName: this.props.account.name,
+      isDisappearing: false
     };
   }
 
@@ -24,16 +26,24 @@ class Settings extends Component {
   }
 
   async switchAccount(newAccount) {
-    let accounts = await PopupAPI.getAllAccounts();
+    let accounts = await PopupAPI.getAllAccounts()
     accounts = accounts.filter(account => account.id !== newAccount.id);
-    this.setState({ accounts });
-    this.props.onSwitchAccount(newAccount);
+    this.setState({ accounts })
+    this.props.onSwitchAccount(newAccount)
   }
 
   async updateData() {
-    let accounts = await PopupAPI.getAllAccounts();
-    accounts = accounts.filter(account => !account.current);
-    this.setState({ accounts });
+    let accounts = await PopupAPI.getAllAccounts()
+    accounts = accounts.filter(account => !account.current)
+    this.setState({ accounts })
+  }
+
+  async onClose() {
+    this.setState({
+      isDisappearing: true
+    })
+    await Utils.sleep(290)
+    this.props.onClose()
   }
 
   /*handleClick(e) {
@@ -50,15 +60,17 @@ class Settings extends Component {
 
   render() {
     return (
-      <div className='modal'>
-        <div onClick={this.handleClick} id='sidebar-wrapper'>
+      <div className='modal mt-6'>
+        <div onClick={this.handleClick} 
+          id='sidebar-wrapper'
+          className={this.state.isDisappearing ? 'sidebar-wrapper-disappear' : ''}>
           <nav id='spy'>
             <ul className='sidebar-nav nav'>
               <li className='sidebar-header'>
                 <div className="row">
                   <div className="col-12 text-left">
-                    <button onClick={() => { this.props.onClose(); }} type='button' className='close' aria-label='Close'>
-                      <span aria-hidden='true'>&times;</span>
+                    <button onClick={this.onClose} type="button" className="close mt-05 mr-05">
+                      <span className="fa fa-times"></span>
                     </button>
                   </div>
                 </div>
@@ -99,16 +111,18 @@ class Settings extends Component {
               </li>
               {
                 this.state.accounts.map(account => {
-                  return (<li className='sidebar-brand'>
-                    <div className='row'>
-                      <div className='col-2'><i className='fa fa-user'></i></div>
-                      <div className='col-8'>
-                        <a href='#' onClick={() => this.switchAccount(account)} data-scroll>
-                          <div className='text-xs text-black'>{account.name}</div>
-                        </a>
+                  return (
+                    <li className='sidebar-brand'>
+                      <div className='row'>
+                        <div className='col-2'><i className='fa fa-user'></i></div>
+                        <div className='col-8'>
+                          <a href='#' onClick={() => this.switchAccount(account)} data-scroll>
+                            <div className='text-xs text-black'>{account.name}</div>
+                          </a>
+                        </div>
                       </div>
-                    </div>
-                  </li>);
+                    </li>
+                  )
                 })
               }
               <hr />

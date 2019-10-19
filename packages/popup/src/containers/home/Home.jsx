@@ -226,16 +226,20 @@ class Home extends Component {
           onDeleteCurrentNetwork={this.onDeleteCurrentNetwork}>
         </Navbar>
         {!(Object.keys(this.props.account).length === 0 && this.props.account.constructor === Object) ? ( //!
-          <div>
-            {this.state.showSettings ? (<Settings network={this.props.network}
-              account={this.props.account}
-              onAddAccount={this.onAddAccount}
-              onSwitchAccount={this.onSwitchAccount}
-              onShowMap={this.onClickMap}
-              onLogout={this.onLogout}
-              onClose={this.onCloseSettings}
-              onMamExplorer={this.onMamExplorer} />) : ''}
-
+          <React.Fragment>
+            {
+              this.state.showSettings ?
+                <Settings network={this.props.network}
+                  show={this.state.showSettings}
+                  account={this.props.account}
+                  onAddAccount={this.onAddAccount}
+                  onSwitchAccount={this.onSwitchAccount}
+                  onShowMap={this.onClickMap}
+                  onLogout={this.onLogout}
+                  onClose={this.onCloseSettings}
+                  onMamExplorer={this.onMamExplorer} />
+              : ''
+            }
             {
               this.state.showSend ? 
                 <Send account={this.props.account}
@@ -314,8 +318,7 @@ class Home extends Component {
                 </div>
               : ''
             }
-
-          </div>) : (
+          </React.Fragment>) : (
             <Loader />
           )}
       </div>
