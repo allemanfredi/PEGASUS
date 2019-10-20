@@ -5,7 +5,7 @@ import Utils from '@pegasus/lib/utils'
 class StorageDataService {
   constructor (encryptionkey) {
     this.encryptionkey = encryptionkey
-
+    this.data = null
     // check if is null
     const edata = localStorage.getItem('data')
     if (!edata)
@@ -13,15 +13,22 @@ class StorageDataService {
   }
 
   getData () {
-    const edata = localStorage.getItem('data')
-    const data = Utils.aes256decrypt(edata, this.encryptionkey)
-    return JSON.parse(data)
+    if (!this.data) {
+      const edata = localStorage.getItem('data')
+      this.data = Utils.aes256decrypt(edata, this.encryptionkey)
+      this.data = JSON.parse(this.data)
+    }
+    return this.data
   }
 
   setData (data) {
+    this.data = data
+    return
+  }
+
+  writeDataToStorage() {
     const edata = Utils.aes256encrypt(JSON.stringify(data), this.encryptionkey)
     localStorage.setItem('data', edata)
-    return
   }
 }
 
