@@ -501,6 +501,7 @@ class Wallet extends EventEmitter {
         const date = new Date()
         const currentTime = date.getTime()
         if (currentTime - time > 3600000) { // greather than 1 our
+          this.storageDataService.writeDataToStorage()
           this.setState(APP_STATE.WALLET_LOCKED)
           return
         }
@@ -768,9 +769,11 @@ class Wallet extends EventEmitter {
     clearInterval(this.accountDataHandler)
   }
 
-  reloadAccountData () {
+  async reloadAccountData () {
     this.emit('setAccount', {})
+    clearInterval(this.accountDataHandler)
     this.loadAccountData()
+    this.accountDataHandler = setInterval(() => this.loadAccountData(), 90000)
   }
 
   // CUSTOM iotajs functions
