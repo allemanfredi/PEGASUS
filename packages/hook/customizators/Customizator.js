@@ -9,13 +9,14 @@ export default {
   },
 
   getCustomIota (provider) {
-    const iotajs = composeAPI({ provider })
+    const iotajsHandler = composeAPI({ provider })
+    const iotajsTarget = composeAPI({ provider })
 
-    Object.entries(iotajs).forEach(([method]) => {
-      iotajs[method] = (...args) => this[method](args)
+    Object.entries(iotajsHandler).forEach(([method]) => {
+      iotajsHandler[method] = (...args) => this[method](args)
     })
 
-    return iotajs
+    return new Proxy(iotajsTarget, iotajsHandler)
   },
 
   addNeighbors (args) {
