@@ -523,6 +523,7 @@ class Wallet extends EventEmitter {
 
   deleteSession () {
     try {
+      this.storageDataService.writeDataToStorage()
       localStorage.removeItem('session')
       this.setState(APP_STATE.WALLET_LOCKED)
       this.password = false

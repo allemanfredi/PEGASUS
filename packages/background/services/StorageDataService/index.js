@@ -27,7 +27,7 @@ class StorageDataService {
   }
 
   writeDataToStorage() {
-    const edata = Utils.aes256encrypt(JSON.stringify(data), this.encryptionkey)
+    const edata = Utils.aes256encrypt(JSON.stringify(this.data), this.encryptionkey)
     localStorage.setItem('data', edata)
   }
 }
