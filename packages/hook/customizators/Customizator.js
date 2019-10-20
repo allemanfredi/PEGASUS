@@ -12,8 +12,8 @@ export default {
     const iotajsHandler = composeAPI({ provider })
     const iotajsTarget = composeAPI({ provider })
 
-    Object.entries(iotajsHandler).forEach(([method]) => {
-      iotajsHandler[method] = (...args) => this[method](args)
+    Object.entries(iotajsTarget).forEach(([method]) => {
+      iotajsTarget[method] = (...args) => this[method](args)
     })
 
     return new Proxy(iotajsTarget, iotajsHandler)
