@@ -53,7 +53,7 @@ class Main extends Component {
         PopupAPI.setState(APP_STATE.WALLET_LOCKED);
     }*/
 
-    if (state == APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
+    if (state === APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
       this.props.showHeader(false);
 
     this.setState({ appState: state });
@@ -163,7 +163,8 @@ class Main extends Component {
   }
 
   render() {
-    switch (parseInt(this.state.appState)) {
+    console.log(this.state.appState)
+    switch (this.state.appState) {
       case APP_STATE.WALLET_NOT_INITIALIZED:
         return <Init onSuccess={this.onSuccessFromInit} />;
       case APP_STATE.WALLET_LOCKED:

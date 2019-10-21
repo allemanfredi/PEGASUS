@@ -478,12 +478,12 @@ class Wallet extends EventEmitter {
       const currentState = this.getState()
 
       // payment queue not empty during an extension hard reload cause show confirm view with 0 payment since the payments are deleted during the hard rel
-      if (currentState == APP_STATE.WALLET_TRANSFERS_IN_QUEUE && this.getPayments().length === 0 && !this.password) {
+      if (currentState === APP_STATE.WALLET_TRANSFERS_IN_QUEUE && this.getPayments().length === 0 && !this.password) {
         this.setState(APP_STATE.WALLET_UNLOCKED)
         return
       }
 
-      if (currentState == APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
+      if (currentState === APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
         return
 
       if (!this.password && !this.isWalletSetup()) {
@@ -601,7 +601,7 @@ class Wallet extends EventEmitter {
   }
 
   getState () {
-    const state = localStorage.getItem('state')
+    const state = parseInt(localStorage.getItem('state'))
     return state
   }
 
