@@ -500,7 +500,7 @@ class Wallet extends EventEmitter {
       if (time) {
         const date = new Date()
         const currentTime = date.getTime()
-        if (currentTime - time > 3600000) { // greather than 1 our
+        if (currentTime - time > 900000) { // greather than 15 minutes
           this.storageDataService.writeDataToStorage()
           this.setState(APP_STATE.WALLET_LOCKED)
           return
