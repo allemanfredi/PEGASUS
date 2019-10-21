@@ -57,14 +57,23 @@ After having built the application, it needs to be loaded on chrome.
 
 &nbsp;
 
-## :fire: How data are stored?
-An user during the initialization phase will have to enter a password that will be used as a key to encrypt the data (seed, address, transactions etc.. togheter). Of this password the hash will be saved in the localStorage in order to use it during login. The plain text of the password (encryption key) will be saved in a variable within the background script. After 15 minutes of inactivity, the wallet will delete this variable so that the key has not been saved anywhere. In this way the data encryption key is saved only in the user's mind and in a variable when using the wallet.
+## :seedling: How seed is stored?
 
-```js
+The seed is saved in the local storage of the browser, encrypted (through aes256) with the login password that a user chooses during the wallet initialization phase. To make it more difficult to find out, the password must meet the following requirements:
 
- const encryptedData = aes256(JSON.stringify("transactions, seed, accountData etc.."), loginPassword)
+- Must contains at least 8 characters
+- Must contains at least 1 uppercase character
+- Must contains at least 1 lowercase character
+- Must contains at least 1 symbol
+- Must contains at least 1 digit
 
-```
+Of this password only its hash is saved in the local storage.
+
+During the login phase, a user will have to enter a password, which will be compared with the hash specified above. if the two hashes match (the password is correct), the wallet loads the seed from the local storage (encrypted), decrypts it with the password just inserted and keeps it in memory together with the plain text of the password. If the wallet shows a period of inactivity of at least 15 minutes, delete the value of the variables relating to seed and password.
+In this way, the seed decryption key is not saved anywhere except in the mind of the user or in the RAM for only a limited period of time.
+
+A user also has the ability to export the seed, in order to do so, first he will have to enter the login password which will always be compared with the hash (of the password) saved in the local storage.
+In this way, if a user loses the access password (or if he forgets it), if he has exported the seed he will be able to restore the wallet 
 
 &nbsp;
 
