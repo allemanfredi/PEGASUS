@@ -23,7 +23,7 @@ class Receive extends Component {
       <div className='container'>
         <div className='row mt-5'>
           <div className='col-12 text-center'>
-            <QRCode value={this.props.account.data.latestAddress} />
+            <QRCode value={Utils.checksummed(this.props.account.data.latestAddress)} />
           </div>
         </div>
         <div className="row mt-4">
