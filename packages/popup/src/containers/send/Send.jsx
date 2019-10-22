@@ -1,9 +1,7 @@
 import React, { Component } from 'react'
 import { PopupAPI } from '@pegasus/lib/api'
 import Loader from '../../components/loader/Loader'
-import Alert from '../../components/alert/Alert'
 import Utils from '@pegasus/lib/utils'
-
 
 class Send extends Component {
   constructor(props, context) {

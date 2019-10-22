@@ -1,33 +1,33 @@
 
-import React, { Component } from 'react';
-import Utils from '@pegasus/lib/utils';
-import { PopupAPI } from '@pegasus/lib/api';
+import React, { Component } from 'react'
+import Utils from '@pegasus/lib/utils'
+import { PopupAPI } from '@pegasus/lib/api'
 
 class Settings extends Component {
   constructor(props, context) {
-    super(props, context);
+    super(props, context)
 
     this.switchAccount = this.switchAccount.bind(this)
     this.updateData = this.updateData.bind(this)
     this.onClose = this.onClose.bind(this)
-    //this.handleClick = this.handleClick.bind(this);
-    //this.onChangeName = this.onChangeName.bind(this);
+    //this.handleClick = this.handleClick.bind(this)
+    //this.onChangeName = this.onChangeName.bind(this)
 
     this.state = {
       accounts: [],
       showEdit: false,
       editedName: this.props.account.name,
       isDisappearing: false
-    };
+    }
   }
 
   async componentWillMount() {
-    this.updateData();
+    this.updateData()
   }
 
   async switchAccount(newAccount) {
     let accounts = await PopupAPI.getAllAccounts()
-    accounts = accounts.filter(account => account.id !== newAccount.id);
+    accounts = accounts.filter(account => account.id !== newAccount.id)
     this.setState({ accounts })
     this.props.onSwitchAccount(newAccount)
   }
@@ -48,14 +48,14 @@ class Settings extends Component {
 
   /*handleClick(e) {
     if (!this.edit.contains(e.target)) {
-      this.setState({ showEdit: false });
+      this.setState({ showEdit: false })
     }
   }
 
   onChangeName(e) {
     this.setState({ editedName: e.target.value })
     this.props.onChangeName(e.target.value)
-    PopupAPI.updateNameAccount(this.props.account, newName);
+    PopupAPI.updateNameAccount(this.props.account, newName)
   }*/
 
   render() {
@@ -96,7 +96,9 @@ class Settings extends Component {
                 <div className='row mt-1'>
                   <div className="col-2"></div>
                   <div className='col-8 text-center text-no-overflow text-xxs'>
-                    {this.props.account.data.latestAddress}
+                    {
+                      Utils.checksummed(this.props.account.data.latestAddress)
+                    }
                   </div>
                   <div className="col-2"></div>
                 </div>
@@ -151,7 +153,7 @@ class Settings extends Component {
                 <div className='row'>
                   <div className='col-2 text-center'><i className='fa fa-sign-out'></i></div>
                   <div className='col-10 text-left'>
-                    <a href='#' onClick={() => { this.props.onLogout(); }} data-scroll>
+                    <a href='#' onClick={() => { this.props.onLogout() }} data-scroll>
                       <div className='text-xs text-black'>logout</div>
                     </a>
                   </div>
@@ -161,8 +163,8 @@ class Settings extends Component {
           </nav>
         </div>
       </div>
-    );
+    )
   }
 }
 
-export default Settings;
+export default Settings
