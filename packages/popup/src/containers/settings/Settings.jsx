@@ -17,7 +17,8 @@ class Settings extends Component {
       accounts: [],
       showEdit: false,
       editedName: this.props.account.name,
-      isDisappearing: false
+      isDisappearing: false,
+      showFullAddress: false
     }
   }
 
@@ -94,13 +95,21 @@ class Settings extends Component {
                   <div className="col-2"></div>
                 </div>
                 <div className='row mt-1'>
-                  <div className="col-2"></div>
-                  <div className='col-8 text-center text-no-overflow text-xxs'>
+                  <div className="col-1"></div>
+                  <div className={'col-10 text-center text-xxs line-height-1-5' + (!this.state.showFullAddress ? ' text-no-overflow' : ' break-text')}>
                     {
                       Utils.checksummed(this.props.account.data.latestAddress)
                     }
                   </div>
-                  <div className="col-2"></div>
+                  <div className="col-1"></div>
+                </div>
+                <div className='row mt-05'>
+                  <div onClick={() => this.setState({showFullAddress: !this.state.showFullAddress})} 
+                    className='col-12 text-center text-blue text-xxs cursor-pointer'>
+                    {
+                      !this.state.showFullAddress ? 'Show Full Address' : 'Hide Full Address'
+                    }
+                  </div>
                 </div>
                 <div className='row mt-3'>
                   <div className='col-6 text-right text-sm text text-bold pr-1'>
@@ -118,9 +127,9 @@ class Settings extends Component {
                       <div className='row'>
                         <div className='col-2'><i className='fa fa-user'></i></div>
                         <div className='col-8'>
-                          <a href='#' onClick={() => this.switchAccount(account)} data-scroll>
+                          <span onClick={() => this.switchAccount(account)}>
                             <div className='text-xs text-black'>{account.name}</div>
-                          </a>
+                          </span>
                         </div>
                       </div>
                     </li>
@@ -132,9 +141,9 @@ class Settings extends Component {
                 <div className='row'>
                   <div className='col-2 text-center'><i className='fa fa-wpexplorer'></i></div>
                   <div className='col-10 text-left'>
-                    <a href='#' onClick={() => { this.props.onMamExplorer() }} data-scroll>
+                    <span onClick={() => { this.props.onMamExplorer() }}>
                       <div className='text-xs text-black'>MAM explorer</div>
-                    </a>
+                    </span>
                   </div>
                 </div>
               </li>
@@ -143,9 +152,9 @@ class Settings extends Component {
                 <div className='row'>
                   <div className='col-2 text-center'><i className='fa fa-plus'></i></div>
                   <div className='col-10 text-left'>
-                    <a href='#' onClick={() => { this.props.onAddAccount() }} data-scroll>
+                    <span onClick={() => { this.props.onAddAccount() }}>
                       <div className='text-xs text-black'>add account</div>
-                    </a>
+                    </span>
                   </div>
                 </div>
               </li>
@@ -153,9 +162,9 @@ class Settings extends Component {
                 <div className='row'>
                   <div className='col-2 text-center'><i className='fa fa-sign-out'></i></div>
                   <div className='col-10 text-left'>
-                    <a href='#' onClick={() => { this.props.onLogout() }} data-scroll>
+                    <span onClick={() => { this.props.onLogout() }}>
                       <div className='text-xs text-black'>logout</div>
-                    </a>
+                    </span>
                   </div>
                 </div>
               </li>
