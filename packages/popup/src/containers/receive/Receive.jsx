@@ -1,16 +1,17 @@
-import React, { Component } from 'react';
-import QRCode from 'qrcode.react';
+import React, { Component } from 'react'
+import QRCode from 'qrcode.react'
+import Utils from '@pegasus/lib/utils'
 
 class Receive extends Component {
   constructor(props, context) {
-    super(props, context);
+    super(props, context)
 
-    this.copyToClipboard = this.copyToClipboard.bind(this);
+    this.copyToClipboard = this.copyToClipboard.bind(this)
   }
 
   copyToClipboard(e) {
-    const textField = document.createElement('textarea');
-    textField.innerText = this.props.account.data.latestAddress;
+    const textField = document.createElement('textarea')
+    textField.innerText = Utils.checksummed(this.props.account.data.latestAddress)
     document.body.appendChild(textField)
     textField.select()
     document.execCommand('copy')
@@ -33,7 +34,9 @@ class Receive extends Component {
         <div className='row mt-2'>
           <div className='col-1'></div>
           <div className='col-10 text-center text-xs break-text' >
-            {this.props.account.data.latestAddress}
+            {
+              Utils.checksummed(this.props.account.data.latestAddress)
+            }
           </div>
           <div className='col-1'></div>
         </div>
@@ -45,8 +48,8 @@ class Receive extends Component {
           <div className="col-2"></div>
         </div>
       </div>
-    );
+    )
   }
 }
 
-export default Receive;
+export default Receive

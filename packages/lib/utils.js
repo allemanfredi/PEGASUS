@@ -1,4 +1,5 @@
 import crypto from 'crypto'
+import { addChecksum} from '@iota/checksum'
 
 const Utils = {
 
@@ -144,6 +145,10 @@ const Utils = {
     return new Promise(resolve => 
       setTimeout(resolve, ms)
     )
+  },
+
+  checksummed (address) {
+    return addChecksum(address)
   }
 
 }
