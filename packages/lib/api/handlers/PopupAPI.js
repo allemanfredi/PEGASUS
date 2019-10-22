@@ -35,6 +35,10 @@ export default {
     return this.duplex.send('initStorageDataService', key)
   },
 
+  writeDataOnLocalStorage () {
+    return this.duplex.send('writeDataOnLocalStorage')
+  },
+
   unlockSeed (psw) {
     return this.duplex.send('unlockSeed', psw)
   },

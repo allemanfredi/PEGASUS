@@ -64,7 +64,17 @@ class Wallet extends EventEmitter {
 
   initStorageDataService (key) {
     // allow to encrypt/decrypt the wallet
-    this.storageDataService = new StorageDataService(key)
+    if (!this.storageDataService) {
+      this.storageDataService = new StorageDataService(key)
+    } else {
+      this.storageDataService.setEncryptionKey(key)
+    }
+  }
+
+  writeDataToLocalStorage() {
+    if (this.storageDataService) {
+      this.storageDataService.writeDataToStorage()
+    }
   }
 
   storePassword (psw) {

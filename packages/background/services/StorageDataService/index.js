@@ -12,6 +12,10 @@ class StorageDataService {
       this.setData([])
   }
 
+  setEncryptionKey(key) {
+    this.encryptionkey = key
+  }
+
   getData () {
     if (!this.data) {
       const edata = localStorage.getItem('data')

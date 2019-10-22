@@ -46,6 +46,11 @@ class App extends Component {
     })
   }
 
+  //when user stop to use the extension, background will save the data in the local storage
+  componentWillUnmount() {
+    PopupAPI.writeDataOnLocalStorage()
+  }
+
   onHandleLogin(value) {
     this.setState({ isLogged: value });
   }

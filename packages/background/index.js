@@ -28,6 +28,7 @@ const backgroundScript = {
     duplex.on('isWalletSetup', this.walletService.isWalletSetup)
     duplex.on('setupWallet', this.walletService.setupWallet)
     duplex.on('initStorageDataService', this.walletService.initStorageDataService)
+    duplex.on('writeDataToLocalStorage', this.walletService.writeDataToLocalStorage)
     duplex.on('unlockWallet', this.walletService.unlockWallet)
     duplex.on('restoreWallet', this.walletService.restoreWallet)
     duplex.on('unlockSeed', this.walletService.unlockSeed)
