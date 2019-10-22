@@ -170,7 +170,7 @@ class Main extends Component {
       case APP_STATE.WALLET_LOCKED:
         return <Login onSuccess={this.onSuccessFromLogin} onRestore={this.onRestore} />
       case APP_STATE.WALLET_RESTORE:
-        return <Restore network={this.state.network} onSuccess={this.onSuccessFromRestore} onBack={this.onBack} />;
+        return <Restore network={this.props.network} onSuccess={this.onSuccessFromRestore} onBack={this.onBack} />;
       case APP_STATE.WALLET_UNLOCKED:
         return <Home ref={this.home} account={this.props.account} network={this.props.network} onLogout={this.onLogout} onAskConfirm={this.onAskConfirm} />
       case APP_STATE.WALLET_TRANSFERS_IN_QUEUE:

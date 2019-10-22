@@ -29,6 +29,7 @@ const backgroundScript = {
     duplex.on('setupWallet', this.walletService.setupWallet)
     duplex.on('initStorageDataService', this.walletService.initStorageDataService)
     duplex.on('unlockWallet', this.walletService.unlockWallet)
+    duplex.on('restoreWallet', this.walletService.restoreWallet)
     duplex.on('unlockSeed', this.walletService.unlockSeed)
     duplex.on('getKey', this.walletService.getKey)
     duplex.on('storePassword', this.walletService.storePassword)

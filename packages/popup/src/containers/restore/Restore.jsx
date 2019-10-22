@@ -1,27 +1,27 @@
 import React, { Component } from 'react';
 import IOTA from '@pegasus/lib/iota';
 import { PopupAPI } from '@pegasus/lib/api';
-import Utils from '@pegasus/lib/utils';
 import Loader from '../../components/loader/Loader';
 
 class Restore extends Component {
   constructor(props, context) {
-    super(props, context);
+    super(props, context)
 
-    this.onClickRestore = this.onClickRestore.bind(this);
-    this.onChangeSeed = this.onChangeSeed.bind(this);
-    this.comparePassword = this.comparePassword.bind(this);
-    this.closeAlert = this.closeAlert.bind(this);
+    this.onClickRestore = this.onClickRestore.bind(this)
+    this.onChangeSeed = this.onChangeSeed.bind(this)
+    this.comparePassword = this.comparePassword.bind(this)
+    this.closeAlert = this.closeAlert.bind(this)
 
     this.state = {
       seed: '',
       psw: '',
+      accountName: '',
       isLoading: false,
       seedIsValid: false,
       passwordIsValid: false,
       shake: false,
       error: null
-    };
+    }
   }
 
   async onClickRestore(e) {
@@ -33,53 +33,50 @@ class Restore extends Component {
         isSeedValid,
         error: 'Invalid Seed'
       })
-      return;
+      return
     }
 
-    this.setState({ isLoading: true });
+    this.setState({ isLoading: true })
 
     //start encryption storage service
     PopupAPI.initStorageDataService(this.state.psw)
 
-    await PopupAPI.resetData();
-    const pswHash = Utils.sha256(this.state.psw);
-    const eseed = Utils.aes256encrypt(this.state.seed, pswHash);
-    const data = await IOTA.getAccountData(this.state.seed);
+    await PopupAPI.resetData()
+    const data = await IOTA.getAccountData(this.state.seed)
     const account = {
-      name: 'restored account',
-      seed: eseed,
+      name: this.state.accountName,
+      seed: this.state.seed,
       data,
       network: this.props.network
     };
-    await PopupAPI.addAccount(account);
-    await PopupAPI.setCurrentNetwork(this.props.network);
-    this.setState({ isLoading: false });
-    this.props.onSuccess();
+    await PopupAPI.restoreWallet(account, this.props.network, this.state.psw)
+    this.setState({ isLoading: false })
+    this.props.onSuccess()
   }
 
   async comparePassword(e) {
-    e.preventDefault();
+    e.preventDefault()
 
-    this.setState({ shake: false });
+    this.setState({ shake: false })
 
-    const canAccess = await PopupAPI.comparePassword(this.state.psw);
+    const canAccess = await PopupAPI.comparePassword(this.state.psw)
     if (canAccess)
-      this.setState({ passwordIsValid: true });
-    else this.setState({ shake: true });
+      this.setState({ passwordIsValid: true })
+    else this.setState({ shake: true })
   }
 
   onChangeSeed(e) {
     this.setState({ seed: e.target.value });
-    const isValid = PopupAPI.isSeedValid(this.state.seed);
+    const isValid = PopupAPI.isSeedValid(this.state.seed)
     if (isValid) {
-      this.setState({ seedIsValid: true });
-    } else this.setState({ seedIsValid: false });
+      this.setState({ seedIsValid: true })
+    } else this.setState({ seedIsValid: false })
   }
 
   closeAlert() {
     this.setState({
       error: null
-    });
+    })
   }
 
   render() {
@@ -87,14 +84,19 @@ class Restore extends Component {
       this.state.isLoading ? <Loader /> : (
         <div className={this.state.shake ? 'container shake' : 'container'}>
           <div className='row mt-3 mb-3'>
-            <div className='col-12 text-center text-lg text-blue'>Insert your password to restore the wallet</div>
+            <div className='col-12 text-center text-lg text-blue'>
+              {
+                !this.state.passwordIsValid ?
+                  'Insert your password to restore the wallet'
+                : 'Now choose a name and insert the seed'
+              }
+            </div>
           </div>
           {
             this.state.passwordIsValid ?
               <React.Fragment>
                 <div className='row mt-11'>
-                  <div className='col-1'></div>
-                  <div className='col-10 text-center'>
+                  <div className='col-12 text-center'>
                     <form onSubmit={this.onClickRestore}>
                       <label htmlFor='inp-seed' className='inp '>
                         <input value={this.state.seed} onChange={this.onChangeSeed} type='text' id='inp-seed' placeholder='&nbsp;' />
@@ -103,7 +105,17 @@ class Restore extends Component {
                       </label>
                     </form>
                   </div>
-                  <div className='col-1'></div>
+                </div>
+                <div className='row mt-3'>
+                  <div className='col-12 text-center'>
+                    <form onSubmit={this.onClickRestore}>
+                      <label htmlFor='inp-name' className='inp '>
+                        <input value={this.state.accountName} onChange={e => {this.setState({accountName: e.target.value})}} type='text' id='inp-name' placeholder='&nbsp;' />
+                        <span className='label'>Account name</span>
+                        <span className='border'></span>
+                      </label>
+                    </form>
+                  </div>
                 </div>
                 {
                   this.state.error ?
@@ -118,7 +130,7 @@ class Restore extends Component {
                 }
                 <div className='row mt-4'>
                   <div className='col-12 text-center'>
-                    <button disabled={this.state.seed.length > 0 ? false : true}
+                    <button disabled={this.state.seed.length > 0 && this.state.accountName.length > 0 ? false : true}
                       onClick={this.onClickRestore} 
                       type='button' 
                       className='btn btn-blue text-bold btn-big'>
@@ -148,7 +160,7 @@ class Restore extends Component {
           }
           <div className='row mt-3'>
             <div className='col-12 text-center'>
-              <button onClick={e => { this.props.onBack(); }} type='submit' className='btn btn-white'>return to login</button>
+              <button disablesonClick={e => { this.props.onBack(); }} type='submit' className='btn btn-white'>return to login</button>
             </div>
           </div>
         </div>

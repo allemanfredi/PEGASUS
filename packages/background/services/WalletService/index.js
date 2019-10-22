@@ -114,6 +114,37 @@ class Wallet extends EventEmitter {
     }
   }
 
+  restoreWallet ({ account, network, key }) {
+    const transactions = AccountDataService.mapTransactions(account.data, network)
+    const eseed = Utils.aes256encrypt(account.seed, key)
+    const obj = {
+      name: account.name,
+      seed: eseed,
+      transactions,
+      data: account.data,
+      current: true,
+      id: Utils.sha256(account.name)
+    }
+
+    try {
+      const restoredData = []
+      restoredData.push(obj)
+      this.storageDataService.setData(restoredData)
+      this.storageDataService.writeDataToStorage()
+
+      this.password = key
+      this.setCurrentNetwork(network)
+
+      this.emit('setProvider', network.provider)
+      this.emit('setAddress', account.data.latestAddress)
+      this.emit('setAccount', obj)
+
+      return obj
+    } catch (err) {
+      throw new Error(err)
+    }
+  }
+
   unlockSeed (psw) {
     const hash = Utils.sha256(psw)
     try {
@@ -303,6 +334,7 @@ class Wallet extends EventEmitter {
         if (account.current)
           return account
       }
+
     } catch (err) {
       throw new Error(err)
     }

@@ -27,6 +27,10 @@ export default {
     return this.duplex.send('unlockWallet', psw)
   },
 
+  restoreWallet (account, network, key) {
+    return this.duplex.send('restoreWallet', { account, network, key})
+  },
+
   initStorageDataService (key) {
     return this.duplex.send('initStorageDataService', key)
   },
