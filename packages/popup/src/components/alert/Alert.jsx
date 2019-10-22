@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 
 export default class Alert extends Component {
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {}
   }
@@ -13,7 +13,7 @@ export default class Alert extends Component {
         <div className='container-alert container bg-white container border-radius-5'>
           <div className='row mt-1'>
             <div className='col-2'>
-              <button onClick={() => this.props.onClose()} type='button' className='close' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
+              <button onClick={() => this.props.onClose()} type='button' className='close' aria-label='Close'><span aria-hidden='true'>&times</span></button>
             </div>
             <div className='col-10' />
           </div>
@@ -49,7 +49,7 @@ export default class Alert extends Component {
           }
         </div>
       </div>
-    );
+    )
   }
 }
 

@@ -1,5 +1,5 @@
 import crypto from 'crypto'
-import { addChecksum} from '@iota/checksum'
+import { addChecksum, isValidChecksum } from '@iota/checksum'
 
 const Utils = {
 
@@ -149,6 +149,10 @@ const Utils = {
 
   checksummed (address) {
     return addChecksum(address)
+  },
+
+  isChecksummed (address) {
+    return isValidChecksum(address)
   }
 
 }
