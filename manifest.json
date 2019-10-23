@@ -9,10 +9,12 @@
         "default_title": "Pegasus"
     },
     "permissions": [
+        "*://*/*",
         "storage",
         "unlimitedStorage",
         "clipboardWrite",
-        "notifications"
+        "notifications",
+        "activeTab"
     ],
     "icons": { 
         "64": "packages/popup/build/material/logo/pegasus-64.png",
