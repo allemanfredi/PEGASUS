@@ -13,7 +13,8 @@ import Navbar from '../../components/navbar/Navbar';
 import Alert from '../../components/alert/Alert';
 import { PopupAPI } from '@pegasus/lib/api';
 import Utils from '@pegasus/lib/utils';
-
+import Transport from "@ledgerhq/hw-transport-webusb";
+import Iota from 'hw-app-iota';
 
 class Home extends Component {
   constructor(props, context) {
@@ -57,7 +58,7 @@ class Home extends Component {
       alertType: '',
       alertText: '',
       actionToConfirm: ''
-    };
+    }
   }
 
   async onReload() {

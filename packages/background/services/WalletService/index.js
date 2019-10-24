@@ -12,6 +12,7 @@ import CustomizatorService from '../CustomizatorService'
 import MamService from '../MamService'
 import StorageDataService from '../StorageDataService'
 import NotificationsService from '../NotificationsService'
+import LedgerService from '../LedgerService'
 
 class Wallet extends EventEmitter {
   constructor () {
@@ -36,6 +37,7 @@ class Wallet extends EventEmitter {
     }
 
     this.notificationsService = new NotificationsService()
+    this.ledgerService = new LedgerService()
 
     this.checkSession()
     setInterval(() => this.checkSession(), 9000000)
@@ -289,7 +291,6 @@ class Wallet extends EventEmitter {
   }
 
   addAccount ({ account, network, isCurrent }) {
-
     if (isCurrent) {
       const data = this.storageDataService.getData()
       data.forEach(account => { account.current = false })
@@ -649,7 +650,6 @@ class Wallet extends EventEmitter {
 
   pushPayment (payment, uuid, callback) {
     const currentState = this.getState()
-    console.log(currentState)
     if (currentState !== APP_STATE.WALLET_LOCKED)
       this.setState(APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
     else

@@ -30,7 +30,6 @@ class App extends Component {
   }
 
   async componentWillMount() {
-
     PopupAPI.init(this.state.duplex);
     this.bindDuplexRequests();
 
