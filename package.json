@@ -17,7 +17,7 @@
     "build": "lerna run build",
     "build:trampoline": "lerna run build --scope @pegasus/trampoline",
     "build:popup": "lerna run build --scope @pegasus/popup",
-    "build:core": "lerna run build --ignore @pegasus/popup @pegasus/trampoline",
+    "build:core": "lerna run build --ignore @pegasus/popup",
     "update-version": "lerna publish --skip-git --skip-npm --force-publish '*'",
     "lint": "lerna run lint",
     "build:zip": "yarn build && npx bestzip chrome-extension.zip dist manifest.json packages/popup/build packages/popup/static"
