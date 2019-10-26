@@ -49,7 +49,7 @@ class Login extends Component {
         </div>
         <div className="row">
           <div className="col-12 text-gray text-sm text-center">
-            An IOTA wallet in your browser!
+            Meet 'the Tangle' from your browser!
           </div>
         </div>
         <div className='row mt-10'>
