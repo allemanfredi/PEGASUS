@@ -84,14 +84,14 @@ class Transactions extends Component {
                   return (
                     <div key={index} className='transaction-list-item mt-1' >
                       <div className='row'>
-                        <div className='col-3 text-left text-xs text-blue'>
+                        <div className='col-3 text-left text-xxs text-blue my-auto'>
                           {Utils.timestampToDate(transaction.timestamp)}
                         </div>
-                        <div className='col-3 text-center text-xs'>
+                        <div className='col-3 text-center text-xxs my-auto'>
                           {transaction.value > 0 ? 'received ' : 'sent'}
                         </div>
-                        <div className='col-3 text-center'>
-                          <div className={transaction.status ? 'text-xs text-bold text-blue' : 'text-xs text-bold text-gray'} >
+                        <div className='col-3 text-center my-auto'>
+                          <div className={transaction.status ? 'text-xxs text-bold text-blue' : 'text-xxs text-bold text-gray'} >
                           {transaction.status ? 'confirmed ' : 'pending'}
                         </div>
                         </div>
