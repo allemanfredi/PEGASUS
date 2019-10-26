@@ -128,7 +128,7 @@ class Settings extends Component {
                         <div className='col-2'><i className='fa fa-user'></i></div>
                         <div className='col-8'>
                           <span onClick={() => this.switchAccount(account)}>
-                            <div className='text-xs text-black'>{account.name}</div>
+                            <div className='text-black'>{account.name}</div>
                           </span>
                         </div>
                       </div>
@@ -142,7 +142,7 @@ class Settings extends Component {
                   <div className='col-2 text-center'><i className='fa fa-wpexplorer'></i></div>
                   <div className='col-10 text-left'>
                     <span onClick={() => { this.props.onMamExplorer() }}>
-                      <div className='text-xs text-black'>MAM explorer</div>
+                      <div className='text-black'>MAM explorer</div>
                     </span>
                   </div>
                 </div>
@@ -153,7 +153,7 @@ class Settings extends Component {
                   <div className='col-2 text-center'><i className='fa fa-plus'></i></div>
                   <div className='col-10 text-left'>
                     <span onClick={() => { this.props.onAddAccount() }}>
-                      <div className='text-xs text-black'>add account</div>
+                      <div className='text-black'>add account</div>
                     </span>
                   </div>
                 </div>
@@ -163,7 +163,7 @@ class Settings extends Component {
                   <div className='col-2 text-center'><i className='fa fa-sign-out'></i></div>
                   <div className='col-10 text-left'>
                     <span onClick={() => { this.props.onLogout() }}>
-                      <div className='text-xs text-black'>logout</div>
+                      <div className='text-black'>logout</div>
                     </span>
                   </div>
                 </div>
