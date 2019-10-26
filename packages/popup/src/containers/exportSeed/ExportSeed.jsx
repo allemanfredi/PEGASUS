@@ -76,7 +76,7 @@ class ExportSeed extends Component {
               </div>
               <div className='row mt-3'>
                 <div className='col-12'>
-                  <button onClick={this.copyToClipboard} type='button' className='btn btn-blue text-bold btn-big'>Copy to clipboard</button>
+                  <button onClick={this.copyToClipboard} type='button' className='btn btn-blue text-bold btn-big'>Copy To Clipboard</button>
                 </div>
               </div>
             </React.Fragment>
