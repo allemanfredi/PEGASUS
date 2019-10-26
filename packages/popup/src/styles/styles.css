@@ -684,22 +684,22 @@ header{
   
 .sidebar-nav > .sidebar-brand {
     /*line-height: 60px;*/
-    font-size: 17px;
+    font-size: 14px;
 }
 .sidebar-nav > .sidebar-brand-add-account a{
     /*line-height: 60px;*/
     color: black;
-    font-size: 18px;
+    font-size: 14px;
 }
 .sidebar-nav > .sidebar-brand-logout a{
     /*line-height: 60px;*/
     color: black;
-    font-size: 18px;
+    font-size: 14px;
 }
   
 .sidebar-nav > .sidebar-brand a {
     color: black;
-    font-size: 18px;
+    font-size: 14px;
 }
   
 .sidebar-nav > .sidebar-brand:hover {
