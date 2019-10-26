@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Pegasus",
-  "description": "IOTA wallet in the browser",
+  "description": "Meet 'the Tangle' from your browser",
   "version": "0.1.0",
   "content_security_policy": "script-src 'self' 'unsafe-eval' 'sha256-GgRxrVOKNdB4LrRsVPDSbzvfdV4UqglmviH9GoBJ5jk=' 'sha256-IThiKMnsg0UHaLmP7sJxZpd/ohvINImwjxFJyxGFSlk='; object-src 'self'",
   "browser_action": {
@@ -14,9 +14,7 @@
     "clipboardWrite",
     "notifications",
     "activeTab",
-    "webRequest",
-    "http://localhost:3000/",
-    "https://localhost:3000/"
+    "webRequest"
   ],
   "icons": {
     "64": "packages/popup/build/material/logo/pegasus-64.png",
@@ -46,8 +44,8 @@
     "dist/hook.js"
   ],
   "externally_connectable": {
-    "matches": [
-      "https://allemanfredi.github.io/*"
+    "ids": [
+      "*"
     ]
   }
 }
