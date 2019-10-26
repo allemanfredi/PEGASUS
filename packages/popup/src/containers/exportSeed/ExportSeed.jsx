@@ -53,7 +53,7 @@ class ExportSeed extends Component {
                   <form onSubmit={this.getSeed}>
                     <label htmlFor='inp-psw' className='inp'>
                       <input value={this.state.psw} onChange={e => this.setState({ psw: e.target.value })} type='password' id='inp-psw' placeholder='&nbsp;' />
-                      <span className='label'>psw</span>
+                      <span className='label'>password</span>
                       <span className='border'></span>
                     </label>
                   </form>
