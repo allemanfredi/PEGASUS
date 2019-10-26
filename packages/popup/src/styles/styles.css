@@ -341,6 +341,9 @@ input#inp-edit {
 .border-radius-5{
     border-radius: 5px;
 }
+.border-radius-50{
+    border-radius: 50%
+}
 
 /* DECORATION */
 .text-blue{
@@ -843,6 +846,8 @@ header{
 .line-height-1-5 {
     line-height: 1.5
 }
+
+.border-radiu
 
 /* TEXT AREA */
 textarea {

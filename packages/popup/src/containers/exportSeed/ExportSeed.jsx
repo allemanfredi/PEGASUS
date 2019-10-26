@@ -43,7 +43,7 @@ class ExportSeed extends Component {
     return (
       <div className={this.state.shake ? 'container shake' : 'container'}>
         <div className='row mt-3 mb-3'>
-          <div className='col-12 text-center text-lg text-blue'>Insert your password to export the seed</div>
+          <div className='col-12 text-center text-lg text-blue text-bold'>Insert your password to export the seed</div>
         </div>
         {
           !this.state.seed ?
@@ -59,7 +59,7 @@ class ExportSeed extends Component {
                   </form>
                 </div>
               </div>
-              <div className='row mt-3'>
+              <div className='row mt-13'>
                 <div className='col-12'>
                   <button disabled={!this.state.psw.length > 0} onClick={this.getSeed} type='submit' className='btn btn-blue text-bold btn-big'>Unlock</button>
                 </div>
@@ -74,7 +74,7 @@ class ExportSeed extends Component {
                 </div>
                 <div className='col-1'></div>
               </div>
-              <div className='row mt-3'>
+              <div className='row mt-13'>
                 <div className='col-12'>
                   <button onClick={this.copyToClipboard} type='button' className='btn btn-blue text-bold btn-big'>Copy To Clipboard</button>
                 </div>

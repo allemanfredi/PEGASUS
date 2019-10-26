@@ -40,7 +40,7 @@ class Login extends Component {
     return (
       <div className={this.state.shake ? 'container shake' : 'container'}>
         <div className='container-logo-login mt-5'>
-          <img src='./material/logo/pegasus-128.png' height='100' width='100' alt='pegasus logo' />
+          <img className="border-radius-50" src='./material/logo/pegasus-256.png' height='130' width='130' alt='pegasus logo'/>
         </div>
         <div className='row mt-1'>
           <div className='col-12 text-center text-xl text-blue text-bold'>
@@ -52,7 +52,7 @@ class Login extends Component {
             Meet 'the Tangle' from your browser!
           </div>
         </div>
-        <div className='row mt-10'>
+        <div className='row mt-7'>
           <div className='col-12'>
             <form onSubmit={this.clickLogin}>
               <label htmlFor='inp-psw ' className='inp'>

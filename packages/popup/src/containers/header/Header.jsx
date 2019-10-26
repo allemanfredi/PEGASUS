@@ -42,7 +42,7 @@ class Header extends Component {
       <header>
         <div className='row'>
           <div className='col-2 container-header-logo'>
-            <img src='./material/logo/pegasus-64.png' height='40' width='40' alt='pegasus logo' />
+            <img className="border-radius-50" src='./material/logo/pegasus-64.png' height='40' width='40' alt='pegasus logo' />
           </div>
           <div className='col-1'></div>
           <div className='col-8'>
