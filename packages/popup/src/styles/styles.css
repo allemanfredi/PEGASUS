@@ -84,11 +84,11 @@
 }
 
 .container-ellipse-menu {
-    width: 180px;
+    width: 210px;
     right: 0;
     background: rgba(0,0,0,.8);
     position: absolute;
-    height: 180px;
+    height: 150px;
     margin-top: -13px;
     border-radius: 5px;
     margin-right: 2px;
