@@ -1,46 +1,52 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 
 export default class Navbar extends Component {
   constructor(props) {
-    super(props);
+    super(props)
 
-    this.deleteAccount = this.deleteAccount.bind(this);
-    this.deleteNetwork = this.deleteNetwork.bind(this);
-    this.exportSeed = this.exportSeed.bind(this);
-    this.handleClickOutside = this.handleClickOutside.bind(this);
+    this.deleteAccount = this.deleteAccount.bind(this)
+    this.deleteNetwork = this.deleteNetwork.bind(this)
+    this.exportSeed = this.exportSeed.bind(this)
+    this.importSeed = this.importSeed.bind(this)
+    this.handleClickOutside = this.handleClickOutside.bind(this)
 
     this.state = {
       showEllipseMenu: false
-    };
+    }
   }
 
   componentDidMount() {
-    document.addEventListener('mousedown', this.handleClickOutside);
+    document.addEventListener('mousedown', this.handleClickOutside)
   }
 
   componentWillUnmount() {
-    document.removeEventListener('mousedown', this.handleClickOutside);
+    document.removeEventListener('mousedown', this.handleClickOutside)
   }
 
   handleClickOutside(event) {
     if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
-      this.setState({ showEllipseMenu: false });
+      this.setState({ showEllipseMenu: false })
     }
   }
 
   deleteAccount() {
-    this.setState({ showEllipseMenu: false });
+    this.setState({ showEllipseMenu: false })
     this.props.onDeleteAccount()
   }
 
   deleteNetwork() {
-    this.setState({ showEllipseMenu: false });
-    this.props.onDeleteCurrentNetwork();
+    this.setState({ showEllipseMenu: false })
+    this.props.onDeleteCurrentNetwork()
   }
 
   exportSeed() {
-    this.setState({ showEllipseMenu: false });
-    this.props.onExportSeed();
+    this.setState({ showEllipseMenu: false })
+    this.props.onExportSeed()
+  }
+
+  importSeed() {
+    this.setState({ showEllipseMenu: false })
+    this.props.onImportSeed()
   }
 
   render() {
@@ -67,7 +73,6 @@ export default class Navbar extends Component {
             <div className='col-2'>
               <button onClick={() => this.setState({ showEllipseMenu: !this.state.showEllipseMenu })} className='btn btn-icon'><i className='fa fa-ellipsis-h'></i></button>
             </div>
-
             : ''
           }
         </div>
@@ -88,6 +93,10 @@ export default class Navbar extends Component {
                 <div className="col-2 text-white text-center text-xs"><span className='fa fa-share'></span></div>
                 <div className="col-10 text-white text-xs">Export seed</div>
               </div>
+              <div className="row mt-1 cursor-pointer" onClick={this.importSeed}>
+                <div className="col-2 text-white text-center text-xs"><span className='fa fa-plus'></span></div>
+                <div className="col-10 text-white text-xs">Import seed</div>
+              </div>
               {
                 !this.props.network.default ? <hr className="bg-white mt-1 mb-1" /> : ''
               }
@@ -101,6 +110,6 @@ export default class Navbar extends Component {
             </div>
           : ''}
       </div>
-    );
+    )
   }
 }

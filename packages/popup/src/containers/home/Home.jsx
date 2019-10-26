@@ -1,43 +1,43 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 
-import Send from '../send/Send';
-import Receive from '../receive/Receive';
-import Settings from '../settings/Settings';
-import Transactions from '../transactions/Transactions';
-import Add from '../add/Add';
-import Network from '../network/Network';
-import MamExplorer from '../mamExplorer/MamExplorer';
-import ExportSeed from '../exportSeed/ExportSeed';
-import Loader from '../../components/loader/Loader';
-import Navbar from '../../components/navbar/Navbar';
-import Alert from '../../components/alert/Alert';
-import { PopupAPI } from '@pegasus/lib/api';
-import Utils from '@pegasus/lib/utils';
-import Transport from "@ledgerhq/hw-transport-webusb";
-import Iota from 'hw-app-iota';
+import Send from '../send/Send'
+import Receive from '../receive/Receive'
+import Settings from '../settings/Settings'
+import Transactions from '../transactions/Transactions'
+import Add from '../add/Add'
+import Network from '../network/Network'
+import MamExplorer from '../mamExplorer/MamExplorer'
+import ExportSeed from '../exportSeed/ExportSeed'
+import ImportSeed from '../importSeed/ImportSeed'
+import Loader from '../../components/loader/Loader'
+import Navbar from '../../components/navbar/Navbar'
+import Alert from '../../components/alert/Alert'
+import { PopupAPI } from '@pegasus/lib/api'
+import Utils from '@pegasus/lib/utils'
 
 class Home extends Component {
   constructor(props, context) {
-    super(props, context);
+    super(props, context)
 
     //transactions components
-    this.transactions = React.createRef();
+    this.transactions = React.createRef()
 
-    this.onClickSend = this.onClickSend.bind(this);
-    this.onClickSettings = this.onClickSettings.bind(this);
-    this.onCloseSettings = this.onCloseSettings.bind(this);
-    this.onClickReceive = this.onClickReceive.bind(this);
-    this.onBack = this.onBack.bind(this);
-    this.onSwitchAccount = this.onSwitchAccount.bind(this);
-    this.onAddAccount = this.onAddAccount.bind(this);
-    this.onLogout = this.onLogout.bind(this);
-    this.onDeleteAccount = this.onDeleteAccount.bind(this);
-    this.onReload = this.onReload.bind(this);
-    this.onConfirm = this.onConfirm.bind(this);
-    this.onExportSeed = this.onExportSeed.bind(this);
-    this.onAddNetwork = this.onAddNetwork.bind(this);
-    this.onDeleteCurrentNetwork = this.onDeleteCurrentNetwork.bind(this);
-    this.onMamExplorer = this.onMamExplorer.bind(this);
+    this.onClickSend = this.onClickSend.bind(this)
+    this.onClickSettings = this.onClickSettings.bind(this)
+    this.onCloseSettings = this.onCloseSettings.bind(this)
+    this.onClickReceive = this.onClickReceive.bind(this)
+    this.onBack = this.onBack.bind(this)
+    this.onSwitchAccount = this.onSwitchAccount.bind(this)
+    this.onAddAccount = this.onAddAccount.bind(this)
+    this.onLogout = this.onLogout.bind(this)
+    this.onDeleteAccount = this.onDeleteAccount.bind(this)
+    this.onReload = this.onReload.bind(this)
+    this.onConfirm = this.onConfirm.bind(this)
+    this.onExportSeed = this.onExportSeed.bind(this)
+    this.onImportSeed = this.onImportSeed.bind(this)
+    this.onAddNetwork = this.onAddNetwork.bind(this)
+    this.onDeleteCurrentNetwork = this.onDeleteCurrentNetwork.bind(this)
+    this.onMamExplorer = this.onMamExplorer.bind(this)
 
     this.state = {
       error: '',
@@ -55,6 +55,7 @@ class Home extends Component {
       showAlert: false,
       showMam: false,
       showExportSeed: false,
+      showImportSeed: false,
       alertType: '',
       alertText: '',
       actionToConfirm: ''
@@ -62,11 +63,11 @@ class Home extends Component {
   }
 
   async onReload() {
-    PopupAPI.reloadAccountData();
+    PopupAPI.reloadAccountData()
   }
 
   async onSwitchAccount(account) {
-    PopupAPI.setCurrentAccount(account);
+    PopupAPI.setCurrentAccount(account)
   }
 
   async onDeleteAccount() {
@@ -99,10 +100,17 @@ class Home extends Component {
     })
   }
 
+  onImportSeed() {
+    this.setState({
+      showImportSeed: true,
+      showHome: false
+    })
+  }
+
   async onConfirm() {
     switch (this.state.actionToConfirm) {
       case 'deleteAccount': {
-        const account = await PopupAPI.deleteAccount(this.props.account);
+        const account = await PopupAPI.deleteAccount(this.props.account)
         if (!account) {
           this.setState(() => {
             return {
@@ -111,14 +119,14 @@ class Home extends Component {
               alertType: 'error'
             }
           })
-        } else this.setState({ showAlert: false });
+        } else this.setState({ showAlert: false })
 
-        break;
+        break
       }
       case 'deleteNetwork': {
-        PopupAPI.deleteCurrentNetwork();
-        this.setState({ showAlert: false });
-        break;
+        PopupAPI.deleteCurrentNetwork()
+        this.setState({ showAlert: false })
+        break
       }
     }
 
@@ -153,17 +161,18 @@ class Home extends Component {
         showNetwork: false,
         showMam: false,
         showExportSeed: false,
+        showImportSeed: false,
         showHome: true
       }
     })
   }
 
   onClickSettings() { 
-    this.setState({ showSettings: true }); 
+    this.setState({ showSettings: true }) 
   }
 
   onCloseSettings() { 
-    this.setState({ showSettings: false }); 
+    this.setState({ showSettings: false }) 
   }
 
   onAddAccount() {
@@ -173,10 +182,10 @@ class Home extends Component {
         showHome: false,
         showSettings: false
       }
-    });
+    })
   }
 
-  onLogout() { this.props.onLogout(); }
+  onLogout() { this.props.onLogout() }
 
   addCustomNetwork() {
     this.setState(() => {
@@ -184,7 +193,7 @@ class Home extends Component {
         showHome: false,
         showNetwork: true
       }
-    });
+    })
   }
 
   async onAddNetwork(network) {
@@ -193,10 +202,10 @@ class Home extends Component {
         showNetwork: false,
         showHome: true
       }
-    });
-    await PopupAPI.addNetwork(network);
-    await PopupAPI.setCurrentNetwork(network);
-    await PopupAPI.getCurrentAccount();
+    })
+    await PopupAPI.addNetwork(network)
+    await PopupAPI.setCurrentNetwork(network)
+    await PopupAPI.getCurrentAccount()
   }
 
   onMamExplorer() {
@@ -217,13 +226,14 @@ class Home extends Component {
           showBtnSettings={this.state.showHome}
           showBtnEllipse={this.state.showHome}
           showBtnBack={!this.state.showHome}
-          text={this.state.showHome ? this.props.account.name : (this.state.showSend ? 'Send' : (this.state.showReceive ? 'Receive' : this.state.showAdd ? 'Add account' : (this.state.showNetwork ? 'Add custom node' : (this.state.showMam ? 'MAM Explorer' : (this.state.showExportSeed ? 'Export Seed ' : '')))))}
+          text={this.state.showHome ? this.props.account.name : (this.state.showSend ? 'Send' : (this.state.showReceive ? 'Receive' : this.state.showAdd ? 'Add account' : (this.state.showNetwork ? 'Add custom node' : (this.state.showMam ? 'MAM Explorer' : (this.state.showExportSeed ? 'Export Seed ' : (this.state.showImportSeed ? 'Import Seed' : ''))))))}
           onClickSettings={this.onClickSettings}
           onClickMap={this.onClickMap}
           onBack={this.onBack}
           onDeleteAccount={this.onDeleteAccount}
           onViewAccountOnExplorer={this.onViewAccountOnExplorer}
           onExportSeed={this.onExportSeed}
+          onImportSeed={this.onImportSeed}
           onDeleteCurrentNetwork={this.onDeleteCurrentNetwork}>
         </Navbar>
         {!(Object.keys(this.props.account).length === 0 && this.props.account.constructor === Object) ? ( //!
@@ -280,6 +290,13 @@ class Home extends Component {
               : ''
             }
             {
+              this.state.showImportSeed ?
+                <ImportSeed account={this.props.account}
+                    network={this.props.network}
+                    onBack={this.onBack} /> 
+              : ''
+            }
+            {
               this.state.showAlert ?
                 <Alert type={this.state.alertType}
                   text={this.state.alertText}
@@ -323,8 +340,8 @@ class Home extends Component {
             <Loader />
           )}
       </div>
-    );
+    )
   }
 }
 
-export default Home;
+export default Home

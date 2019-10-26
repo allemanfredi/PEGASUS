@@ -1,16 +1,16 @@
-import React, { Component } from 'react';
-import IOTA from '@pegasus/lib/iota';
-import { PopupAPI } from '@pegasus/lib/api';
-import Loader from '../../components/loader/Loader';
+import React, { Component } from 'react'
+import IOTA from '@pegasus/lib/iota'
+import { PopupAPI } from '@pegasus/lib/api'
+import Loader from '../../components/loader/Loader'
 
 class Restore extends Component {
   constructor(props, context) {
     super(props, context)
 
     this.onClickRestore = this.onClickRestore.bind(this)
-    this.onChangeSeed = this.onChangeSeed.bind(this)
     this.comparePassword = this.comparePassword.bind(this)
     this.closeAlert = this.closeAlert.bind(this)
+    this.onChangeSeed = this.onChangeSeed.bind(this)
 
     this.state = {
       seed: '',
@@ -25,9 +25,9 @@ class Restore extends Component {
   }
 
   async onClickRestore(e) {
-    e.preventDefault();
+    e.preventDefault()
 
-    const isSeedValid = await PopupAPI.isSeedValid(this.state.seed);
+    const isSeedValid = await PopupAPI.isSeedValid(this.state.seed)
     if (!isSeedValid) {
       this.setState({
         isSeedValid,
@@ -48,7 +48,7 @@ class Restore extends Component {
       seed: this.state.seed,
       data,
       network: this.props.network
-    };
+    }
     await PopupAPI.restoreWallet(account, this.props.network, this.state.psw)
     this.setState({ isLoading: false })
     this.props.onSuccess()
@@ -66,11 +66,12 @@ class Restore extends Component {
   }
 
   onChangeSeed(e) {
-    this.setState({ seed: e.target.value });
-    const isValid = PopupAPI.isSeedValid(this.state.seed)
-    if (isValid) {
-      this.setState({ seedIsValid: true })
-    } else this.setState({ seedIsValid: false })
+    if (this.state.error) {
+      this.setState({
+        error: null
+      })
+    }
+    this.setState({ seed: e.target.value })
   }
 
   closeAlert() {
@@ -84,7 +85,7 @@ class Restore extends Component {
       this.state.isLoading ? <Loader /> : (
         <div className={this.state.shake ? 'container shake' : 'container'}>
           <div className='row mt-3 mb-3'>
-            <div className='col-12 text-center text-lg text-blue'>
+            <div className='col-12 text-center text-lg text-blue text-bold'>
               {
                 !this.state.passwordIsValid ?
                   'Insert your password to restore the wallet'
@@ -95,23 +96,28 @@ class Restore extends Component {
           {
             this.state.passwordIsValid ?
               <React.Fragment>
-                <div className='row mt-11'>
-                  <div className='col-12 text-center'>
-                    <form onSubmit={this.onClickRestore}>
-                      <label htmlFor='inp-seed' className='inp '>
-                        <input value={this.state.seed} onChange={this.onChangeSeed} type='text' id='inp-seed' placeholder='&nbsp;' />
-                        <span className='label'>seed</span>
-                        <span className='border'></span>
-                      </label>
-                    </form>
+                <div className={'row ' + (this.state.error ? 'mt-3' : 'mt-8')}>
+                  <div className='col-12 text-xs text-gray'>
+                    seed
                   </div>
                 </div>
-                <div className='row mt-3'>
+                <div className='row mt-05'>
+                  <div className='col-12 text-center'>
+                    <textarea rows={3} 
+                      value={this.state.seed}
+                      onChange={this.onChangeSeed}/>
+                  </div>
+                </div>
+                <div className='row mt-2'>
                   <div className='col-12 text-center'>
                     <form onSubmit={this.onClickRestore}>
                       <label htmlFor='inp-name' className='inp '>
-                        <input value={this.state.accountName} onChange={e => {this.setState({accountName: e.target.value})}} type='text' id='inp-name' placeholder='&nbsp;' />
-                        <span className='label'>Account name</span>
+                        <input value={this.state.accountName}
+                          onChange={e => {this.setState({accountName: e.target.value})}}
+                          type='text'
+                          id='inp-name' 
+                          placeholder='&nbsp;'/>
+                        <span className='label'>account name</span>
                         <span className='border'></span>
                       </label>
                     </form>
@@ -128,7 +134,7 @@ class Restore extends Component {
                     </div>
                     : null
                 }
-                <div className='row mt-4'>
+                <div className={'row ' + (this.state.error ? 'mt-1' : ' mt-4')}>
                   <div className='col-12 text-center'>
                     <button disabled={this.state.seed.length > 0 && this.state.accountName.length > 0 ? false : true}
                       onClick={this.onClickRestore} 
@@ -140,33 +146,36 @@ class Restore extends Component {
               </React.Fragment>
               :
               <React.Fragment>
-                <div className='row mt-11'>
+                <div className='row mt-22'>
                   <div className='col-12 text-center'>
                     <form onSubmit={this.comparePassword}>
                       <label htmlFor='inp-psw' className='inp'>
                         <input value={this.state.psw} onChange={e => this.setState({ psw: e.target.value })} type='password' id='inp-psw' placeholder='&nbsp;' />
-                        <span className='label'>psw</span>
+                        <span className='label'>password</span>
                         <span className='border'></span>
                       </label>
                     </form>
                   </div>
                 </div>
-                <div className='row mt-4'>
+                <div className='row mt-3'>
                   <div className='col-12 text-center'>
-                    <button disabled={this.state.psw.length > 0 ? false : true} onClick={this.comparePassword} type='button' className='btn btn-blue text-bold btn-big'>Unlock</button>
+                    <button disabled={this.state.psw.length > 0 ? false : true} 
+                      onClick={this.comparePassword}
+                      type='button'
+                      className='btn btn-blue text-bold btn-big'>Unlock</button>
                   </div>
                 </div>
               </React.Fragment>
           }
-          <div className='row mt-3'>
+          <div className='row mt-1'>
             <div className='col-12 text-center'>
-              <button disablesonClick={e => { this.props.onBack(); }} type='submit' className='btn btn-white'>return to login</button>
+              <button onClick={() => this.props.onBack()} type='submit' className='btn btn-white'>return to login</button>
             </div>
           </div>
         </div>
       )
-    );
+    )
   }
 }
 
-export default Restore;
+export default Restore
