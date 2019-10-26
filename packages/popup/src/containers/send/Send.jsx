@@ -121,7 +121,7 @@ class Send extends Component {
                   </div>
                 : ''
               }
-              <div className={'row ' + (this.state.error ? 'mt-1' : 'mt-6')}>
+              <div className={'row ' + (this.state.error ? 'mt-1' : 'mt-11')}>
                 <div className='col-12 text-center'>
                   <button disabled={this.state.dstAddress === '' ? true : false} 
                     onClick={this.clickTransfer}
@@ -130,8 +130,8 @@ class Send extends Component {
                   </button>
                 </div>
               </div>
-              <div className="row mt-3">
-                <div className="col-12 text-center text-xs text-blue">Address is mandatory. if value is empty it's interpreted as 0 and the wallet will generate a 0 value transaction</div>
+              <div className="row mt-2">
+                <div className="col-12 text-center text-xxs text-blue">Address is mandatory. if value is empty it's interpreted as 0 and the wallet will generate a 0 value transaction</div>
               </div>
             </div>
             : <Loader />
