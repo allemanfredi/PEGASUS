@@ -1,18 +1,21 @@
 
 // import ProxiedProvider from './handlers/ProxiedProvider';
-import RequestHandler from './handlers/RequestHandler'
+import requester from './requester'
+import connector from './connector'
 import EventChannel from '@pegasus/lib/EventChannel'
-import Customizator from './customizators/Customizator'
+import customizator from './customizator'
 
-const pageHook = {
+const hook = {
 
   init () {
     this._bindEventChannel()
 
-    Customizator.init(this.request)
-
+    customizator.init(this.request)
+    
     this._bindEvents()
     this._bindIotaJs()
+    
+    connector.init(this.request)
 
     this.request('init').then(({ selectedAddress, selectedProvider }) => {
       this.setAddress(selectedAddress)
@@ -27,20 +30,18 @@ const pageHook = {
     if (window.iotajs !== undefined)
       console.log('iotaJs is already initiated. Pegasus will overwrite the current instance')
 
-    const iotajs = Customizator.getCustomIota(this.selectedProvider)
-
+    const iotajs = customizator.getCustomIota(this.selectedProvider)
     const iota = {
       iotajs: iotajs,
       selectedAddress: this.selectedAddress,
       selectedProvider: this.selectedProvider
     }
-
     window.iota = iota
   },
 
   _bindEventChannel () {
     this.eventChannel = new EventChannel('pageHook')
-    this.request = RequestHandler.init(this.eventChannel)
+    this.request = requester.init(this.eventChannel)
   },
 
   _bindEvents () {
@@ -55,7 +56,7 @@ const pageHook = {
 
   setProvider (provider) {
     window.iota.selectedProvider = provider
-    window.iota.iotajs = Customizator.getCustomIota(provider)
+    window.iota.iotajs = customizator.getCustomIota(provider)
   },
 
   setAddress (address) {
@@ -64,4 +65,4 @@ const pageHook = {
 
 }
 
-pageHook.init()
+hook.init()

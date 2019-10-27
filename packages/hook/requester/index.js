@@ -1,6 +1,6 @@
 import randomUUID from 'uuid/v4'
 
-const RequestHandler = {
+const requester = {
   init (eventChannel) {
     this.eventChannel = eventChannel
     this.calls = {}
@@ -37,4 +37,4 @@ const RequestHandler = {
   }
 }
 
-export default RequestHandler
+export default requester

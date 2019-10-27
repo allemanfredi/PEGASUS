@@ -21,6 +21,8 @@ class Wallet extends EventEmitter {
     this.popup = false
     this.payments = []
     this.requests = []
+    this.connectionToStore = null       //local storage connection data
+    this.connectionRequest = null      //callback for user response
     this.password = false
     this.accountDataHandler = false
 
@@ -37,7 +39,7 @@ class Wallet extends EventEmitter {
     }
 
     this.notificationsService = new NotificationsService()
-    this.ledgerService = new LedgerService()
+    this.ledgerService = new LedgerService()    
 
     this.checkSession()
     setInterval(() => this.checkSession(), 9000000)
@@ -73,9 +75,9 @@ class Wallet extends EventEmitter {
     }
   }
 
-  writeDataToLocalStorage() {
+  writeOnLocalStorage() {
     if (this.storageDataService) {
-      this.storageDataService.writeDataToStorage()
+      this.storageDataService.writeToStorage()
     }
   }
 
@@ -142,7 +144,7 @@ class Wallet extends EventEmitter {
       const restoredData = []
       restoredData.push(obj)
       this.storageDataService.setData(restoredData)
-      this.storageDataService.writeDataToStorage()
+      this.storageDataService.writeToStorage()
 
       this.password = key
       this.setCurrentNetwork(network)
@@ -544,7 +546,7 @@ class Wallet extends EventEmitter {
         const date = new Date()
         const currentTime = date.getTime()
         if (currentTime - time > 900000) { // greather than 15 minutes
-          this.storageDataService.writeDataToStorage()
+          this.storageDataService.writeToStorage()
           this.setState(APP_STATE.WALLET_LOCKED)
           return
         }
@@ -566,7 +568,7 @@ class Wallet extends EventEmitter {
 
   deleteSession () {
     try {
-      this.storageDataService.writeDataToStorage()
+      this.storageDataService.writeToStorage()
       localStorage.removeItem('session')
       this.setState(APP_STATE.WALLET_LOCKED)
       this.password = false
@@ -662,7 +664,6 @@ class Wallet extends EventEmitter {
     }
 
     this.payments.push(obj)
-    console.log(this.payments)
     this.popup = null
     if (!this.popup && !payment.isPopup)
       this.openPopup()
@@ -825,8 +826,12 @@ class Wallet extends EventEmitter {
   // CUSTOM iotajs functions
   // if wallet is locked user must login, after having do it, wallet will execute every request put in the queue
   pushRequest (method, { uuid, resolve, data }) {
+
+    //TODO: check if page is already connected, otherwise ask user permission
+    //TODO and page has permission
+
     const seedNeeded = ['getAccountData', 'getInputs', 'getNewAddress', 'generateAddress']
-    if (seedNeeded.includes(method)) {
+    if (seedNeeded.includes(method)) { 
       const state = this.getState()
       if (state <= APP_STATE.WALLET_LOCKED) {
         if (!this.popup)
@@ -857,9 +862,72 @@ class Wallet extends EventEmitter {
       const resolve = request.options.resolve
       const data = request.options.data
       const seed = this.getCurrentSeed()
-
       this.customizatorService.request(method, { uuid, resolve, seed, data })
     })
+  }
+
+  connect(data, uuid, resolve) {
+    this.openPopup()
+    const connection = {
+      origin: data.origin,
+      requestToConnect : true,
+      connected: false,
+      enabled: false
+    }
+
+    this.connectionRequest = {
+      uuid,
+      resolve,
+      connection
+    }
+
+    //if user call connect before log in, storage is not already set up so it is not possible to save/load data
+    //workardund -> keep in memory and once he login, store the data into storage and delete the variable
+    if (!this.storageDataService) {
+      this.connectionToStore = connection
+    }
+    else this.storageDataService.setConnection(connection)
+  }
+
+  getConnection() {
+    if (!this.storageDataService) {
+      return null
+    }
+    if (this.connectionToStore) {
+      const connection = this.connectionToStore
+      this.storageDataService.setConnection(connection)
+      this.connectionToStore = null
+      return connection
+    }
+    const connection = this.storageDataService.getConnection()
+    return connection
+  }
+
+  setConnection(connection) {
+    this.storageDataService.setConnection(connection)
+  }
+
+  completeConnection() {
+    if (this.connectionRequest) {
+      this.connectionRequest.resolve({
+        data: 'Connection enabled',
+        success: true,
+        uuid: this.connectionRequest.uuid
+      })
+      this.connectionRequest = null
+    }
+  }
+
+  rejectConnection(){
+    if (this.connectionRequest) {
+      this.connectionRequest.resolve({
+        data: 'Connection not enabled by the user',
+        success: false,
+        uuid: this.connectionRequest.uuid
+      })
+      this.connectionRequest = null
+      this.closePopup()
+    }
   }
 
   startFetchMam (options) {

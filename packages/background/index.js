@@ -28,7 +28,7 @@ const backgroundScript = {
     duplex.on('isWalletSetup', this.walletService.isWalletSetup)
     duplex.on('setupWallet', this.walletService.setupWallet)
     duplex.on('initStorageDataService', this.walletService.initStorageDataService)
-    duplex.on('writeDataToLocalStorage', this.walletService.writeDataToLocalStorage)
+    duplex.on('writeOnLocalStorage', this.walletService.writeOnLocalStorage)
     duplex.on('unlockWallet', this.walletService.unlockWallet)
     duplex.on('restoreWallet', this.walletService.restoreWallet)
     duplex.on('unlockSeed', this.walletService.unlockSeed)
@@ -82,6 +82,10 @@ const backgroundScript = {
     duplex.on('closePopup', this.walletService.closePopup)
 
     duplex.on('executeRequests', this.walletService.executeRequests)
+    duplex.on('getConnection', this.walletService.getConnection)
+    duplex.on('setConnection', this.walletService.setConnection)
+    duplex.on('completeConnection', this.walletService.completeConnection)
+    duplex.on('rejectConnection', this.walletService.rejectConnection)
 
     duplex.on('startFetchMam', this.walletService.startFetchMam)
   },
@@ -109,7 +113,10 @@ const backgroundScript = {
           })
           break
         }
-
+        case 'connect' : {
+          this.walletService.connect(data, uuid, resolve)
+          break
+        }
         case 'addNeighbors': {
           this.walletService.pushRequest('addNeighbors', { uuid, resolve, data })
           break
