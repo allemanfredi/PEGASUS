@@ -35,8 +35,8 @@ export default {
     return this.duplex.send('initStorageDataService', key)
   },
 
-  writeDataOnLocalStorage () {
-    return this.duplex.send('writeDataOnLocalStorage')
+  writeOnLocalStorage () {
+    return this.duplex.send('writeOnLocalStorage')
   },
 
   unlockSeed (psw) {
@@ -177,6 +177,22 @@ export default {
 
   executeRequests () {
     return this.duplex.send('executeRequests')
+  },
+
+  getConnection () {
+    return this.duplex.send('getConnection')
+  },
+
+  setConnection (connection) {
+    return this.duplex.send('setConnection', connection)
+  },
+
+  completeConnection () {
+    return this.duplex.send('completeConnection')
+  },
+
+  rejectConnection () {
+    return this.duplex.send('rejectConnection')
   },
 
   startFetchMam (options) {
