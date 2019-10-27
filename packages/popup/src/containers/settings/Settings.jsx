@@ -43,7 +43,7 @@ class Settings extends Component {
     this.setState({
       isDisappearing: true
     })
-    await Utils.sleep(290)
+    await Utils.sleep(190)
     this.props.onClose()
   }
 

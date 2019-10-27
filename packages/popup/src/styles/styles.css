@@ -609,7 +609,7 @@ header{
     z-index: 1000;
     transition: all 0.4s ease 0s; 
     animation-name: appear;
-    animation-duration: 0.3s;
+    animation-duration: 0.2s;
     animation-timing-function: ease-in;
     margin-top: -10px;
     box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
@@ -618,7 +618,7 @@ header{
 .sidebar-wrapper-disappear {
     transition: all 0.4s ease 0s !important; 
     animation-name: disappear !important;
-    animation-duration: 0.3s !important;
+    animation-duration: 0.2s !important;
     animation-timing-function: ease-out !important;
 }
 
