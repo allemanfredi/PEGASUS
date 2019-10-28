@@ -63,7 +63,7 @@ class Main extends Component {
           state = APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION 
         }
       }
-      if (!connection && APP_STATE.WALLET_TRANSFERS_IN_QUEUE) {
+      if (!connection && state === APP_STATE.WALLET_TRANSFERS_IN_QUEUE) {
         this.props.showHeader(false)
         state = APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION 
       }
@@ -103,7 +103,7 @@ class Main extends Component {
       PopupAPI.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
       return
     } //unlocked and no injection requests
-    else if (!connection && payments.length === 0 && requests.length === 0){
+    else if ((!connection || connection.enabled) && payments.length === 0 && requests.length === 0){
       PopupAPI.startHandleAccountData()
       this.props.showHeader(true)
       this.setState({ appState: APP_STATE.WALLET_UNLOCKED })

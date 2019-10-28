@@ -854,6 +854,12 @@ class Wallet extends EventEmitter {
     if (!connection) {
       this.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
       this.openPopup()
+      this.connectorService.pushConnection({
+        origin,
+        requestToConnect: true,
+        connected: false,
+        enabled: false
+      })
       isPopupAlreadyOpened = true
     } else if (!connection.enabled) {
       this.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
