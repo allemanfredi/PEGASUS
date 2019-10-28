@@ -90,16 +90,16 @@ class Confirm extends Component {
             }
             <hr className="mt-1 mb-1" />
             <div className={this.state.error ? "row mt-3" : "row mt-9"}>
-              <div className="col-6">
-                <button onClick={() => this.reject(obj)} className="btn btn-border-blue text-sm text-bold">Reject</button>
+              <div className="col-6 pr-5 pl-5">
+                <button onClick={() => this.reject(obj)} className="btn btn-border-blue text-sm text-bold btn-big">Reject</button>
               </div>
-              <div className="col-6">
-                <button onClick={() => this.confirm(obj)} className="btn btn-blue text-sm text-bold">Confirm</button>
+              <div className="col-6 pr-5 pl-5">
+                <button onClick={() => this.confirm(obj)} className="btn btn-blue text-sm text-bold btn-big">Confirm</button>
               </div>
             </div>
             <div className="row mt-1">
-              <div className="col-12 text-center">
-                <button onClick={() => this.props.onRejectAll()} type='submit' className='btn btn-border-blue text-bold'>Reject all</button>
+              <div className="col-12 text-center pr-5 pl-5">
+                <button onClick={() => this.props.onRejectAll()} type='submit' className='btn btn-border-blue text-bold btn-big'>Reject all</button>
               </div>
             </div>
             <div className="row mt-1">
