@@ -1,6 +1,4 @@
 
-// import ProxiedProvider from './handlers/ProxiedProvider';
-import requester from './requester'
 import connector from './connector'
 import EventChannel from '@pegasus/lib/EventChannel'
 import customizator from './customizator'
@@ -11,12 +9,10 @@ const hook = {
     this._bindEventChannel()
     this._bindEvents()
 
-    this.request('init').then(({ selectedProvider }) => {
+    this.connection('init').then(({ selectedProvider }) => {
 
-      customizator.init(this.request)    
+      customizator.init(this.connection)    
       this.injectIotaJs(selectedProvider)
-
-      connector.init(this.request)
 
       console.log('Pegasus initiated succesfully')
     }).catch(err => {
@@ -26,7 +22,7 @@ const hook = {
 
   _bindEventChannel () {
     this.eventChannel = new EventChannel('pageHook')
-    this.request = requester.init(this.eventChannel)
+    this.connection = connector.init(this.eventChannel)
   },
 
   _bindEvents () {

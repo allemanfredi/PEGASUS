@@ -1,25 +1,61 @@
-import Utils from '@pegasus/lib/utils'
+import randomUUID from 'uuid/v4'
 
 const connector = {
+  init (eventChannel) {
+    this.eventChannel = eventChannel
+    this.calls = {}
 
-  init(request) {
-    this.request = request
-    window.iota.connect = (...args) => this._connect(args)
+    this.bindListener()
+    return this.handler.bind(this)
   },
 
-  _connect(args) {
-    const cb = args[0]
+  bindListener () {
+    this.eventChannel.on('tabReply', ({ success, data, uuid }) => {
+      if (success)
+        this.calls[uuid].resolve(data)
+      else this.calls[uuid].reject(data)
+
+      delete this.calls[uuid]
+    })
+  },
+
+  handler (action, data = {}) {
+    const uuid = randomUUID()
     const origin = this.getOrigin()
-    if(!cb) {
-      return Utils.injectPromise(this.request, 'connect', { origin })
+    const favicon = this.getFavicon()
+    const website = {
+      favicon,
+      origin
     }
-    this.request('connect', { origin })
-      .then(r => cb(r, null))
-      .catch(err => cb(null, err))
+
+    this.eventChannel.send('tunnel', {
+      website,
+      action,
+      data,
+      uuid
+    })
+
+    return new Promise((resolve, reject) => {
+      this.calls[uuid] = {
+        resolve,
+        reject
+      }
+    })
   },
 
   getOrigin() {
     return location.origin
+  },
+
+  getFavicon() {
+    let favicon = null
+    const nodeList = document.getElementsByTagName('link')
+    for (var i = 0; i < nodeList.length; i++) {
+      if ((nodeList[i].getAttribute('rel') == 'icon') || (nodeList[i].getAttribute('rel') == 'shortcut icon')) {
+        favicon = nodeList[i].getAttribute('href')
+      }
+    }
+    return favicon;
   }
 }
 

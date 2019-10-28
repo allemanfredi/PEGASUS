@@ -16,12 +16,24 @@ export default {
       iotajsTarget[method] = (...args) => this[method](args)
     })
 
+    iotajsTarget.connect = (...args) => this[method](args)
+
     //disable
     delete iotajsTarget.getAccountData
     delete iotajsTarget.getInputs
     delete iotajsTarget.getNewAddress
 
     return new Proxy(iotajsTarget, iotajsHandler)
+  },
+
+  _connect(args) {
+    const cb = args[0]
+    if (!cb) {
+      return Utils.injectPromise(this.request, 'connect')
+    }
+    this.request('connect', { website })
+      .then(r => cb(r, null))
+      .catch(err => cb(null, err))
   },
 
   addNeighbors (args) {
