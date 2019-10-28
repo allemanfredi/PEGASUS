@@ -16,6 +16,11 @@ export default {
       iotajsTarget[method] = (...args) => this[method](args)
     })
 
+    //disable
+    delete iotajsTarget.getAccountData
+    delete iotajsTarget.getInputs
+    delete iotajsTarget.getNewAddress
+
     return new Proxy(iotajsTarget, iotajsHandler)
   },
 
@@ -90,18 +95,6 @@ export default {
       .catch(err => callback(null, err))
   },
 
-  getAccountData (args) {
-    let callback
-    args[1] ? callback = args[1] : callback = args[0]
-
-    if (callback === undefined)
-      return Utils.injectPromise(this.request, 'getAccountData', { args })
-
-    this.request('getAccountData', { args })
-      .then(data => callback(data, null))
-      .catch(err => callback(null, err))
-  },
-
   getBalances (args) {
     const callback = args[2]
     if (callback === undefined)
@@ -132,17 +125,6 @@ export default {
       .catch(err => callback(null, err))
   },
 
-  getInputs (args) {
-    let callback
-    args[1] ? callback = args[1] : callback = args[0]
-    if (callback === undefined)
-      return Utils.injectPromise(this.request, 'getInputs', { args })
-
-    this.request('getInputs', { args })
-      .then(data => callback(data, null))
-      .catch(err => callback(null, err))
-  },
-
   getLatestInclusion (args) {
     let callback
     args[2] ? callback = args[2] : callback = args[1]
@@ -161,17 +143,6 @@ export default {
 
     this.request('getNeighbors')
       .then(info => callback(info, null))
-      .catch(err => callback(null, err))
-  },
-
-  getNewAddress (args) {
-    let callback
-    args[1] ? callback = args[1] : callback = args[0]
-    if (callback === undefined)
-      return Utils.injectPromise(this.request, 'getNewAddress', { args })
-
-    this.request('getNewAddress', { args })
-      .then(address => callback(address, null))
       .catch(err => callback(null, err))
   },
 
@@ -335,17 +306,17 @@ export default {
       })
   },
 
-  generateAddress (args) {
-    let callback
-    args[3] ? callback = args[3] : args[2] ? callback = args[2] : callback = args[1]
-    if (callback === undefined)
-      return Utils.injectPromise(this.request, 'generateAddress', { args })
+  //disabled
+  getAccountData (args) {
+    return null
+  },
 
-    this.request('generateAddress', { args })
-      .then(address => {
-        callback(address, null)
-      }).catch(err => {
-        callback(null, err)
-      })
+  getInputs (args) {
+    return null
+  },
+
+  getNewAddress (args) {
+    return null
   }
+
 }

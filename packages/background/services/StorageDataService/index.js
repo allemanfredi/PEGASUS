@@ -6,19 +6,15 @@ class StorageDataService {
   constructor (encryptionkey) {
     this.encryptionkey = encryptionkey
     this.data = null
-    this.connection = null
+    this.connections = []
 
     const edata = localStorage.getItem('data')
     if (!edata)
       this.setData([])
 
-    const econnection = localStorage.getItem('connection')
-    if (!econnection)
-      this.setConnection({
-        requestToConnect: true,
-        connected: false,
-        enabled: false
-      })
+    const econnections = localStorage.getItem('connections')
+    if (!econnections)
+      this.setConnections([])
   }
 
   setEncryptionKey(key) {
@@ -39,25 +35,26 @@ class StorageDataService {
     return
   }
 
-  getConnection() {    
-    if (!this.connection) {
-      const econnection = localStorage.getItem('connection')
-      this.connection = Utils.aes256decrypt(econnection, this.encryptionkey)
-      this.data = JSON.parse(this.connection)
+  getConnections() {    
+    if (!this.connections) {
+      const econnections = localStorage.getItem('connections')
+      this.connections = Utils.aes256decrypt(econnections, this.encryptionkey)
+      this.connections = JSON.parse(this.connections)
     }
-    return this.connection
+    return this.connections
   }
 
-  setConnection (connection) {
-    this.connection = connection
+  setConnections (connections) {
+    this.connections = connections
+    console.log("set connections", this.connections)
     return
   }
 
   writeToStorage() {
     const edata = Utils.aes256encrypt(JSON.stringify(this.data), this.encryptionkey)
     localStorage.setItem('data', edata)
-    const econnection = Utils.aes256encrypt(JSON.stringify(this.connection), this.encryptionkey)
-    localStorage.setItem('connection', econnection)
+    const econnections = Utils.aes256encrypt(JSON.stringify(this.connections), this.encryptionkey)
+    localStorage.setItem('connections', econnections)
   }
 }
 

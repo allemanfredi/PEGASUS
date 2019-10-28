@@ -179,12 +179,16 @@ export default {
     return this.duplex.send('executeRequests')
   },
 
-  getConnection () {
-    return this.duplex.send('getConnection')
+  getConnection (connection) {
+    return this.duplex.send('getConnection', connection)
   },
 
-  setConnection (connection) {
-    return this.duplex.send('setConnection', connection)
+  pushConnection (connection) {
+    return this.duplex.send('pushConnection', connection)
+  },
+
+  updateConnection (connection) {
+    return this.duplex.send('updateConnection', connection)
   },
 
   completeConnection () {
@@ -197,6 +201,18 @@ export default {
 
   startFetchMam (options) {
     return this.duplex.send('startFetchMam', options)
+  },
+
+  getOrigin() {
+    return this.duplex.send('getOrigin')
+  },
+
+  getRequests () {
+    return this.duplex.send('getRequests')
+  },
+  
+  rejectRequests() {
+    return this.duplex.send('rejectRequests')
   }
 
 }

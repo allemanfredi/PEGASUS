@@ -54,12 +54,6 @@ class CustomizatorService {
             .catch(err => resolve({ data: err.message, success: false, uuid }))
           break
         }
-        case 'getAccountData': {
-          this.iota.getAccountData(seed, ...data.args)
-            .then(data => resolve({ data, success: true, uuid }))
-            .catch(err => resolve({ data: err.message, success: false, uuid }))
-          break
-        }
         case 'getBalances': {
           this.iota.getBalances(...data.args)
             .then(({ balances }) => resolve({ data: balances, success: true, uuid }))
@@ -78,12 +72,6 @@ class CustomizatorService {
             .catch(err => resolve({ data: err.message, success: false, uuid }))
           break
         }
-        case 'getInputs': {
-          this.iota.getInputs(seed, ...data.args)
-            .then(inputs => resolve({ data: inputs, success: true, uuid }))
-            .catch(err => resolve({ data: err.message, success: false, uuid }))
-          break
-        }
         case 'getLatestInclusion': {
           this.iota.getLatestInclusion(...data.args)
             .then(states => resolve({ data: states, success: true, uuid }))
@@ -93,12 +81,6 @@ class CustomizatorService {
         case 'getNeighbors': {
           this.iota.getNeighbors()
             .then(neighbors => resolve({ data: neighbors, success: true, uuid }))
-            .catch(err => resolve({ data: err.message, success: false, uuid }))
-          break
-        }
-        case 'getNewAddress': {
-          this.iota.getNewAddress(seed, ...data.args)
-            .then(address => resolve({ data: address, success: true, uuid }))
             .catch(err => resolve({ data: err.message, success: false, uuid }))
           break
         }
@@ -178,11 +160,6 @@ class CustomizatorService {
           this.iota.traverseBundle(...data.args)
             .then(bundle => resolve({ data: bundle, success: true, uuid }))
             .catch(err => resolve({ data: err.message, success: false, uuid }))
-          break
-        }
-        case 'generateAddress': {
-          const address = this.iota.generateAddress(...data.args)
-          resolve({ data: address, success: true, uuid })
           break
         }
       }

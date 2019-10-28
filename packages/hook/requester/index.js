@@ -21,8 +21,10 @@ const requester = {
 
   handler (action, data = {}) {
     const uuid = randomUUID()
+    const origin = this._getOrigin()
 
     this.eventChannel.send('tunnel', {
+      origin,
       action,
       data,
       uuid
@@ -34,6 +36,10 @@ const requester = {
         reject
       }
     })
+  },
+
+  _getOrigin() {
+    return location.origin
   }
 }
 

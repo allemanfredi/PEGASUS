@@ -22,10 +22,10 @@ class Login extends Component {
 
     const canAccess = await PopupAPI.comparePassword(this.state.psw)
     if (canAccess) {
-      PopupAPI.setPassword(this.state.psw)
-      PopupAPI.initStorageDataService(this.state.psw)
-      PopupAPI.unlockWallet(this.state.psw)
-      PopupAPI.startSession()
+      await PopupAPI.setPassword(this.state.psw)
+      await PopupAPI.initStorageDataService(this.state.psw)
+      await PopupAPI.unlockWallet(this.state.psw)
+      await PopupAPI.startSession()
       this.props.onSuccess()
     } else {
       this.setState({ shake: true })

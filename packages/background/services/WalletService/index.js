@@ -12,7 +12,8 @@ import CustomizatorService from '../CustomizatorService'
 import MamService from '../MamService'
 import StorageDataService from '../StorageDataService'
 import NotificationsService from '../NotificationsService'
-import LedgerService from '../LedgerService'
+//import LedgerService from '../LedgerService'
+import ConnectorService from '../ConnectorService'
 
 class Wallet extends EventEmitter {
   constructor () {
@@ -21,10 +22,9 @@ class Wallet extends EventEmitter {
     this.popup = false
     this.payments = []
     this.requests = []
-    this.connectionToStore = null       //local storage connection data
-    this.connectionRequest = null      //callback for user response
     this.password = false
-    this.accountDataHandler = false
+    this.accountDataHandler = false,
+    this.origin = null
 
     if (!this.isWalletSetup())
       this.setupWallet()
@@ -39,7 +39,8 @@ class Wallet extends EventEmitter {
     }
 
     this.notificationsService = new NotificationsService()
-    this.ledgerService = new LedgerService()    
+    //this.ledgerService = new LedgerService()
+    this.connectorService = new ConnectorService()
 
     this.checkSession()
     setInterval(() => this.checkSession(), 9000000)
@@ -73,6 +74,7 @@ class Wallet extends EventEmitter {
     } else {
       this.storageDataService.setEncryptionKey(key)
     }
+    this.connectorService.setStorageDataService(this.storageDataService)
   }
 
   writeOnLocalStorage() {
@@ -240,7 +242,6 @@ class Wallet extends EventEmitter {
 
   addNetwork (network) {
     // TODO check that the name does not exists
-
     try {
       let options = JSON.parse(localStorage.getItem('options'))
       if (!options.networks)
@@ -650,17 +651,29 @@ class Wallet extends EventEmitter {
     return state
   }
 
-  pushPayment (payment, uuid, callback) {
+  pushPayment (payment, uuid, resolve, origin) {
     const currentState = this.getState()
     if (currentState !== APP_STATE.WALLET_LOCKED)
       this.setState(APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
     else
       console.log('locked')
+    
+
+    //check permissions
+    if (!payment.isPopup) {
+      const connection = this.connectorService.getConnection(origin)
+      if (!connection) {
+        this.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
+      }
+      else if (!connection.enabled) {
+        this.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
+      }
+    }
 
     const obj = {
       payment,
       uuid,
-      callback
+      resolve
     }
 
     this.payments.push(obj)
@@ -744,14 +757,25 @@ class Wallet extends EventEmitter {
     return payments
   }
 
+  getRequests () {
+    return this.requests
+  }
+
   rejectAllPayments () {
+    this.payments.filter(p => {
+      p.resolve({
+        data: 'Transaction has been rejected',
+        success: false,
+        uuid: p.uuid
+      })
+    })
     this.payments = []
     this.closePopup()
     this.setState(APP_STATE.WALLET_UNLOCKED)
   }
 
   rejectPayment (rejectedPayment) {
-    const cc = this.payments.filter(obj => rejectedPayment.uuid === obj.uuid)[0].callback
+    const cc = this.payments.filter(obj => rejectedPayment.uuid === obj.uuid)[0].resolve
     this.payments = this.payments.filter(payment => payment.uuid !== rejectedPayment.uuid)
 
     if (cc) {
@@ -802,7 +826,6 @@ class Wallet extends EventEmitter {
   }
 
   startHandleAccountData () {
-    // first time without loading from the iotajs since are store in the localstorage
     const account = this.getCurrentAccount()
     this.emit('setAccount', account)
 
@@ -824,46 +847,59 @@ class Wallet extends EventEmitter {
   }
 
   // CUSTOM iotajs functions
-  // if wallet is locked user must login, after having do it, wallet will execute every request put in the queue
-  pushRequest (method, { uuid, resolve, data }) {
+  // if wallet is locked user must login, after having do it, wallet will execute every request put in the queue IF USER  GRANTed PERMISSIONS
+  pushRequest (method, { uuid, resolve, data, origin }) {
+    const connection = this.connectorService.getConnection(origin)
+    if (!connection) {
+      console.log("1")
+      this.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
+      this.openPopup()
+    } else if (!connection.enabled) {
+      this.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
+      if (!this.popup)
+        this.openPopup()
+    }
 
-    //TODO: check if page is already connected, otherwise ask user permission
-    //TODO and page has permission
-
-    const seedNeeded = ['getAccountData', 'getInputs', 'getNewAddress', 'generateAddress']
-    if (seedNeeded.includes(method)) { 
-      const state = this.getState()
-      if (state <= APP_STATE.WALLET_LOCKED) {
-        if (!this.popup)
-          this.openPopup()
-
-        const request = {
-          method,
-          options: {
-            uuid,
-            resolve,
-            data
-          }
-        }
-        this.requests.push(request)
-      } else {
-        const seed = this.getCurrentSeed()
-        this.customizatorService.request(method, { uuid, resolve, seed, data })
+    const state = this.getState()
+    if (state <= APP_STATE.WALLET_LOCKED || !connection) {
+      if (!this.popup){
+        console.log("2")
+        this.openPopup()
       }
+
+      const request = {
+        method,
+        uuid,
+        resolve,
+        data
+      }
+      this.requests.push(request)
     } else {
       this.customizatorService.request(method, { uuid, resolve, data })
-    }
+    } 
   }
 
   executeRequests () {
     this.requests.forEach(request => {
       const method = request.method
-      const uuid = request.options.uuid
-      const resolve = request.options.resolve
-      const data = request.options.data
+      const uuid = request.uuid
+      const resolve = request.resolve
+      const data = request.data
       const seed = this.getCurrentSeed()
       this.customizatorService.request(method, { uuid, resolve, seed, data })
     })
+  }
+
+  rejectRequests() {
+    this.requests.forEach(r => {
+      r.resolve({
+        data: 'Request has been rejected by the user',
+        success: false,
+        uuid: r.uuid
+      })
+    })
+    this.requests = null
+    this.closePopup()
   }
 
   connect(data, uuid, resolve) {
@@ -872,62 +908,66 @@ class Wallet extends EventEmitter {
       origin: data.origin,
       requestToConnect : true,
       connected: false,
-      enabled: false
+      enabled: false,
     }
 
-    this.connectionRequest = {
+    const connectionRequest = {
       uuid,
       resolve,
       connection
     }
+    this.connectorService.setConnectionRequest(connectionRequest)
 
     //if user call connect before log in, storage is not already set up so it is not possible to save/load data
     //workardund -> keep in memory and once he login, store the data into storage and delete the variable
     if (!this.storageDataService) {
-      this.connectionToStore = connection
+      this.connectorService.setConnectionToStore(connection)
     }
-    else this.storageDataService.setConnection(connection)
+    else {
+      this.connectorService.pushConnection(connection)
+    }
   }
 
-  getConnection() {
-    if (!this.storageDataService) {
-      return null
-    }
-    if (this.connectionToStore) {
-      const connection = this.connectionToStore
-      this.storageDataService.setConnection(connection)
-      this.connectionToStore = null
-      return connection
-    }
-    const connection = this.storageDataService.getConnection()
+  getConnection(origin) {
+    const connection = this.connectorService.getConnection(origin)
     return connection
   }
 
-  setConnection(connection) {
-    this.storageDataService.setConnection(connection)
+  pushConnection(connection) {
+    this.connectorService.pushConnection(connection)
+  }
+
+  updateConnection(connection) {
+    this.connectorService.updateConnection(connection)
   }
 
   completeConnection() {
-    if (this.connectionRequest) {
-      this.connectionRequest.resolve({
-        data: 'Connection enabled',
+    const connectionRequest = this.connectorService.getConnectionRequest()
+    if (connectionRequest) {
+      connectionRequest.resolve({
+        data: {
+          connected: true
+        },
         success: true,
-        uuid: this.connectionRequest.uuid
+        uuid: connectionRequest.uuid
       })
-      this.connectionRequest = null
+      this.connectorService.setConnectionRequest(null)
     }
   }
 
   rejectConnection(){
-    if (this.connectionRequest) {
-      this.connectionRequest.resolve({
-        data: 'Connection not enabled by the user',
+    const connectionRequest = this.connectorService.getConnectionRequest()
+    if (connectionRequest) {
+      connectionRequest.resolve({
+        data: {
+          connected: false
+        },
         success: false,
-        uuid: this.connectionRequest.uuid
+        uuid: connectionRequest.uuid
       })
-      this.connectionRequest = null
-      this.closePopup()
+      this.connectorService.setConnectionRequest(null)
     }
+    this.closePopup()
   }
 
   startFetchMam (options) {
@@ -935,6 +975,14 @@ class Wallet extends EventEmitter {
     MamService.fetch(network.provider, options.root, options.mode, options.sideKey, data => {
       BackgroundAPI.newMamData(data)
     })
+  }
+
+  setOrigin(origin) {
+    this.origin = origin
+  }
+
+  getOrigin() {
+    return this.origin
   }
 
   _updateAccountTransactionsPersistence(account, transactions) {
