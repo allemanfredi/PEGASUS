@@ -150,13 +150,8 @@ __getAccountData__, __getInputs__, __getNewAddress__ have been disabled for secu
 
 &nbsp;
 
-## :camera: Some screenshots
+## :hammer: Work In Progress
+* __`pegasus-connector`__: Allows the user to decide whether to give the website permissions to access the library (iota.js) injected into the content script through a special popup. Before being able to give permission, the user must unlock the wallet. Even if he tries to interact with an injected function, if the wallet is not unlocked, the appropriate popup will appear.
 
-__Iotajs injection__
 
-<img src="./images/injection.png" width="400" height="500">
-
-__Mam explorer__
-
-<img src="./images/mam-explorer.png" width="320" height="500">
 
