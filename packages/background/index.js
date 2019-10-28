@@ -98,18 +98,11 @@ const backgroundScript = {
   bindTabDuplex () {
     duplex.on('tabRequest', async ({ hostname, resolve, data: { action, data, uuid, origin } }) => {
       switch (action) {
-        case 'init': {
-          let response = {
-            selectedAddress: '',
-            selectedProvider: ''
-          }
-          
+        case 'init': {          
           const currentNetwork = this.walletService.getCurrentNetwork()
-          const account = this.walletService.getCurrentAccount()
           this.walletService.setOrigin(origin)
-          response = {
-            selectedAddress: account ? account.data.latestAddress : null,
-            selectedProvider: currentNetwork.provider
+          const response = {
+            selectedProvider: currentNetwork
           }
 
           resolve({
@@ -256,10 +249,6 @@ const backgroundScript = {
 
     this.walletService.on('setConfirmationError', error =>
       BackgroundAPI.setConfirmationError(error)
-    )
-
-    this.walletService.on('setAddress', address =>
-      BackgroundAPI.setAddress(address)
     )
 
     this.walletService.on('setProvider', provider =>

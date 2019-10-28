@@ -119,7 +119,6 @@ class Wallet extends EventEmitter {
         this.emit('setAccount', account)
 
         //injection
-        this.emit('setAddress', account.data.latestAddress)
         this.emit('setProvider', network.provider)
         return true
       }
@@ -152,7 +151,6 @@ class Wallet extends EventEmitter {
       this.setCurrentNetwork(network)
 
       this.emit('setProvider', network.provider)
-      this.emit('setAddress', account.data.latestAddress)
       this.emit('setAccount', obj)
 
       return obj
@@ -324,9 +322,7 @@ class Wallet extends EventEmitter {
       this.storageDataService.setData(data)
 
       this.emit('setProvider', network.provider)
-      this.emit('setAddress', account.data.latestAddress)
       this.emit('setAccount', obj)
-
       return obj
     } catch (err) {
       throw new Error(err)
@@ -367,7 +363,6 @@ class Wallet extends EventEmitter {
           const network = this.getCurrentNetwork()
           this.emit('setProvider', network.provider)
           this.emit('setNetwork', network)
-          this.emit('setAddress', account.data.latestAddress)
           this.emit('setAccount', account)
         }
       })
@@ -573,9 +568,6 @@ class Wallet extends EventEmitter {
       localStorage.removeItem('session')
       this.setState(APP_STATE.WALLET_LOCKED)
       this.password = false
-
-      //injection
-      this.emit('setAddress', null)
       return true
     } catch (err) {
       console.log(err)
@@ -854,7 +846,7 @@ class Wallet extends EventEmitter {
     if (!connection) {
       this.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
       this.openPopup()
-      this.connectorService.pushConnection({
+      this.connectorService.setConnectionToStore({
         origin,
         requestToConnect: true,
         connected: false,

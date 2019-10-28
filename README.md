@@ -86,33 +86,21 @@ In this way, if a user loses the access password (or if he forgets it), if he ha
 
 ```js
 if (window.iota) {
-    const iotajs = window.iota.iotajs;
-    const selectedAddress = window.iota.selectedAddress
-    
-    const transfers = [{
-        address: 'address here',
-        value: 10, 
-        tag: '', // optional tag of `0-27` trytes
-        message: '' // optional message in trytes
-    }];
+    //grant permission
+    const permission = await window.iota.connect()
 
-    //callback
-    iotajs.prepareTransfers(transfers , (bundle,err) => {
-        if (!err){
-            console.log(bundle);
-        }
-    });
-
-    //async/await 
-    const bundle = await iotajs.prepareTransfers(transfers);
-    console.log(bundle)
+    //if user enabled
+    if (permission.connected) {
+        const bundle = await window.iota.prepareTransfers(transfers)
+        console.log(bundle)
+    } 
 }
 ```
 &nbsp;
 ### :page_with_curl: List of Supported injected functions
 
 It's possible to interact with the functions both with __callbacks__ and __promises__
-
+ * .connect([callback])
  * .addNeighbors(uris, [callback])
  * .attachToTangle(trunkTransaction, branchTransaction, minWeightMagnitude, trytes, [callback])
  * .broadcastBundle(tailTransactionHash, [callback])
@@ -151,7 +139,8 @@ __getAccountData__, __getInputs__, __getNewAddress__ have been disabled for secu
 &nbsp;
 
 ## :hammer: Work In Progress
-* __`pegasus-connector`__: Allows the user to decide whether to give the website permissions to access the library (iota.js) injected into the content script through a special popup. Before being able to give permission, the user must unlock the wallet. Even if he tries to interact with an injected function, if the wallet is not unlocked, the appropriate popup will appear.
+* __`pegasus-ledger-trampoline`__: Since it is not possible to access Ledger Nano S from a Google Chrome extension, i implemented a workaround: injecting an iframe to the background page of the extension, (which is hosted thanks to __`gh-pages`__ [here](https://github.com/allemanfredi/pegasus-ledger-trampoline/tree/master)). In order to work correctly, the iframe must run under https (since U2F requires SSL). Moreover, the comunication between the backgrund page and the iframe is made by __`window.postMessage`__. [30%]
+* __`pegasus-connector`__: Allows the user to decide whether to give the website permissions to access the library (iota.js) injected into the content script through a special popup. Before being able to give permission, the user must unlock the wallet. Even if he tries to interact with an injected function, if the wallet is not unlocked, the appropriate popup will appear. [80%]
 
 
 
