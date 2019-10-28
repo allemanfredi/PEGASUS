@@ -122,14 +122,11 @@ It's possible to interact with the functions both with __callbacks__ and __promi
  * .prepareTransfers(seed, transfers, [options], [callback])
  * .findTransactionObjects(query, [callback])
  * .findTransactions(query, [callback])
- * .getAccountData(options, [callback])
  * .getBalances(addresses, threshold, [callback])
  * .getBundle(tailTransactionHash, [callback])
  * .getInclusionStates(transactions, tips, [callback])
- * .getInputs(seed, [options], [callback])
  * .getLatestInclusion(transactions, tips, [callback])
  * .getNeighbors([callback])
- * .getNewAddress(seed, [options], [callback])
  * .getNodeInfo([callback])
  * .getTips([callback])
  * .getTransactionObjects(hashes, [callback])
@@ -144,7 +141,8 @@ It's possible to interact with the functions both with __callbacks__ and __promi
  * .storeAndBroadcast(trytes, [callback])
  * .storeTransactions(trytes, [callback])
  * .traverseBundle(trunkTransaction, [bundle], [callback])
- * .generateAddress(seed, index, [security], [checksum] , [callback])
+
+__getAccountData__, __getInputs__, __getNewAddress__ have been disabled for security reason.
 
 &nbsp;
 

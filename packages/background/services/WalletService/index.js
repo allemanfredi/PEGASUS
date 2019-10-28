@@ -850,19 +850,22 @@ class Wallet extends EventEmitter {
   // if wallet is locked user must login, after having do it, wallet will execute every request put in the queue IF USER  GRANTed PERMISSIONS
   pushRequest (method, { uuid, resolve, data, origin }) {
     const connection = this.connectorService.getConnection(origin)
+    let isPopupAlreadyOpened = false
     if (!connection) {
       console.log("1")
       this.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
       this.openPopup()
+      isPopupAlreadyOpened = true
     } else if (!connection.enabled) {
       this.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
       if (!this.popup)
         this.openPopup()
+        isPopupAlreadyOpened = true
     }
 
     const state = this.getState()
     if (state <= APP_STATE.WALLET_LOCKED || !connection) {
-      if (!this.popup){
+      if (!this.popup && isPopupAlreadyOpened === false){
         console.log("2")
         this.openPopup()
       }
@@ -898,7 +901,7 @@ class Wallet extends EventEmitter {
         uuid: r.uuid
       })
     })
-    this.requests = null
+    this.requests = []
     this.closePopup()
   }
 
