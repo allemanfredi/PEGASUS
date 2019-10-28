@@ -852,7 +852,6 @@ class Wallet extends EventEmitter {
     const connection = this.connectorService.getConnection(origin)
     let isPopupAlreadyOpened = false
     if (!connection) {
-      console.log("1")
       this.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
       this.openPopup()
       isPopupAlreadyOpened = true
@@ -866,7 +865,6 @@ class Wallet extends EventEmitter {
     const state = this.getState()
     if (state <= APP_STATE.WALLET_LOCKED || !connection) {
       if (!this.popup && isPopupAlreadyOpened === false){
-        console.log("2")
         this.openPopup()
       }
 

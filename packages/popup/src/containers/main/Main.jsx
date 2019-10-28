@@ -90,10 +90,8 @@ class Main extends Component {
     const connection = await PopupAPI.getConnection(origin)
     const payments = await PopupAPI.getPayments()
     const requests = await PopupAPI.getRequests()
-    console.log(requests)
     //no connections but request from injection with wallet locked
     if (!connection && (payments.length > 0 || requests.length > 0)) {
-      console.log("connessione non presente con paymentx o requets > 0 allora chiedere")
       PopupAPI.pushConnection({
         origin,
         requestToConnect: true,
@@ -113,7 +111,6 @@ class Main extends Component {
     }
     //.connect() with wallet locked
     else if (connection.requestToConnect === true) {
-      console.log("richiesta di connection")
       PopupAPI.updateConnection({
         origin,
         requestToConnect: true,

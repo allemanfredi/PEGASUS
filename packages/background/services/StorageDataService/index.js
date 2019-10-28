@@ -46,7 +46,6 @@ class StorageDataService {
 
   setConnections (connections) {
     this.connections = connections
-    console.log("set connections", this.connections)
     return
   }
 
