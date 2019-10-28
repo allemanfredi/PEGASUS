@@ -24,7 +24,7 @@ class Wallet extends EventEmitter {
     this.requests = []
     this.password = false
     this.accountDataHandler = false,
-    this.origin = null
+    this.website = null
 
     if (!this.isWalletSetup())
       this.setupWallet()
@@ -643,7 +643,8 @@ class Wallet extends EventEmitter {
     return state
   }
 
-  pushPayment (payment, uuid, resolve, origin) {
+  pushPayment (payment, uuid, resolve, website) {
+    console.log(payment)
     const currentState = this.getState()
     if (currentState !== APP_STATE.WALLET_LOCKED)
       this.setState(APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
@@ -653,7 +654,7 @@ class Wallet extends EventEmitter {
 
     //check permissions
     if (!payment.isPopup) {
-      const connection = this.connectorService.getConnection(origin)
+      const connection = this.connectorService.getConnection(website.origin)
       if (!connection) {
         this.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
       }
@@ -685,7 +686,7 @@ class Wallet extends EventEmitter {
     let transfers = obj.payment.args[0]
     const network = this.getCurrentNetwork()
     const iota = composeAPI({ provider: network.provider })
-    const cc = this.payments.filter(obj => obj.uuid === obj.uuid)[0].callback
+    const resolve = this.payments.filter(obj => obj.uuid === obj.uuid)[0].resolve
 
     const key = this.getKey()
     const account = this.getCurrentAccount()
@@ -711,7 +712,7 @@ class Wallet extends EventEmitter {
           BackgroundAPI.setPayments(this.payments)
           this.setState(APP_STATE.WALLET_UNLOCKED)
 
-          cc({ data: bundle, success: true, uuid: obj.uuid })
+          resolve({ data: bundle, success: true, uuid: obj.uuid })
 
           // since every transaction is generated a new address, it's necessary to modify the hook
           const data = await iota.getAccountData(seed)
@@ -725,12 +726,12 @@ class Wallet extends EventEmitter {
         .catch(err => {
           BackgroundAPI.setConfirmationError(err.message)
           BackgroundAPI.setConfirmationLoading(false)
-          cc({ data: err.message, success: false, uuid: obj.uuid })
+          resolve({ data: err.message, success: false, uuid: obj.uuid })
         })
     } catch (err) {
       BackgroundAPI.setConfirmationError(err.message)
       BackgroundAPI.setConfirmationLoading(false)
-      cc({ data: err.message, success: false, uuid: obj.uuid })
+      resolve({ data: err.message, success: false, uuid: obj.uuid })
     }
     return
   }
@@ -840,14 +841,14 @@ class Wallet extends EventEmitter {
 
   // CUSTOM iotajs functions
   // if wallet is locked user must login, after having do it, wallet will execute every request put in the queue IF USER  GRANTed PERMISSIONS
-  pushRequest (method, { uuid, resolve, data, origin }) {
-    const connection = this.connectorService.getConnection(origin)
+  pushRequest (method, { uuid, resolve, data, website }) {
+    const connection = this.connectorService.getConnection(website.origin)
     let isPopupAlreadyOpened = false
     if (!connection) {
       this.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
       this.openPopup()
       this.connectorService.setConnectionToStore({
-        origin,
+        website,
         requestToConnect: true,
         connected: false,
         enabled: false
@@ -901,10 +902,10 @@ class Wallet extends EventEmitter {
     this.closePopup()
   }
 
-  connect(data, uuid, resolve) {
+  connect(uuid, resolve, website) {
     this.openPopup()
     const connection = {
-      origin: data.origin,
+      website,
       requestToConnect : true,
       connected: false,
       enabled: false,
@@ -976,12 +977,12 @@ class Wallet extends EventEmitter {
     })
   }
 
-  setOrigin(origin) {
-    this.origin = origin
+  setWebsite(website) {
+    this.website = website
   }
 
-  getOrigin() {
-    return this.origin
+  getWebsite() {
+    return this.website
   }
 
   _updateAccountTransactionsPersistence(account, transactions) {
