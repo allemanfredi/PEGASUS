@@ -1,16 +1,16 @@
-import React, { Component } from 'react';
-import { PopupAPI } from '@pegasus/lib/api';
+import React, { Component } from 'react'
+import { PopupAPI } from '@pegasus/lib/api'
 
-import Utils from '@pegasus/lib/utils';
-import Loader from '../../components/loader/Loader';
+import Utils from '@pegasus/lib/utils'
+import Loader from '../../components/loader/Loader'
 
 class Confirm extends Component {
 
   constructor(props, context) {
-    super(props, context);
+    super(props, context)
 
-    this.reject = this.reject.bind(this);
-    this.confirm = this.confirm.bind(this);
+    this.reject = this.reject.bind(this)
+    this.confirm = this.confirm.bind(this)
 
     this.state = {
       payments: [],
@@ -21,34 +21,34 @@ class Confirm extends Component {
   }
 
   async componentWillMount() {
-    const payments = await PopupAPI.getPayments();
-    this.setState({ payments });
+    const payments = await PopupAPI.getPayments()
+    this.setState({ payments })
   }
 
   async reject(payment) {
 
-    await PopupAPI.rejectPayment(payment);
-    const payments = await PopupAPI.getPayments();
-    this.setState({ payments });
+    await PopupAPI.rejectPayment(payment)
+    const payments = await PopupAPI.getPayments()
+    this.setState({ payments })
     if (payments.length === 0)
-      this.props.onNotConfirms();
+      this.props.onNotConfirms()
   }
 
   changePayments(payments) {
-    this.setState({ payments });
+    this.setState({ payments })
   }
   setConfirmationLoading(isLoading) {
-    this.setState({ isLoading });
+    this.setState({ isLoading })
   }
   setConfirmationError(error) {
-    this.setState({ error });
+    this.setState({ error })
   }
   setConfirmationCallback(callback) {
-    this.setState({ callback });
+    this.setState({ callback })
   }
 
   async confirm(payment) {
-    await PopupAPI.confirmPayment(payment);
+    await PopupAPI.confirmPayment(payment)
   }
 
   render() {
@@ -112,4 +112,4 @@ class Confirm extends Component {
   }
 }
 
-export default Confirm;
+export default Confirm
