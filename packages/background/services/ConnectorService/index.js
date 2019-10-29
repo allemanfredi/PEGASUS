@@ -45,8 +45,6 @@ class ConnectorService {
         return c
       }
     })
-    //console.log("to update", connection)
-    //console.log("updated", updatedConnections)
     this.storageDataService.setConnections(updatedConnections)
   }
 
@@ -65,7 +63,6 @@ class ConnectorService {
   getConnectionRequest() {
     return this.connectionRequest
   }
-
 }
 
 export default ConnectorService
