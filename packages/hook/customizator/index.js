@@ -16,9 +16,9 @@ export default {
       iotajsTarget[method] = (...args) => this[method](args)
     })
 
-    iotajsTarget.connect = (...args) => this[method](args)
+    iotajsTarget.connect = (...args) => this._connect(args)
 
-    //disable
+    //disabled for security reasons
     delete iotajsTarget.getAccountData
     delete iotajsTarget.getInputs
     delete iotajsTarget.getNewAddress
@@ -31,7 +31,7 @@ export default {
     if (!cb) {
       return Utils.injectPromise(this.request, 'connect')
     }
-    this.request('connect', { website })
+    this.request('connect')
       .then(r => cb(r, null))
       .catch(err => cb(null, err))
   },
