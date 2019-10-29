@@ -894,6 +894,7 @@ class Wallet extends EventEmitter {
       const seed = this.getCurrentSeed()
       this.customizatorService.request(method, { uuid, resolve, seed, data })
     })
+    this.requests = []
   }
 
   rejectRequests() {

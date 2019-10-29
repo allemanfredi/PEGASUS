@@ -14,7 +14,7 @@ class ConnectorService {
     if (!this.storageDataService) {
       return null
     }
-    if (this.connectionToStore) {
+    if (this.connectionToStore && this.connectionToStore.website.origin === origin) {
       const connection = this.connectionToStore
       this.pushConnection(connection)
       this.connectionToStore = null
@@ -29,7 +29,7 @@ class ConnectorService {
     const connections = this.storageDataService.getConnections()
     const existingConnection = connections.find(c => c.website.origin === connection.website.origin)
     if (existingConnection) {
-      this.updateConnection(existingConnection)
+      this.updateConnection(connection)
     } else {
       connections.push(connection)
       this.storageDataService.setConnections(connections)
@@ -45,6 +45,8 @@ class ConnectorService {
         return c
       }
     })
+    //console.log("to update", connection)
+    //console.log("updated", updatedConnections)
     this.storageDataService.setConnections(updatedConnections)
   }
 
