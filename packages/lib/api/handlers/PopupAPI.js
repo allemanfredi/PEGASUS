@@ -203,8 +203,8 @@ export default {
     return this.duplex.send('startFetchMam', options)
   },
 
-  getOrigin() {
-    return this.duplex.send('getOrigin')
+  getWebsite() {
+    return this.duplex.send('getWebsite')
   },
 
   getRequests () {

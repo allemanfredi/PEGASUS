@@ -21,25 +21,25 @@ class ConnectorService {
       return connection
     }
     const connections = this.storageDataService.getConnections()
-    const connection = connections.find(c => c.origin === origin)
+    const connection = connections.find(c => c.website.origin === origin)
     return connection
   }
 
   pushConnection(connection) {
     const connections = this.storageDataService.getConnections()
-    const existingConnection = connections.find(c => c.origin === origin)
+    const existingConnection = connections.find(c => c.website.origin === connection.website.origin)
     if (existingConnection) {
       this.updateConnection(existingConnection)
     } else {
       connections.push(connection)
-    }
-    this.storageDataService.setConnections(connections)
+      this.storageDataService.setConnections(connections)
+    }    
   }
 
   updateConnection(connection) {
     const connections = this.storageDataService.getConnections()
     const updatedConnections = connections.map(c => {
-      if (c.origin === connection.origin) {
+      if (c.website.origin === connection.website.origin) {
         return connection
       } else {
         return c

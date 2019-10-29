@@ -92,15 +92,15 @@ const backgroundScript = {
     duplex.on('rejectConnection', this.walletService.rejectConnection)
 
     duplex.on('startFetchMam', this.walletService.startFetchMam)
-    duplex.on('getOrigin', this.walletService.getOrigin)
+    duplex.on('getWebsite', this.walletService.getWebsite)
   },
 
   bindTabDuplex () {
-    duplex.on('tabRequest', async ({ hostname, resolve, data: { action, data, uuid, origin } }) => {
+    duplex.on('tabRequest', async ({ resolve, data: { action, data, uuid, website } }) => {
       switch (action) {
-        case 'init': {          
+        case 'init': {    
           const currentNetwork = this.walletService.getCurrentNetwork()
-          this.walletService.setOrigin(origin)
+          this.walletService.setWebsite(website)
           const response = {
             selectedProvider: currentNetwork
           }
@@ -113,113 +113,113 @@ const backgroundScript = {
           break
         }
         case 'connect' : {
-          this.walletService.connect(data, uuid, resolve)
+          this.walletService.connect(uuid, resolve, website)
           break
         }
         case 'addNeighbors': {
-          this.walletService.pushRequest('addNeighbors', { uuid, resolve, data, origin })
+          this.walletService.pushRequest('addNeighbors', { uuid, resolve, data })
           break
         }
         case 'attachToTangle': {
-          this.walletService.pushRequest('attachToTangle', { uuid, resolve, data, origin })
+          this.walletService.pushRequest('attachToTangle', { uuid, resolve, data })
           break
         }
         case 'broadcastTransactions': {
-          this.walletService.pushRequest('broadcastTransactions', { uuid, resolve, data, origin })
+          this.walletService.pushRequest('broadcastTransactions', { uuid, resolve, data })
           break
         }
         case 'broadcastBundle': {
-          this.walletService.pushRequest('broadcastBundle', { uuid, resolve, data, origin })
+          this.walletService.pushRequest('broadcastBundle', { uuid, resolve, data, website })
           break
         }
         case 'checkConsistency': {
-          this.walletService.pushRequest('checkConsistency', { uuid, resolve, data, origin })
+          this.walletService.pushRequest('checkConsistency', { uuid, resolve, data, website })
           break
         }
         case 'findTransactionObjects': {
-          this.walletService.pushRequest('findTransactionObjects', { uuid, resolve, data, origin })
+          this.walletService.pushRequest('findTransactionObjects', { uuid, resolve, data, website })
           break
         }
         case 'findTransactions': {
-          this.walletService.pushRequest('findTransactions', { uuid, resolve, data, origin })
+          this.walletService.pushRequest('findTransactions', { uuid, resolve, data, website })
           break
         }
         case 'getBalances': {
-          this.walletService.pushRequest('getBalances', { uuid, resolve, data, origin })
+          this.walletService.pushRequest('getBalances', { uuid, resolve, data, website })
           break
         }
         case 'getBundle': {
-          this.walletService.pushRequest('getBundle', { uuid, resolve, data, origin })
+          this.walletService.pushRequest('getBundle', { uuid, resolve, data, website })
           break
         }
         case 'getInclusionStates': {
-          this.walletService.pushRequest('getInclusionStates', { uuid, resolve, data, origin })
+          this.walletService.pushRequest('getInclusionStates', { uuid, resolve, data, website })
           break
         }
         case 'getLatestInclusion': {
-          this.walletService.pushRequest('getLatestInclusion', { uuid, resolve, data, origin })
+          this.walletService.pushRequest('getLatestInclusion', { uuid, resolve, data, website })
           break
         }
         case 'getNeighbors': {
-          this.walletService.pushRequest('getNeighbors', { uuid, resolve, data, origin })
+          this.walletService.pushRequest('getNeighbors', { uuid, resolve, data, website })
           break
         }
         case 'getNodeInfo': {
-          this.walletService.pushRequest('getNodeInfo', { uuid, resolve, origin })
+          this.walletService.pushRequest('getNodeInfo', { uuid, resolve, website })
           break
         }
         case 'getTips': {
-          this.walletService.pushRequest('getTips', { uuid, resolve, origin })
+          this.walletService.pushRequest('getTips', { uuid, resolve, website })
           break
         }
         case 'getTransactionObjects': {
-          this.walletService.pushRequest('getTransactionObjects', { uuid, resolve, data, origin })
+          this.walletService.pushRequest('getTransactionObjects', { uuid, resolve, data, website })
           break
         }
         case 'getTransactionsToApprove': {
-          this.walletService.pushRequest('getTransactionObjects', { uuid, resolve, data, origin })
+          this.walletService.pushRequest('getTransactionObjects', { uuid, resolve, data, website })
           break
         }
         case 'getTrytes': {
-          this.walletService.pushRequest('getTrytes', { uuid, resolve, data, origin })
+          this.walletService.pushRequest('getTrytes', { uuid, resolve, data, website })
           break
         }
         case 'isPromotable': {
-          this.walletService.pushRequest('isPromotable', { uuid, resolve, data, origin })
+          this.walletService.pushRequest('isPromotable', { uuid, resolve, data, website })
           break
         }
         case 'prepareTransfer': {
           // in order to not open extensionizer popup
           data['isPopup'] = false
-          this.walletService.pushPayment(data, uuid, resolve, origin)
+          this.walletService.pushPayment(data, uuid, resolve, website)
           break
         }
         case 'promoteTransaction': {
-          this.walletService.pushRequest('promoteTransaction', { uuid, resolve, data, origin })
+          this.walletService.pushRequest('promoteTransaction', { uuid, resolve, data, website })
           break
         }
         case 'removeNeighbors': {
-          this.walletService.pushRequest('removeNeighbors', { uuid, resolve, data, origin })
+          this.walletService.pushRequest('removeNeighbors', { uuid, resolve, data, website })
           break
         }
         case 'replayBundle': {
-          this.walletService.pushRequest('replayBundle', { uuid, resolve, data, origin })
+          this.walletService.pushRequest('replayBundle', { uuid, resolve, data, website })
           break
         }
         case 'sendTrytes': {
-          this.walletService.pushRequest('sendTrytes', { uuid, resolve, data, origin })
+          this.walletService.pushRequest('sendTrytes', { uuid, resolve, data, website })
           break
         }
         case 'storeAndBroadcast': {
-          this.walletService.pushRequest('storeAndBroadcast', { uuid, resolve, data, origin })
+          this.walletService.pushRequest('storeAndBroadcast', { uuid, resolve, data, website })
           break
         }
         case 'storeTransactions': {
-          this.walletService.pushRequest('storeTransactions', { uuid, resolve, data, origin })
+          this.walletService.pushRequest('storeTransactions', { uuid, resolve, data, website })
           break
         }
         case 'traverseBundle': {
-          this.walletService.pushRequest('traverseBundle', { uuid, resolve, data, origin })
+          this.walletService.pushRequest('traverseBundle', { uuid, resolve, data, website })
           break
         }
       }

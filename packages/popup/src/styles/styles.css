@@ -178,7 +178,7 @@ input#inp-edit {
 /*BUTTONS*/
 
 .btn-big{
-    height: 50px;;
+    height: 50px;
 }
 
 .btn-small{
@@ -278,6 +278,9 @@ input#inp-edit {
 .mt-11{
     margin-top: 110px  !important;
 }
+.mt-12{
+    margin-top: 120px  !important;
+}
 .mt-13{
     margin-top: 130px  !important;
 }
@@ -295,6 +298,9 @@ input#inp-edit {
 }
 .mt-20{
     margin-top: 200px  !important;
+}
+.mt-21{
+    margin-top: 210px  !important;
 }
 .mt-22{
     margin-top: 220px  !important;
@@ -331,11 +337,10 @@ input#inp-edit {
 }
 
 .pl-5{
-    padding-left: 5px;
+    padding-left: 5px !important;
 }
-
 .pr-5{
-    padding-right: 5px;
+    padding-right: 5px !important;
 }
 
 .border-radius-5{
@@ -373,10 +378,10 @@ input#inp-edit {
     font-size: 12px;
 }
 .text-xs{
-    font-size: 16px;
+    font-size: 14px;
 }
 .text-sm{
-    font-size: 18px;
+    font-size: 16px;
 }
 .text-md{
     font-size: 25px

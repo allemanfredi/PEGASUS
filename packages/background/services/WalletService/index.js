@@ -587,7 +587,7 @@ class Wallet extends EventEmitter {
         url: 'packages/popup/build/index.html',
         type: 'popup',
         width: 380,
-        height: 600,
+        height: 620,
         left: 25,
         top: 25
       }, window => {
@@ -599,7 +599,7 @@ class Wallet extends EventEmitter {
       url: 'packages/popup/build/index.html',
       type: 'popup',
       width: 380,
-      height: 600,
+      height: 620,
       left: 25,
       top: 25
     })
@@ -644,9 +644,8 @@ class Wallet extends EventEmitter {
   }
 
   pushPayment (payment, uuid, resolve, website) {
-    console.log(payment)
     const currentState = this.getState()
-    if (currentState !== APP_STATE.WALLET_LOCKED)
+    if (currentState > APP_STATE.WALLET_LOCKED)
       this.setState(APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
     else
       console.log('locked')
@@ -657,6 +656,12 @@ class Wallet extends EventEmitter {
       const connection = this.connectorService.getConnection(website.origin)
       if (!connection) {
         this.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
+        this.connectorService.setConnectionToStore({
+          website,
+          requestToConnect: true,
+          connected: false,
+          enabled: false
+        })
       }
       else if (!connection.enabled) {
         this.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
@@ -674,7 +679,7 @@ class Wallet extends EventEmitter {
     if (!this.popup && !payment.isPopup)
       this.openPopup()
 
-    if (currentState !== APP_STATE.WALLET_LOCKED)
+    if (currentState > APP_STATE.WALLET_LOCKED)
       BackgroundAPI.setPayments(this.payments)
 
     return
@@ -768,11 +773,11 @@ class Wallet extends EventEmitter {
   }
 
   rejectPayment (rejectedPayment) {
-    const cc = this.payments.filter(obj => rejectedPayment.uuid === obj.uuid)[0].resolve
+    const resolve = this.payments.filter(obj => rejectedPayment.uuid === obj.uuid)[0].resolve
     this.payments = this.payments.filter(payment => payment.uuid !== rejectedPayment.uuid)
 
-    if (cc) {
-      cc({
+    if (resolve) {
+      resolve({
         data: 'Transaction has been rejected',
         success: false,
         uuid: rejectedPayment.uuid
@@ -840,7 +845,8 @@ class Wallet extends EventEmitter {
   }
 
   // CUSTOM iotajs functions
-  // if wallet is locked user must login, after having do it, wallet will execute every request put in the queue IF USER  GRANTed PERMISSIONS
+  // if wallet is locked user must login, after having do it, wallet will execute 
+  //every request put in the queue IF USER  GRANTed PERMISSIONS
   pushRequest (method, { uuid, resolve, data, website }) {
     const connection = this.connectorService.getConnection(website.origin)
     let isPopupAlreadyOpened = false

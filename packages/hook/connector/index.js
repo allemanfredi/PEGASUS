@@ -44,13 +44,14 @@ const connector = {
   },
 
   getOrigin() {
+    //check nedeed in order to open extension in chrome extensions page
     return location.origin
   },
 
   getFavicon() {
     let favicon = null
     const nodeList = document.getElementsByTagName('link')
-    for (var i = 0; i < nodeList.length; i++) {
+    for (let i = 0; i < nodeList.length; i++) {
       if ((nodeList[i].getAttribute('rel') == 'icon') || (nodeList[i].getAttribute('rel') == 'shortcut icon')) {
         favicon = nodeList[i].getAttribute('href')
       }

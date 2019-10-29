@@ -177,7 +177,7 @@ class Init extends Component {
           : (<div>
             <div className="row mt-5">
               <div className='col-12 text-center'>
-                <img src='./material/logo/pegasus-128.png' height='80' width='80' alt='pegasus logo' />
+                <img className="border-radius-50" src='./material/logo/pegasus-128.png' height='80' width='80' alt='pegasus logo' />
               </div>
             </div>
             {

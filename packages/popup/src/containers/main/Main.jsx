@@ -55,8 +55,8 @@ class Main extends Component {
 
     //impossible to load data from the storage until that a user log in
     if (state >= APP_STATE.WALLET_UNLOCKED) {
-      const origin = await PopupAPI.getOrigin()
-      const connection = await PopupAPI.getConnection(origin)
+      const website = await PopupAPI.getWebsite()
+      const connection = await PopupAPI.getConnection(website ? website.origin : 'offline')
       if (connection) {
         if (connection.requestToConnect === true && state >= APP_STATE.WALLET_UNLOCKED) {
           this.props.showHeader(false)
@@ -71,6 +71,7 @@ class Main extends Component {
     
     this.setState({ appState: state })
     this.bindDuplexRequests()
+    //this.setState({appState: APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION})
   }
 
   bindDuplexRequests() {
@@ -86,14 +87,15 @@ class Main extends Component {
     PopupAPI.startSession()
     PopupAPI.setState(APP_STATE.WALLET_UNLOCKED)
 
-    const origin = await PopupAPI.getOrigin()
-    const connection = await PopupAPI.getConnection(origin)
+    const website = await PopupAPI.getWebsite()
+    const connection = await PopupAPI.getConnection(website ? website.origin : 'offline')
     const payments = await PopupAPI.getPayments()
     const requests = await PopupAPI.getRequests()
+    
     //no connections but request from injection with wallet locked
     if (!connection && (payments.length > 0 || requests.length > 0)) {
       PopupAPI.pushConnection({
-        origin,
+        website,
         requestToConnect: true,
         connected: false,
         enabled: false
@@ -102,7 +104,8 @@ class Main extends Component {
       this.setState({ appState: APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION })
       PopupAPI.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
       return
-    } //unlocked and no injection requests
+    } 
+    //unlocked and no injection requests
     else if ((!connection || connection.enabled) && payments.length === 0 && requests.length === 0){
       PopupAPI.startHandleAccountData()
       this.props.showHeader(true)
@@ -111,8 +114,8 @@ class Main extends Component {
     }
     //.connect() with wallet locked
     else if (connection.requestToConnect === true) {
-      PopupAPI.updateConnection({
-        origin,
+      PopupAPI.pushConnection({
+        website,
         requestToConnect: true,
         connected: false,
         enabled: false
@@ -135,25 +138,31 @@ class Main extends Component {
 
   async onPermissionGranted() {
     const payments = await PopupAPI.getPayments()
-    const origin = await PopupAPI.getOrigin()
-    const connection = await PopupAPI.getConnection(origin)
+    const website = await PopupAPI.getWebsite()
+    const connection = await PopupAPI.getConnection(website.origin)
     const requests = await PopupAPI.getRequests()
     //no connections but request from injection with wallet unlocked
-    if (!connection && (payments.length > 0 || requests.length > 0)) {
+    /*if (!connection && (payments.length > 0 || requests.length > 0)) {
       PopupAPI.pushConnection({
-        origin,
+        website,
         requestToConnect: false,
         connected: true,
         enabled: true
       })
     } else {
       PopupAPI.updateConnection({
-        origin,
+        website,
         requestToConnect: false,
         connected: true,
         enabled: true
       })
-    }
+    }*/
+    PopupAPI.pushConnection({
+      website,
+      requestToConnect: false,
+      connected: true,
+      enabled: true
+    })
     
     PopupAPI.completeConnection()
     if (payments.length > 0) {
@@ -171,11 +180,10 @@ class Main extends Component {
   }
 
   async onPermissionNotGranted() {
-    const origin = await PopupAPI.getOrigin()
-    const connection = await PopupAPI.getConnection(origin)
+    const website = await PopupAPI.getWebsite()
     PopupAPI.updateConnection({
-      origin,
-      requestToConnect: false,
+      website,
+      requestToConnect: true,
       connected: false,
       enabled: false
     })

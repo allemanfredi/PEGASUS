@@ -10,7 +10,6 @@ const hook = {
     this._bindEvents()
 
     this.connection('init').then(({ selectedProvider }) => {
-
       customizator.init(this.connection)    
       this.injectIotaJs(selectedProvider)
 
