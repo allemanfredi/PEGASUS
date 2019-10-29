@@ -43,7 +43,7 @@ class Wallet extends EventEmitter {
     this.connectorService = new ConnectorService()
 
     this.checkSession()
-    setInterval(() => this.checkSession(), 9000000)
+    setInterval(() => this.checkSession(), 300000)
   }
 
   isWalletSetup () {
