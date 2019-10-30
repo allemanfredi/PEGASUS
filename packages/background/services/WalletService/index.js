@@ -131,6 +131,15 @@ class Wallet extends EventEmitter {
 
   restoreWallet ({ account, network, key }) {
     const transactions = AccountDataService.mapTransactions(account.data, network)
+    account.data.balance = network.type === 'mainnet'
+      ? {
+          mainnet: account.data.balance,
+          testnet: 0,
+        }
+      : {
+          mainnet: account.data.balance,
+          testnet: 0
+        }
     const eseed = Utils.aes256encrypt(account.seed, key)
     const obj = {
       name: account.name,
@@ -296,6 +305,11 @@ class Wallet extends EventEmitter {
       const data = this.storageDataService.getData()
       data.forEach(account => { account.current = false })
       this.storageDataService.setData(data)
+    }
+
+    account.data.balance = {
+      testnet: 0,
+      mainnet: 0
     }
 
     const key = this.getKey()
@@ -514,6 +528,10 @@ class Wallet extends EventEmitter {
     }
   }
 
+  checkConnection() {
+
+  }
+
   checkSession () {
     try {
       const currentState = this.getState()
@@ -650,7 +668,6 @@ class Wallet extends EventEmitter {
     else
       console.log('locked')
     
-
     //check permissions
     if (!payment.isPopup) {
       const connection = this.connectorService.getConnection(website.origin)
@@ -682,6 +699,25 @@ class Wallet extends EventEmitter {
     if (currentState > APP_STATE.WALLET_LOCKED)
       BackgroundAPI.setPayments(this.payments)
 
+    return
+  }
+
+  pushPaymentFromPopup (payment, uuid, resolve) {
+    const currentState = this.getState()
+    if (currentState > APP_STATE.WALLET_LOCKED)
+      this.setState(APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
+    else
+      console.log('locked')
+
+    const obj = {
+      payment,
+      uuid,
+      resolve
+    }
+
+    this.payments.push(obj)
+    if (currentState > APP_STATE.WALLET_LOCKED)
+      BackgroundAPI.setPayments(this.payments)
     return
   }
 
@@ -795,7 +831,7 @@ class Wallet extends EventEmitter {
     const seed = this.getCurrentSeed()
     const network = this.getCurrentNetwork()
     let account = this.getCurrentAccount()
-    const { transactions, newData } = await AccountDataService.retrieveAccountData(seed, network)
+    const { transactions, newData } = await AccountDataService.retrieveAccountData(seed, network, account)
 
     //show notification
     const transactionsJustConfirmed = this._getTransactionsJustConfirmed(account, transactions)
@@ -838,7 +874,7 @@ class Wallet extends EventEmitter {
   }
 
   async reloadAccountData () {
-    this.emit('setAccount', {})
+    //this.emit('setAccount', {})
     clearInterval(this.accountDataHandler)
     this.loadAccountData()
     this.accountDataHandler = setInterval(() => this.loadAccountData(), 90000)
@@ -849,16 +885,18 @@ class Wallet extends EventEmitter {
   //every request put in the queue IF USER  GRANTed PERMISSIONS
   pushRequest (method, { uuid, resolve, data, website }) {
     const connection = this.connectorService.getConnection(website.origin)
+    let mockConnection = connection
     let isPopupAlreadyOpened = false
     if (!connection) {
       this.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
       this.openPopup()
-      this.connectorService.setConnectionToStore({
+      mockConnection = {
         website,
         requestToConnect: true,
         connected: false,
         enabled: false
-      })
+      }
+      this.connectorService.setConnectionToStore(connection)
       isPopupAlreadyOpened = true
     } else if (!connection.enabled) {
       this.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
@@ -868,12 +906,13 @@ class Wallet extends EventEmitter {
     }
 
     const state = this.getState()
-    if (state <= APP_STATE.WALLET_LOCKED || !connection) {
+    if (state <= APP_STATE.WALLET_LOCKED || !connection ) {
       if (!this.popup && isPopupAlreadyOpened === false){
         this.openPopup()
       }
 
       const request = {
+        connection: mockConnection,
         method,
         uuid,
         resolve,
@@ -890,9 +929,13 @@ class Wallet extends EventEmitter {
       const method = request.method
       const uuid = request.uuid
       const resolve = request.resolve
-      const data = request.data
-      const seed = this.getCurrentSeed()
-      this.customizatorService.request(method, { uuid, resolve, seed, data })
+      if (request.connection.enabled) {
+        const data = request.data
+        const seed = this.getCurrentSeed()
+        this.customizatorService.request(method, { uuid, resolve, seed, data })
+      } else {
+        resolve({ data: 'no permissions', success: false, uuid })
+      }
     })
     this.requests = []
   }
@@ -959,7 +1002,19 @@ class Wallet extends EventEmitter {
         uuid: connectionRequest.uuid
       })
       this.connectorService.setConnectionRequest(null)
+      return 
     }
+
+    //if connection happens indirectly thank to a request
+    //without previous approving
+    const website = this.getWebsite()
+    this.requests.forEach(request => {
+      if (request.connection.website.origin === website.origin) {
+        request.connection.requestToConnect = false
+        request.connection.enabled = true
+        request.connection.connected = true
+      }
+    })
   }
 
   rejectConnection(){
