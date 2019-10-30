@@ -23,9 +23,11 @@ const connector = {
     const uuid = randomUUID()
     const origin = this.getOrigin()
     const favicon = this.getFavicon()
+    const hostname = this.getHostName()
     const website = {
       favicon,
-      origin
+      origin,
+      hostname
     }
 
     this.eventChannel.send('tunnel', {
@@ -44,8 +46,11 @@ const connector = {
   },
 
   getOrigin() {
-    //check nedeed in order to open extension in chrome extensions page
     return location.origin
+  },
+
+  getHostName() {
+    return window.location.hostname
   },
 
   getFavicon() {
@@ -56,7 +61,7 @@ const connector = {
         favicon = nodeList[i].getAttribute('href')
       }
     }
-    return favicon;
+    return favicon
   }
 }
 
