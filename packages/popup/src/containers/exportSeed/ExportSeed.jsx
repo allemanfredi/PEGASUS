@@ -43,12 +43,18 @@ class ExportSeed extends Component {
     return (
       <div className={this.state.shake ? 'container shake' : 'container'}>
         <div className='row mt-3 mb-3'>
-          <div className='col-12 text-center text-lg text-blue text-bold'>Insert your password to export the seed</div>
+          <div className='col-12 text-center text-lg text-blue text-bold'>
+            {
+              !this.state.seed 
+                ? 'Insert your password to export the seed'
+                : 'Please keep it as safely as possible!'
+            }'
+          </div>
         </div>
         {
           !this.state.seed ?
             <React.Fragment>
-              <div className='row mt-11'>
+              <div className='row mt-20'>
                 <div className='col-12'>
                   <form onSubmit={this.getSeed}>
                     <label htmlFor='inp-psw' className='inp'>
@@ -59,7 +65,7 @@ class ExportSeed extends Component {
                   </form>
                 </div>
               </div>
-              <div className='row mt-13'>
+              <div className='row mt-3'>
                 <div className='col-12'>
                   <button disabled={!this.state.psw.length > 0} onClick={this.getSeed} type='submit' className='btn btn-blue text-bold btn-big'>Unlock</button>
                 </div>
@@ -67,14 +73,14 @@ class ExportSeed extends Component {
             </React.Fragment>
             :
             <React.Fragment>
-              <div className='row mt-11'>
+              <div className='row mt-10'>
                 <div className='col-1'></div>
-                <div className='col-10 text-center text-xs break-text' >
+                <div className='col-10 text-center text-xs break-text border-light-gray pt-1 pb-1'>
                   {this.state.seed}
                 </div>
                 <div className='col-1'></div>
               </div>
-              <div className='row mt-13'>
+              <div className='row mt-10'>
                 <div className='col-12'>
                   <button onClick={this.copyToClipboard} type='button' className='btn btn-blue text-bold btn-big'>Copy To Clipboard</button>
                 </div>

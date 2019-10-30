@@ -47,11 +47,10 @@ class Send extends Component {
     const data = {
       args: [
         transfer,
-      ],
-      isPopup: true
+      ]
     }
 
-    PopupAPI.pushPayment(data)
+    PopupAPI.pushPaymentFromPopup(data)
     this.props.onAskConfirm()
   }
 
