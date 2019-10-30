@@ -2,12 +2,27 @@ import IOTA from '@pegasus/lib/iota'
 
 const AccountDataService = {
 
-  async retrieveAccountData (seed, network) {
+  async retrieveAccountData (seed, network, currentAccount) {
     IOTA.setProvider(network.provider)
-    const newData = await IOTA.getAccountData(seed)
-    const transactions = this.mapTransactions(newData, network)
+    const data = await IOTA.getAccountData(seed)
+    const transactions = this.mapTransactions(data, network)
+    const newData = this.mapBalance(data, network, currentAccount)
     return { transactions, newData }
   },
+
+  mapBalance(data, network, currentAccount) {
+    data.balance = network.type === 'mainnet'
+      ? {
+          mainnet: data.balance,
+          testnet: currentAccount.data.balance.testnet,
+        }
+      : {
+          mainnet: currentAccount.data.balance.testnet,
+          testnet: data.balance
+        }
+    return data
+  },
+
 
   mapTransactions (data, network) {
     const transactions = []
