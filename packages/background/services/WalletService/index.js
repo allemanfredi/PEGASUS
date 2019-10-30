@@ -920,7 +920,6 @@ class Wallet extends EventEmitter {
       }
       this.requests.push(request)
     } else if (connection.enabled) {
-      console.log("ciao")
       this.customizatorService.request(method, { uuid, resolve, data })
     } 
   }
