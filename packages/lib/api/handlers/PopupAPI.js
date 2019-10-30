@@ -135,8 +135,8 @@ export default {
     return this.duplex.send('getPayments')
   },
 
-  pushPayment (payment) {
-    return this.duplex.send('pushPayment', payment)
+  pushPaymentFromPopup (payment) {
+    return this.duplex.send('pushPaymentFromPopup', payment)
   },
 
   rejectPayment (payment) {
