@@ -45,7 +45,6 @@ class Home extends Component {
       network: {},
       details: {}, //transaction selected from the table
       decryptedSeed: '',
-      isLoading: false,
       showSend: false,
       showHome: true,
       showReceive: false,
@@ -58,11 +57,28 @@ class Home extends Component {
       showImportSeed: false,
       alertType: '',
       alertText: '',
-      actionToConfirm: ''
+      actionToConfirm: '',
+      isLoading: false
     }
   }
 
+  /*static getDerivedStateFromProps(props, prevState, prevProps) {
+    if (
+      JSON.stringify(props.account) !== JSON.stringify(prevProps.account) && 
+      prevState.isLoading
+      ) {
+      return {
+        isLoading: false
+      }
+    }
+    return null
+  }*/
+
   async onReload() {
+    console.log("reload")
+    this.setState({
+      isLoading: true
+    })
     PopupAPI.reloadAccountData()
   }
 
@@ -185,7 +201,9 @@ class Home extends Component {
     })
   }
 
-  onLogout() { this.props.onLogout() }
+  onLogout() { 
+    this.props.onLogout() 
+  }
 
   addCustomNetwork() {
     this.setState(() => {
@@ -236,109 +254,116 @@ class Home extends Component {
           onImportSeed={this.onImportSeed}
           onDeleteCurrentNetwork={this.onDeleteCurrentNetwork}>
         </Navbar>
-        {!(Object.keys(this.props.account).length === 0 && this.props.account.constructor === Object) ? ( //!
-          <React.Fragment>
-            {
-              this.state.showSettings ?
-                <Settings network={this.props.network}
-                  show={this.state.showSettings}
-                  account={this.props.account}
-                  onAddAccount={this.onAddAccount}
-                  onSwitchAccount={this.onSwitchAccount}
-                  onShowMap={this.onClickMap}
-                  onLogout={this.onLogout}
-                  onClose={this.onCloseSettings}
-                  onMamExplorer={this.onMamExplorer} />
-              : ''
-            }
-            {
-              this.state.showSend ? 
-                <Send account={this.props.account}
-                  network={this.props.network}
-                  onAskConfirm={() => this.props.onAskConfirm()} /> 
-              : ''
-            }
-            {
-              this.state.showReceive ? 
-                <Receive account={this.props.account}
-                  network={this.state.network} /> 
-              : ''
-            }
-            {
-              this.state.showAdd ? 
-                <Add network={this.props.network}
-                  onBack={this.onBack} /> 
-              : ''
-            }
-            {
-              this.state.showNetwork ? 
-                <Network onAddNetwork={this.onAddNetwork} /> 
-              : ''
-            }
-            {
-              this.state.showMam ? 
-                <MamExplorer account={this.props.account}
-                  network={this.props.network}
-                  onBack={this.onBack} /> 
-              : ''
-            }
-            {
-              this.state.showExportSeed ? 
-                <ExportSeed account={this.props.account}
-                  network={this.props.network}
-                  onBack={this.onBack} /> 
-              : ''
-            }
-            {
-              this.state.showImportSeed ?
-                <ImportSeed account={this.props.account}
-                    network={this.props.network}
-                    onBack={this.onBack} /> 
-              : ''
-            }
-            {
-              this.state.showAlert ?
-                <Alert type={this.state.alertType}
-                  text={this.state.alertText}
-                  onClose={this.onBack}
-                  onConfirm={this.onConfirm}
-                /> 
-              : ''
-            }
-            {
-              this.state.showHome ?
-                <div>
-                  <div className='row mt-4'>
-                    <div className='col-12 text-center'>
-                      <img src='./material/logo/iota-logo.png' height='60' width='60' alt='iota logo' />
-                    </div>
-                  </div>
-                  <div className="row mt-1">
-                    <div className='col-12 text-center text-black text-md'>
-                      {Utils.iotaReducer(this.props.account.data.balance)}
-                    </div>
-                  </div>
-                  <div className='row mt-1 mb-4'>
-                    <div className="col-2"></div>
-                    <div className='col-4 text-center'>
-                      <button onClick={this.onClickReceive} className='btn btn-border-blue btn-big'>Receive</button>
-                    </div>
-                    <div className='col-4 text-center'>
-                      <button onClick={this.onClickSend} className='btn btn-border-blue btn-big'>Send</button>
-                    </div>
-                    <div className="col-2"></div>
-                  </div>
-                  <Transactions ref={this.transactions}
-                    account={this.props.account}
-                    network={this.props.network}
-                    onReload={this.onReload}
-                  />
-                </div>
-              : ''
-            }
-          </React.Fragment>) : (
-            <Loader />
-          )}
+        {
+          !(Object.keys(this.props.account).length === 0 && this.props.account.constructor === Object)
+            ? <React.Fragment>
+                {
+                  this.state.showSettings 
+                    ? <Settings network={this.props.network}
+                        show={this.state.showSettings}
+                        account={this.props.account}
+                        onAddAccount={this.onAddAccount}
+                        onSwitchAccount={this.onSwitchAccount}
+                        onShowMap={this.onClickMap}
+                        onLogout={this.onLogout}
+                        onClose={this.onCloseSettings}
+                        onMamExplorer={this.onMamExplorer} />
+                    : ''
+                }
+                {
+                  this.state.showSend
+                    ? <Send account={this.props.account}
+                        network={this.props.network}
+                        onAskConfirm={() => this.props.onAskConfirm()} /> 
+                    : ''
+                }
+                {
+                  this.state.showReceive 
+                    ? <Receive account={this.props.account}
+                      network={this.state.network} /> 
+                    : ''
+                }
+                {
+                  this.state.showAdd
+                    ? <Add network={this.props.network}
+                        onBack={this.onBack} /> 
+                    : ''
+                }
+                {
+                  this.state.showNetwork
+                    ? <Network onAddNetwork={this.onAddNetwork} /> 
+                    : ''
+                }
+                {
+                  this.state.showMam
+                    ? <MamExplorer account={this.props.account}
+                        network={this.props.network}
+                        onBack={this.onBack} /> 
+                    : ''
+                }
+                {
+                  this.state.showExportSeed
+                    ? <ExportSeed account={this.props.account}
+                        network={this.props.network}
+                        onBack={this.onBack} /> 
+                    : ''
+                }
+                {
+                  this.state.showImportSeed
+                    ? <ImportSeed account={this.props.account}
+                          rk={this.props.network}
+                        onBack={this.onBack} /> 
+                    : ''
+                }
+                {
+                  this.state.showAlert
+                    ? <Alert type={this.state.alertType}
+                        text={this.state.alertText}
+                        onClose={this.onBack}
+                        onConfirm={this.onConfirm}/> 
+                    : ''
+                }
+                {
+                  this.state.showHome
+                    ? <div>
+                        <div className='row mt-4'>
+                          <div className='col-12 text-center'>
+                            <img src='./material/logo/iota-logo.png' height='60' width='60' alt='iota logo' />
+                          </div>
+                        </div>
+                        <div className="row mt-1">
+                          <div className='col-12 text-center text-black text-md'>
+                            {
+                              Utils.iotaReducer(
+                              this.props.account.data.balance[this.props.network.type]
+                                ? this.props.account.data.balance[this.props.network.type]
+                                : 0
+                              )
+                            }
+                          </div>
+                        </div>
+                        <div className='row mt-1 mb-4'>
+                          <div className="col-2"></div>
+                          <div className='col-4 text-center'>
+                            <button onClick={this.onClickReceive} className='btn btn-border-blue btn-big'>Receive</button>
+                          </div>
+                          <div className='col-4 text-center'>
+                            <button onClick={this.onClickSend} className='btn btn-border-blue btn-big'>Send</button>
+                          </div>
+                          <div className="col-2"></div>
+                        </div>
+                        <Transactions ref={this.transactions}
+                          account={this.props.account}
+                          network={this.props.network}
+                          onReload={this.onReload}
+                          isLoading={this.state.isLoading}
+                        />
+                      </div>
+                    : ''
+                }
+              </React.Fragment>
+            : <Loader />
+        }
       </div>
     )
   }
