@@ -65,9 +65,9 @@ const backgroundScript = {
     duplex.on('setState', this.walletService.setState)
 
     duplex.on('getPayments', this.walletService.getPayments)
-    duplex.on('pushPayment', ({ hostname, data, resolve, reject }) => {
+    duplex.on('pushPaymentFromPopup', ({ data, resolve }) => {
       const uuid = randomUUID()
-      this.walletService.pushPayment(data, uuid, resolve)
+      this.walletService.pushPaymentFromPopup(data, uuid, resolve)
     })
     duplex.on('rejectAllPayments', this.walletService.rejectAllPayments)
     duplex.on('rejectPayment', this.walletService.rejectPayment)
