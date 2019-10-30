@@ -906,7 +906,7 @@ class Wallet extends EventEmitter {
     }
 
     const state = this.getState()
-    if (state <= APP_STATE.WALLET_LOCKED || !connection ) {
+    if (state <= APP_STATE.WALLET_LOCKED || !connection  || !connection.enabled) {
       if (!this.popup && isPopupAlreadyOpened === false){
         this.openPopup()
       }
@@ -919,7 +919,8 @@ class Wallet extends EventEmitter {
         data
       }
       this.requests.push(request)
-    } else {
+    } else if (connection.enabled) {
+      console.log("ciao")
       this.customizatorService.request(method, { uuid, resolve, data })
     } 
   }
@@ -1002,11 +1003,9 @@ class Wallet extends EventEmitter {
         uuid: connectionRequest.uuid
       })
       this.connectorService.setConnectionRequest(null)
-      return 
     }
 
-    //if connection happens indirectly thank to a request
-    //without previous approving
+    //in case there was already the connection stored
     const website = this.getWebsite()
     this.requests.forEach(request => {
       if (request.connection.website.origin === website.origin) {
@@ -1029,6 +1028,17 @@ class Wallet extends EventEmitter {
       })
       this.connectorService.setConnectionRequest(null)
     }
+
+    //in case there was already the connection stored
+    const website = this.getWebsite()
+    this.requests.forEach(request => {
+      if (request.connection.website.origin === website.origin) {
+        request.connection.requestToConnect = false
+        request.connection.enabled = false
+        request.connection.connected = false
+      }
+    })
+
     this.closePopup()
   }
 
