@@ -75,7 +75,6 @@ class Home extends Component {
   }*/
 
   async onReload() {
-    console.log("reload")
     this.setState({
       isLoading: true
     })
@@ -356,7 +355,6 @@ class Home extends Component {
                           account={this.props.account}
                           network={this.props.network}
                           onReload={this.onReload}
-                          isLoading={this.state.isLoading}
                         />
                       </div>
                     : ''

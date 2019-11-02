@@ -8,8 +8,6 @@ import Connector from '../connector/Connector'
 import MessageDuplex from '@pegasus/lib/MessageDuplex'
 import { PopupAPI } from '@pegasus/lib/api'
 import { APP_STATE } from '@pegasus/lib/states'
-import { resolve } from 'any-promise'
-
 
 class Main extends Component {
   constructor(props, context) {
@@ -53,11 +51,11 @@ class Main extends Component {
     if (state === APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
       this.props.showHeader(false)
 
+    const requests = await PopupAPI.getRequests()
     //impossible to load data from the storage until that a user log in
     if (state >= APP_STATE.WALLET_UNLOCKED) {
       const website = await PopupAPI.getWebsite()
       const connection = await PopupAPI.getConnection(website ? website.origin : 'offline')
-      console.log(connection)
       if (connection) {
         if (connection.requestToConnect === true && state >= APP_STATE.WALLET_UNLOCKED) {
           this.props.showHeader(false)
@@ -65,6 +63,14 @@ class Main extends Component {
         }
       }
       if (!connection && state === APP_STATE.WALLET_TRANSFERS_IN_QUEUE) {
+        this.props.showHeader(false)
+        state = APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION 
+      }
+      if (
+        !connection &&
+        state >= APP_STATE.WALLET_UNLOCKED &&
+        requests.length > 0
+      ) {
         this.props.showHeader(false)
         state = APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION 
       }
@@ -111,28 +117,23 @@ class Main extends Component {
       PopupAPI.startHandleAccountData()
       this.props.showHeader(true)
       this.setState({ appState: APP_STATE.WALLET_UNLOCKED })
-      console.log("unlocked")
       return
     }
     //.connect() with wallet locked
     else if (connection.requestToConnect === true) {
-      /*PopupAPI.updateConnection({
-        website,
-        requestToConnect: true,
-        connected: false,
-        enabled: false
-      })*/
       this.props.showHeader(false)
       this.setState({ appState: APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION })
       PopupAPI.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
       return
-    } else if (payments.length > 0) {
+    } 
+    else if (payments.length > 0) {
       this.props.showHeader(false)
       this.setState({ appState: APP_STATE.WALLET_TRANSFERS_IN_QUEUE })
       PopupAPI.setState(APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
       this.changePayments(payments)
       return
-    } else {
+    } 
+    else if (connection.enabled === true){
       PopupAPI.closePopup()
       PopupAPI.executeRequests()
     }
@@ -141,24 +142,6 @@ class Main extends Component {
   async onPermissionGranted() {
     const payments = await PopupAPI.getPayments()
     const website = await PopupAPI.getWebsite()
-    const connection = await PopupAPI.getConnection(website.origin)
-    const requests = await PopupAPI.getRequests()
-    //no connections but request from injection with wallet unlocked
-    /*if (!connection && (payments.length > 0 || requests.length > 0)) {
-      PopupAPI.pushConnection({
-        website,
-        requestToConnect: false,
-        connected: true,
-        enabled: true
-      })
-    } else {
-      PopupAPI.updateConnection({
-        website,
-        requestToConnect: false,
-        connected: true,
-        enabled: true
-      })
-    }*/
     PopupAPI.pushConnection({
       website,
       requestToConnect: false,
@@ -166,7 +149,7 @@ class Main extends Component {
       enabled: true
     })
     
-    PopupAPI.completeConnection()
+    await PopupAPI.completeConnection()
     if (payments.length > 0) {
       this.props.showHeader(false)
       this.setState({ appState: APP_STATE.WALLET_TRANSFERS_IN_QUEUE })

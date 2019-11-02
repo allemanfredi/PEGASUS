@@ -113,7 +113,13 @@ class Settings extends Component {
                 </div>
                 <div className='row mt-3'>
                   <div className='col-6 text-right text-sm text text-bold pr-1'>
-                    {Utils.iotaReducer(this.props.account.data.balance)}
+                    {
+                      Utils.iotaReducer(
+                        this.props.account.data.balance[this.props.network.type]
+                          ? this.props.account.data.balance[this.props.network.type]
+                          : 0
+                      )
+                    }
                   </div>
                   <div className="col-6 text-left pl-1">
                     <img src='./material/logo/iota-logo.png' height='30' width='30' alt='iota logo' />

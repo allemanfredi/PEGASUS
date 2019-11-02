@@ -71,9 +71,9 @@ class Transactions extends Component {
             <div className="col-6 text-left text-black text-gray text-xs">History</div>
             <div className="col-6 text-right">
             {
-              this.props.isLoading
+              /*this.props.isLoading
                 ? <MiniSpinner/>
-                : <button onClick={() => this.props.onReload()} className="btn btn-icon-inverted">
+                :*/ <button onClick={() => this.props.onReload()} className="btn btn-icon-inverted">
                     <i className="fa fa-refresh"></i>
                   </button>
             }
