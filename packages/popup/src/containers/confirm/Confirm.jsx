@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
-import { PopupAPI } from '@pegasus/lib/api'
-
-import Utils from '@pegasus/lib/utils'
+import { popupMessanger } from '@pegasus/utils/messangers'
+import Utils from '@pegasus/utils/utils'
 import Loader from '../../components/loader/Loader'
 
 class Confirm extends Component {
@@ -21,14 +20,14 @@ class Confirm extends Component {
   }
 
   async componentWillMount() {
-    const payments = await PopupAPI.getPayments()
+    const payments = await popupMessanger.getPayments()
     this.setState({ payments })
   }
 
   async reject(payment) {
 
-    await PopupAPI.rejectPayment(payment)
-    const payments = await PopupAPI.getPayments()
+    await popupMessanger.rejectPayment(payment)
+    const payments = await popupMessanger.getPayments()
     this.setState({ payments })
     if (payments.length === 0)
       this.props.onNotConfirms()
@@ -48,7 +47,7 @@ class Confirm extends Component {
   }
 
   async confirm(payment) {
-    await PopupAPI.confirmPayment(payment)
+    await popupMessanger.confirmPayment(payment)
   }
 
   render() {

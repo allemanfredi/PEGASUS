@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import { PopupAPI } from '@pegasus/lib/api'
+import { popupMessanger } from '@pegasus/utils/messangers'
 import Loader from '../../components/loader/Loader'
-import Utils from '@pegasus/lib/utils'
+import Utils from '@pegasus/utils/utils'
 
 class Send extends Component {
   constructor(props, context) {
@@ -50,7 +50,7 @@ class Send extends Component {
       ]
     }
 
-    PopupAPI.pushPaymentFromPopup(data)
+    popupMessanger.pushPaymentFromPopup(data)
     this.props.onAskConfirm()
   }
 

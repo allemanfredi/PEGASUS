@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { PopupAPI } from '@pegasus/lib/api'
+import { popupMessanger } from '@pegasus/utils/messangers'
 
 class Connector extends Component {
 
@@ -13,7 +13,7 @@ class Connector extends Component {
   }
 
   async componentDidMount() {
-    const website = await PopupAPI.getWebsite()
+    const website = await popupMessanger.getWebsite()
     this.setState({
       favicon: website.favicon,
       hostname: website.hostname

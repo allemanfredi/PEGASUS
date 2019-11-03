@@ -1,4 +1,4 @@
-class ConnectorService {
+class ConnectorController {
 
   constructor(storageDataService) {
     this.storageDataService = storageDataService
@@ -65,4 +65,4 @@ class ConnectorService {
   }
 }
 
-export default ConnectorService
+export default ConnectorController

@@ -1,10 +1,10 @@
-import MessageDuplex from '@pegasus/lib/MessageDuplex'
-import EventChannel from '@pegasus/lib/EventChannel'
+import Duplex from '@pegasus/utils/duplex'
+import EventChannel from '@pegasus/utils/event-channel'
 import extensionizer from 'extensionizer'
 
-const contentScript = {
-  eventChannel: new EventChannel('contentScript'),
-  duplex: new MessageDuplex.Tab(),
+const injection = {
+  eventChannel: new EventChannel('content-script'),
+  duplex: new Duplex.Tab(),
 
   init () {
     console.log('Initialising Pegasus')
@@ -47,4 +47,4 @@ const contentScript = {
   }
 }
 
-contentScript.init()
+injection.init()

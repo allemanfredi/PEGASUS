@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react'
-import Utils from '@pegasus/lib/utils'
-import { PopupAPI } from '@pegasus/lib/api'
+import Utils from '@pegasus/utils/utils'
+import { popupMessanger } from '@pegasus/utils/messangers'
 
 class Settings extends Component {
   constructor(props, context) {
@@ -27,14 +27,14 @@ class Settings extends Component {
   }
 
   async switchAccount(newAccount) {
-    let accounts = await PopupAPI.getAllAccounts()
+    let accounts = await popupMessanger.getAllAccounts()
     accounts = accounts.filter(account => account.id !== newAccount.id)
     this.setState({ accounts })
     this.props.onSwitchAccount(newAccount)
   }
 
   async updateData() {
-    let accounts = await PopupAPI.getAllAccounts()
+    let accounts = await popupMessanger.getAllAccounts()
     accounts = accounts.filter(account => !account.current)
     this.setState({ accounts })
   }
@@ -56,7 +56,7 @@ class Settings extends Component {
   onChangeName(e) {
     this.setState({ editedName: e.target.value })
     this.props.onChangeName(e.target.value)
-    PopupAPI.updateNameAccount(this.props.account, newName)
+    popupMessanger.updateNameAccount(this.props.account, newName)
   }*/
 
   render() {

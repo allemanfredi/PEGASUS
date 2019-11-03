@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { PopupAPI } from '@pegasus/lib/api'
+import { popupMessanger } from '@pegasus/utils/messangers'
 
 
 class Login extends Component {
@@ -20,12 +20,12 @@ class Login extends Component {
 
     this.setState({ shake: false })
 
-    const canAccess = await PopupAPI.comparePassword(this.state.psw)
+    const canAccess = await popupMessanger.comparePassword(this.state.psw)
     if (canAccess) {
-      await PopupAPI.setPassword(this.state.psw)
-      await PopupAPI.initStorageDataService(this.state.psw)
-      await PopupAPI.unlockWallet(this.state.psw)
-      await PopupAPI.startSession()
+      await popupMessanger.setPassword(this.state.psw)
+      await popupMessanger.initStorageDataService(this.state.psw)
+      await popupMessanger.unlockWallet(this.state.psw)
+      await popupMessanger.startSession()
       this.props.onSuccess()
     } else {
       this.setState({ shake: true })

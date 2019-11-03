@@ -2,12 +2,12 @@ import EventEmitter from 'eventemitter3'
 import randomUUID from 'uuid/v4'
 import extensionizer from 'extensionizer'
 
-class MessageDuplexChild extends EventEmitter {
+class DuplexChild extends EventEmitter {
   constructor (type = false) {
     super()
 
     if (!['tab', 'popup'].includes(type))
-      throw new Error(`MessageDuplexChild expects a source type of either tab or popup, instead "${type}" was provided`)
+      throw new Error(`DuplexChild expects a source type of either tab or popup, instead "${type}" was provided`)
 
     this.type = type
     this.incoming = new Map() // Incoming message replies
@@ -38,7 +38,7 @@ class MessageDuplexChild extends EventEmitter {
         extensionizer.lastError ||
         'Unknown disconnect'
 
-      console.log('Lost connection to MessageDuplexHost:', error)
+      console.log('Lost connection to DuplexHost:', error)
 
       this.governor.isConnected = false
       this.governor.reconnect()
@@ -58,7 +58,7 @@ class MessageDuplexChild extends EventEmitter {
       },
       queue: [],
       reconnect: () => {
-        console.log('MessageDuplexChild requested reconnect')
+        console.log('DuplexChild requested reconnect')
       }
     }
   }
@@ -144,4 +144,4 @@ class MessageDuplexChild extends EventEmitter {
   }
 }
 
-export default MessageDuplexChild
+export default DuplexChild

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import IOTA from '@pegasus/lib/iota';
+import IOTA from '@pegasus/utils/iota';
 import Alert from '../../components/alert/Alert';
 import Loader from '../../components/loader/Loader';
-import { PopupAPI } from '@pegasus/lib/api';
+import { popupMessanger } from '@pegasus/utils/messangers';
 
 
 class Add extends Component {
@@ -32,7 +32,7 @@ class Add extends Component {
   }
 
   async componentDidMount() {
-    const seed = await PopupAPI.generateSeed();
+    const seed = await popupMessanger.generateSeed();
     this.setState({ seed });
   }
 
@@ -43,7 +43,7 @@ class Add extends Component {
 
   async goOn() {
     if (this.state.indexInitialization === 0) {
-      const nameAlreadyExixts = await PopupAPI.isAccountNameAlreadyExists(this.state.name)
+      const nameAlreadyExixts = await popupMessanger.isAccountNameAlreadyExists(this.state.name)
       if (nameAlreadyExixts) {
         this.setState({
           showAlert: true,
@@ -80,7 +80,7 @@ class Add extends Component {
       this.setState({ randomLetters: this.state.randomLetters - 1 });
     }
 
-    const letter = await PopupAPI.generateSeed(1);
+    const letter = await popupMessanger.generateSeed(1);
     this.setState(state => {
       const seed = state.seed;
       seed[index] = letter[0];
@@ -104,7 +104,7 @@ class Add extends Component {
   async addAccount() {
     return new Promise(async (resolve, reject) => {
       try {
-        const promisedSeed = await PopupAPI.generateSeed()
+        const promisedSeed = await popupMessanger.generateSeed()
         const seed = promisedSeed.toString().replace(/,/g, '')
         const data = await IOTA.getAccountData(seed)
         const account = {
@@ -113,7 +113,7 @@ class Add extends Component {
           network: this.props.network,
           data: data
         };
-        PopupAPI.addAccount(account, this.props.network, true)
+        popupMessanger.addAccount(account, this.props.network, true)
         resolve(account);
       } catch (err) {
         reject('Impossible to create the account')

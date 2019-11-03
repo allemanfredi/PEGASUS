@@ -1,6 +1,6 @@
 import { composeAPI } from '@iota/core'
 
-class CustomizatorService {
+class CustomizatorController {
   constructor (provider) {
     this.iota = composeAPI({ provider })
   }
@@ -169,4 +169,4 @@ class CustomizatorService {
   }
 }
 
-export default CustomizatorService
+export default CustomizatorController

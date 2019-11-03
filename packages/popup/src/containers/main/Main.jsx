@@ -5,9 +5,9 @@ import Init from '../init/Init'
 import Restore from '../restore/Restore'
 import Confirm from '../confirm/Confirm'
 import Connector from '../connector/Connector'
-import MessageDuplex from '@pegasus/lib/MessageDuplex'
-import { PopupAPI } from '@pegasus/lib/api'
-import { APP_STATE } from '@pegasus/lib/states'
+import Duplex from '@pegasus/utils/duplex'
+import { popupMessanger } from '@pegasus/utils/messangers'
+import { APP_STATE } from '@pegasus/utils/states'
 
 class Main extends Component {
   constructor(props, context) {
@@ -32,18 +32,18 @@ class Main extends Component {
 
     this.state = {
       appState: APP_STATE.WALLET_WITHOUT_STATE,
-      duplex: new MessageDuplex.Popup(),
+      duplex: new Duplex.Popup(),
     }
   }
 
   async componentDidMount() {
-    await PopupAPI.checkSession()
-    let state = await PopupAPI.getState()
+    await popupMessanger.checkSession()
+    let state = await popupMessanger.getState()
     if (state >= APP_STATE.WALLET_LOCKED) {
       this.props.showHeader(true)
     }
     if (state >= APP_STATE.WALLET_UNLOCKED) {
-      PopupAPI.startHandleAccountData()
+      popupMessanger.startHandleAccountData()
     }
     if (state === APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
       this.props.showHeader(false)
@@ -51,11 +51,11 @@ class Main extends Component {
     if (state === APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
       this.props.showHeader(false)
 
-    const requests = await PopupAPI.getRequests()
+    const requests = await popupMessanger.getRequests()
     //impossible to load data from the storage until that a user log in
     if (state >= APP_STATE.WALLET_UNLOCKED) {
-      const website = await PopupAPI.getWebsite()
-      const connection = await PopupAPI.getConnection(website ? website.origin : 'offline')
+      const website = await popupMessanger.getWebsite()
+      const connection = await popupMessanger.getConnection(website ? website.origin : 'offline')
       if (connection) {
         if (connection.requestToConnect === true && state >= APP_STATE.WALLET_UNLOCKED) {
           this.props.showHeader(false)
@@ -91,17 +91,17 @@ class Main extends Component {
   }
 
   async onSuccessFromLogin() {
-    PopupAPI.startSession()
-    PopupAPI.setState(APP_STATE.WALLET_UNLOCKED)
+    popupMessanger.startSession()
+    popupMessanger.setState(APP_STATE.WALLET_UNLOCKED)
 
-    const website = await PopupAPI.getWebsite()
-    const connection = await PopupAPI.getConnection(website ? website.origin : 'offline')
-    const payments = await PopupAPI.getPayments()
-    const requests = await PopupAPI.getRequests()
+    const website = await popupMessanger.getWebsite()
+    const connection = await popupMessanger.getConnection(website ? website.origin : 'offline')
+    const payments = await popupMessanger.getPayments()
+    const requests = await popupMessanger.getRequests()
     
     //no connections but request from injection with wallet locked
     if (!connection && (payments.length > 0 || requests.length > 0)) {
-      PopupAPI.updateConnection({
+      popupMessanger.updateConnection({
         website,
         requestToConnect: true,
         connected: false,
@@ -109,12 +109,12 @@ class Main extends Component {
       })
       this.props.showHeader(false)
       this.setState({ appState: APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION })
-      PopupAPI.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
+      popupMessanger.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
       return
     } 
     //unlocked and no injection requests
     else if ((!connection || connection.enabled) && payments.length === 0 && requests.length === 0){
-      PopupAPI.startHandleAccountData()
+      popupMessanger.startHandleAccountData()
       this.props.showHeader(true)
       this.setState({ appState: APP_STATE.WALLET_UNLOCKED })
       return
@@ -123,57 +123,57 @@ class Main extends Component {
     else if (connection.requestToConnect === true) {
       this.props.showHeader(false)
       this.setState({ appState: APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION })
-      PopupAPI.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
+      popupMessanger.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
       return
     } 
     else if (payments.length > 0) {
       this.props.showHeader(false)
       this.setState({ appState: APP_STATE.WALLET_TRANSFERS_IN_QUEUE })
-      PopupAPI.setState(APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
+      popupMessanger.setState(APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
       this.changePayments(payments)
       return
     } 
     else if (connection.enabled === true){
-      PopupAPI.closePopup()
-      PopupAPI.executeRequests()
+      popupMessanger.closePopup()
+      popupMessanger.executeRequests()
     }
   }
 
   async onPermissionGranted() {
-    const payments = await PopupAPI.getPayments()
-    const website = await PopupAPI.getWebsite()
-    PopupAPI.pushConnection({
+    const payments = await popupMessanger.getPayments()
+    const website = await popupMessanger.getWebsite()
+    popupMessanger.pushConnection({
       website,
       requestToConnect: false,
       connected: true,
       enabled: true
     })
     
-    await PopupAPI.completeConnection()
+    await popupMessanger.completeConnection()
     if (payments.length > 0) {
       this.props.showHeader(false)
       this.setState({ appState: APP_STATE.WALLET_TRANSFERS_IN_QUEUE })
-      PopupAPI.setState(APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
+      popupMessanger.setState(APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
       this.changePayments(payments)
       return
     } else {
-      PopupAPI.closePopup()
-      PopupAPI.executeRequests()
+      popupMessanger.closePopup()
+      popupMessanger.executeRequests()
     }
     this.props.showHeader(true)
     this.setState({ appState: APP_STATE.WALLET_UNLOCKED })
   }
 
   async onPermissionNotGranted() {
-    const website = await PopupAPI.getWebsite()
-    PopupAPI.updateConnection({
+    const website = await popupMessanger.getWebsite()
+    popupMessanger.updateConnection({
       website,
       requestToConnect: true,
       connected: false,
       enabled: false
     })
-    PopupAPI.rejectConnection()
-    PopupAPI.rejectRequests()
+    popupMessanger.rejectConnection()
+    popupMessanger.rejectRequests()
     this.props.showHeader(true)
     this.setState({ appState: APP_STATE.WALLET_UNLOCKED })
   }
@@ -181,42 +181,42 @@ class Main extends Component {
   onSuccessFromInit() {
     this.props.showHeader(true)
     this.setState({ appState: APP_STATE.WALLET_UNLOCKED })
-    PopupAPI.startHandleAccountData()
-    PopupAPI.setState(APP_STATE.WALLET_UNLOCKED)
-    PopupAPI.startSession()
+    popupMessanger.startHandleAccountData()
+    popupMessanger.setState(APP_STATE.WALLET_UNLOCKED)
+    popupMessanger.startSession()
   }
 
   onSuccessFromRestore() {
     this.props.showHeader(true)
     this.setState({ appState: APP_STATE.WALLET_UNLOCKED })
-    PopupAPI.setState(APP_STATE.WALLET_UNLOCKED)
-    PopupAPI.startHandleAccountData()
-    PopupAPI.startSession()
+    popupMessanger.setState(APP_STATE.WALLET_UNLOCKED)
+    popupMessanger.startHandleAccountData()
+    popupMessanger.startSession()
   }
 
   onLogout() {
-    PopupAPI.deleteSession()
-    PopupAPI.stopHandleAccountData()
+    popupMessanger.deleteSession()
+    popupMessanger.stopHandleAccountData()
     this.props.showHeader(true)
     this.setState({ appState: APP_STATE.WALLET_LOCKED })
-    PopupAPI.setState(APP_STATE.WALLET_LOCKED)
+    popupMessanger.setState(APP_STATE.WALLET_LOCKED)
   }
 
   onRestore() {
     this.props.showHeader(true)
     this.setState({ appState: APP_STATE.WALLET_RESTORE })
-    PopupAPI.setState(APP_STATE.WALLET_RESTORE)
+    popupMessanger.setState(APP_STATE.WALLET_RESTORE)
   }
 
   onBack() {
     this.setState({ appState: APP_STATE.WALLET_LOCKED })
-    PopupAPI.setState(APP_STATE.WALLET_LOCKED)
+    popupMessanger.setState(APP_STATE.WALLET_LOCKED)
   }
 
   onRejectAll() {
     this.props.showHeader(true)
     this.setState({ appState: APP_STATE.WALLET_UNLOCKED })
-    PopupAPI.rejectAllPayments()
+    popupMessanger.rejectAllPayments()
   }
 
   onNotConfirms() {
@@ -240,7 +240,7 @@ class Main extends Component {
   onAskConfirm() {
     this.props.showHeader(false)
     this.setState({ appState: APP_STATE.WALLET_TRANSFERS_IN_QUEUE })
-    PopupAPI.setState(APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
+    popupMessanger.setState(APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
   }
 
   //add network

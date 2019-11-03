@@ -1,7 +1,7 @@
 import Mam from '@iota/mam/lib/mam.web.min.js'
 import { trytesToAscii } from '@iota/converter'
 
-const MamService = {
+const MamController = {
 
   fetch (provider, root, mode, sidekey, callback) {
     try {
@@ -16,4 +16,4 @@ const MamService = {
   }
 }
 
-export default MamService
+export default MamController

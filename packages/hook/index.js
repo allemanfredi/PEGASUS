@@ -1,6 +1,6 @@
 
 import connector from './connector'
-import EventChannel from '@pegasus/lib/EventChannel'
+import EventChannel from '@pegasus/utils/event-channel'
 import customizator from './customizator'
 
 const hook = {

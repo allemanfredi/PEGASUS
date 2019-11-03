@@ -1,4 +1,4 @@
-class LedgerService {
+class LedgerController {
 
   constructor() {
     this.bridgeUrl = 'https://allemanfredi.github.io/pegasus-ledger-trampoline/'
@@ -25,4 +25,4 @@ class LedgerService {
   }
 }
 
-export default LedgerService
+export default LedgerController

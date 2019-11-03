@@ -12,8 +12,8 @@ import ImportSeed from '../importSeed/ImportSeed'
 import Loader from '../../components/loader/Loader'
 import Navbar from '../../components/navbar/Navbar'
 import Alert from '../../components/alert/Alert'
-import { PopupAPI } from '@pegasus/lib/api'
-import Utils from '@pegasus/lib/utils'
+import { popupMessanger } from '@pegasus/utils/messangers'
+import Utils from '@pegasus/utils/utils'
 
 class Home extends Component {
   constructor(props, context) {
@@ -78,11 +78,11 @@ class Home extends Component {
     this.setState({
       isLoading: true
     })
-    PopupAPI.reloadAccountData()
+    popupMessanger.reloadAccountData()
   }
 
   async onSwitchAccount(account) {
-    PopupAPI.setCurrentAccount(account)
+    popupMessanger.setCurrentAccount(account)
   }
 
   async onDeleteAccount() {
@@ -125,7 +125,7 @@ class Home extends Component {
   async onConfirm() {
     switch (this.state.actionToConfirm) {
       case 'deleteAccount': {
-        const account = await PopupAPI.deleteAccount(this.props.account)
+        const account = await popupMessanger.deleteAccount(this.props.account)
         if (!account) {
           this.setState(() => {
             return {
@@ -139,7 +139,7 @@ class Home extends Component {
         break
       }
       case 'deleteNetwork': {
-        PopupAPI.deleteCurrentNetwork()
+        popupMessanger.deleteCurrentNetwork()
         this.setState({ showAlert: false })
         break
       }
@@ -220,9 +220,9 @@ class Home extends Component {
         showHome: true
       }
     })
-    await PopupAPI.addNetwork(network)
-    await PopupAPI.setCurrentNetwork(network)
-    await PopupAPI.getCurrentAccount()
+    await popupMessanger.addNetwork(network)
+    await popupMessanger.setCurrentNetwork(network)
+    await popupMessanger.getCurrentAccount()
   }
 
   onMamExplorer() {

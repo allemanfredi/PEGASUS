@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import ReactJson from 'react-json-view';
-import { PopupAPI } from '@pegasus/lib/api';
-import Utils from '@pegasus/lib/utils';
-import MessageDuplex from '@pegasus/lib/MessageDuplex';
+import { popupMessanger } from '@pegasus/utils/messangers';
+import Utils from '@pegasus/utils/utils';
+import Duplex from '@pegasus/utils/duplex';
 import Alert from '../../components/alert/Alert';
 import Picklist from '../../components/picklist/Picklist';
 
@@ -20,7 +20,7 @@ class MamExplorer extends Component {
       options: ['private', 'public', 'restricted'],
       root: '',
       sideKey: '',
-      duplex: new MessageDuplex.Popup(),
+      duplex: new Duplex.Popup(),
       data: [],
       opened: [],
       showAlert: false,
@@ -70,7 +70,7 @@ class MamExplorer extends Component {
       mode: this.state.mode,
       sideKey: this.state.sideKey !== '' ? this.state.sideKey : null
     }
-    PopupAPI.startFetchMam(options);
+    popupMessanger.startFetchMam(options);
   }
 
   render() {

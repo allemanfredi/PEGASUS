@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
-import Utils from '@pegasus/lib/utils'
-import IOTA from '@pegasus/lib/iota'
+import Utils from '@pegasus/utils/utils'
+import IOTA from '@pegasus/utils/iota'
 import Details from '../details/Details'
-import MiniSpinner from '../../components/miniSpinner/MiniSpinner'
 
 class Transactions extends Component {
   constructor(props, context) {

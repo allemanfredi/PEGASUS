@@ -1,8 +1,8 @@
 // class used to encrypt the content of wallet data in order to make more difficult the decryption of the seed since is encrypted togheter with other data (ex name, address ecc)
 // options, state, password hash and session(timestamp for checking the last login) are not encrypted
-import Utils from '@pegasus/lib/utils'
+import Utils from '@pegasus/utils/utils'
 
-class StorageDataService {
+class StorageController {
   constructor (encryptionkey) {
     this.encryptionkey = encryptionkey
     this.data = null
@@ -57,4 +57,4 @@ class StorageDataService {
   }
 }
 
-export default StorageDataService
+export default StorageController

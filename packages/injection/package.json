@@ -1,17 +1,16 @@
 {
-  "name": "@pegasus/hook",
+  "name": "@pegasus/injection",
   "main": "index.js",
   "author": "allemanfredi <alle.manfredi@gmail.com>",
   "private": true,
   "version": "0.1.0",
   "scripts": {
-    "build": "webpack --config ../../webpack.config.js --progress --colors -o ../../dist/hook.js",
+    "build": "webpack --config ../../webpack.config.js --progress --colors -o ../../dist/injection.js",
     "lint": "npx eslint . --fix"
   },
   "dependencies": {
-    "@iota/core": "^1.0.0-beta.8",
-    "@iota/http-client": "^1.0.0-beta.8",
-    "mam.client.js": "iotaledger/mam.client.js"
+    "extensionizer": "^1.0.1",
+    "@pegasus/utils": "0.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",
@@ -20,6 +19,6 @@
     "babel-minify-webpack-plugin": "^0.3.1",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-es2015": "^6.24.1",
-    "webpack-cli": "^3.1.2"
+    "webpack-cli": "^3.3.10"
   }
 }

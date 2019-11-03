@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import IOTA from '@pegasus/lib/iota'
-import { PopupAPI } from '@pegasus/lib/api'
+import IOTA from '@pegasus/utils/iota'
+import { popupMessanger } from '@pegasus/utils/messangers'
 import Loader from '../../components/loader/Loader'
 
 class Restore extends Component {
@@ -27,7 +27,7 @@ class Restore extends Component {
   async onClickRestore(e) {
     e.preventDefault()
 
-    const isSeedValid = await PopupAPI.isSeedValid(this.state.seed)
+    const isSeedValid = await popupMessanger.isSeedValid(this.state.seed)
     if (!isSeedValid) {
       this.setState({
         isSeedValid,
@@ -39,9 +39,9 @@ class Restore extends Component {
     this.setState({ isLoading: true })
 
     //start encryption storage service
-    PopupAPI.initStorageDataService(this.state.psw)
+    popupMessanger.initStorageDataService(this.state.psw)
 
-    await PopupAPI.resetData()
+    await popupMessanger.resetData()
     const data = await IOTA.getAccountData(this.state.seed)
     const account = {
       name: this.state.accountName,
@@ -49,7 +49,7 @@ class Restore extends Component {
       data,
       network: this.props.network
     }
-    await PopupAPI.restoreWallet(account, this.props.network, this.state.psw)
+    await popupMessanger.restoreWallet(account, this.props.network, this.state.psw)
     this.setState({ isLoading: false })
     this.props.onSuccess()
   }
@@ -59,7 +59,7 @@ class Restore extends Component {
 
     this.setState({ shake: false })
 
-    const canAccess = await PopupAPI.comparePassword(this.state.psw)
+    const canAccess = await popupMessanger.comparePassword(this.state.psw)
     if (canAccess)
       this.setState({ passwordIsValid: true })
     else this.setState({ shake: true })

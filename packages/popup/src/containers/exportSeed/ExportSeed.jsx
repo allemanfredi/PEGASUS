@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { PopupAPI } from '@pegasus/lib/api'
+import { popupMessanger } from '@pegasus/utils/messangers'
 
 class ExportSeed extends Component {
 
@@ -19,7 +19,7 @@ class ExportSeed extends Component {
   async getSeed(e) {
     e.preventDefault()
     this.setState({ shake: false })
-    const seed = await PopupAPI.unlockSeed(this.state.psw)
+    const seed = await popupMessanger.unlockSeed(this.state.psw)
     this.setState({
       seed,
       psw: '',

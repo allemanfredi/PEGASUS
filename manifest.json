@@ -34,7 +34,7 @@
         "https://*/*"
       ],
       "js": [
-        "dist/contentscript.js"
+        "dist/injection.js"
       ],
       "run_at": "document_start",
       "all_frames": false

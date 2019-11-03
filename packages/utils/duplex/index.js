@@ -1,5 +1,5 @@
-import Host from './handlers/host'
-import Child from './handlers/child'
+import Host from './host'
+import Child from './child'
 
 const Tab = Child.bind(null, 'tab')
 const Popup = Child.bind(null, 'popup')

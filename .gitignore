@@ -20,6 +20,4 @@ package-lock.json
 lerna-debug.log
 
 # Extension
-/key.pem
 /chrome-extension.zip
-/.idea

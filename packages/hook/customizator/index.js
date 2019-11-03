@@ -1,6 +1,6 @@
 
 import { composeAPI } from '@iota/core'
-import Utils from '@pegasus/lib/utils'
+import Utils from '@pegasus/utils/utils'
 
 export default {
 

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import QRCode from 'qrcode.react'
-import Utils from '@pegasus/lib/utils'
+import Utils from '@pegasus/utils/utils'
 
 class Receive extends Component {
   constructor(props, context) {

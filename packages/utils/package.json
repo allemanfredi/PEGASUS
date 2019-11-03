@@ -1,6 +1,5 @@
 {
-  "name": "@pegasus/lib",
-  "main": "index.js",
+  "name": "@pegasus/utils",
   "author": "allemanfredi <alle.manfredi@gmail.com>",
   "private": true,
   "version": "0.1.0",

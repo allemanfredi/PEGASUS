@@ -1,21 +1,20 @@
 
 import EventEmitter from 'eventemitter3'
 import extensionizer from 'extensionizer'
-import Utils from '@pegasus/lib/utils'
-import { BackgroundAPI } from '@pegasus/lib/api'
-import { APP_STATE } from '@pegasus/lib/states'
+import Utils from '@pegasus/utils/utils'
+import { backgroundMessanger } from '@pegasus/utils/messangers'
+import { APP_STATE } from '@pegasus/utils/states'
 import { composeAPI } from '@iota/core'
 import { asciiToTrytes } from '@iota/converter'
-import settings from '@pegasus/lib/options'
-import AccountDataService from '../AccountDataService'
-import CustomizatorService from '../CustomizatorService'
-import MamService from '../MamService'
-import StorageDataService from '../StorageDataService'
-import NotificationsService from '../NotificationsService'
-//import LedgerService from '../LedgerService'
-import ConnectorService from '../ConnectorService'
+import settings from '@pegasus/utils/options'
+import AccountDataController from './account-data-controller'
+import CustomizatorController from './customizator-controller'
+import MamController from './mam-controller'
+import StorageController from './storage-controller'
+import NotificationsController from './notifications-controller'
+import ConnectorController from './connector-controller'
 
-class Wallet extends EventEmitter {
+class WalletController extends EventEmitter {
   constructor () {
     super()
 
@@ -32,15 +31,14 @@ class Wallet extends EventEmitter {
     const currentNetwork = this.getCurrentNetwork()
     if (Object.entries(currentNetwork).length === 0 && currentNetwork.constructor === Object) {
       settings.networks.forEach(network => this.addNetwork(network))
-      this.customizatorService = Utils.requestHandler(new CustomizatorService(settings.networks[0].provider))
+      this.customizatorController = Utils.requestHandler(new CustomizatorController(settings.networks[0].provider))
       this.setCurrentNetwork(settings.networks[0])
     } else {
-      this.customizatorService = Utils.requestHandler(new CustomizatorService(currentNetwork.provider))
+      this.customizatorController = Utils.requestHandler(new CustomizatorController(currentNetwork.provider))
     }
 
-    this.notificationsService = new NotificationsService()
-    //this.ledgerService = new LedgerService()
-    this.connectorService = new ConnectorService()
+    this.notificationsController = new NotificationsController()
+    this.connectorController = new ConnectorController()
 
     this.checkSession()
     setInterval(() => this.checkSession(), 300000)
@@ -69,17 +67,17 @@ class Wallet extends EventEmitter {
 
   initStorageDataService (key) {
     // allow to encrypt/decrypt the wallet
-    if (!this.storageDataService) {
-      this.storageDataService = new StorageDataService(key)
+    if (!this.storageController) {
+      this.storageController = new StorageController(key)
     } else {
-      this.storageDataService.setEncryptionKey(key)
+      this.storageController.setEncryptionKey(key)
     }
-    this.connectorService.setStorageDataService(this.storageDataService)
+    this.connectorController.setStorageDataService(this.storageController)
   }
 
   writeOnLocalStorage() {
-    if (this.storageDataService) {
-      this.storageDataService.writeToStorage()
+    if (this.storageController) {
+      this.storageController.writeToStorage()
     }
   }
 
@@ -130,7 +128,7 @@ class Wallet extends EventEmitter {
   }
 
   restoreWallet ({ account, network, key }) {
-    const transactions = AccountDataService.mapTransactions(account.data, network)
+    const transactions = AccountDataController.mapTransactions(account.data, network)
     account.data.balance = network.type === 'mainnet'
       ? {
           mainnet: account.data.balance,
@@ -153,8 +151,8 @@ class Wallet extends EventEmitter {
     try {
       const restoredData = []
       restoredData.push(obj)
-      this.storageDataService.setData(restoredData)
-      this.storageDataService.writeToStorage()
+      this.storageController.setData(restoredData)
+      this.storageController.writeToStorage()
 
       this.password = key
       this.setCurrentNetwork(network)
@@ -206,7 +204,7 @@ class Wallet extends EventEmitter {
       // change pagehook
       this.emit('setProvider', network.provider)
       this.emit('setNetwork', network)
-      this.customizatorService.setProvider(network.provider)
+      this.customizatorController.setProvider(network.provider)
 
       // handle the init phase ( yes network no account )
       const account = this.getCurrentAccount()
@@ -291,7 +289,7 @@ class Wallet extends EventEmitter {
   }
 
   isAccountNameAlreadyExists ({ name }) {
-    const data = this.storageDataService.getData()
+    const data = this.storageController.getData()
     const alreadyExists = data.filter(account => account.name === name)
     if (alreadyExists.length > 0) {
       return true
@@ -302,9 +300,9 @@ class Wallet extends EventEmitter {
 
   addAccount ({ account, network, isCurrent }) {
     if (isCurrent) {
-      const data = this.storageDataService.getData()
+      const data = this.storageController.getData()
       data.forEach(account => { account.current = false })
-      this.storageDataService.setData(data)
+      this.storageController.setData(data)
     }
 
     account.data.balance = {
@@ -325,7 +323,7 @@ class Wallet extends EventEmitter {
     }
 
     try {
-      const data = this.storageDataService.getData()
+      const data = this.storageController.getData()
 
       const alreadyExists = data.filter(account => account.id === obj.id)
       if (alreadyExists.length > 0) {
@@ -333,7 +331,7 @@ class Wallet extends EventEmitter {
       }
 
       data.push(obj)
-      this.storageDataService.setData(data)
+      this.storageController.setData(data)
 
       this.emit('setProvider', network.provider)
       this.emit('setAccount', obj)
@@ -346,10 +344,10 @@ class Wallet extends EventEmitter {
   getCurrentAccount () {
     try {
       // check the user has already logged in
-      if (!this.storageDataService)
+      if (!this.storageController)
         return null
 
-      const accounts = this.storageDataService.getData()
+      const accounts = this.storageController.getData()
       const state = this.getState()
       if (accounts.length === 0 && state === APP_STATE.WALLET_NOT_INITIALIZED)
         return null
@@ -365,12 +363,12 @@ class Wallet extends EventEmitter {
   }
 
   setCurrentAccount ({ currentAccount }) {
-    let data = this.storageDataService.getData()
+    let data = this.storageController.getData()
     data.forEach(account => { account.current = false })
-    this.storageDataService.setData(data)
+    this.storageController.setData(data)
 
     try {
-      const data = this.storageDataService.getData()
+      const data = this.storageController.getData()
       data.forEach(account => {
         if (account.id === currentAccount.id) {
           account.current = true
@@ -380,7 +378,7 @@ class Wallet extends EventEmitter {
           this.emit('setAccount', account)
         }
       })
-      this.storageDataService.setData(data)
+      this.storageController.setData(data)
     } catch (err) {
       console.log(err)
       throw new Error(err)
@@ -389,7 +387,7 @@ class Wallet extends EventEmitter {
 
   resetData () {
     try {
-      this.storageDataService.setData([])
+      this.storageController.setData([])
       return
     } catch (err) {
       console.log(err)
@@ -399,7 +397,7 @@ class Wallet extends EventEmitter {
 
   updateDataAccount ({ updatedData }) {
     try {
-      const data = this.storageDataService.getData()
+      const data = this.storageController.getData()
       let updatedAccount = {}
       data.forEach(account => {
         if (account.current) {
@@ -407,7 +405,7 @@ class Wallet extends EventEmitter {
           updatedAccount = account
         }
       })
-      this.storageDataService.setData(data)
+      this.storageController.setData(data)
       return updatedAccount
     } catch (err) {
       throw new Error(err)
@@ -416,7 +414,7 @@ class Wallet extends EventEmitter {
 
   updateNetworkAccount ({ network }) {
     try {
-      const data = this.storageDataService.getData()
+      const data = this.storageController.getData()
       let updatedAccount = {}
       data.forEach(account => {
         if (account.current) {
@@ -424,7 +422,7 @@ class Wallet extends EventEmitter {
           updatedAccount = account
         }
       })
-      this.storageDataService.setData(data)
+      this.storageController.setData(data)
       return updatedAccount
     } catch (err) {
       throw new Error(err)
@@ -433,7 +431,7 @@ class Wallet extends EventEmitter {
 
   updateTransactionsAccount ({ transactions }) {
     try {
-      const data = this.storageDataService.getData()
+      const data = this.storageController.getData()
       let updatedAccount = {}
       data.forEach(account => {
         if (account.current) {
@@ -441,7 +439,7 @@ class Wallet extends EventEmitter {
           updatedAccount = account
         }
       })
-      this.storageDataService.setData(data)
+      this.storageController.setData(data)
       return updatedAccount
     } catch (err) {
       throw new Error(err)
@@ -450,7 +448,7 @@ class Wallet extends EventEmitter {
 
   updateNameAccount ({ current, newName }) {
     try {
-      const data = this.storageDataService.getData()
+      const data = this.storageController.getData()
       let updatedAccount = {}
       data.forEach(account => {
         if (account.id === current.id) {
@@ -459,7 +457,7 @@ class Wallet extends EventEmitter {
           updatedAccount = account
         }
       })
-      this.storageDataService.setData(data)
+      this.storageController.setData(data)
       this.emit('setAccount', updatedAccount)
     } catch (err) {
       throw new Error(err)
@@ -468,7 +466,7 @@ class Wallet extends EventEmitter {
 
   deleteAccount ({ account }) {
     try {
-      const data = this.storageDataService.getData()
+      const data = this.storageController.getData()
       if (data.length === 1) { return null } else {
         // remove account
         const app = data.filter(acc => acc.id !== account.id)
@@ -478,7 +476,7 @@ class Wallet extends EventEmitter {
 
         // set the new current account (the first one of this network)
         app[0].current = true
-        this.storageDataService.setData(app)
+        this.storageController.setData(app)
         this.emit('setAccount', app[0])
         return app[0]
       }
@@ -490,7 +488,7 @@ class Wallet extends EventEmitter {
   getAllAccounts () {
     const accounts = []
     try {
-      this.storageDataService.getData().forEach(account => {
+      this.storageController.getData().forEach(account => {
         accounts.push(account)
       })
       return accounts
@@ -560,7 +558,7 @@ class Wallet extends EventEmitter {
         const date = new Date()
         const currentTime = date.getTime()
         if (currentTime - time > 900000) { // greather than 15 minutes
-          this.storageDataService.writeToStorage()
+          this.storageController.writeToStorage()
           this.setState(APP_STATE.WALLET_LOCKED)
           return
         }
@@ -582,7 +580,7 @@ class Wallet extends EventEmitter {
 
   deleteSession () {
     try {
-      this.storageDataService.writeToStorage()
+      this.storageController.writeToStorage()
       localStorage.removeItem('session')
       this.setState(APP_STATE.WALLET_LOCKED)
       this.password = false
@@ -670,10 +668,10 @@ class Wallet extends EventEmitter {
     
     //check permissions
     if (!payment.isPopup) {
-      const connection = this.connectorService.getConnection(website.origin)
+      const connection = this.connectorController.getConnection(website.origin)
       if (!connection) {
         this.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
-        this.connectorService.setConnectionToStore({
+        this.connectorController.setConnectionToStore({
           website,
           requestToConnect: true,
           connected: false,
@@ -697,7 +695,7 @@ class Wallet extends EventEmitter {
       this.openPopup()
 
     if (currentState > APP_STATE.WALLET_LOCKED)
-      BackgroundAPI.setPayments(this.payments)
+      backgroundMessanger.setPayments(this.payments)
 
     return
   }
@@ -717,12 +715,12 @@ class Wallet extends EventEmitter {
 
     this.payments.push(obj)
     if (currentState > APP_STATE.WALLET_LOCKED)
-      BackgroundAPI.setPayments(this.payments)
+      backgroundMessanger.setPayments(this.payments)
     return
   }
 
   confirmPayment (obj) {
-    BackgroundAPI.setConfirmationLoading(true)
+    backgroundMessanger.setConfirmationLoading(true)
 
     let transfers = obj.payment.args[0]
     const network = this.getCurrentNetwork()
@@ -750,28 +748,28 @@ class Wallet extends EventEmitter {
         })
         .then(async bundle => {
           this.removePayment(obj)
-          BackgroundAPI.setPayments(this.payments)
+          backgroundMessanger.setPayments(this.payments)
           this.setState(APP_STATE.WALLET_UNLOCKED)
 
           resolve({ data: bundle, success: true, uuid: obj.uuid })
 
           // since every transaction is generated a new address, it's necessary to modify the hook
           const data = await iota.getAccountData(seed)
-          BackgroundAPI.setAddress(data.latestAddress)
+          backgroundMessanger.setAddress(data.latestAddress)
 
           // comunicates to the popup the new app State
-          BackgroundAPI.setAppState(APP_STATE.WALLET_UNLOCKED)
+          backgroundMessanger.setAppState(APP_STATE.WALLET_UNLOCKED)
 
-          BackgroundAPI.setConfirmationLoading(false)
+          backgroundMessanger.setConfirmationLoading(false)
         })
         .catch(err => {
-          BackgroundAPI.setConfirmationError(err.message)
-          BackgroundAPI.setConfirmationLoading(false)
+          backgroundMessanger.setConfirmationError(err.message)
+          backgroundMessanger.setConfirmationLoading(false)
           resolve({ data: err.message, success: false, uuid: obj.uuid })
         })
     } catch (err) {
-      BackgroundAPI.setConfirmationError(err.message)
-      BackgroundAPI.setConfirmationLoading(false)
+      backgroundMessanger.setConfirmationError(err.message)
+      backgroundMessanger.setConfirmationLoading(false)
       resolve({ data: err.message, success: false, uuid: obj.uuid })
     }
     return
@@ -831,12 +829,12 @@ class Wallet extends EventEmitter {
     const seed = this.getCurrentSeed()
     const network = this.getCurrentNetwork()
     let account = this.getCurrentAccount()
-    const { transactions, newData } = await AccountDataService.retrieveAccountData(seed, network, account)
+    const { transactions, newData } = await AccountDataController.retrieveAccountData(seed, network, account)
 
     //show notification
     const transactionsJustConfirmed = this._getTransactionsJustConfirmed(account, transactions)
     transactionsJustConfirmed.forEach(transaction => {
-      this.notificationsService.showNotification(
+      this.notificationsController.showNotification(
         'Transaction Confirmed',
         transaction.bundle,
         network.link + 'bundle/' + transaction.bundle
@@ -884,7 +882,7 @@ class Wallet extends EventEmitter {
   // if wallet is locked user must login, after having do it, wallet will execute 
   //every request put in the queue IF USER  GRANTed PERMISSIONS
   pushRequest (method, { uuid, resolve, data, website }) {
-    const connection = this.connectorService.getConnection(website.origin)
+    const connection = this.connectorController.getConnection(website.origin)
     let mockConnection = connection
     let isPopupAlreadyOpened = false
     if (!connection) {
@@ -896,7 +894,7 @@ class Wallet extends EventEmitter {
         connected: false,
         enabled: false
       }
-      this.connectorService.setConnectionToStore(connection)
+      this.connectorController.setConnectionToStore(connection)
       isPopupAlreadyOpened = true
     } else if (!connection.enabled) {
       this.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
@@ -920,7 +918,7 @@ class Wallet extends EventEmitter {
       }
       this.requests.push(request)
     } else if (connection.enabled) {
-      this.customizatorService.request(method, { uuid, resolve, data })
+      this.customizatorController.request(method, { uuid, resolve, data })
     } 
   }
 
@@ -932,7 +930,7 @@ class Wallet extends EventEmitter {
       if (request.connection.enabled) {
         const data = request.data
         const seed = this.getCurrentSeed()
-        this.customizatorService.request(method, { uuid, resolve, seed, data })
+        this.customizatorController.request(method, { uuid, resolve, seed, data })
       } else {
         resolve({ data: 'no permissions', success: false, uuid })
       }
@@ -966,33 +964,33 @@ class Wallet extends EventEmitter {
       resolve,
       connection
     }
-    this.connectorService.setConnectionRequest(connectionRequest)
+    this.connectorController.setConnectionRequest(connectionRequest)
 
     //if user call connect before log in, storage is not already set up so it is not possible to save/load data
     //workardund -> keep in memory and once he login, store the data into storage and delete the variable
-    if (!this.storageDataService) {
-      this.connectorService.setConnectionToStore(connection)
+    if (!this.storageController) {
+      this.connectorController.setConnectionToStore(connection)
     }
     else {
-      this.connectorService.pushConnection(connection)
+      this.connectorController.pushConnection(connection)
     }
   }
 
   getConnection(origin) {
-    const connection = this.connectorService.getConnection(origin)
+    const connection = this.connectorController.getConnection(origin)
     return connection
   }
 
   pushConnection(connection) {
-    this.connectorService.pushConnection(connection)
+    this.connectorController.pushConnection(connection)
   }
 
   updateConnection(connection) {
-    this.connectorService.updateConnection(connection)
+    this.connectorController.updateConnection(connection)
   }
 
   completeConnection() {
-    const connectionRequest = this.connectorService.getConnectionRequest()
+    const connectionRequest = this.connectorController.getConnectionRequest()
     if (connectionRequest) {
       connectionRequest.resolve({
         data: {
@@ -1001,7 +999,7 @@ class Wallet extends EventEmitter {
         success: true,
         uuid: connectionRequest.uuid
       })
-      this.connectorService.setConnectionRequest(null)
+      this.connectorController.setConnectionRequest(null)
     }
 
     //in case there was already the connection stored
@@ -1016,7 +1014,7 @@ class Wallet extends EventEmitter {
   }
 
   rejectConnection(){
-    const connectionRequest = this.connectorService.getConnectionRequest()
+    const connectionRequest = this.connectorController.getConnectionRequest()
     if (connectionRequest) {
       connectionRequest.resolve({
         data: {
@@ -1025,7 +1023,7 @@ class Wallet extends EventEmitter {
         success: false,
         uuid: connectionRequest.uuid
       })
-      this.connectorService.setConnectionRequest(null)
+      this.connectorController.setConnectionRequest(null)
     }
 
     //in case there was already the connection stored
@@ -1043,8 +1041,8 @@ class Wallet extends EventEmitter {
 
   startFetchMam (options) {
     const network = this.getCurrentNetwork()
-    MamService.fetch(network.provider, options.root, options.mode, options.sideKey, data => {
-      BackgroundAPI.newMamData(data)
+    MamController.fetch(network.provider, options.root, options.mode, options.sideKey, data => {
+      backgroundMessanger.newMamData(data)
     })
   }
 
@@ -1103,4 +1101,4 @@ class Wallet extends EventEmitter {
   }
 }
 
-export default Wallet
+export default WalletController

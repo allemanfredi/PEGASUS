@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { PopupAPI } from '@pegasus/lib/api';
-import IOTA from '@pegasus/lib/iota';
+import { popupMessanger } from '@pegasus/utils/messangers';
+import IOTA from '@pegasus/utils/iota';
 import Loader from '../../components/loader/Loader';
 import * as  passwordValidator from 'password-validator';
 
@@ -44,7 +44,7 @@ class Init extends Component {
   }
 
   async componentDidMount() {
-    const seed = await PopupAPI.generateSeed();
+    const seed = await popupMessanger.generateSeed();
     this.setState({ seed });
   }
 
@@ -118,7 +118,7 @@ class Init extends Component {
       this.setState({ randomLetters: this.state.randomLetters - 1 });
     }
 
-    const letter = await PopupAPI.generateSeed(1);
+    const letter = await popupMessanger.generateSeed(1);
     this.setState(state => {
       const seed = state.seed;
       seed[index] = letter[0];
@@ -144,15 +144,15 @@ class Init extends Component {
       try {
 
         //store the psw
-        PopupAPI.storePassword(this.state.psw);
+        popupMessanger.storePassword(this.state.psw);
 
         //start encryption storage service
-        PopupAPI.initStorageDataService(this.state.psw);
+        popupMessanger.initStorageDataService(this.state.psw);
 
-        const promisedSeed = await PopupAPI.generateSeed()
+        const promisedSeed = await popupMessanger.generateSeed()
         const seed = promisedSeed.toString().replace(/,/g, '');
         const data = await IOTA.getAccountData(seed);
-        const network = await PopupAPI.getCurrentNetwork();
+        const network = await popupMessanger.getCurrentNetwork();
 
         const account = {
           seed: seed,
@@ -161,7 +161,7 @@ class Init extends Component {
           data: data
         };
 
-        await PopupAPI.addAccount(account, network, true);
+        await popupMessanger.addAccount(account, network, true);
         resolve();
       } catch (err) {
         reject('Impossible to create the wallet');

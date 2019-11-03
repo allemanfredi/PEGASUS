@@ -1,9 +1,9 @@
-const extension = require('extensionizer')
+import extensionizer from 'extensionizer'
 
-class NotificationsService {
+class NotificationsController {
 
   showNotification (title, message, url) {
-    extension.notifications.create(
+    extensionizer.notifications.create(
       url,
       {
         'type': 'basic',
@@ -14,4 +14,4 @@ class NotificationsService {
   }
 }
 
-export default NotificationsService
+export default NotificationsController

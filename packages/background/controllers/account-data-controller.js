@@ -1,6 +1,6 @@
-import IOTA from '@pegasus/lib/iota'
+import IOTA from '@pegasus/utils/iota'
 
-const AccountDataService = {
+const AccountDataController = {
 
   async retrieveAccountData (seed, network, currentAccount) {
     IOTA.setProvider(network.provider)
@@ -64,6 +64,6 @@ const AccountDataService = {
 
 }
 
-export default AccountDataService
+export default AccountDataController
 
 // bundle explanation : //https://domschiener.gitbooks.io/iota-guide/content/chapter1/bundles.html

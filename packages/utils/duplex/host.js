@@ -2,7 +2,7 @@ import EventEmitter from 'eventemitter3'
 import randomUUID from 'uuid/v4'
 import extensionizer from 'extensionizer'
 
-class MessageDuplexHost extends EventEmitter {
+class DuplexHost extends EventEmitter {
   constructor () {
     super()
 
@@ -148,4 +148,4 @@ class MessageDuplexHost extends EventEmitter {
   }
 }
 
-export default MessageDuplexHost
+export default DuplexHost

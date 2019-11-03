@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import IOTA from '@pegasus/lib/iota'
-import { PopupAPI } from '@pegasus/lib/api'
+import IOTA from '@pegasus/utils/iota'
+import { popupMessanger } from '@pegasus/utils/messangers'
 import Loader from '../../components/loader/Loader'
 
 
@@ -21,14 +21,14 @@ class ImportSeed extends Component {
   }
 
   async onImport() {
-    const nameAlreadyExixts = await PopupAPI.isAccountNameAlreadyExists(this.state.name)
+    const nameAlreadyExixts = await popupMessanger.isAccountNameAlreadyExists(this.state.name)
     if (nameAlreadyExixts) {
       this.setState({
         error: 'Account name already exists'
       })
       return
     }
-    const isValidSeed = await PopupAPI.isSeedValid(this.state.seed)
+    const isValidSeed = await popupMessanger.isSeedValid(this.state.seed)
     if (!isValidSeed) {
       this.setState({
         error: 'Invalid seed'
@@ -44,7 +44,7 @@ class ImportSeed extends Component {
         network: this.props.network,
         data: data
       }
-      PopupAPI.addAccount(account, this.props.network, true)
+      popupMessanger.addAccount(account, this.props.network, true)
       this.setState({ isLoading: false })
       this.props.onBack()
     } catch (e) {
