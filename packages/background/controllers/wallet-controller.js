@@ -872,7 +872,7 @@ class WalletController extends EventEmitter {
   }
 
   async reloadAccountData () {
-    //this.emit('setAccount', {})
+    this.emit('setAccount', {})
     clearInterval(this.accountDataHandler)
     this.loadAccountData()
     this.accountDataHandler = setInterval(() => this.loadAccountData(), 90000)
