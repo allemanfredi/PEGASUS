@@ -127,7 +127,5 @@ __getAccountData__, __getInputs__, __getNewAddress__ have been disabled for secu
 
 ## :hammer: Work In Progress
 * __`pegasus-ledger-trampoline`__: Since it is not possible to access Ledger Nano S from a Google Chrome extension, i implemented a workaround: injecting an iframe to the background page of the extension, (which is hosted thanks to __gh-pages__ [here](https://github.com/allemanfredi/pegasus-ledger-trampoline/tree/master)). In order to work correctly, the iframe must run under https (since U2F requires SSL). [30%]
-* __`pegasus-connector`__: Allows the user to decide whether to give the website permissions to access the library (iota.js) injected into the content script through a special popup. Before being able to give permission, the user must unlock the wallet. Even if he tries to interact with an injected function, if the wallet is not unlocked, the appropriate popup will appear. [80%]
-
 
 
