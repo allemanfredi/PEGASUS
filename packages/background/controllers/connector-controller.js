@@ -1,17 +1,17 @@
 class ConnectorController {
 
-  constructor(storageDataService) {
-    this.storageDataService = storageDataService
+  constructor(storageController) {
+    this.storageController = storageController
     this.connectionToStore = null      //local storage connection data
     this.connectionRequest = null      //callback for user response
   }
 
-  setStorageDataService(storageDataService) {
-    this.storageDataService = storageDataService
+  setStorageController(storageController) {
+    this.storageController = storageController
   }
 
   getConnection(origin) {
-    if (!this.storageDataService) {
+    if (!this.storageController) {
       return null
     }
     if (this.connectionToStore && this.connectionToStore.website.origin === origin) {
@@ -20,24 +20,24 @@ class ConnectorController {
       this.connectionToStore = null
       return connection
     }
-    const connections = this.storageDataService.getConnections()
+    const connections = this.storageController.getConnections()
     const connection = connections.find(c => c.website.origin === origin)
     return connection
   }
 
   pushConnection(connection) {
-    const connections = this.storageDataService.getConnections()
+    const connections = this.storageController.getConnections()
     const existingConnection = connections.find(c => c.website.origin === connection.website.origin)
     if (existingConnection) {
       this.updateConnection(connection)
     } else {
       connections.push(connection)
-      this.storageDataService.setConnections(connections)
+      this.storageController.setConnections(connections)
     }    
   }
 
   updateConnection(connection) {
-    const connections = this.storageDataService.getConnections()
+    const connections = this.storageController.getConnections()
     const updatedConnections = connections.map(c => {
       if (c.website.origin === connection.website.origin) {
         return connection
@@ -45,7 +45,7 @@ class ConnectorController {
         return c
       }
     })
-    this.storageDataService.setConnections(updatedConnections)
+    this.storageController.setConnections(updatedConnections)
   }
 
   setConnectionToStore(connection) {

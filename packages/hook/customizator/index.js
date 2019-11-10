@@ -17,6 +17,8 @@ export default {
     })
 
     iotajsTarget.connect = (...args) => this._connect(args)
+    iotajsTarget.getCurrentAccount = (...args) => this.getCurrentAccount(args)
+    iotajsTarget.getCurrentNode = (...args) => this.getCurrentNode(args)
 
     //disabled for security reasons
     delete iotajsTarget.getAccountData
@@ -124,6 +126,26 @@ export default {
 
     this.request('getBundle', { args })
       .then(bundle => callback(bundle, null))
+      .catch(err => callback(null, err))
+  },
+
+  getCurrentAccount (args) {
+    const callback = args[0]
+    if (callback === undefined)
+      return Utils.injectPromise(this.request, 'getCurrentAccount')
+
+    this.request('getCurrentAccount')
+      .then(info => callback(info, null))
+      .catch(err => callback(null, err))
+  },
+
+  getCurrentNode (args) {
+    const callback = args[0]
+    if (callback === undefined)
+      return Utils.injectPromise(this.request, 'getCurrentNode')
+
+    this.request('getCurrentNode')
+      .then(info => callback(info, null))
       .catch(err => callback(null, err))
   },
 

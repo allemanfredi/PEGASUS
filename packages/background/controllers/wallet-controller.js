@@ -40,6 +40,8 @@ class WalletController extends EventEmitter {
     this.notificationsController = new NotificationsController()
     this.connectorController = new ConnectorController()
 
+    this.customizatorController.setWalletController(this)
+
     this.checkSession()
     setInterval(() => this.checkSession(), 300000)
   }
@@ -72,7 +74,7 @@ class WalletController extends EventEmitter {
     } else {
       this.storageController.setEncryptionKey(key)
     }
-    this.connectorController.setStorageDataService(this.storageController)
+    this.connectorController.setStorageController(this.storageController)
   }
 
   writeOnLocalStorage() {
@@ -343,7 +345,6 @@ class WalletController extends EventEmitter {
 
   getCurrentAccount () {
     try {
-      // check the user has already logged in
       if (!this.storageController)
         return null
 

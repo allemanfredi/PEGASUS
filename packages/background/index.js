@@ -149,6 +149,14 @@ const backgroundScript = {
           this.walletController.pushRequest('getBundle', { uuid, resolve, data, website })
           break
         }
+        case 'getCurrentAccount': {
+          this.walletController.pushRequest('getCurrentAccount', { uuid, resolve, data, website })
+          break
+        }
+        case 'getCurrentNode': {
+          this.walletController.pushRequest('getCurrentNode', { uuid, resolve, website })
+          break
+        }
         case 'getInclusionStates': {
           this.walletController.pushRequest('getInclusionStates', { uuid, resolve, data, website })
           break

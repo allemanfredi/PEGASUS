@@ -99,6 +99,8 @@ It's possible to interact with the functions both with __callbacks__ and __promi
  * .findTransactions(query, [callback])
  * .getBalances(addresses, threshold, [callback])
  * .getBundle(tailTransactionHash, [callback])
+ * .getCurrentAccount([callback])
+ * .getCurrentNode([callback])
  * .getInclusionStates(transactions, tips, [callback])
  * .getLatestInclusion(transactions, tips, [callback])
  * .getNeighbors([callback])
