@@ -461,14 +461,20 @@ input#inp-edit {
     }
 }
 
-.mini-spinner {
+.spinner {
     display: inline-block;
     position: relative;
     width: 18px;
     height: 18px;
     margin-bottom: 5px;
 }
-.mini-spinner div {
+
+.spinner.big {
+    width: 50px;
+    height: 50px;
+}
+
+.spinner div {
     box-sizing: border-box;
     display: block;
     position: absolute;
@@ -476,19 +482,25 @@ input#inp-edit {
     height: 18px;
     border: 3px solid darkblue;
     border-radius: 50%;
-    animation: mini-spinner 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    animation: spinner 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
     border-color: darkblue transparent transparent transparent;
 }
-.mini-spinner div:nth-child(1) {
+
+.spinner.big div {
+    width: 50px;
+    height: 50px;
+}
+
+.spinner div:nth-child(1) {
     animation-delay: -0.45s;
 }
-.mini-spinner div:nth-child(2) {
+.spinner div:nth-child(2) {
     animation-delay: -0.3s;
 }
-.mini-spinner div:nth-child(3) {
+.spinner div:nth-child(3) {
     animation-delay: -0.15s;
 }
-@keyframes mini-spinner {
+@keyframes spinner {
     0% {
       transform: rotate(0deg);
     }

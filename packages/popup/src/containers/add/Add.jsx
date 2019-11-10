@@ -1,8 +1,7 @@
-import React, { Component } from 'react';
-import IOTA from '@pegasus/utils/iota';
-import Alert from '../../components/alert/Alert';
-import Loader from '../../components/loader/Loader';
-import { popupMessanger } from '@pegasus/utils/messangers';
+import React, { Component } from 'react'
+import Alert from '../../components/alert/Alert'
+import { popupMessanger } from '@pegasus/utils/messangers'
+import Spinner from '../../components/spinner/Spinner'
 
 
 class Add extends Component {
@@ -120,7 +119,18 @@ class Add extends Component {
         }
         {
           this.state.isLoading 
-            ? <Loader />
+            ? <React.Fragment>
+                <div className="container">
+                  <div className='row mt-5 mb-3'>
+                    <div className='col-12 text-center text-lg text-blue'>I'm creating the new Account!</div>
+                  </div>
+                  <div className='row mt-4'>
+                    <div className="col-12 text-center">
+                      <Spinner size={'big'}/>
+                    </div>
+                  </div>
+                </div>
+              </React.Fragment>
             : 
             <React.Fragment>
             {
@@ -129,7 +139,7 @@ class Add extends Component {
                     <div className='row mt-5 mb-3'>
                       <div className='col-12 text-center text-lg text-blue'>Let's add a name</div>
                     </div>
-                    <div className='row mt-8'>
+                    <div className='row mt-11'>
                       <div className='col-12'>
                         <label htmlFor='inp-name' className='inp'>
                           <input value={this.state.name} onChange={e => { this.setState({ name: e.target.value }); }} type='text' id='inp-name' placeholder='&nbsp;' />
