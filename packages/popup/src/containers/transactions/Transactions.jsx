@@ -90,17 +90,10 @@ class Transactions extends Component {
                   return (
                     <div key={index} className="transaction-list-item mt-1">
                       <div className="row">
-                        <div className="col-3 text-left text-xxs text-blue my-auto">
+                        <div className="col-4 text-left text-xxs text-blue my-auto">
                           {Utils.timestampToDate(transaction.timestamp)}
                         </div>
-                        <div className="col-3 text-center text-xxs my-auto">
-                          {
-                            transaction.value > 0 
-                              ? 'received ' 
-                              : 'sent'
-                            }
-                        </div>
-                        <div className="col-3 text-center my-auto">
+                        <div className="col-4 text-center my-auto">
                           <div className={transaction.status ? 'text-xxs text-bold text-blue' : 'text-xxs text-bold text-gray'} >
                           {
                             transaction.status 
@@ -109,9 +102,13 @@ class Transactions extends Component {
                           }
                         </div>
                         </div>
-                        <div className="col-3 text-right">
-                          <div className="text-xs text-bold">
-                            {Utils.iotaReducer(transaction.value)}
+                        <div className="col-4 text-right">
+                          <div className="text-sm text-bold">
+                            {
+                              transaction.value > 0 
+                                ? '+' + Utils.iotaReducer(transaction.value)
+                                : Utils.iotaReducer(transaction.value)
+                            }
                           </div>
                         </div>
                       </div>
