@@ -1,23 +1,23 @@
-import React, { Component } from 'react';
-import { popupMessanger } from '@pegasus/utils/messangers';
-import IOTA from '@pegasus/utils/iota';
-import Loader from '../../components/loader/Loader';
-import * as  passwordValidator from 'password-validator';
+import React, { Component } from 'react'
+import { popupMessanger } from '@pegasus/utils/messangers'
+import IOTA from '@pegasus/utils/iota'
+import Loader from '../../components/loader/Loader'
+import * as  passwordValidator from 'password-validator'
 
 class Init extends Component {
   constructor(props, context) {
-    super(props, context);
+    super(props, context)
 
-    this.createWallet = this.createWallet.bind(this);
-    this.goBack = this.goBack.bind(this);
-    this.goOn = this.goOn.bind(this);
-    this.updateStatusInitialization = this.updateStatusInitialization.bind(this);
-    this.randomiseSeedLetter = this.randomiseSeedLetter.bind(this);
-    this.copyToClipboard = this.copyToClipboard.bind(this);
-    this.onChangePassword = this.onChangePassword.bind(this);
-    this.onChangeRePassword = this.onChangeRePassword.bind(this);
-    this.checkPassword = this.checkPassword.bind(this);
-    this.getPasswordErrors = this.getPasswordErrors.bind(this);
+    this.createWallet = this.createWallet.bind(this)
+    this.goBack = this.goBack.bind(this)
+    this.goOn = this.goOn.bind(this)
+    this.updateStatusInitialization = this.updateStatusInitialization.bind(this)
+    this.randomiseSeedLetter = this.randomiseSeedLetter.bind(this)
+    this.copyToClipboard = this.copyToClipboard.bind(this)
+    this.onChangePassword = this.onChangePassword.bind(this)
+    this.onChangeRePassword = this.onChangeRePassword.bind(this)
+    this.checkPassword = this.checkPassword.bind(this)
+    this.getPasswordErrors = this.getPasswordErrors.bind(this)
 
     this.passwordValidator = new passwordValidator();
     this.passwordValidator
@@ -40,43 +40,43 @@ class Init extends Component {
       initialization: [true, false, false, false],
       indexInitialization: 0,
       isCopiedToClipboard: false,
-    };
+    }
   }
 
   async componentDidMount() {
     const seed = await popupMessanger.generateSeed();
-    this.setState({ seed });
+    this.setState({ seed })
   }
 
   onChangePassword(e) {
-    this.setState({ psw: e.target.value });
-    this.checkPassword(e.target.value, this.state.repsw);
+    this.setState({ psw: e.target.value })
+    this.checkPassword(e.target.value, this.state.repsw)
   }
 
   onChangeRePassword(e) {
     this.setState({ repsw: e.target.value })
-    this.checkPassword(this.state.psw, e.target.value);
+    this.checkPassword(this.state.psw, e.target.value)
   }
 
   checkPassword(psw, rePsw) {
 
-    const errors = this.getPasswordErrors(psw);
+    const errors = this.getPasswordErrors(psw)
     this.setState({ pswErrors: errors })
 
     if (psw === rePsw && this.state.pswErrors.length === 0) {
-      this.setState({ pswAcceptable: true });
-    } else this.setState({ pswAcceptable: false });
+      this.setState({ pswAcceptable: true })
+    } else this.setState({ pswAcceptable: false })
   }
 
   getPasswordErrors(psw) {
-    const err = this.passwordValidator.validate(psw, { list: true });
+    const err = this.passwordValidator.validate(psw, { list: true })
     const errors = err.map(error => {
       switch (error) {
-        case 'min': return 'Password must contains at least 8 characters';
-        case 'uppercase': return 'Password must contains at least 1 uppercase character';
-        case 'lowercase': return 'Password must contains at least 1 lowercase character';
-        case 'symbols': return 'Password must contains at least 1 symbol';
-        case 'digits': return 'Password must contains at least 1 digit';
+        case 'min': return 'Password must contains at least 8 characters'
+        case 'uppercase': return 'Password must contains at least 1 uppercase character'
+        case 'lowercase': return 'Password must contains at least 1 lowercase character'
+        case 'symbols': return 'Password must contains at least 1 symbol'
+        case 'digits': return 'Password must contains at least 1 digit'
         default: return '';
       }
     })
@@ -85,58 +85,58 @@ class Init extends Component {
 
   //action = true -> goOn, action = false = goBack
   goBack() {
-    this.updateStatusInitialization(this.state.indexInitialization, false);
-    this.setState({ indexInitialization: this.state.indexInitialization - 1 });
+    this.updateStatusInitialization(this.state.indexInitialization, false)
+    this.setState({ indexInitialization: this.state.indexInitialization - 1 })
   }
 
   async goOn() {
     this.updateStatusInitialization(this.state.indexInitialization, true);
-    this.setState({ indexInitialization: this.state.indexInitialization + 1 });
+    this.setState({ indexInitialization: this.state.indexInitialization + 1 })
 
     if (this.state.indexInitialization === 3) { //create wallet
-      this.setState({ isLoading: true });
-      await this.createWallet();
-      this.setState({ isLoading: false });
-      this.props.onSuccess();
+      this.setState({ isLoading: true })
+      await this.createWallet()
+      this.setState({ isLoading: false })
+      this.props.onSuccess()
     }
   }
 
   updateStatusInitialization(index, action) {
     this.setState(state => {
-      const initialization = state.initialization;
-      initialization[index] = false;
+      const initialization = state.initialization
+      initialization[index] = false
       action ? initialization[index + 1] = true : initialization[index - 1] = true;
       return {
         initialization,
-      };
-    });
+      }
+    })
   }
 
   async randomiseSeedLetter(index) {
     if (!this.state.randomizedLetter.includes(index) && this.state.randomLetters > 0) {
-      this.setState({ randomizedLetter: [...this.state.randomizedLetter, index] });
-      this.setState({ randomLetters: this.state.randomLetters - 1 });
+      this.setState({ randomizedLetter: [...this.state.randomizedLetter, index] })
+      this.setState({ randomLetters: this.state.randomLetters - 1 })
     }
 
-    const letter = await popupMessanger.generateSeed(1);
+    const letter = await popupMessanger.generateSeed(1)
     this.setState(state => {
-      const seed = state.seed;
-      seed[index] = letter[0];
+      const seed = state.seed
+      seed[index] = letter[0]
       return {
         seed
-      };
-    });
+      }
+    })
   }
 
   copyToClipboard(e) {
     const seed = this.state.seed.toString().replace(/,/g, '')
-    const textField = document.createElement('textarea');
+    const textField = document.createElement('textarea')
     textField.innerText = seed;
-    document.body.appendChild(textField);
-    textField.select();
-    document.execCommand('copy');
-    textField.remove();
-    this.setState({ isCopiedToClipboard: true });
+    document.body.appendChild(textField)
+    textField.select()
+    document.execCommand('copy')
+    textField.remove()
+    this.setState({ isCopiedToClipboard: true })
   }
 
   async createWallet() {
@@ -144,25 +144,15 @@ class Init extends Component {
       try {
 
         //store the psw
-        popupMessanger.storePassword(this.state.psw);
+        await popupMessanger.storePassword(this.state.psw)
 
         //start encryption storage service
-        popupMessanger.initStorageDataService(this.state.psw);
+        await popupMessanger.initStorageDataService(this.state.psw)
 
-        const promisedSeed = await popupMessanger.generateSeed()
-        const seed = promisedSeed.toString().replace(/,/g, '');
-        const data = await IOTA.getAccountData(seed);
-        const network = await popupMessanger.getCurrentNetwork();
-
-        const account = {
-          seed: seed,
-          name: this.state.name,
-          network,
-          data: data
-        };
-
-        await popupMessanger.addAccount(account, network, true);
-        resolve();
+        await popupMessanger.addAccount(this.state.name, true)
+        
+        popupMessanger.writeOnLocalStorage()
+        resolve()
       } catch (err) {
         reject('Impossible to create the wallet');
       }

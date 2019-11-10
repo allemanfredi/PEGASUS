@@ -9,7 +9,6 @@ class Add extends Component {
   constructor(props, context) {
     super(props, context);
 
-    this.addAccount = this.addAccount.bind(this)
     this.goBack = this.goBack.bind(this)
     this.goOn = this.goOn.bind(this)
     this.updateStatusInitialization = this.updateStatusInitialization.bind(this)
@@ -28,17 +27,17 @@ class Add extends Component {
       showAlert: false,
       alertType: '',
       alertText: '',
-    };
+    }
   }
 
   async componentDidMount() {
     const seed = await popupMessanger.generateSeed();
-    this.setState({ seed });
+    this.setState({ seed })
   }
 
   goBack() {
-    this.updateStatusInitialization(this.state.indexInitialization, false);
-    this.setState({ indexInitialization: this.state.indexInitialization - 1 });
+    this.updateStatusInitialization(this.state.indexInitialization, false)
+    this.setState({ indexInitialization: this.state.indexInitialization - 1 })
   }
 
   async goOn() {
@@ -53,11 +52,12 @@ class Add extends Component {
         return
       }
     }
-    this.updateStatusInitialization(this.state.indexInitialization, true);
-    this.setState({ indexInitialization: this.state.indexInitialization + 1 });
+    this.updateStatusInitialization(this.state.indexInitialization, true)
+    this.setState({ indexInitialization: this.state.indexInitialization + 1 })
     if (this.state.indexInitialization === 2) {
       this.setState({ isLoading: true })
-      await this.addAccount()
+      await popupMessanger.addAccount(this.state.name, true)
+      await popupMessanger.writeOnLocalStorage()
       this.setState({ isLoading: false })
       this.props.onBack()
     }
@@ -65,29 +65,29 @@ class Add extends Component {
 
   updateStatusInitialization(index, action) {
     this.setState(state => {
-      const initialization = state.initialization;
-      initialization[index] = false;
+      const initialization = state.initialization
+      initialization[index] = false
       action ? initialization[index + 1] = true : initialization[index - 1] = true;
       return {
         initialization,
-      };
-    });
+      }
+    })
   }
 
   async randomiseSeedLetter(index) {
     if (!this.state.randomizedLetter.includes(index) && this.state.randomLetters > 0) {
-      this.setState({ randomizedLetter: [...this.state.randomizedLetter, index] });
-      this.setState({ randomLetters: this.state.randomLetters - 1 });
+      this.setState({ randomizedLetter: [...this.state.randomizedLetter, index] })
+      this.setState({ randomLetters: this.state.randomLetters - 1 })
     }
 
-    const letter = await popupMessanger.generateSeed(1);
+    const letter = await popupMessanger.generateSeed(1)
     this.setState(state => {
-      const seed = state.seed;
-      seed[index] = letter[0];
+      const seed = state.seed
+      seed[index] = letter[0]
       return {
         seed
-      };
-    });
+      }
+    })
   }
 
   copyToClipboard(e) {
@@ -101,26 +101,6 @@ class Add extends Component {
     this.setState({ isCopiedToClipboard: true })
   }
 
-  async addAccount() {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const promisedSeed = await popupMessanger.generateSeed()
-        const seed = promisedSeed.toString().replace(/,/g, '')
-        const data = await IOTA.getAccountData(seed)
-        const account = {
-          seed: seed,
-          name: this.state.name,
-          network: this.props.network,
-          data: data
-        };
-        popupMessanger.addAccount(account, this.props.network, true)
-        resolve(account);
-      } catch (err) {
-        reject('Impossible to create the account')
-      }
-    });
-  }
-
   onCloseAlert() {
     this.setState({
       showAlert: false
@@ -131,92 +111,106 @@ class Add extends Component {
     return (
       <React.Fragment>
         {
-          this.state.showAlert ?
-            <Alert type={this.state.alertType}
-              text={this.state.alertText}
-              onClose={this.onCloseAlert}
-            /> 
-          : ''
+          this.state.showAlert 
+            ? <Alert type={this.state.alertType}
+                text={this.state.alertText}
+                onClose={this.onCloseAlert}
+              /> 
+            : ''
         }
-        {this.state.isLoading ?
-          <Loader />
-          : (<div>
+        {
+          this.state.isLoading 
+            ? <Loader />
+            : 
+            <React.Fragment>
             {
-              this.state.initialization[0] ?
-                <div className="container">
-                  <div className='row mt-5 mb-3'>
-                    <div className='col-12 text-center text-lg text-blue'>Let's add a name</div>
-                  </div>
-                  <div className='row mt-8'>
-                    <div className='col-12'>
-                      <label htmlFor='inp-name' className='inp'>
-                        <input value={this.state.name} onChange={e => { this.setState({ name: e.target.value }); }} type='text' id='inp-name' placeholder='&nbsp;' />
-                        <span className='label'>name</span>
-                        <span className='border'></span>
-                      </label>
+              this.state.initialization[0] 
+                ? <div className="container">
+                    <div className='row mt-5 mb-3'>
+                      <div className='col-12 text-center text-lg text-blue'>Let's add a name</div>
+                    </div>
+                    <div className='row mt-8'>
+                      <div className='col-12'>
+                        <label htmlFor='inp-name' className='inp'>
+                          <input value={this.state.name} onChange={e => { this.setState({ name: e.target.value }); }} type='text' id='inp-name' placeholder='&nbsp;' />
+                          <span className='label'>name</span>
+                          <span className='border'></span>
+                        </label>
+                      </div>
                     </div>
                   </div>
-                </div>
                 : ''
-              }
-            {this.state.initialization[1] ?
-              <div className="container">
-                <div className='row mt-2'>
-                  <div className='col-12 text-center text-lg text-blue'>
-                    Let's generate a seed
-                                    </div>
-                </div>
-                <div className='row mb-2 mt-1'>
-                  <div className='col-12 text-center'>
-                    Press <i className='text-blue text-bold'>{this.state.randomLetters >= 0 ? this.state.randomLetters : 0}</i> more letters to randomise them
-                                    </div>
-                </div>
-                {[0, 9, 18, 27, 36, 45, 54, 63, 72].map(item => {
-                  return (
-                    <div className='row pl-3'>
-                      <div className='col-1'></div>
-                      {Array.from(new Array(9), (x, i) => i + item).map(index => {
-                        return (
-                          <div className='col-1'>
-                            <div onClick={() => this.randomiseSeedLetter(index)} className='container-letter'>{this.state.seed[index]}</div>
-                          </div>
-                        );
-                      })}
-                      <div className='col-1'></div>
-                    </div>
-                  );
-                })}
-              </div>
-              : ''
             }
             {
-              this.state.initialization[2] ?
-                <div className="container">
-                  <div className='row mt-3 mb-3'>
-                    <div className='col-12 text-center text-lg text-blue'>Let's export the seed</div>
-                  </div>
-                  <div className='row mt-4'>
-                    <div className='col-12 text-center text-bold'>Take care to copy the seed in order to correctly reinitialize the wallet </div>
-                  </div>
-                  <div className='row mt-5'>
-                    <div className='col-1'></div>
-                    <div className='col-10 text-center text-no-overflow text-xxs'>
-                      {this.state.seed.toString().replace(/,/g, '')}
+              this.state.initialization[1] 
+                ? <div className="container">
+                    <div className='row mt-2'>
+                      <div className='col-12 text-center text-lg text-blue'>
+                        Let's generate a seed
+                      </div>
                     </div>
-                    <div className='col-1'></div>
+                    <div className='row mb-2 mt-1'>
+                      <div className='col-12 text-center'>
+                        Press <i className='text-blue text-bold'>{this.state.randomLetters >= 0 ? this.state.randomLetters : 0}</i> more letters to randomise them
+                      </div>
+                    </div>
+                    {
+                      [0, 9, 18, 27, 36, 45, 54, 63, 72].map(item => {
+                        return (
+                          <div className='row pl-3'>
+                            <div className='col-1'></div>
+                            {
+                              Array.from(new Array(9), (x, i) => i + item).map(index => {
+                                return (
+                                  <div className='col-1'>
+                                    <div onClick={() => this.randomiseSeedLetter(index)} className='container-letter'>{this.state.seed[index]}</div>
+                                  </div>
+                                )
+                              })
+                            }
+                            <div className='col-1'></div>
+                          </div>
+                        );
+                      })
+                    }
                   </div>
-                  <div className='row mt-6'>
-                    <div className='col-12 text-center'>
-                      <button onClick={this.copyToClipboard} className='btn btn-blue text-bold btn-big'><span className='fa fa-clipboard'></span> Copy to clipboard</button>
+                : ''
+            }
+            {
+              this.state.initialization[2] 
+                ? <div className="container">
+                    <div className='row mt-3 mb-3'>
+                      <div className='col-12 text-center text-lg text-blue'>Let's export the seed</div>
+                    </div>
+                    <div className='row mt-4'>
+                      <div className='col-12 text-center text-bold'>Take care to copy the seed in order to correctly reinitialize the wallet </div>
+                    </div>
+                    <div className='row mt-5'>
+                      <div className='col-1'></div>
+                      <div className='col-10 text-center text-no-overflow text-xxs'>
+                        {this.state.seed.toString().replace(/,/g, '')}
+                      </div>
+                      <div className='col-1'></div>
+                    </div>
+                    <div className='row mt-6'>
+                      <div className='col-12 text-center'>
+                        <button onClick={this.copyToClipboard} 
+                          className='btn btn-blue text-bold btn-big'>
+                            <span className='fa fa-clipboard'></span> Copy to clipboard
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              : ''
+                : ''
             }
             <div className='container-menu-init'>
               <div className='row'>
                 <div className='col-6 text-center pl-0 pr-0'>
-                  <button disabled={this.state.initialization[0] ? true : false} onClick={this.goBack} type='submit' className='btn btn-light-blue text-bold no-border'><span className='fa fa-arrow-left'></span></button>
+                  <button disabled={this.state.initialization[0] ? true : false} 
+                    onClick={this.goBack} type='submit' 
+                    className='btn btn-light-blue text-bold no-border'>
+                      <span className='fa fa-arrow-left'></span>
+                  </button>
                 </div>
                 <div className='col-6 text-center pl-0 pr-0'>
                   <button disabled={this.state.initialization[0] ? (this.state.name.length > 0 ? false : true) :
@@ -229,12 +223,11 @@ class Add extends Component {
                 </div>
               </div>
             </div>
-
-          </div>
-          )}
+          </React.Fragment>
+          }
       </React.Fragment>
-    );
+    )
   }
 }
 
-export default Add;
+export default Add

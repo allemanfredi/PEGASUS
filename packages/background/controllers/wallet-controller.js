@@ -300,44 +300,49 @@ class WalletController extends EventEmitter {
     }
   }
 
-  addAccount ({ account, network, isCurrent }) {
+  async addAccount ({ name, isCurrent }) {
     if (isCurrent) {
       const data = this.storageController.getData()
       data.forEach(account => { account.current = false })
       this.storageController.setData(data)
     }
 
-    account.data.balance = {
+    const network = this.getCurrentNetwork()
+    const iota = composeAPI({ provider: network.provider })
+    const seed = this.generateSeed().toString().replace(/,/g, '')
+    const accountData = await iota.getAccountData(seed, { start: 0, security: 2 })
+
+    accountData.balance = {
       testnet: 0,
       mainnet: 0
     }
 
     const key = this.getKey()
-    const eseed = Utils.aes256encrypt(account.seed, key)
+    const eseed = Utils.aes256encrypt(seed, key)
 
-    const obj = {
-      name: account.name,
+    const account = {
+      name: name,
       seed: eseed,
       transactions: [],
-      data: account.data,
+      data: accountData,
       current: Boolean(isCurrent),
-      id: Utils.sha256(account.name)
+      id: Utils.sha256(name)
     }
 
     try {
       const data = this.storageController.getData()
 
-      const alreadyExists = data.filter(account => account.id === obj.id)
+      const alreadyExists = data.filter(a => a.id === account.id)
       if (alreadyExists.length > 0) {
         return null
       }
 
-      data.push(obj)
+      data.push(account)
       this.storageController.setData(data)
 
       this.emit('setProvider', network.provider)
-      this.emit('setAccount', obj)
-      return obj
+      this.emit('setAccount', account)
+      return
     } catch (err) {
       throw new Error(err)
     }

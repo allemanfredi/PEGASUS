@@ -129,7 +129,7 @@ class Settings extends Component {
               {
                 this.state.accounts.map(account => {
                   return (
-                    <li className='sidebar-brand'>
+                    <li className='sidebar-brand cursor-pointer'>
                       <div className='row'>
                         <div className='col-2'><i className='fa fa-user'></i></div>
                         <div className='col-8'>
@@ -143,7 +143,7 @@ class Settings extends Component {
                 })
               }
               <hr />
-              <li className='sidebar-brand mt-1 mb-1'>
+              <li className='sidebar-brand mt-1 mb-1 cursor-pointer'>
                 <div className='row'>
                   <div className='col-2 text-center'><i className='fa fa-wpexplorer'></i></div>
                   <div className='col-10 text-left'>
@@ -154,7 +154,7 @@ class Settings extends Component {
                 </div>
               </li>
               <hr />
-              <li className='sidebar-brand mt-1'>
+              <li className='sidebar-brand mt-1 cursor-pointer'>
                 <div className='row'>
                   <div className='col-2 text-center'><i className='fa fa-plus'></i></div>
                   <div className='col-10 text-left'>
@@ -164,7 +164,7 @@ class Settings extends Component {
                   </div>
                 </div>
               </li>
-              <li className='sidebar-brand'>
+              <li className='sidebar-brand cursor-pointer'>
                 <div className='row'>
                   <div className='col-2 text-center'><i className='fa fa-sign-out'></i></div>
                   <div className='col-10 text-left'>
