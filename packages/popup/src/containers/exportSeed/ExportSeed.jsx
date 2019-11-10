@@ -45,7 +45,7 @@ class ExportSeed extends Component {
               !this.state.seed 
                 ? 'Insert your password to export the seed'
                 : 'Please keep it as safely as possible!'
-            }'
+            }
           </div>
         </div>
         {

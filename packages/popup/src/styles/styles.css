@@ -578,6 +578,7 @@ header{
 .container-hidden-network-body{
     color: white;
     padding-left: 5px;
+    padding-right: 5px;
 }
 
 .container-hidden-network-item{

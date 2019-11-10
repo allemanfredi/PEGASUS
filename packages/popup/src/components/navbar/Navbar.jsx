@@ -54,31 +54,36 @@ export default class Navbar extends Component {
       <div ref={ref => this.wrapperRef = ref} className='bg-darkblue'>
         <div className='row text-center '>
           {
-            this.props.showBtnSettings ?
-            <div className='col-2'>
-              <button onClick={() => this.props.onClickSettings()} className='btn btn-icon'><i className='fa fa-bars'></i></button>
-            </div>
-            : ''
+            this.props.showBtnSettings 
+              ? <div className='col-2'>
+                  <button onClick={() => this.props.onClickSettings()} className='btn btn-icon'><i className='fa fa-bars'></i></button>
+                </div>
+              : ''
           }
-          {this.props.showBtnBack ?
-            <div className='col-2'>
-              <button onClick={() => this.props.onBack()} className='btn btn-icon'><i className='fa fa-arrow-left'></i></button>
-            </div>
-            : ''}
+          {
+            this.props.showBtnBack 
+              ? <div className='col-2'>
+                  <button onClick={() => this.props.onBack()} className='btn btn-icon'><i className='fa fa-arrow-left'></i></button>
+                </div>
+              : ''
+          }
           <div className='col-8 text-center my-auto'>
             <div className='text-white text-sm'>{this.props.text}</div>
           </div>
           {
-            this.props.showBtnEllipse ?
-            <div className='col-2'>
-              <button onClick={() => this.setState({ showEllipseMenu: !this.state.showEllipseMenu })} className='btn btn-icon'><i className='fa fa-ellipsis-h'></i></button>
-            </div>
-            : ''
+            this.props.showBtnEllipse 
+              ? <div className='col-2'>
+                  <button onClick={() => this.setState({ showEllipseMenu: !this.state.showEllipseMenu })} 
+                    className='btn btn-icon'>
+                      <i className='fa fa-ellipsis-h'></i>
+                  </button>
+                </div>
+              : ''
           }
         </div>
         {
-          this.state.showEllipseMenu ?
-            <div className="container-ellipse-menu container">
+          this.state.showEllipseMenu 
+          ? <div className="container-ellipse-menu container">
               <div className="row mt-1 cursor-pointer" onClick={this.deleteAccount}>
                 <div className="col-2 text-white text-center text-xs"><span className='fa fa-trash-o'></span></div>
                 <div className="col-10 text-white text-xs">Delete account</div>
@@ -86,7 +91,9 @@ export default class Navbar extends Component {
               <div className="row mt-1 cursor-pointer">
                 <div className="col-2 text-white text-center text-xs"><span className='fa fa-wpexplorer'></span></div>
                 <div className="col-10 ">
-                  <a className="text-white text-xs cursor-pointer" href={this.props.network.link + 'address/' + this.props.account.data.latestAddress} target="_blank">View on explorer</a>
+                  <a className="text-white text-xs cursor-pointer" 
+                    href={this.props.network.link + 'address/' + this.props.account.data.latestAddress} 
+                    target="_blank">View on explorer</a>
                 </div>
               </div>
               <div className="row mt-1 cursor-pointer" onClick={this.exportSeed}>
@@ -98,17 +105,21 @@ export default class Navbar extends Component {
                 <div className="col-10 text-white text-xs">Import seed</div>
               </div>
               {
-                !this.props.network.default ? <hr className="bg-white mt-1 mb-1" /> : ''
+                !this.props.network.default 
+                  ? <hr className="bg-white mt-1 mb-1" /> 
+                  : ''
               }
               {
-                !this.props.network.default ?
-                <div className="row mt-1 cursor-pointer" onClick={this.deleteNetwork}>
-                  <div className="col-2 text-white text-center text-xs"><span className='fa fa-trash-o'></span></div>
-                  <div className="col-10 text-white text-xs">Delete current network</div>
-                </div> : ''
+                !this.props.network.default 
+                  ? <div className="row mt-1 cursor-pointer" onClick={this.deleteNetwork}>
+                      <div className="col-2 text-white text-center text-xs"><span className='fa fa-trash-o'></span></div>
+                      <div className="col-10 text-white text-xs">Delete current network</div>
+                    </div> 
+                  : ''
               }
             </div>
-          : ''}
+            : ''
+          }
       </div>
     )
   }
