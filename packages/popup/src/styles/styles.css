@@ -306,6 +306,9 @@ input#inp-edit {
     margin-top: 220px  !important;
 }
 
+.mb-05 {
+    margin-bottom: 5px !important;
+}
 .mb-1{
     margin-bottom:10px !important;
 }
@@ -461,16 +464,17 @@ input#inp-edit {
 .mini-spinner {
     display: inline-block;
     position: relative;
-    width: 12px;
-    height: 12px;
+    width: 18px;
+    height: 18px;
+    margin-bottom: 5px;
 }
 .mini-spinner div {
     box-sizing: border-box;
     display: block;
     position: absolute;
-    width: 6px;
-    height: 6px;
-    border: 6px solid darkblue;
+    width: 18px;
+    height: 18px;
+    border: 3px solid darkblue;
     border-radius: 50%;
     animation: mini-spinner 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
     border-color: darkblue transparent transparent transparent;
@@ -478,7 +482,7 @@ input#inp-edit {
 .mini-spinner div:nth-child(1) {
     animation-delay: -0.45s;
 }
-.lmini-spinner div:nth-child(2) {
+.mini-spinner div:nth-child(2) {
     animation-delay: -0.3s;
 }
 .mini-spinner div:nth-child(3) {
@@ -486,12 +490,13 @@ input#inp-edit {
 }
 @keyframes mini-spinner {
     0% {
-        transform: rotate(0deg);
+      transform: rotate(0deg);
     }
     100% {
-        transform: rotate(360deg);
+      transform: rotate(360deg);
     }
 }
+  
 
 /*UTILS*/
 .break-text {

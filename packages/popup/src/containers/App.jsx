@@ -25,12 +25,13 @@ class App extends Component {
       networks: [],
       account: {},
       showHeader: false,
-      duplex: new Duplex.Popup(),
     }
+
+    this.duplex = new Duplex.Popup()
   }
 
   async componentWillMount() {
-    popupMessanger.init(this.state.duplex)
+    popupMessanger.init(this.duplex)
     this.bindDuplexRequests()
 
     //check if the current network has been already set, if no => set to testnet (options[0])
@@ -74,12 +75,12 @@ class App extends Component {
   }
 
   bindDuplexRequests() {
-    this.state.duplex.on('setPayments', payments => this.main.current.changePayments(payments))
-    this.state.duplex.on('setConfirmationLoading', isLoading => this.main.current.setConfirmationLoading(isLoading))
-    this.state.duplex.on('setConfirmationError', error => this.main.current.setConfirmationError(error))
-    this.state.duplex.on('setAccount', account => this.setState({ account }))
-    this.state.duplex.on('setNetworks', networks => this.setState({ networks }))
-    this.state.duplex.on('setNetwork', network => this.setState({ network }))
+    this.duplex.on('setPayments', payments => this.main.current.changePayments(payments))
+    this.duplex.on('setConfirmationLoading', isLoading => this.main.current.setConfirmationLoading(isLoading))
+    this.duplex.on('setConfirmationError', error => this.main.current.setConfirmationError(error))
+    this.duplex.on('setAccount', account => this.setState({ account }))
+    this.duplex.on('setNetworks', networks => this.setState({ networks }))
+    this.duplex.on('setNetwork', network => this.setState({ network }))
   }
 
   render() {

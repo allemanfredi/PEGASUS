@@ -873,7 +873,6 @@ class WalletController extends EventEmitter {
   }
 
   async reloadAccountData () {
-    this.emit('setAccount', {})
     clearInterval(this.accountDataHandler)
     this.loadAccountData()
     this.accountDataHandler = setInterval(() => this.loadAccountData(), 90000)
@@ -886,6 +885,7 @@ class WalletController extends EventEmitter {
     const connection = this.connectorController.getConnection(website.origin)
     let mockConnection = connection
     let isPopupAlreadyOpened = false
+
     if (!connection) {
       this.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
       this.openPopup()
@@ -901,7 +901,7 @@ class WalletController extends EventEmitter {
       this.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
       if (!this.popup)
         this.openPopup()
-        isPopupAlreadyOpened = true
+      isPopupAlreadyOpened = true
     }
 
     const state = this.getState()

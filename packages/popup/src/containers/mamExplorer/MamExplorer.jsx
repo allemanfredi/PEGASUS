@@ -1,47 +1,48 @@
-import React, { Component } from 'react';
-import ReactJson from 'react-json-view';
-import { popupMessanger } from '@pegasus/utils/messangers';
-import Utils from '@pegasus/utils/utils';
-import Duplex from '@pegasus/utils/duplex';
-import Alert from '../../components/alert/Alert';
-import Picklist from '../../components/picklist/Picklist';
+import React, { Component } from 'react'
+import ReactJson from 'react-json-view'
+import { popupMessanger } from '@pegasus/utils/messangers'
+import Utils from '@pegasus/utils/utils'
+import Duplex from '@pegasus/utils/duplex'
+import Alert from '../../components/alert/Alert'
+import Picklist from '../../components/picklist/Picklist'
 
 class MamExplorer extends Component {
 
   constructor(props, context) {
 
-    super(props, context);
+    super(props, context)
 
-    this.onFetch = this.onFetch.bind(this);
-    this.onClickDetail = this.onClickDetail.bind(this);
+    this.onFetch = this.onFetch.bind(this)
+    this.onClickDetail = this.onClickDetail.bind(this)
 
     this.state = {
       mode: 'mode',
       options: ['private', 'public', 'restricted'],
       root: '',
       sideKey: '',
-      duplex: new Duplex.Popup(),
       data: [],
       opened: [],
       showAlert: false,
       alertText: '',
       alertType: ''
-    };
+    }
+
+    this.duplex = new Duplex.Popup()
   }
 
   async componentWillMount() {
-    this.state.duplex.on('newMamData', data => this.setState(
+    this.duplex.on('newMamData', data => this.setState(
       {
         opened: [...this.state.opened, false],
         data: [...this.state.data, data]
       }
-    ));
+    ))
   }
 
   onClickDetail(index) {
     this.setState(prevState => {
-      const opened = prevState.opened;
-      opened[index] = !opened[index];
+      const opened = prevState.opened
+      opened[index] = !opened[index]
       return {
         opened
       }
@@ -53,24 +54,24 @@ class MamExplorer extends Component {
     //check if root is a valid address
     if (!Utils.isValidAddress(this.state.root)) {
       this.setState(prevState => {
-        const alertType = 'error';
+        const alertType = 'error'
         const alertText = 'Invalid root'
-        const showAlert = true;
+        const showAlert = true
 
         return {
           alertText,
           alertType,
           showAlert
         }
-      });
-      return;
+      })
+      return
     }
     const options = {
       root: this.state.root,
       mode: this.state.mode,
       sideKey: this.state.sideKey !== '' ? this.state.sideKey : null
     }
-    popupMessanger.startFetchMam(options);
+    popupMessanger.startFetchMam(options)
   }
 
   render() {
@@ -80,7 +81,11 @@ class MamExplorer extends Component {
           <div className='row mt-3'>
             <div className='col-12'>
               <label htmlFor='inp-root' className='inp'>
-                <input value={this.state.root} onChange={e => this.setState({ root: e.target.value })} type='text' id='inp-root' placeholder='&nbsp;' />
+                <input value={this.state.root}
+                  onChange={e => this.setState({ root: e.target.value })} 
+                  type='text' 
+                  id='inp-root'
+                  placeholder='&nbsp;'/>
                 <span className='label'>root</span>
                 <span className='border'></span>
               </label>
@@ -95,27 +100,32 @@ class MamExplorer extends Component {
             </div>
           </div>
           {
-            this.state.mode === 'restricted' ? (
-              <div className='row mt-3'>
-                <div className='col-12'>
-                  <label htmlFor='inp-address' className='inp'>
-                    <input value={this.state.sideKey} onChange={e => this.setState({ sideKey: e.target.value })} type='text' id='inp-sideKey' placeholder='&nbsp;' />
-                    <span className='label'>Side Key</span>
-                    <span className='border'></span>
-                  </label>
+            this.state.mode === 'restricted' 
+              ?
+                <div className='row mt-3'>
+                  <div className='col-12'>
+                    <label htmlFor='inp-address' className='inp'>
+                      <input value={this.state.sideKey} onChange={e => this.setState({ sideKey: e.target.value })} type='text' id='inp-sideKey' placeholder='&nbsp;' />
+                      <span className='label'>Side Key</span>
+                      <span className='border'></span>
+                    </label>
+                  </div>
                 </div>
-              </div>
-            ) : ''
+              : ''
           }
           <div className='row mt-3'>
             <div className='col-12 text-center'>
-              <button onClick={this.onFetch} disabled={this.state.root === '' || this.state.mode === 'mode' ? true : false} className='btn btn-blue text-bold btn-big'>Fetch</button>
+              <button onClick={this.onFetch} 
+                disabled={this.state.root === '' || this.state.mode === 'mode' ? true : false} 
+                className='btn btn-blue text-bold btn-big'>
+                  Fetch
+              </button>
             </div>
           </div>
           {
-            this.state.data.length > 0 ? 
-              <hr className="mt-3 mb-3" /> 
-            : ''
+            this.state.data.length > 0 
+              ? <hr className="mt-3 mb-3"/> 
+              : ''
           }
           {
             this.state.data.map((data, index) => {
@@ -132,13 +142,14 @@ class MamExplorer extends Component {
                         </div>
                       </div>
                       {
-                        this.state.opened[index] ?
-                          <div className="row mt-2">
+                        this.state.opened[index] 
+                        ?
+                         <div className="row mt-2">
                             <div className="col-12">
                               <ReactJson src={data} />
                             </div>
                           </div>
-                          : ''
+                        : ''
                       }
                     </div>
                   </div>
@@ -148,15 +159,16 @@ class MamExplorer extends Component {
           }
         </React.Fragment>
         {
-          this.state.showAlert ?
-            <Alert text={this.state.alertText}
-              type={this.state.alertType}
-              onClose={() => this.setState({ showAlert: false })} />
-          : ''
+          this.state.showAlert 
+            ?
+              <Alert text={this.state.alertText}
+                type={this.state.alertType}
+                onClose={() => this.setState({ showAlert: false })} />
+            : ''
         }
       </div>
     )
   }
 }
 
-export default MamExplorer;
+export default MamExplorer

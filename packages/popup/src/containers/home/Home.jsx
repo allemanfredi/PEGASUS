@@ -14,6 +14,7 @@ import Navbar from '../../components/navbar/Navbar'
 import Alert from '../../components/alert/Alert'
 import { popupMessanger } from '@pegasus/utils/messangers'
 import Utils from '@pegasus/utils/utils'
+import Duplex from '@pegasus/utils/duplex'
 
 class Home extends Component {
   constructor(props, context) {
@@ -60,19 +61,15 @@ class Home extends Component {
       actionToConfirm: '',
       isLoading: false
     }
+
+    this.duplex = new Duplex.Popup()
   }
 
-  /*static getDerivedStateFromProps(props, prevState, prevProps) {
-    if (
-      JSON.stringify(props.account) !== JSON.stringify(prevProps.account) && 
-      prevState.isLoading
-      ) {
-      return {
-        isLoading: false
-      }
-    }
-    return null
-  }*/
+  async componentWillMount() {
+    this.duplex.on('setAccount', () => this.setState({
+      isLoading: false
+    }))
+  }
 
   async onReload() {
     this.setState({
@@ -354,6 +351,7 @@ class Home extends Component {
                         <Transactions ref={this.transactions}
                           account={this.props.account}
                           network={this.props.network}
+                          isLoading={this.state.isLoading}
                           onReload={this.onReload}
                         />
                       </div>

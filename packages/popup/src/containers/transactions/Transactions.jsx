@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import Utils from '@pegasus/utils/utils'
 import IOTA from '@pegasus/utils/iota'
 import Details from '../details/Details'
+import MiniSpinner from '../../components/miniSpinner/MiniSpinner'
 
 class Transactions extends Component {
   constructor(props, context) {
@@ -70,9 +71,9 @@ class Transactions extends Component {
             <div className="col-6 text-left text-black text-gray text-xs">History</div>
             <div className="col-6 text-right">
             {
-              /*this.props.isLoading
+              this.props.isLoading
                 ? <MiniSpinner/>
-                :*/ <button onClick={() => this.props.onReload()} className="btn btn-icon-inverted">
+                : <button onClick={() => this.props.onReload()} className="btn btn-icon-inverted mb-05">
                     <i className="fa fa-refresh"></i>
                   </button>
             }
