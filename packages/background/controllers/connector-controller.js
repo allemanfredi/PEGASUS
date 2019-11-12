@@ -49,6 +49,31 @@ class ConnectorController {
     this.storageController.setConnections(updatedConnections)
   }
 
+  connect(uuid, resolve, website)  {
+    const connection = {
+      website,
+      requestToConnect : true,
+      connected: false,
+      enabled: false,
+    }
+
+    const connectionRequest = {
+      uuid,
+      resolve,
+      connection
+    }
+    this.setConnectionRequest(connectionRequest)
+
+    //if user call connect before log in, storage is not already set up so it is not possible to save/load data
+    //workardund -> keep in memory and once he login, store the data into storage and delete the variable
+    if (!this.storageController) {
+      this.setConnectionToStore(connection)
+    }
+    else {
+      this.pushConnection(connection)
+    }
+  }
+
   completeConnection(requests) {
     const website = this.getCurrentWebsite()
     const connectionRequest = this.getConnectionRequest()

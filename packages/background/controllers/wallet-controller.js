@@ -954,28 +954,7 @@ class WalletController extends EventEmitter {
 
   connect(uuid, resolve, website) {
     this.openPopup()
-    const connection = {
-      website,
-      requestToConnect : true,
-      connected: false,
-      enabled: false,
-    }
-
-    const connectionRequest = {
-      uuid,
-      resolve,
-      connection
-    }
-    this.connectorController.setConnectionRequest(connectionRequest)
-
-    //if user call connect before log in, storage is not already set up so it is not possible to save/load data
-    //workardund -> keep in memory and once he login, store the data into storage and delete the variable
-    if (!this.storageController) {
-      this.connectorController.setConnectionToStore(connection)
-    }
-    else {
-      this.connectorController.pushConnection(connection)
-    }
+    this.connectorController.connect(uuid, resolve, website)
   }
 
   getConnection(origin) {
