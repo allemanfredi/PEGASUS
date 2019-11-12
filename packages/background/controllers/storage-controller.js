@@ -3,8 +3,8 @@
 import Utils from '@pegasus/utils/utils'
 
 class StorageController {
-  constructor (encryptionkey) {
-    this.encryptionkey = encryptionkey
+  constructor () {
+    this.encryptionkey = null
     this.data = null
     this.connections = []
 
@@ -54,6 +54,37 @@ class StorageController {
     localStorage.setItem('data', edata)
     const econnections = Utils.aes256encrypt(JSON.stringify(this.connections), this.encryptionkey)
     localStorage.setItem('connections', econnections)
+  }
+
+  getSession() {
+    const session = localStorage.getItem('session')
+    return session
+  }
+
+  setSession(session) {
+    localStorage.setItem('session', session)
+  }
+
+  deleteSession() {
+    localStorage.removeItem('session')
+  }
+
+  getPasswordHash() {
+    const hpsw = localStorage.getItem('hpsw')
+    return hpsw
+  }
+
+  setPasswordHash(hash) {
+    localStorage.setItem('hpsw', hash)
+  }
+
+  setOptions(options) {
+    localStorage.setItem('options', JSON.stringify(options))
+  }
+
+  getOptions() {
+    const options = JSON.parse(localStorage.getItem('options'))
+    return options
   }
 }
 

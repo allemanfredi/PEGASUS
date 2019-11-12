@@ -25,6 +25,10 @@ class WalletController extends EventEmitter {
     this.accountDataHandler = false,
     this.website = null
 
+    this.notificationsController = new NotificationsController()
+    this.connectorController = new ConnectorController()
+    this.storageController = new StorageController()
+
     if (!this.isWalletSetup())
       this.setupWallet()
 
@@ -36,9 +40,6 @@ class WalletController extends EventEmitter {
     } else {
       this.customizatorController = Utils.requestHandler(new CustomizatorController(currentNetwork.provider))
     }
-
-    this.notificationsController = new NotificationsController()
-    this.connectorController = new ConnectorController()
 
     this.customizatorController.setWalletController(this)
 
@@ -68,12 +69,7 @@ class WalletController extends EventEmitter {
   }
 
   initStorageDataService (key) {
-    // allow to encrypt/decrypt the wallet
-    if (!this.storageController) {
-      this.storageController = new StorageController(key)
-    } else {
-      this.storageController.setEncryptionKey(key)
-    }
+    this.storageController.setEncryptionKey(key)
     this.connectorController.setStorageController(this.storageController)
   }
 
@@ -87,7 +83,7 @@ class WalletController extends EventEmitter {
     const hash = Utils.sha256(psw)
     try {
       this.password = psw
-      localStorage.setItem('hpsw', hash)
+      this.storageController.setPasswordHash(hash)
       return true
     } catch (err) {
       console.log(err)
@@ -97,7 +93,7 @@ class WalletController extends EventEmitter {
 
   comparePassword (psw) {
     let pswToCompare
-    if ((pswToCompare = localStorage.getItem('hpsw')) === null)
+    if ((pswToCompare = this.storageController.getPasswordHash()) === null)
       return false
     if (pswToCompare === Utils.sha256(psw))
       return true
@@ -111,7 +107,7 @@ class WalletController extends EventEmitter {
     const hash = Utils.sha256(psw)
     try {
       let pswToCompare
-      if ((pswToCompare = localStorage.getItem('hpsw')) === null)
+      if ((pswToCompare = this.storageController.getPasswordHash()) === null)
         return false
       if (pswToCompare === hash) {
         const account = this.getCurrentAccount()
@@ -172,7 +168,7 @@ class WalletController extends EventEmitter {
     const hash = Utils.sha256(psw)
     try {
       let pswToCompare
-      if ((pswToCompare = localStorage.getItem('hpsw')) === null)
+      if ((pswToCompare = this.storageController.getPasswordHash()) === null)
         return false
       if (pswToCompare === hash) {
         const seed = this.getCurrentSeed()
@@ -199,9 +195,9 @@ class WalletController extends EventEmitter {
   // return the account with current = true and the reletated network
   setCurrentNetwork (network) {
     try {
-      const options = JSON.parse(localStorage.getItem('options'))
+      const options = this.storageController.getOptions()
       options.selectedNetwork = network
-      localStorage.setItem('options', JSON.stringify(options))
+      this.storageController.setOptions(options)
 
       // change pagehook
       this.emit('setProvider', network.provider)
@@ -223,9 +219,9 @@ class WalletController extends EventEmitter {
 
   getCurrentNetwork () {
     try {
-      const options = JSON.parse(localStorage.getItem('options'))
+      const options = this.storageController.getOptions()
       if (!options) {
-        localStorage.setItem('options', JSON.stringify({}))
+        this.storageController.setOptions({})
         return {}
       }
       return options.selectedNetwork
@@ -236,9 +232,9 @@ class WalletController extends EventEmitter {
 
   getAllNetworks () {
     try {
-      const options = JSON.parse(localStorage.getItem('options'))
+      const options = this.storageController.getOptions()
       if (!options) {
-        localStorage.setItem('options', JSON.stringify({}))
+        this.storageController.setOptions({})
         return {}
       }
       return options.networks
@@ -250,12 +246,12 @@ class WalletController extends EventEmitter {
   addNetwork (network) {
     // TODO check that the name does not exists
     try {
-      let options = JSON.parse(localStorage.getItem('options'))
+      const options = this.storageController.getOptions()
       if (!options.networks)
         options.networks = []
 
       options.networks.push(network)
-      localStorage.setItem('options', JSON.stringify(options))
+      this.storageController.setOptions(options)
 
       this.emit('setNetworks', options.networks)
       return
@@ -267,7 +263,7 @@ class WalletController extends EventEmitter {
 
   deleteCurrentNetwork () {
     try {
-      let options = JSON.parse(localStorage.getItem('options'))
+      const options = this.storageController.getOptions()
       const currentNetwork = options.selectedNetwork
 
       const networks = options.networks.filter(network => currentNetwork.name !== network.name)
@@ -277,7 +273,7 @@ class WalletController extends EventEmitter {
       const selectedNetwork = options.networks[0]
       options.selectedNetwork = selectedNetwork
 
-      localStorage.setItem('options', JSON.stringify(options))
+      this.storageController.setOptions(options)
 
       this.emit('setNetworks', options.networks)
       this.emit('setNetwork', selectedNetwork)
@@ -523,7 +519,7 @@ class WalletController extends EventEmitter {
   startSession () {
     try {
       const date = new Date()
-      localStorage.setItem('session', date.getTime())
+      this.storageController.setSession(date.getTime())
       this.setState(APP_STATE.WALLET_UNLOCKED)
       return true
     } catch (err) {
@@ -559,7 +555,7 @@ class WalletController extends EventEmitter {
         return
       }
 
-      const time = localStorage.getItem('session')
+      const time = this.storageController.getSession()
       if (time) {
         const date = new Date()
         const currentTime = date.getTime()
@@ -587,7 +583,7 @@ class WalletController extends EventEmitter {
   deleteSession () {
     try {
       this.storageController.writeToStorage()
-      localStorage.removeItem('session')
+      this.storageController.deleteSession()
       this.setState(APP_STATE.WALLET_LOCKED)
       this.password = false
       return true
