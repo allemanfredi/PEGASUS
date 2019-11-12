@@ -995,54 +995,24 @@ class WalletController extends EventEmitter {
     this.connectorController.updateConnection(connection)
   }
 
-  completeConnection() {
-    const connectionRequest = this.connectorController.getConnectionRequest()
-    if (connectionRequest) {
-      connectionRequest.resolve({
-        data: {
-          connected: true
-        },
-        success: true,
-        uuid: connectionRequest.uuid
-      })
-      this.connectorController.setConnectionRequest(null)
-    }
-
-    //in case there was already the connection stored
-    const website = this.getWebsite()
-    this.requests.forEach(request => {
-      if (request.connection.website.origin === website.origin) {
-        request.connection.requestToConnect = false
-        request.connection.enabled = true
-        request.connection.connected = true
-      }
-    })
+  completeConnection() { 
+    const requests = this.connectorController.completeConnection(this.requests)
+    this.requests = requests
   }
 
   rejectConnection(){
-    const connectionRequest = this.connectorController.getConnectionRequest()
-    if (connectionRequest) {
-      connectionRequest.resolve({
-        data: {
-          connected: false
-        },
-        success: false,
-        uuid: connectionRequest.uuid
-      })
-      this.connectorController.setConnectionRequest(null)
-    }
-
-    //in case there was already the connection stored
-    const website = this.getWebsite()
-    this.requests.forEach(request => {
-      if (request.connection.website.origin === website.origin) {
-        request.connection.requestToConnect = false
-        request.connection.enabled = false
-        request.connection.connected = false
-      }
-    })
-
+    const requests = this.connectorController.rejectConnection(this.requests)
+    this.requests = requests
     this.closePopup()
+  }
+
+  setWebsite(website) {
+    this.connectorController.setCurrentWebsite(website)
+  }
+
+  getWebsite() {
+    const website = this.connectorController.getCurrentWebsite()
+    return website
   }
 
   startFetchMam (options) {
@@ -1050,14 +1020,6 @@ class WalletController extends EventEmitter {
     MamController.fetch(network.provider, options.root, options.mode, options.sideKey, data => {
       backgroundMessanger.newMamData(data)
     })
-  }
-
-  setWebsite(website) {
-    this.website = website
-  }
-
-  getWebsite() {
-    return this.website
   }
 
   _updateAccountTransactionsPersistence(account, transactions) {
