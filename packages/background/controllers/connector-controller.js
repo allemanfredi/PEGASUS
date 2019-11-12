@@ -83,7 +83,7 @@ class ConnectorController {
         data: {
           connected: false
         },
-        success: false,
+        success: true,
         uuid: connectionRequest.uuid
       })
       this.setConnectionRequest(null)
