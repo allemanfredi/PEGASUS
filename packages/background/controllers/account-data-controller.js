@@ -60,8 +60,53 @@ const AccountDataController = {
       }
     })
     return transactions
-  }
+  },
 
+  updateAccountTransactionsPersistence(account, transactions) {
+    for (let tx of transactions) {
+      for (let tx2 of account.transactions) {
+        if (
+          tx.bundle === tx2.bundle &&
+          tx.status !== tx2.status
+        ) {
+          tx2.status = tx.status
+        }
+      }
+    }
+    return account
+  },
+
+  getTransactionsJustConfirmed(account, transactions) {
+    const transactionsJustConfirmed = []
+    for (let tx of transactions) {
+      for (let tx2 of account.transactions) {
+        if (
+          tx.bundle === tx2.bundle &&
+          tx.status !== tx2.status &&
+          tx.status === true
+        ) {
+          transactionsJustConfirmed.push(tx)
+        }
+      }
+    }
+    return transactionsJustConfirmed
+  },
+
+  getNewTransactionsFromAll (account, transactions) {
+    const newTxs = []
+    for (let txToCheck of transactions) {
+      let isNew = true
+      for (let tx of account.transactions ) {
+        if (tx.bundle === txToCheck.bundle) {
+          isNew = false
+        }
+      }
+      if (isNew) {
+        newTxs.push(txToCheck)
+      }
+    }
+    return newTxs
+  }
 }
 
 export default AccountDataController

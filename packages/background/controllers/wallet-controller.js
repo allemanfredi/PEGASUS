@@ -834,7 +834,7 @@ class WalletController extends EventEmitter {
     const { transactions, newData } = await AccountDataController.retrieveAccountData(seed, network, account)
 
     //show notification
-    const transactionsJustConfirmed = this._getTransactionsJustConfirmed(account, transactions)
+    const transactionsJustConfirmed = AccountDataController.getTransactionsJustConfirmed(account, transactions)
     transactionsJustConfirmed.forEach(transaction => {
       this.notificationsController.showNotification(
         'Transaction Confirmed',
@@ -843,8 +843,8 @@ class WalletController extends EventEmitter {
       )
     })
     
-    account = this._updateAccountTransactionsPersistence(account, transactions)
-    const newTransactions = this._getNewTransactionsFromAll(account, transactions)
+    account = AccountDataController.updateAccountTransactionsPersistence(account, transactions)
+    const newTransactions = AccountDataController.getNewTransactionsFromAll(account, transactions)
 
     const updatedData = Object.assign({}, newData, {
       transactions: [...newTransactions, ...account.transactions]
@@ -995,52 +995,6 @@ class WalletController extends EventEmitter {
     MamController.fetch(network.provider, options.root, options.mode, options.sideKey, data => {
       backgroundMessanger.newMamData(data)
     })
-  }
-
-  _updateAccountTransactionsPersistence(account, transactions) {
-    for (let tx of transactions) {
-      for (let tx2 of account.transactions) {
-        if (
-          tx.bundle === tx2.bundle &&
-          tx.status !== tx2.status
-        ) {
-          tx2.status = tx.status
-        }
-      }
-    }
-    return account
-  }
-
-  _getTransactionsJustConfirmed(account, transactions) {
-    const transactionsJustConfirmed = []
-    for (let tx of transactions) {
-      for (let tx2 of account.transactions) {
-        if (
-          tx.bundle === tx2.bundle &&
-          tx.status !== tx2.status &&
-          tx.status === true
-        ) {
-          transactionsJustConfirmed.push(tx)
-        }
-      }
-    }
-    return transactionsJustConfirmed
-  }
-
-  _getNewTransactionsFromAll (account, transactions) {
-    const newTxs = []
-    for (let txToCheck of transactions) {
-      let isNew = true
-      for (let tx of account.transactions ) {
-        if (tx.bundle === txToCheck.bundle) {
-          isNew = false
-        }
-      }
-      if (isNew) {
-        newTxs.push(txToCheck)
-      }
-    }
-    return newTxs
   }
 }
 
