@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { popupMessanger } from '@pegasus/utils/messangers'
 import Loader from '../../components/loader/Loader'
 import Utils from '@pegasus/utils/utils'
+import randomUUID from 'uuid/v4'
 
 class Send extends Component {
   constructor(props, context) {
@@ -44,12 +45,16 @@ class Send extends Component {
       value: this.state.value ? this.state.value : 0,
       message: this.state.message,
     }]
+
+    const uuid = randomUUID()
+
     const data = {
+      uuid,
       args: [
         transfer,
       ]
     }
-
+    
     popupMessanger.pushPaymentFromPopup(data)
     this.props.onAskConfirm()
   }

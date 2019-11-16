@@ -62,10 +62,7 @@ const backgroundScript = {
     duplex.on('setState', this.walletController.setState)
 
     duplex.on('getPayments', this.walletController.getPayments)
-    duplex.on('pushPaymentFromPopup', ({ data, resolve }) => {
-      const uuid = randomUUID()
-      this.walletController.pushPaymentFromPopup(data, uuid, resolve)
-    })
+    duplex.on('pushPaymentFromPopup',this.walletController.pushPaymentFromPopup)
     duplex.on('rejectAllPayments', this.walletController.rejectAllPayments)
     duplex.on('rejectPayment', this.walletController.rejectPayment)
     duplex.on('confirmPayment', this.walletController.confirmPayment)
@@ -87,9 +84,9 @@ const backgroundScript = {
     duplex.on('updateConnection', this.walletController.updateConnection)
     duplex.on('completeConnection', this.walletController.completeConnection)
     duplex.on('rejectConnection', this.walletController.rejectConnection)
+    duplex.on('getWebsite', this.walletController.getWebsite)
 
     duplex.on('startFetchMam', this.walletController.startFetchMam)
-    duplex.on('getWebsite', this.walletController.getWebsite)
   },
 
   bindTabDuplex () {
@@ -194,8 +191,6 @@ const backgroundScript = {
           break
         }
         case 'prepareTransfer': {
-          // in order to not open extensionizer popup
-          data['isPopup'] = false
           this.walletController.pushPayment(data, uuid, resolve, website)
           break
         }

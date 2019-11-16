@@ -702,7 +702,7 @@ class WalletController extends EventEmitter {
     return
   }
 
-  pushPaymentFromPopup (payment, uuid, resolve) {
+  pushPaymentFromPopup (payment, resolve) {
     const currentState = this.getState()
     if (currentState > APP_STATE.WALLET_LOCKED)
       this.setState(APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
@@ -711,7 +711,7 @@ class WalletController extends EventEmitter {
 
     const obj = {
       payment,
-      uuid,
+      uuid: payment.uuid,
       resolve
     }
 
