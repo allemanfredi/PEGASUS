@@ -26,11 +26,17 @@ class PegasusEngine {
     const duplex = new Duplex.Host()
     backgroundMessanger.init(duplex)
 
+    /* C O N T R O L L E R S */
     this.popupController = new PopupController()
-    this.customizatorController = new CustomizatorController()
-    this.notificationsController = new NotificationsController()
     this.connectorController = new ConnectorController()
     this.storageController = new StorageController()
+    this.notificationsController = new NotificationsController()
+
+    this.customizatorController = new CustomizatorController({
+      popupController: this.popupController,
+      connectorController: this.connectorController,
+      walletController: null //DEFINED BELOW
+    })
 
     this.networkController = new NetworkController({
       storageController: this.storageController,
@@ -61,6 +67,11 @@ class PegasusEngine {
       networkController: this.networkController
     })
 
+    this.customizatorController.setWalletController(
+      this.walletController
+    )
+    /* E N D   C O N T R O L L E R S */
+
     if (!this.walletController.isWalletSetup()) {
       this.walletController.setupWallet()
     }
@@ -73,9 +84,7 @@ class PegasusEngine {
     } else {
       this.customizatorController.setProvider(currentNetwork.provider)
     }
-
-    this.customizatorController.setWalletController(this)
-
+    
     this.sessionController.checkSession()
     setInterval(() => this.sessionController.checkSession(), SESSION_TIME)
   }
@@ -243,12 +252,67 @@ class PegasusEngine {
   closePopup () {
     this.popupController.closePopup()
   }
-  //END API
 
+  pushRequest (method, { uuid, resolve, data, website }) {
+    this.customizatorController.pushRequest(
+      method,
+      uuid,
+      resolve,
+      data,
+      website
+    )
+  }
 
   getRequests () {
-    return this.requests
+    return this.customizatorController.getRequests()
   }
+
+  executeRequests () {
+    this.customizatorController.executeRequests()
+  }
+
+  rejectRequests() {
+    this.customizatorController.rejectRequests()
+  }
+
+  connect(uuid, resolve, website) {
+    this.popupController.openPopup()
+    this.connectorController.connect(uuid, resolve, website)
+  }
+
+  getConnection(origin) {
+    return this.connectorController.getConnection(origin)
+  }
+
+  pushConnection(connection) {
+    this.connectorController.pushConnection(connection)
+  }
+
+  updateConnection(connection) {
+    this.connectorController.updateConnection(connection)
+  }
+
+  completeConnection() { 
+    let requests = this.customizatorController.getRequests()
+    requests = this.connectorController.completeConnection(requests)
+    this.customizatorController.setRequests(requests)
+  }
+
+  rejectConnection(){
+    let requests = this.customizatorController.getRequests()
+    requests = this.connectorController.rejectConnection(requests)
+    this.customizatorController.setRequests(requests)
+    this.popupController.closePopup()
+  }
+
+  setWebsite(website) {
+    this.connectorController.setCurrentWebsite(website)
+  }
+
+  getWebsite() {
+    return this.connectorController.getCurrentWebsite()
+  }
+  //END API
 
   loadAccountData () {
     this.accountDataController.loadAccountData()
@@ -274,115 +338,7 @@ class PegasusEngine {
     this.accountDataController.loadAccountData()
     this.accountDataHandler = setInterval(() => this.accountDataController.loadAccountData(), ACCOUNT_RELOAD_TIME)
   }
-
-  // CUSTOM iotajs functions
-  // if wallet is locked user must login, after having do it, wallet will execute 
-  //every request put in the queue IF USER  GRANTed PERMISSIONS
-  pushRequest (method, { uuid, resolve, data, website }) {
-    const connection = this.connectorController.getConnection(website.origin)
-    let mockConnection = connection
-    let isPopupAlreadyOpened = false
-
-    if (!connection) {
-      this.walletController.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
-      this.openPopup()
-      mockConnection = {
-        website,
-        requestToConnect: true,
-        connected: false,
-        enabled: false
-      }
-      this.connectorController.setConnectionToStore(connection)
-      isPopupAlreadyOpened = true
-    } else if (!connection.enabled) {
-      this.walletController.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
-      if (!this.popup)
-        this.openPopup()
-      isPopupAlreadyOpened = true
-    }
-
-    const state = this.getState()
-    if (state <= APP_STATE.WALLET_LOCKED || !connection  || !connection.enabled) {
-      if (!this.popup && isPopupAlreadyOpened === false){
-        this.openPopup()
-      }
-
-      const request = {
-        connection: mockConnection,
-        method,
-        uuid,
-        resolve,
-        data
-      }
-      this.requests.push(request)
-    } else if (connection.enabled) {
-      this.customizatorController.request(method, { uuid, resolve, data })
-    } 
-  }
-
-  executeRequests () {
-    this.requests.forEach(request => {
-      const method = request.method
-      const uuid = request.uuid
-      const resolve = request.resolve
-      if (request.connection.enabled) {
-        const data = request.data
-        const seed = this.walletController.getCurrentSeed()
-        this.customizatorController.request(method, { uuid, resolve, seed, data })
-      } else {
-        resolve({ data: 'no permissions', success: false, uuid })
-      }
-    })
-    this.requests = []
-  }
-
-  rejectRequests() {
-    this.requests.forEach(r => {
-      r.resolve({
-        data: 'Request has been rejected by the user',
-        success: false,
-        uuid: r.uuid
-      })
-    })
-    this.requests = []
-    this.closePopup()
-  }
-
-  connect(uuid, resolve, website) {
-    this.popupController.openPopup()
-    this.connectorController.connect(uuid, resolve, website)
-  }
-
-  getConnection(origin) {
-    return this.connectorController.getConnection(origin)
-  }
-
-  pushConnection(connection) {
-    this.connectorController.pushConnection(connection)
-  }
-
-  updateConnection(connection) {
-    this.connectorController.updateConnection(connection)
-  }
-
-  completeConnection() { 
-    const requests = this.connectorController.completeConnection(this.requests)
-    this.requests = requests
-  }
-
-  rejectConnection(){
-    const requests = this.connectorController.rejectConnection(this.requests)
-    this.requests = requests
-    this.popupController.closePopup()
-  }
-
-  setWebsite(website) {
-    this.connectorController.setCurrentWebsite(website)
-  }
-
-  getWebsite() {
-    return this.connectorController.getCurrentWebsite()
-  }
+  
 
   startFetchMam (options) {
     const network = this.networkController.getCurrentNetwork()
