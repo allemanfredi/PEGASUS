@@ -1,7 +1,6 @@
 import Duplex from '@pegasus/utils/duplex'
 import PegasusEngine from './pegasus-engine'
 import Utils from '@pegasus/utils/utils'
-import { backgroundMessanger } from '@pegasus/utils/messangers'
 
 const duplex = new Duplex.Host()
 
@@ -12,11 +11,9 @@ const backgroundScript = {
   ),
 
   run () {
-    backgroundMessanger.init(duplex)
 
     this.bindPopupDuplex()
     this.bindTabDuplex()
-    this.bindWalletEvents()
   },
 
   bindPopupDuplex () {
@@ -221,40 +218,6 @@ const backgroundScript = {
         }
       }
     })
-  },
-
-  bindWalletEvents () {
-    this.engine.on('setTranfers', transfers =>
-      backgroundMessanger.setTranfers(transfers)
-    )
-
-    this.engine.on('setNetworks', networks =>
-      backgroundMessanger.setNetworks(networks)
-    )
-
-    this.engine.on('setNetwork', network =>
-      backgroundMessanger.setNetwork(network)
-    )
-
-    this.engine.on('setAccount', account =>
-      backgroundMessanger.setAccount(account)
-    )
-
-    this.engine.on('setConfirmationLoading', isLoading =>
-      backgroundMessanger.setConfirmationLoading(isLoading)
-    )
-
-    this.engine.on('setConfirmationError', error =>
-      backgroundMessanger.setConfirmationError(error)
-    )
-
-    this.engine.on('setProvider', provider =>
-      backgroundMessanger.setProvider(provider)
-    )
-
-    this.engine.on('setAppState', state =>
-      backgroundMessanger.setAppState(state)
-    )
   }
 }
 

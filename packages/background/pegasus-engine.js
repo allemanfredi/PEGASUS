@@ -1,7 +1,6 @@
-
-import EventEmitter from 'eventemitter3'
 import extensionizer from 'extensionizer'
 import Utils from '@pegasus/utils/utils'
+import Duplex from '@pegasus/utils/duplex'
 import { backgroundMessanger } from '@pegasus/utils/messangers'
 import { APP_STATE } from '@pegasus/utils/states'
 import { composeAPI } from '@iota/core'
@@ -20,14 +19,16 @@ import SessionsController from './controllers/session-controller'
 const SESSION_TIME = 30000
 const ACCOUNT_RELOAD_TIME = 90000
 
-class PegasusEngine extends EventEmitter {
+class PegasusEngine {
   constructor () {
-    super()
 
     this.popup = false
     this.transfers = []
     this.requests = []
-    this.accountDataHandler = false,
+    this.accountDataHandler = false
+
+    const duplex = new Duplex.Host()
+    backgroundMessanger.init(duplex)
 
     this.customizatorController = new CustomizatorController()
     this.notificationsController = new NotificationsController()
@@ -124,7 +125,7 @@ class PegasusEngine extends EventEmitter {
     this.networkController.setCurrentNetwork(network)
     const account = this.getCurrentAccount()
     if (account) {
-      this.emit('setAccount', account)
+      backgroundMessanger.setAccount(account)
     }
   }
 
@@ -307,7 +308,7 @@ class PegasusEngine extends EventEmitter {
     return
   }
 
-  pushTransferFromPopup (transfer, resolve) {
+  pushTransferFromPopup (transfer) {
     const currentState = this.getState()
     if (currentState > APP_STATE.WALLET_LOCKED)
       this.walletController.setState(APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
@@ -317,7 +318,7 @@ class PegasusEngine extends EventEmitter {
     const obj = {
       transfer,
       uuid: transfer.uuid,
-      resolve
+      resolve: null
     }
 
     this.transfers.push(obj)
@@ -358,11 +359,15 @@ class PegasusEngine extends EventEmitter {
           backgroundMessanger.setTransfers(this.transfers)
           this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
 
-          resolve({ data: bundle, success: true, uuid: obj.uuid })
+          //injection
+          if (resolve) {
+            resolve({ data: bundle, success: true, uuid: obj.uuid })
+          }
 
           // since every transaction is generated a new address, it's necessary to modify the hook
-          const data = await iota.getAccountData(seed)
-          backgroundMessanger.setAddress(data.latestAddress)
+          iota.getAccountData(seed, (err, data) => {
+            backgroundMessanger.setAddress(data.latestAddress)
+          })
 
           // comunicates to the popup the new app State
           backgroundMessanger.setAppState(APP_STATE.WALLET_UNLOCKED)
@@ -375,7 +380,6 @@ class PegasusEngine extends EventEmitter {
           resolve({ data: err.message, success: false, uuid: obj.uuid })
         })
     } catch (err) {
-      console.log(err)
       backgroundMessanger.setConfirmationError(err.message)
       backgroundMessanger.setConfirmationLoading(false)
       resolve({ data: err.message, success: false, uuid: obj.uuid })
@@ -438,7 +442,7 @@ class PegasusEngine extends EventEmitter {
 
   startHandleAccountData () {
     const account = this.walletController.getCurrentAccount()
-    this.emit('setAccount', account)
+    backgroundMessanger.setAccount(account)
 
     if (this.accountDataHandler) {
       return

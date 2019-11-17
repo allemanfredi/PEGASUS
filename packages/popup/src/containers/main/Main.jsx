@@ -32,8 +32,9 @@ class Main extends Component {
 
     this.state = {
       appState: APP_STATE.WALLET_WITHOUT_STATE,
-      duplex: new Duplex.Popup(),
     }
+
+    this.duplex = new Duplex.Popup()
   }
 
   async componentDidMount() {
@@ -85,7 +86,7 @@ class Main extends Component {
   }
 
   bindDuplexRequests() {
-    this.state.duplex.on('setAppState', appState => {
+    this.duplex.on('setAppState', appState => {
       console.log("ne st", appState)
       this.setState({ appState })
       if (appState > APP_STATE.WALLET_LOCKED)
