@@ -4,8 +4,8 @@ export default {
     this.duplex = duplex
   },
 
-  setPayments (payments) {
-    this.duplex.send('popup', 'setPayments', payments, false)
+  setTransfers (transfers) {
+    this.duplex.send('popup', 'setTransfers', transfers, false)
   },
 
   setNetworks (networks) {
@@ -16,8 +16,8 @@ export default {
     this.duplex.send('popup', 'setNetwork', network, false)
   },
 
-  setConfirmationLoading (isLoading) {
-    this.duplex.send('popup', 'setConfirmationLoading', isLoading, false)
+  setConfirmationLoading(loading) {
+    this.duplex.send('popup', 'setConfirmationLoading', loading, false)
   },
 
   setConfirmationError (error) {

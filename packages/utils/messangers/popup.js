@@ -31,8 +31,8 @@ export default {
     return this.duplex.send('restoreWallet', { account, network, key})
   },
 
-  initStorageDataService (key) {
-    return this.duplex.send('initStorageDataService', key)
+  setStorageKey (key) {
+    return this.duplex.send('setStorageKey', key)
   },
 
   writeOnLocalStorage () {
@@ -41,10 +41,6 @@ export default {
 
   unlockSeed (psw) {
     return this.duplex.send('unlockSeed', psw)
-  },
-
-  getKey () {
-    return this.duplex.send('getKey')
   },
 
   setCurrentNetwork (network) {
@@ -131,24 +127,24 @@ export default {
     return this.duplex.send('setState', state)
   },
 
-  getPayments () {
-    return this.duplex.send('getPayments')
+  getTransfers () {
+    return this.duplex.send('getTransfers')
   },
 
-  pushPaymentFromPopup (payment) {
-    return this.duplex.send('pushPaymentFromPopup', payment)
+  pushTransferFromPopup (transfer) {
+    return this.duplex.send('pushTransferFromPopup', transfer)
   },
 
-  rejectPayment (payment) {
-    return this.duplex.send('rejectPayment', payment)
+  rejectTransfer (transfer) {
+    return this.duplex.send('rejectTransfer', transfer)
   },
 
-  rejectAllPayments () {
-    return this.duplex.send('rejectAllPayments')
+  rejectAllTransfers () {
+    return this.duplex.send('rejectAllTransfers')
   },
 
-  confirmPayment (payment) {
-    return this.duplex.send('confirmPayment', payment)
+  confirmTransfer (transfer) {
+    return this.duplex.send('confirmTransfer', transfer)
   },
 
   startHandleAccountData () {

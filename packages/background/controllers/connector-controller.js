@@ -129,7 +129,7 @@ class ConnectorController {
     this.website = website
   }
 
-  getCurrentWebsite(website) {
+  getCurrentWebsite() {
     return this.website
   }
 

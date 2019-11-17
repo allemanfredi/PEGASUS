@@ -2,7 +2,9 @@ import { composeAPI } from '@iota/core'
 
 class CustomizatorController {
   constructor (provider) {
-    this.iota = composeAPI({ provider })
+
+    if (provider)
+      this.iota = composeAPI({ provider })
   }
 
   setProvider (provider) {

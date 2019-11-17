@@ -75,7 +75,7 @@ class App extends Component {
   }
 
   bindDuplexRequests() {
-    this.duplex.on('setPayments', payments => this.main.current.changePayments(payments))
+    this.duplex.on('setTransfers', transfers => this.main.current.changeTransfers(transfers))
     this.duplex.on('setConfirmationLoading', isLoading => this.main.current.setConfirmationLoading(isLoading))
     this.duplex.on('setConfirmationError', error => this.main.current.setConfirmationError(error))
     this.duplex.on('setAccount', account => this.setState({ account }))

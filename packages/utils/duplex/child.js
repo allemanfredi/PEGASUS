@@ -69,8 +69,6 @@ class DuplexChild extends EventEmitter {
   }
 
   handleMessage ({ action, data, messageID, noAck = false }) {
-    // logger.info('Received new message', { action, data, messageID });
-
     if (action === 'messageReply')
       return this.handleReply(data)
 

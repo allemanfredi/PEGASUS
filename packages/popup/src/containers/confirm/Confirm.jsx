@@ -12,7 +12,7 @@ class Confirm extends Component {
     this.confirm = this.confirm.bind(this)
 
     this.state = {
-      payments: [],
+      transfers: [],
       currentTransactionIndex: 0,
       isLoading: false,
       error: false
@@ -20,21 +20,21 @@ class Confirm extends Component {
   }
 
   async componentWillMount() {
-    const payments = await popupMessanger.getPayments()
-    this.setState({ payments })
+    const transfers = await popupMessanger.getTransfers()
+    this.setState({ transfers })
   }
 
-  async reject(payment) {
+  async reject(transfer) {
 
-    await popupMessanger.rejectPayment(payment)
-    const payments = await popupMessanger.getPayments()
-    this.setState({ payments })
-    if (payments.length === 0)
+    await popupMessanger.rejectTransfer(transfer)
+    const transfers = await popupMessanger.getTransfers()
+    this.setState({ transfers })
+    if (transfers.length === 0)
       this.props.onNotConfirms()
   }
 
-  changePayments(payments) {
-    this.setState({ payments })
+  changeTransfers(transfers) {
+    this.setState({ transfers })
   }
   setConfirmationLoading(isLoading) {
     this.setState({ isLoading })
@@ -46,35 +46,35 @@ class Confirm extends Component {
     this.setState({ callback })
   }
 
-  async confirm(payment) {
-    await popupMessanger.confirmPayment(payment)
+  async confirm(transfer) {
+    await popupMessanger.confirmTransfer(transfer)
   }
 
   render() {
     return (
-      !this.state.isLoading ? this.state.payments.filter((obj, index) => index === this.state.currentTransactionIndex).map(obj => {
+      !this.state.isLoading ? this.state.transfers.filter((obj, index) => index === this.state.currentTransactionIndex).map(obj => {
         return (
           <div className="container overflow-auto-600h">
             <div className="row mt-3">
               <div className='col-2'>
                 <img className="border-radius-50" src='./material/logo/pegasus-64.png' height='50' width='50' alt='pegasus logo' />
               </div>
-              <div className="col-10 text-right text-blue text-md">Confirm Payment</div>
+              <div className="col-10 text-right text-blue text-md">Confirm Transfer</div>
             </div>
             <hr className="mt-2 mb-2" />
             <div className="row ">
               <div className="col-2 text-left text-xs text-blue">To</div>
-              <div className="col-10 text-right text-xxs break-text"><div className="">{obj.payment.args[0][0].address}</div></div>
+              <div className="col-10 text-right text-xxs break-text"><div className="">{obj.transfer.args[0][0].address}</div></div>
             </div>
             <div className="row mt-2">
               <div className="col-12 text-center text-blue text-xs">Amount</div>
             </div>
             <div className="row">
-              <div className="col-12 text-center text-bold text-black text-md">{Utils.iotaReducer(obj.payment.args[0][0].value)}</div>
+              <div className="col-12 text-center text-bold text-black text-md">{Utils.iotaReducer(obj.transfer.args[0][0].value)}</div>
             </div>
             <div className="row mt-2">
               <div className="col-2 text-left text-xs text-blue">Message</div>
-              <div className="col-10 text-right break-text"><div className="">{obj.payment.args[0][0].message ? obj.payment.args[0][0].message : '-'}</div></div>
+              <div className="col-10 text-right break-text"><div className="">{obj.transfer.args[0][0].message ? obj.transfer.args[0][0].message : '-'}</div></div>
             </div>
             {
               this.state.error ?
@@ -102,7 +102,7 @@ class Confirm extends Component {
               </div>
             </div>
             <div className="row mt-1">
-              <div className="col-12 text-center text-xxs text-blue">{this.state.payments.length} transactions</div>
+              <div className="col-12 text-center text-xxs text-blue">{this.state.transfers.length} transfers</div>
             </div>
           </div>
         )
