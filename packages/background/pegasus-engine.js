@@ -1,6 +1,5 @@
 import Duplex from '@pegasus/utils/duplex'
 import { backgroundMessanger } from '@pegasus/utils/messangers'
-import { APP_STATE } from '@pegasus/utils/states'
 import settings from '@pegasus/utils/options'
 import AccountDataController from './controllers/account-data-controller'
 import CustomizatorController from './controllers/customizator-controller'
@@ -66,6 +65,8 @@ class PegasusEngine {
       popupController: this.popupController,
       networkController: this.networkController
     })
+
+    this.mamController = new MamController()
 
     this.customizatorController.setWalletController(
       this.walletController
@@ -342,7 +343,7 @@ class PegasusEngine {
 
   startFetchMam (options) {
     const network = this.networkController.getCurrentNetwork()
-    MamController.fetch(network.provider, options.root, options.mode, options.sideKey, data => {
+    this.mamController.fetch(network.provider, options.root, options.mode, options.sideKey, data => {
       backgroundMessanger.newMamData(data)
     })
   }
