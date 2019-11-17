@@ -34,7 +34,8 @@ class PegasusEngine {
     this.customizatorController = new CustomizatorController({
       popupController: this.popupController,
       connectorController: this.connectorController,
-      walletController: null //DEFINED BELOW
+      walletController: null, //DEFINED BELOW
+      networkController: null //DEFINED BELOW
     })
 
     this.networkController = new NetworkController({
@@ -70,6 +71,9 @@ class PegasusEngine {
 
     this.customizatorController.setWalletController(
       this.walletController
+    )
+    this.customizatorController.setNetworkController(
+      this.networkController
     )
     /* E N D   C O N T R O L L E R S */
 

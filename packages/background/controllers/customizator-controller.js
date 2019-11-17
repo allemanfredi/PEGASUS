@@ -7,12 +7,14 @@ class CustomizatorController {
     const {
       connectorController,
       walletController,
-      popupController
+      popupController,
+      networkController
     } = options
 
     this.connectorController = connectorController
     this.walletController = walletController
     this.popupController = popupController
+    this.networkController = networkController
 
     this.requests = []
 
@@ -34,6 +36,10 @@ class CustomizatorController {
 
   setWalletController (walletController) {
     this.walletController = walletController
+  }
+
+  setNetworkController (networkController) {
+    this.networkController = networkController
   }
 
   // CUSTOM iotajs functions
@@ -130,7 +136,7 @@ class CustomizatorController {
         break
       }
       case 'getCurrentNode': {
-        const network = this.walletController.getCurrentNetwork()
+        const network = this.networkController.getCurrentNetwork()
         resolve({ data: network.provider, success: true, uuid })
         break
       }
