@@ -1,6 +1,24 @@
 import IOTA from '@pegasus/utils/iota'
+import { backgroundMessanger } from '@pegasus/utils/messangers'
+import Duplex from '@pegasus/utils/duplex'
 
-const AccountDataController = {
+class AccountDataController {
+
+  constructor (options) {
+
+    const {
+      networkController,
+      walletController,
+      notificationsController
+    } = options
+
+    this.networkController = networkController
+    this.walletController = walletController
+    this.notificationsController = notificationsController
+    
+    const duplex = new Duplex.Host()
+    backgroundMessanger.init(duplex)
+  }
 
   async retrieveAccountData (seed, network, currentAccount) {
     IOTA.setProvider(network.provider)
@@ -8,7 +26,7 @@ const AccountDataController = {
     const transactions = this.mapTransactions(data, network)
     const newData = this.mapBalance(data, network, currentAccount)
     return { transactions, newData }
-  },
+  }
 
   mapBalance(data, network, currentAccount) {
     data.balance = network.type === 'mainnet'
@@ -21,7 +39,7 @@ const AccountDataController = {
           testnet: data.balance
         }
     return data
-  },
+  }
 
 
   mapTransactions (data, network) {
@@ -60,7 +78,7 @@ const AccountDataController = {
       }
     })
     return transactions
-  },
+  }
 
   updateAccountTransactionsPersistence(account, transactions) {
     for (let tx of transactions) {
@@ -74,7 +92,7 @@ const AccountDataController = {
       }
     }
     return account
-  },
+  }
 
   getTransactionsJustConfirmed(account, transactions) {
     const transactionsJustConfirmed = []
@@ -90,7 +108,7 @@ const AccountDataController = {
       }
     }
     return transactionsJustConfirmed
-  },
+  }
 
   getNewTransactionsFromAll (account, transactions) {
     const newTxs = []
@@ -106,6 +124,37 @@ const AccountDataController = {
       }
     }
     return newTxs
+  }
+
+  async loadAccountData () {
+    const seed = this.walletController.getCurrentSeed()
+    const network = this.networkController.getCurrentNetwork()
+    let account = this.walletController.getCurrentAccount()
+    const { transactions, newData } = await this.retrieveAccountData(seed, network, account)
+
+    //show notification
+    const transactionsJustConfirmed = this.getTransactionsJustConfirmed(account, transactions)
+    transactionsJustConfirmed.forEach(transaction => {
+      this.notificationsController.showNotification(
+        'Transaction Confirmed',
+        transaction.bundle,
+        network.link + 'bundle/' + transaction.bundle
+      )
+    })
+    
+    account = this.updateAccountTransactionsPersistence(account, transactions)
+    const newTransactions = this.getNewTransactionsFromAll(account, transactions)
+
+    const totalTransactions =  [...newTransactions, ...account.transactions]
+
+    const updatedData = Object.assign({}, newData, {
+      transactions: totalTransactions
+    })
+
+    this.walletController.updateTransactionsAccount(totalTransactions)
+
+    const updatedAccount = this.walletController.updateDataAccount(updatedData, network)
+    backgroundMessanger.setAccount(updatedAccount)
   }
 }
 

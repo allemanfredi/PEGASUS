@@ -32,8 +32,9 @@ class Main extends Component {
 
     this.state = {
       appState: APP_STATE.WALLET_WITHOUT_STATE,
-      duplex: new Duplex.Popup(),
     }
+
+    this.duplex = new Duplex.Popup()
   }
 
   async componentDidMount() {
@@ -54,18 +55,22 @@ class Main extends Component {
     const requests = await popupMessanger.getRequests()
     //impossible to load data from the storage until that a user log in
     if (state >= APP_STATE.WALLET_UNLOCKED) {
+
       const website = await popupMessanger.getWebsite()
       const connection = await popupMessanger.getConnection(website ? website.origin : 'offline')
+
       if (connection) {
         if (connection.requestToConnect === true && state >= APP_STATE.WALLET_UNLOCKED) {
           this.props.showHeader(false)
           state = APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION 
         }
       }
+
       if (!connection && state === APP_STATE.WALLET_TRANSFERS_IN_QUEUE) {
         this.props.showHeader(false)
         state = APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION 
       }
+
       if (
         !connection &&
         state >= APP_STATE.WALLET_UNLOCKED &&
@@ -78,11 +83,11 @@ class Main extends Component {
     
     this.setState({ appState: state })
     this.bindDuplexRequests()
-    //this.setState({appState: APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION})
   }
 
   bindDuplexRequests() {
-    this.state.duplex.on('setAppState', appState => {
+    this.duplex.on('setAppState', appState => {
+      console.log("ne st", appState)
       this.setState({ appState })
       if (appState > APP_STATE.WALLET_LOCKED)
         this.props.showHeader(true)
@@ -96,11 +101,11 @@ class Main extends Component {
 
     const website = await popupMessanger.getWebsite()
     const connection = await popupMessanger.getConnection(website ? website.origin : 'offline')
-    const payments = await popupMessanger.getPayments()
+    const transfers = await popupMessanger.getTransfers()
     const requests = await popupMessanger.getRequests()
     
     //no connections but request from injection with wallet locked
-    if (!connection && (payments.length > 0 || requests.length > 0)) {
+    if (!connection && (transfers.length > 0 || requests.length > 0)) {
       popupMessanger.updateConnection({
         website,
         requestToConnect: true,
@@ -112,13 +117,15 @@ class Main extends Component {
       popupMessanger.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
       return
     } 
+
     //unlocked and no injection requests
-    else if ((!connection || connection.enabled) && payments.length === 0 && requests.length === 0){
+    else if ((!connection || connection.enabled) && transfers.length === 0 && requests.length === 0){
       popupMessanger.startHandleAccountData()
       this.props.showHeader(true)
       this.setState({ appState: APP_STATE.WALLET_UNLOCKED })
       return
     }
+
     //.connect() with wallet locked
     else if (connection.requestToConnect === true) {
       this.props.showHeader(false)
@@ -126,13 +133,15 @@ class Main extends Component {
       popupMessanger.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
       return
     } 
-    else if (payments.length > 0) {
+
+    else if (transfers.length > 0) {
       this.props.showHeader(false)
       this.setState({ appState: APP_STATE.WALLET_TRANSFERS_IN_QUEUE })
       popupMessanger.setState(APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
-      this.changePayments(payments)
+      this.changeTransfers(transfers)
       return
     } 
+
     else if (connection.enabled === true){
       popupMessanger.closePopup()
       popupMessanger.executeRequests()
@@ -140,7 +149,7 @@ class Main extends Component {
   }
 
   async onPermissionGranted() {
-    const payments = await popupMessanger.getPayments()
+    const transfers = await popupMessanger.getTransfers()
     const website = await popupMessanger.getWebsite()
     popupMessanger.pushConnection({
       website,
@@ -150,11 +159,11 @@ class Main extends Component {
     })
     
     await popupMessanger.completeConnection()
-    if (payments.length > 0) {
+    if (transfers.length > 0) {
       this.props.showHeader(false)
       this.setState({ appState: APP_STATE.WALLET_TRANSFERS_IN_QUEUE })
       popupMessanger.setState(APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
-      this.changePayments(payments)
+      this.changeTransfers(transfers)
       return
     } else {
       popupMessanger.closePopup()
@@ -216,7 +225,7 @@ class Main extends Component {
   onRejectAll() {
     this.props.showHeader(true)
     this.setState({ appState: APP_STATE.WALLET_UNLOCKED })
-    popupMessanger.rejectAllPayments()
+    popupMessanger.rejectAllTransfers()
   }
 
   onNotConfirms() {
@@ -225,8 +234,8 @@ class Main extends Component {
   }
 
   //duplex function
-  changePayments(payments) {
-    this.confirm.current.changePayments(payments)
+  changeTransfers(transfers) {
+    this.confirm.current.changeTransfers(transfers)
   }
 
   setConfirmationLoading(isLoading) {

@@ -142,11 +142,17 @@ class Init extends Component {
     return new Promise(async (resolve, reject) => {
       try {
         await popupMessanger.storePassword(this.state.psw)
+        console.log("ciao1")
         await popupMessanger.initStorageDataService(this.state.psw)
+        console.log("ciao2")
+
         await popupMessanger.addAccount(this.state.name, true)
+        console.log("ciao3")
+
         popupMessanger.writeOnLocalStorage()
         resolve()
       } catch (err) {
+        console.log(err)
         reject('Impossible to create the wallet');
       }
     });
