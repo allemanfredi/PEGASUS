@@ -32,13 +32,6 @@ export default {
     this.duplex.send('popup', 'newMamData', data, false)
   },
 
-  setAddress (address) {
-    this.duplex.send('tab', 'tunnel', {
-      action: 'setAddress',
-      data: address
-    }, false)
-  },
-
   setProvider (provider) {
     this.duplex.send('tab', 'tunnel', {
       action: 'setProvider',

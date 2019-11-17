@@ -1,10 +1,6 @@
-import extensionizer from 'extensionizer'
-import Utils from '@pegasus/utils/utils'
 import Duplex from '@pegasus/utils/duplex'
 import { backgroundMessanger } from '@pegasus/utils/messangers'
 import { APP_STATE } from '@pegasus/utils/states'
-import { composeAPI } from '@iota/core'
-import { asciiToTrytes } from '@iota/converter'
 import settings from '@pegasus/utils/options'
 import AccountDataController from './controllers/account-data-controller'
 import CustomizatorController from './controllers/customizator-controller'
@@ -15,6 +11,8 @@ import ConnectorController from './controllers/connector-controller'
 import NetworkController from './controllers/network-controller'
 import walletController from './controllers/wallet-controller'
 import SessionsController from './controllers/session-controller'
+import PopupController from './controllers/popup-controller'
+import TransferController from './controllers/transfer-controller'
 
 const SESSION_TIME = 30000
 const ACCOUNT_RELOAD_TIME = 90000
@@ -22,14 +20,13 @@ const ACCOUNT_RELOAD_TIME = 90000
 class PegasusEngine {
   constructor () {
 
-    this.popup = false
-    this.transfers = []
     this.requests = []
     this.accountDataHandler = false
 
     const duplex = new Duplex.Host()
     backgroundMessanger.init(duplex)
 
+    this.popupController = new PopupController()
     this.customizatorController = new CustomizatorController()
     this.notificationsController = new NotificationsController()
     this.connectorController = new ConnectorController()
@@ -57,13 +54,19 @@ class PegasusEngine {
       engine: this
     })    
 
+    this.transferController = new TransferController({
+      connectorController: this.connectorController,
+      walletController: this.walletController,
+      popupController: this.popupController,
+      networkController: this.networkController
+    })
+
     if (!this.walletController.isWalletSetup()) {
       this.walletController.setupWallet()
     }
 
     const currentNetwork = this.networkController.getCurrentNetwork()
     if (Object.entries(currentNetwork).length === 0 && currentNetwork.constructor === Object) {
-      
       settings.networks.forEach(network => this.networkController.addNetwork(network))
       this.customizatorController.setProvider(settings.networks[0].provider)
       this.networkController.setCurrentNetwork(settings.networks[0])
@@ -205,235 +208,46 @@ class PegasusEngine {
     this.walletController.setState(state)
   }
 
-
-
-  //END API
-
-
-  async openPopup () {
-    if (this.popup && this.popup.closed)
-      this.popup = false
-
-    if (this.popup && await this.updateWindow())
-      return
-
-    if (typeof chrome !== 'undefined') {
-      return extensionizer.windows.create({
-        url: 'packages/popup/build/index.html',
-        type: 'popup',
-        width: 380,
-        height: 620,
-        left: 25,
-        top: 25
-      }, window => {
-        this.popup = window
-      })
-    }
-
-    this.popup = await extensionizer.windows.create({
-      url: 'packages/popup/build/index.html',
-      type: 'popup',
-      width: 380,
-      height: 620,
-      left: 25,
-      top: 25
-    })
-  }
-
-  async closePopup () {
-    /* if(this.transfers.length)
-        return; */
-
-    if (!this.popup)
-      return
-
-    extensionizer.windows.remove(this.popup.id)
-    this.popup = false
-  }
-
-  async updateWindow () {
-    return new Promise(resolve => {
-      if (typeof chrome !== 'undefined') {
-        return extensionizer.windows.update(this.popup.id, { focused: true }, window => {
-          resolve(Boolean(window))
-        })
-      }
-
-      extensionizer.windows.update(this.popup.id, {
-        focused: true
-      }).then(resolve).catch(() => resolve(false))
-    })
-  }
-
-  
-
   pushTransfer (transfer, uuid, resolve, website) {
-    const currentState = this.getState()
-    if (currentState > APP_STATE.WALLET_LOCKED)
-      this.walletController.setState(APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
-    else
-      console.log('locked')
-    
-    //check permissions
-    if (!transfer.isPopup) {
-      const connection = this.connectorController.getConnection(website.origin)
-      if (!connection) {
-        this.walletController.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
-        this.connectorController.setConnectionToStore({
-          website,
-          requestToConnect: true,
-          connected: false,
-          enabled: false
-        })
-      }
-      else if (!connection.enabled) {
-        this.walletController.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
-      }
-    }
-
-    const obj = {
-      transfer,
-      uuid,
-      resolve
-    }
-
-    this.transfers.push(obj)
-    this.popup = null
-    if (!this.popup && !transfer.isPopup)
-      this.openPopup()
-
-    if (currentState > APP_STATE.WALLET_LOCKED)
-      backgroundMessanger.setTransfers(this.transfers)
-
-    return
+    this.transferController.pushTransfer(transfer, uuid, resolve, website)
   }
 
   pushTransferFromPopup (transfer) {
-    const currentState = this.getState()
-    if (currentState > APP_STATE.WALLET_LOCKED)
-      this.walletController.setState(APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
-    else
-      console.log('locked')
-
-    const obj = {
-      transfer,
-      uuid: transfer.uuid,
-      resolve: null
-    }
-
-    this.transfers.push(obj)
-    if (currentState > APP_STATE.WALLET_LOCKED)
-      backgroundMessanger.setTransfers(this.transfers)
-    return
+    this.transferController.pushTransferFromPopup(transfer)
   }
 
-  confirmTransfer (obj) {
-    backgroundMessanger.setConfirmationLoading(true)
-
-    let transfers = obj.transfer.args[0]
-    const network = this.networkController.getCurrentNetwork()
-    const iota = composeAPI({ provider: network.provider })
-    const resolve = this.transfers.filter(obj => obj.uuid === obj.uuid)[0].resolve
-
-    const key = this.walletController.getKey()
-    const account = this.walletController.getCurrentAccount()
-    const seed = Utils.aes256decrypt(account.seed, key)
-
-    const depth = 3
-    const minWeightMagnitude = network.difficulty
-
-    // convert message and tag from char to trits
-    transfers.forEach(transfer => {
-      transfer.value = parseInt(transfer.value)
-      transfer.tag = asciiToTrytes(JSON.stringify(transfer.tag))
-      transfer.message = asciiToTrytes(JSON.stringify(transfer.message))
-    })
-
-    try {
-      iota.prepareTransfers(seed, transfers)
-        .then(trytes => {
-          return iota.sendTrytes(trytes, depth, minWeightMagnitude)
-        })
-        .then(async bundle => {
-          this.removeTransfer(obj)
-          backgroundMessanger.setTransfers(this.transfers)
-          this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
-
-          //injection
-          if (resolve) {
-            resolve({ data: bundle, success: true, uuid: obj.uuid })
-          }
-
-          // since every transaction is generated a new address, it's necessary to modify the hook
-          iota.getAccountData(seed, (err, data) => {
-            backgroundMessanger.setAddress(data.latestAddress)
-          })
-
-          // comunicates to the popup the new app State
-          backgroundMessanger.setAppState(APP_STATE.WALLET_UNLOCKED)
-
-          backgroundMessanger.setConfirmationLoading(false)
-        })
-        .catch(err => {
-          backgroundMessanger.setConfirmationError(err.message)
-          backgroundMessanger.setConfirmationLoading(false)
-          resolve({ data: err.message, success: false, uuid: obj.uuid })
-        })
-    } catch (err) {
-      backgroundMessanger.setConfirmationError(err.message)
-      backgroundMessanger.setConfirmationLoading(false)
-      resolve({ data: err.message, success: false, uuid: obj.uuid })
-    }
-    return
+  confirmTransfer (transfer) {
+    this.transferController.confirmTransfer(transfer)
   }
 
-  removeTransfer (transferToRemove) {
-    this.transfers = this.transfers.filter(transfer => transfer.uuid !== transferToRemove.uuid)
-    if (this.transfers.length === 0) {
-      this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
-      this.closePopup()
-    }
+  removeTransfer (transfer) {
+    this.transferController.removeTransfer(transfer)
   }
 
   getTransfers () {
-    // remove callback
-    const transfers = this.transfers.map(obj => { return { transfer: obj.transfer, uuid: obj.uuid } })
-    return transfers
-  }
-
-  getRequests () {
-    return this.requests
+    return this.transferController.getTransfers()
   }
 
   rejectAllTransfers () {
-    this.transfers.filter(p => {
-      p.resolve({
-        data: 'Transaction has been rejected',
-        success: false,
-        uuid: p.uuid
-      })
-    })
-    this.transfers = []
-    this.closePopup()
-    this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
+    this.transferController.rejectAllTransfers()
   }
 
-  rejectTransfer (rejectedTransfer) {
-    const resolve = this.transfers.filter(obj => rejectedTransfer.uuid === obj.uuid)[0].resolve
-    this.transfers = this.transfers.filter(transfer => transfer.uuid !== rejectedTransfer.uuid)
+  rejectTransfer (transfer) {
+    this.transferController.rejectTransfer(transfer)
+  }
 
-    if (resolve) {
-      resolve({
-        data: 'Transaction has been rejected',
-        success: false,
-        uuid: rejectedTransfer.uuid
-      })
-    }
+  openPopup () {
+    this.popupController.openPopup()
+  }
 
-    if (this.transfers.length === 0) {
-      this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
-      this.closePopup()
-    }
+  closePopup () {
+    this.popupController.closePopup()
+  }
+  //END API
+
+
+  getRequests () {
+    return this.requests
   }
 
   loadAccountData () {
@@ -535,13 +349,12 @@ class PegasusEngine {
   }
 
   connect(uuid, resolve, website) {
-    this.openPopup()
+    this.popupController.openPopup()
     this.connectorController.connect(uuid, resolve, website)
   }
 
   getConnection(origin) {
-    const connection = this.connectorController.getConnection(origin)
-    return connection
+    return this.connectorController.getConnection(origin)
   }
 
   pushConnection(connection) {
@@ -560,7 +373,7 @@ class PegasusEngine {
   rejectConnection(){
     const requests = this.connectorController.rejectConnection(this.requests)
     this.requests = requests
-    this.closePopup()
+    this.popupController.closePopup()
   }
 
   setWebsite(website) {
@@ -568,8 +381,7 @@ class PegasusEngine {
   }
 
   getWebsite() {
-    const website = this.connectorController.getCurrentWebsite()
-    return website
+    return this.connectorController.getCurrentWebsite()
   }
 
   startFetchMam (options) {
