@@ -1,14 +1,15 @@
 class ConnectorController {
 
-  constructor(storageController) {
+  constructor(options) {
+
+    const {
+      storageController
+    } = options
+    
     this.storageController = storageController
     this.connectionToStore = null      //local storage connection data
     this.connectionRequest = null      //callback for user response
     this.website = null
-  }
-
-  setStorageController(storageController) {
-    this.storageController = storageController
   }
 
   getConnection(origin) {
@@ -66,7 +67,8 @@ class ConnectorController {
 
     //if user call connect before log in, storage is not already set up so it is not possible to save/load data
     //workardund -> keep in memory and once he login, store the data into storage and delete the variable
-    if (!this.storageController) {
+    const isStorageControllerReady = this.storageController.isReady()
+    if (!isStorageControllerReady) {
       this.setConnectionToStore(connection)
     }
     else {

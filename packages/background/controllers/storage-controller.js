@@ -17,6 +17,10 @@ class StorageController {
       this.setConnections([])
   }
 
+  isReady() {
+    return this.encryptionkey ? true : false
+  }
+
   setEncryptionKey(key) {
     this.encryptionkey = key
   }

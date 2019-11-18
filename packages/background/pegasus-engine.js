@@ -27,9 +27,12 @@ class PegasusEngine {
 
     /* C O N T R O L L E R S */
     this.popupController = new PopupController()
-    this.connectorController = new ConnectorController()
     this.storageController = new StorageController()
     this.notificationsController = new NotificationsController()
+
+    this.connectorController = new ConnectorController({
+      storageController: this.storageController
+    })
 
     this.customizatorController = new CustomizatorController({
       popupController: this.popupController,
@@ -105,7 +108,6 @@ class PegasusEngine {
 
   setStorageKey(key) {
     this.storageController.setEncryptionKey(key)
-    this.connectorController.setStorageController(this.storageController)
   }
 
   writeOnLocalStorage() {
