@@ -201,7 +201,7 @@ class PegasusEngine {
   }
 
   isSeedValid (seed) {
-    return this.walletController.isSeedValid()
+    return this.walletController.isSeedValid(seed)
   }
 
   startSession () {
