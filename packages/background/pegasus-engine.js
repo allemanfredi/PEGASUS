@@ -224,20 +224,20 @@ class PegasusEngine {
     this.walletController.setState(state)
   }
 
-  pushTransfer (transfer, uuid, resolve, website) {
-    this.transferController.pushTransfer(transfer, uuid, resolve, website)
+  pushTransfers (transfers, uuid, resolve, website) {
+    this.transferController.pushTransfers(transfers, uuid, resolve, website)
   }
 
-  pushTransferFromPopup (transfer) {
-    this.transferController.pushTransferFromPopup(transfer)
+  pushTransfersFromPopup (transfers) {
+    this.transferController.pushTransfersFromPopup(transfers)
   }
 
-  confirmTransfer (transfer) {
-    this.transferController.confirmTransfer(transfer)
+  confirmTransfers (transfers) {
+    this.transferController.confirmTransfers(transfers)
   }
 
-  removeTransfer (transfer) {
-    this.transferController.removeTransfer(transfer)
+  removeTransfer (transfers) {
+    this.transferController.removeTransfer(transfers)
   }
 
   getTransfers () {
@@ -248,8 +248,8 @@ class PegasusEngine {
     this.transferController.rejectAllTransfers()
   }
 
-  rejectTransfer (transfer) {
-    this.transferController.rejectTransfer(transfer)
+  rejectTransfer (transfers) {
+    this.transferController.rejectTransfer(transfers)
   }
 
   openPopup () {

@@ -131,8 +131,8 @@ export default {
     return this.duplex.send('getTransfers')
   },
 
-  pushTransferFromPopup (transfer) {
-    return this.duplex.send('pushTransferFromPopup', transfer)
+  pushTransfersFromPopup (transfer) {
+    return this.duplex.send('pushTransfersFromPopup', transfer)
   },
 
   rejectTransfer (transfer) {
@@ -143,8 +143,8 @@ export default {
     return this.duplex.send('rejectAllTransfers')
   },
 
-  confirmTransfer (transfer) {
-    return this.duplex.send('confirmTransfer', transfer)
+  confirmTransfers (transfer) {
+    return this.duplex.send('confirmTransfers', transfer)
   },
 
   startHandleAccountData () {

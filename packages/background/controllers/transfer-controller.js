@@ -27,7 +27,7 @@ class TransferController {
     this.transfers = []
   }
 
-  pushTransfer (transfer, uuid, resolve, website) {
+  pushTransfers (transfer, uuid, resolve, website) {
     const currentState = this.walletController.getState()
     if (currentState > APP_STATE.WALLET_LOCKED) {
       this.walletController.setState(APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
@@ -73,7 +73,7 @@ class TransferController {
     return
   }
 
-  pushTransferFromPopup (transfer) {
+  pushTransfersFromPopup (transfer) {
     const currentState = this.walletController.getState()
     if (currentState > APP_STATE.WALLET_LOCKED) {
       this.walletController.setState(APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
@@ -93,7 +93,7 @@ class TransferController {
     return
   }
 
-  confirmTransfer (transfer) {
+  confirmTransfers (transfer) {
     backgroundMessanger.setConfirmationLoading(true)
 
     let transfers = transfer.transfer.args[0]

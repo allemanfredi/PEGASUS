@@ -55,7 +55,7 @@ class Send extends Component {
       ]
     }
     
-    popupMessanger.pushTransferFromPopup(data)
+    popupMessanger.pushTransfersFromPopup(data)
     this.props.onAskConfirm()
   }
 

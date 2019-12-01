@@ -56,10 +56,10 @@ const backgroundScript = {
     duplex.on('setState', this.engine.setState)
 
     duplex.on('getTransfers', this.engine.getTransfers)
-    duplex.on('pushTransferFromPopup',this.engine.pushTransferFromPopup)
+    duplex.on('pushTransfersFromPopup',this.engine.pushTransfersFromPopup)
     duplex.on('rejectAllTransfers', this.engine.rejectAllTransfers)
     duplex.on('rejectTransfer', this.engine.rejectTransfer)
-    duplex.on('confirmTransfer', this.engine.confirmTransfer)
+    duplex.on('confirmTransfers', this.engine.confirmTransfers)
 
     duplex.on('getRequests', this.engine.getRequests)
     duplex.on('rejectRequests', this.engine.rejectRequests)
@@ -184,8 +184,13 @@ const backgroundScript = {
           this.engine.pushRequest('isPromotable', { uuid, resolve, data, website })
           break
         }
-        case 'prepareTransfer': {
-          this.engine.pushTransfer(data, uuid, resolve, website)
+        case 'prepareTransfers': {
+          console.log(data)
+          console.log(uuid)
+
+          console.log(website)
+
+          this.engine.pushTransfers(data, uuid, resolve, website)
           break
         }
         case 'promoteTransaction': {

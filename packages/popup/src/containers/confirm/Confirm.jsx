@@ -34,6 +34,7 @@ class Confirm extends Component {
   }
 
   changeTransfers(transfers) {
+    console.log("change transferss", transfers)
     this.setState({ transfers })
   }
   setConfirmationLoading(isLoading) {
@@ -47,7 +48,7 @@ class Confirm extends Component {
   }
 
   async confirm(transfer) {
-    await popupMessanger.confirmTransfer(transfer)
+    await popupMessanger.confirmTransfers(transfer)
   }
 
   render() {
