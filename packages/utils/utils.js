@@ -153,6 +153,10 @@ const Utils = {
 
   isChecksummed (address) {
     return isValidChecksum(address)
+  },
+
+  showAddress (address, limitStart, limitEnd) {
+    return `${address.slice(0, limitStart)}...${address.slice(address.length - limitEnd, address.length)}`
   }
 
 }
