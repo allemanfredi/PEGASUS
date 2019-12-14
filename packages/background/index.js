@@ -185,11 +185,6 @@ const backgroundScript = {
           break
         }
         case 'prepareTransfers': {
-          console.log(data)
-          console.log(uuid)
-
-          console.log(website)
-
           this.engine.pushTransfers(data, uuid, resolve, website)
           break
         }
