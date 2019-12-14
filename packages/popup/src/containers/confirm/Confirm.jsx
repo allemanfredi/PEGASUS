@@ -34,15 +34,17 @@ class Confirm extends Component {
   }
 
   changeTransfers(transfers) {
-    console.log("change transferss", transfers)
     this.setState({ transfers })
   }
+
   setConfirmationLoading(isLoading) {
     this.setState({ isLoading })
   }
+
   setConfirmationError(error) {
     this.setState({ error })
   }
+  
   setConfirmationCallback(callback) {
     this.setState({ callback })
   }
