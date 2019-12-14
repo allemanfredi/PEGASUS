@@ -333,7 +333,9 @@ class PegasusEngine {
       return
     }
 
-    this.accountDataHandler = setInterval(() => this.accountDataController.loadAccountData(), ACCOUNT_RELOAD_TIME)
+    this.accountDataHandler = setInterval(() => {
+      this.accountDataController.loadAccountData()
+    }, ACCOUNT_RELOAD_TIME)
   }
 
   stopHandleAccountData () {
@@ -343,7 +345,9 @@ class PegasusEngine {
   async reloadAccountData () {
     clearInterval(this.accountDataHandler)
     this.accountDataController.loadAccountData()
-    this.accountDataHandler = setInterval(() => this.accountDataController.loadAccountData(), ACCOUNT_RELOAD_TIME)
+    this.accountDataHandler = setInterval(() => {
+      this.accountDataController.loadAccountData()
+    }, ACCOUNT_RELOAD_TIME)
   }
   
 
