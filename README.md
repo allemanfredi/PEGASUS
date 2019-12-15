@@ -19,8 +19,9 @@ git clone https://github.com/allemanfredi/PEGASUS.git
 cd PEGASUS
 ```
 
+
 ```
-yarn install
+yarn init
 ```
 
 ```
