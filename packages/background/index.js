@@ -104,42 +104,6 @@ const backgroundScript = {
           this.engine.connect(uuid, resolve, website)
           break
         }
-        case 'addNeighbors': {
-          this.engine.pushRequest('addNeighbors', { uuid, resolve, data })
-          break
-        }
-        case 'attachToTangle': {
-          this.engine.pushRequest('attachToTangle', { uuid, resolve, data })
-          break
-        }
-        case 'broadcastTransactions': {
-          this.engine.pushRequest('broadcastTransactions', { uuid, resolve, data })
-          break
-        }
-        case 'broadcastBundle': {
-          this.engine.pushRequest('broadcastBundle', { uuid, resolve, data, website })
-          break
-        }
-        case 'checkConsistency': {
-          this.engine.pushRequest('checkConsistency', { uuid, resolve, data, website })
-          break
-        }
-        case 'findTransactionObjects': {
-          this.engine.pushRequest('findTransactionObjects', { uuid, resolve, data, website })
-          break
-        }
-        case 'findTransactions': {
-          this.engine.pushRequest('findTransactions', { uuid, resolve, data, website })
-          break
-        }
-        case 'getBalances': {
-          this.engine.pushRequest('getBalances', { uuid, resolve, data, website })
-          break
-        }
-        case 'getBundle': {
-          this.engine.pushRequest('getBundle', { uuid, resolve, data, website })
-          break
-        }
         case 'getCurrentAccount': {
           this.engine.pushRequest('getCurrentAccount', { uuid, resolve, data, website })
           break
@@ -148,72 +112,8 @@ const backgroundScript = {
           this.engine.pushRequest('getCurrentNode', { uuid, resolve, website })
           break
         }
-        case 'getInclusionStates': {
-          this.engine.pushRequest('getInclusionStates', { uuid, resolve, data, website })
-          break
-        }
-        case 'getLatestInclusion': {
-          this.engine.pushRequest('getLatestInclusion', { uuid, resolve, data, website })
-          break
-        }
-        case 'getNeighbors': {
-          this.engine.pushRequest('getNeighbors', { uuid, resolve, data, website })
-          break
-        }
-        case 'getNodeInfo': {
-          this.engine.pushRequest('getNodeInfo', { uuid, resolve, website })
-          break
-        }
-        case 'getTips': {
-          this.engine.pushRequest('getTips', { uuid, resolve, website })
-          break
-        }
-        case 'getTransactionObjects': {
-          this.engine.pushRequest('getTransactionObjects', { uuid, resolve, data, website })
-          break
-        }
-        case 'getTransactionsToApprove': {
-          this.engine.pushRequest('getTransactionObjects', { uuid, resolve, data, website })
-          break
-        }
-        case 'getTrytes': {
-          this.engine.pushRequest('getTrytes', { uuid, resolve, data, website })
-          break
-        }
-        case 'isPromotable': {
-          this.engine.pushRequest('isPromotable', { uuid, resolve, data, website })
-          break
-        }
         case 'prepareTransfers': {
           this.engine.pushTransfers(data, uuid, resolve, website)
-          break
-        }
-        case 'promoteTransaction': {
-          this.engine.pushRequest('promoteTransaction', { uuid, resolve, data, website })
-          break
-        }
-        case 'removeNeighbors': {
-          this.engine.pushRequest('removeNeighbors', { uuid, resolve, data, website })
-          break
-        }
-        case 'replayBundle': {
-          this.engine.pushRequest('replayBundle', { uuid, resolve, data, website })
-          break
-        }
-        case 'sendTrytes': {
-          this.engine.pushRequest('sendTrytes', { uuid, resolve, data, website })
-          break
-        }
-        case 'storeAndBroadcast': {
-          this.engine.pushRequest('storeAndBroadcast', { uuid, resolve, data, website })
-          break
-        }
-        case 'storeTransactions': {
-          this.engine.pushRequest('storeTransactions', { uuid, resolve, data, website })
-          break
-        }
-        case 'traverseBundle': {
-          this.engine.pushRequest('traverseBundle', { uuid, resolve, data, website })
           break
         }
       }

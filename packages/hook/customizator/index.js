@@ -1,4 +1,12 @@
 import { composeAPI } from '@iota/core'
+import * as bundle from '@iota/bundle'
+import * as bundleValidator from '@iota/bundle-validator'
+import * as checksum from '@iota/checksum'
+import * as converter from '@iota/converter'
+import * as extractJson from '@iota/extract-json'
+import * as transaction from '@iota/transaction'
+import * as validators from '@iota/validators'
+import * as unitConverter from '@iota/unit-converter'
 import Utils from '@pegasus/utils/utils'
 
 export default {
@@ -8,30 +16,38 @@ export default {
   },
 
   getCustomIota (provider) {
-    const iotajsHandler = composeAPI({ provider })
-    const iotajsTarget = composeAPI({ provider })
+    const core = composeAPI({ provider })
 
-    Object.entries(iotajsTarget).forEach(([method]) => {
-      iotajsTarget[method] = (...args) => {
+    core.prepareTransfers = (...args) => {
+      const cb = args[args.length - 1]
+        ? args[args.length - 1]
+        : null
 
-        const cb = args[args.length - 1]
-          ? args[args.length - 1]
+      if (!Utils.isFunction(cb)) {
+        return Utils.injectPromise(this.request, 'prepareTransfers', { args })
+      } else {
+
+        args = args
+          ? args.slice(0, args.length - 1)
           : null
 
-        if (!Utils.isFunction(cb)) {
-          return Utils.injectPromise(this.request, method, { args })
-        } else {
-
-          args = args
-            ? args.slice(0, args.length - 1)
-            : null
-
-          this.request(method, { args })
-            .then(res => cb(res, null))
-            .catch(err => cb(null, err))
-        }
+        this.request('prepareTransfers', { args })
+          .then(res => cb(res, null))
+          .catch(err => cb(null, err))
       }
-    })
+    }
+
+    const iota = {
+      bundle,
+      bundleValidator,
+      checksum,
+      core,
+      converter,
+      extractJson,
+      transaction,
+      unitConverter,
+      validators
+    }
 
     const additionalMethods = [
       'connect',
@@ -39,7 +55,7 @@ export default {
       'getCurrentNode'
     ]
     additionalMethods.forEach(method => {
-      iotajsTarget[method] = (...args) => {
+      iota[method] = (...args) => {
 
         const cb = args[args.length - 1]
           ? args[args.length - 1]
@@ -61,10 +77,10 @@ export default {
     })
 
     //disabled for security reasons
-    delete iotajsTarget.getAccountData
-    delete iotajsTarget.getInputs
-    delete iotajsTarget.getNewAddress
+    delete iota.core.getAccountData
+    delete iota.core.getInputs
+    delete iota.core.getNewAddress
 
-    return new Proxy(iotajsTarget, iotajsHandler)
+    return iota
   }
 }

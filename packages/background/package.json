@@ -5,11 +5,11 @@
   "private": true,
   "version": "0.2.2",
   "dependencies": {
-    "@iota/converter": "^1.0.0-beta.14",
-    "@iota/core": "^1.0.0-beta.14",
+    "@iota/converter": "^1.0.0-beta.23",
+    "@iota/core": "^1.0.0-beta.24",
     "@iota/curl": "^1.0.0-beta.14",
-    "@iota/extract-json": "^1.0.0-beta.14",
-    "@iota/http-client": "^1.0.0-beta.14",
+    "@iota/extract-json": "^1.0.0-beta.23",
+    "@iota/http-client": "^1.0.0-beta.23",
     "@iota/mam": "^0.7.3",
     "eventemitter3": "^3.1.0",
     "extensionizer": "^1.0.1"
