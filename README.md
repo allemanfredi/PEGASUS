@@ -78,48 +78,31 @@ if (window.iota) {
 
     //if user enabled
     if (permission.connected) {
-        const bundle = await window.iota.prepareTransfers(transfers)
+        const bundle = await window.iota.core.prepareTransfers(transfers)
         console.log(bundle)
     } 
 }
 ```
-&nbsp;
-### :page_with_curl: List of Supported injected functions
 
-It's possible to interact with the functions both with __callbacks__ and __promises__
- * .connect([callback])
- * .addNeighbors(uris, [callback])
- * .attachToTangle(trunkTransaction, branchTransaction, minWeightMagnitude, trytes, [callback])
- * .broadcastBundle(tailTransactionHash, [callback])
- * .broadcastTransactions(trytes, [callback])
- * .checkConsistency(transactions, [options], [callback])
- * .getNodeInfo([callback])
- * .prepareTransfers(seed, transfers, [options], [callback])
- * .findTransactionObjects(query, [callback])
- * .findTransactions(query, [callback])
- * .getBalances(addresses, threshold, [callback])
- * .getBundle(tailTransactionHash, [callback])
- * .getCurrentAccount([callback])
- * .getCurrentNode([callback])
- * .getInclusionStates(transactions, tips, [callback])
- * .getLatestInclusion(transactions, tips, [callback])
- * .getNeighbors([callback])
- * .getNodeInfo([callback])
- * .getTips([callback])
- * .getTransactionObjects(hashes, [callback])
- * .getTransactionsToApprove(depth, [reference], [callback])
- * .getTrytes(hashes, [callback])
- * .isPromotable(tail, [callback])
- * .prepareTransfers(transfers, [options], [callback])
- * .promoteTransaction(tail, depth, minWeightMagnitude, transfer, [options], [callback])
- * .removeNeighbors(uris, [callback])
- * .replayBundle(tail, depth, minWeightMagnitude, [callback])
- * .sendTrytes(trytes, depth, minWeightMagnitude, [reference], [callback])
- * .storeAndBroadcast(trytes, [callback])
- * .storeTransactions(trytes, [callback])
- * .traverseBundle(trunkTransaction, [bundle], [callback])
+### Injection Result
 
-__getAccountData__, __getInputs__, __getNewAddress__ have been disabled for security reason.
+```js
+window.iota
+{
+    bundle: ...
+    bundleValidator: ...
+    checksum: ...
+    connect: ...
+    converter: ...
+    core: ...
+    extractJson: ...
+    getCurrentAccount: ...
+    getCurrentNode: ...
+    transaction: ...
+    unitConverter: ...
+    validators ...
+}
+```
 
 &nbsp;
 
