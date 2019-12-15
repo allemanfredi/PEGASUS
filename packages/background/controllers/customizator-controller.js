@@ -141,15 +141,7 @@ class CustomizatorController {
         break
       }
       default: {
-        if (data) {
-          this.iota[method](...data.args)
-          .then(res => resolve({ data: res, success: true, uuid }))
-          .catch(err => resolve({ data: err.message, success: false, uuid }))
-        } else {
-          this.iota[method]()
-          .then(res => resolve({ data: res, success: true, uuid }))
-          .catch(err => resolve({ data: err.message, success: false, uuid }))
-        }
+        resolve({ data: 'Method Not Found', success: false, uuid })
       }
     }
   }
