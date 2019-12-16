@@ -5,6 +5,7 @@ import Init from '../init/Init'
 import Restore from '../restore/Restore'
 import Confirm from '../confirm/Confirm'
 import Connector from '../connector/Connector'
+import ConfirmMamOperation from '../mam/ConfirmMamOperation'
 import Duplex from '@pegasus/utils/duplex'
 import { popupMessanger } from '@pegasus/utils/messangers'
 import { APP_STATE } from '@pegasus/utils/states'
@@ -52,7 +53,11 @@ class Main extends Component {
     if (state === APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
       this.props.showHeader(false)
 
+    if (state === APP_STATE.WALLET_REQUEST_PERMISSION_MAM_OPERATION)
+      this.props.showHeader(false)
+
     const requests = await popupMessanger.getRequests()
+    const mamRequestsWithUserInteraction = await popupMessanger.getMamRequestsWithUserInteraction()
     //impossible to load data from the storage until that a user log in
     if (state >= APP_STATE.WALLET_UNLOCKED) {
 
@@ -64,6 +69,12 @@ class Main extends Component {
           this.props.showHeader(false)
           state = APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION 
         }
+
+        if (connection.enabled === true && mamRequestsWithUserInteraction.length > 0) {
+          this.props.showHeader(false)
+          state = APP_STATE.WALLET_REQUEST_PERMISSION_MAM_OPERATION
+          popupMessanger.setState(APP_STATE.WALLET_REQUEST_PERMISSION_MAM_OPERATION)
+        }
       }
 
       if (!connection && state === APP_STATE.WALLET_TRANSFERS_IN_QUEUE) {
@@ -74,7 +85,7 @@ class Main extends Component {
       if (
         !connection &&
         state >= APP_STATE.WALLET_UNLOCKED &&
-        requests.length > 0
+        (requests.length > 0 || mamRequestsWithUserInteraction.length > 0)
       ) {
         this.props.showHeader(false)
         state = APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION 
@@ -87,7 +98,6 @@ class Main extends Component {
 
   bindDuplexRequests() {
     this.duplex.on('setAppState', appState => {
-      console.log("ne st", appState)
       this.setState({ appState })
       if (appState > APP_STATE.WALLET_LOCKED)
         this.props.showHeader(true)
@@ -103,9 +113,10 @@ class Main extends Component {
     const connection = await popupMessanger.getConnection(website ? website.origin : 'offline')
     const transfers = await popupMessanger.getTransfers()
     const requests = await popupMessanger.getRequests()
+    const mamRequestsWithUserInteraction = await popupMessanger.getMamRequestsWithUserInteraction()
     
     //no connections but request from injection with wallet locked
-    if (!connection && (transfers.length > 0 || requests.length > 0)) {
+    if (!connection && (transfers.length > 0 || requests.length > 0 || mamRequestsWithUserInteraction.length > 0)) {
       popupMessanger.updateConnection({
         website,
         requestToConnect: true,
@@ -119,7 +130,11 @@ class Main extends Component {
     } 
 
     //unlocked and no injection requests
-    else if ((!connection || connection.enabled) && transfers.length === 0 && requests.length === 0){
+    else if ((!connection || connection.enabled) && 
+      transfers.length === 0 &&
+      requests.length === 0 && 
+      mamRequestsWithUserInteraction.length === 0
+    ){
       popupMessanger.startHandleAccountData()
       this.props.showHeader(true)
       this.setState({ appState: APP_STATE.WALLET_UNLOCKED })
@@ -140,7 +155,14 @@ class Main extends Component {
       popupMessanger.setState(APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
       this.changeTransfers(transfers)
       return
-    } 
+    }
+
+    else if (mamRequestsWithUserInteraction.length > 0) {
+      this.props.showHeader(false)
+      this.setState({ appState: APP_STATE.WALLET_REQUEST_PERMISSION_MAM_OPERATION })
+      popupMessanger.setState(APP_STATE.WALLET_REQUEST_PERMISSION_MAM_OPERATION)
+      return
+    }
 
     else if (connection.enabled === true){
       popupMessanger.closePopup()
@@ -150,6 +172,7 @@ class Main extends Component {
 
   async onPermissionGranted() {
     const transfers = await popupMessanger.getTransfers()
+    const mamRequestsWithUserInteraction = await popupMessanger.getMamRequestsWithUserInteraction()
     const website = await popupMessanger.getWebsite()
     popupMessanger.pushConnection({
       website,
@@ -164,6 +187,12 @@ class Main extends Component {
       this.setState({ appState: APP_STATE.WALLET_TRANSFERS_IN_QUEUE })
       popupMessanger.setState(APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
       this.changeTransfers(transfers)
+      return
+    } 
+    else if (mamRequestsWithUserInteraction.length > 0) {
+      this.props.showHeader(false)
+      this.setState({ appState: APP_STATE.WALLET_REQUEST_PERMISSION_MAM_OPERATION })
+      popupMessanger.setState(APP_STATE.WALLET_REQUEST_PERMISSION_MAM_OPERATION)
       return
     } else {
       popupMessanger.closePopup()
@@ -282,6 +311,8 @@ class Main extends Component {
         return <Connector ref={this.connector} 
                   onPermissionGranted={this.onPermissionGranted}
                   onPermissionNotGranted={this.onPermissionNotGranted} />
+      case APP_STATE.WALLET_REQUEST_PERMISSION_MAM_OPERATION:
+        return <ConfirmMamOperation />
       default:
         return ''
     }

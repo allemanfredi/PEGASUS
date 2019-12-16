@@ -81,6 +81,9 @@ const backgroundScript = {
     duplex.on('getWebsite', this.engine.getWebsite)
 
     duplex.on('startFetchMam', this.engine.startFetchMam)
+    duplex.on('getMamRequestsWithUserInteraction', this.engine.getMamRequestsWithUserInteraction)
+    duplex.on('confirmMamRequest', this.engine.confirmMamRequest)
+    duplex.on('rejectMamRequest', this.engine.rejectMamRequest)
   },
 
   bindTabDuplex () {
@@ -114,6 +117,22 @@ const backgroundScript = {
         }
         case 'prepareTransfers': {
           this.engine.pushTransfers(data, uuid, resolve, website)
+          break
+        }
+        case 'mam_init' : {
+          this.engine.pushRequest('mam_init', { uuid, resolve, data, website })
+          break
+        }
+        case 'mam_changeMode' : {
+          this.engine.pushRequest('mam_changeMode', { uuid, resolve, data, website })
+          break
+        }
+        case 'mam_getRoot' : {
+          this.engine.pushRequest('mam_getRoot', { uuid, resolve, data, website })
+          break
+        }
+        case 'mam_create' : {
+          this.engine.pushRequest('mam_create', { uuid, resolve, data, website })
           break
         }
       }

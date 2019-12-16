@@ -209,6 +209,18 @@ export default {
   
   rejectRequests() {
     return this.duplex.send('rejectRequests')
+  },
+
+  getMamRequestsWithUserInteraction() {
+    return this.duplex.send('getMamRequestsWithUserInteraction')
+  },
+
+  confirmMamRequest(request) {
+    return this.duplex.send('confirmMamRequest', request)
+  },
+
+  rejectMamRequest(request) {
+    return this.duplex.send('rejectMamRequest', request)
   }
 
 }

@@ -29,8 +29,12 @@ class PegasusEngine {
     this.popupController = new PopupController()
     this.storageController = new StorageController()
     this.notificationsController = new NotificationsController()
-
+    
     this.connectorController = new ConnectorController({
+      storageController: this.storageController
+    })
+
+    this.mamController = new MamController({
       storageController: this.storageController
     })
 
@@ -38,7 +42,8 @@ class PegasusEngine {
       popupController: this.popupController,
       connectorController: this.connectorController,
       walletController: null, //DEFINED BELOW
-      networkController: null //DEFINED BELOW
+      networkController: null, //DEFINED BELOW
+      mamController: this.mamController
     })
 
     this.networkController = new NetworkController({
@@ -70,13 +75,17 @@ class PegasusEngine {
       networkController: this.networkController
     })
 
-    this.mamController = new MamController()
-
     this.customizatorController.setWalletController(
       this.walletController
     )
     this.customizatorController.setNetworkController(
       this.networkController
+    )
+    this.mamController.setNetworkController(
+      this.networkController
+    )
+    this.mamController.setWalletController(
+      this.walletController
     )
     /* E N D   C O N T R O L L E R S */
 
@@ -353,9 +362,21 @@ class PegasusEngine {
 
   startFetchMam (options) {
     const network = this.networkController.getCurrentNetwork()
-    this.mamController.fetch(network.provider, options.root, options.mode, options.sideKey, data => {
+    this.mamController.fetchFromPopup(network.provider, options.root, options.mode, options.sideKey, data => {
       backgroundMessanger.newMamData(data)
     })
+  }
+
+  getMamRequestsWithUserInteraction () {
+    return this.customizatorController.getMamRequestsWithUserInteraction()
+  }
+
+  confirmMamRequest (request) {
+    this.customizatorController.confirmMamRequest(request)
+  }
+
+  rejectMamRequest (request) {
+    this.customizatorController.rejectMamRequest(request)
   }
 }
 

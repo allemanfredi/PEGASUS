@@ -47,7 +47,7 @@ class ConnectorController {
         return c
       }
     })
-    this.storageController.setConnections(updatedConnections)
+    this.storageController.setConnections(updatedConnections, true)
   }
 
   connect(uuid, resolve, website)  {

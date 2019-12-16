@@ -7,6 +7,7 @@ import * as extractJson from '@iota/extract-json'
 import * as transaction from '@iota/transaction'
 import * as validators from '@iota/validators'
 import * as unitConverter from '@iota/unit-converter'
+import Mam from '@iota/mam/lib/mam.web.min.js'
 import Utils from '@pegasus/utils/utils'
 
 export default {
@@ -18,24 +19,12 @@ export default {
   getCustomIota (provider) {
     const core = composeAPI({ provider })
 
-    core.prepareTransfers = (...args) => {
-      const cb = args[args.length - 1]
-        ? args[args.length - 1]
-        : null
+    core.prepareTransfers = (...args) => this._handleInjectedRequest(args, 'prepareTransfers')
 
-      if (!Utils.isFunction(cb)) {
-        return Utils.injectPromise(this.request, 'prepareTransfers', { args })
-      } else {
-
-        args = args
-          ? args.slice(0, args.length - 1)
-          : null
-
-        this.request('prepareTransfers', { args })
-          .then(res => cb(res, null))
-          .catch(err => cb(null, err))
-      }
-    }
+    const mam = {}
+    Object.keys(Mam).forEach(method => {
+      mam[method] = (...args) => this._handleInjectedRequest(args, method, 'mam_')
+    })
 
     const iota = {
       bundle,
@@ -46,7 +35,8 @@ export default {
       extractJson,
       transaction,
       unitConverter,
-      validators
+      validators,
+      mam
     }
 
     const additionalMethods = [
@@ -55,25 +45,7 @@ export default {
       'getCurrentNode'
     ]
     additionalMethods.forEach(method => {
-      iota[method] = (...args) => {
-
-        const cb = args[args.length - 1]
-          ? args[args.length - 1]
-          : null
-
-        if (!Utils.isFunction(cb)) {
-          return Utils.injectPromise(this.request, method, { args })
-        } else {
-
-          args = args
-            ? args.slice(0, args.length - 1)
-            : null
-
-          this.request(method, { args })
-            .then(res => cb(res, null))
-            .catch(err => cb(null, err))
-        }
-      }
+      iota[method] = (...args) => this._handleInjectedRequest(args, method)
     })
 
     //disabled for security reasons
@@ -82,5 +54,24 @@ export default {
     delete iota.core.getNewAddress
 
     return iota
-  }
+  },
+
+  _handleInjectedRequest(args, method, prefix = '') {
+    const cb = args[args.length - 1]
+      ? args[args.length - 1]
+      : null
+
+    if (!Utils.isFunction(cb)) {
+      return Utils.injectPromise(this.request, prefix + method, { args })
+    } else {
+
+      args = args
+        ? args.slice(0, args.length - 1)
+        : null
+
+      this.request(prefix + method, { args })
+        .then(res => cb(res, null))
+        .catch(err => cb(null, err))
+    }
+  },
 }
