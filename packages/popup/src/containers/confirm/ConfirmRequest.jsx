@@ -2,8 +2,9 @@ import React, { Component } from 'react'
 import { popupMessanger } from '@pegasus/utils/messangers'
 import Utils from '@pegasus/utils/utils'
 import ConfirmTransfers from './confirmTransfers/ConfirmTransfers'
+import ConfirmCreateMamChannel from './confirmCreateMamChannel/ConfirmCreateMamChannel'
+import ConfirmChangeModeMamChannel from './confirmChangeModeMamChannel/ConfirmChangeModeMamChannel'
 import Loader from '../../components/loader/Loader'
-import Duplex from '@pegasus/utils/duplex'
 
 class ConfirmRequest extends Component {
 
@@ -18,8 +19,6 @@ class ConfirmRequest extends Component {
     this.state = {
       requests: [],
     }
-
-    this.duplex = new Duplex.Popup()
   }
 
   async componentWillMount() {
@@ -40,7 +39,7 @@ class ConfirmRequest extends Component {
   }
 
   bindDuplexRequests() {
-    this.duplex.on('setRequests', requests => {
+    this.props.duplex.on('setRequests', requests => {
       this.setState({ requests })
     })
   }
@@ -52,11 +51,24 @@ class ConfirmRequest extends Component {
     if (request) {
       switch(request.method) {
         case 'prepareTransfers':
-          return <ConfirmTransfers transfer={request}
+          return <ConfirmTransfers 
+            transfer={request}
             duplex={this.props.duplex}
             onConfirm={this.confirm}
             onReject={this.reject}/>
-  
+
+        case 'mam_init':
+          return <ConfirmCreateMamChannel 
+            request={request}
+            onConfirm={this.confirm}
+            onReject={this.reject}/>
+        case 'mam_changeMode':
+          return <ConfirmChangeModeMamChannel 
+            from={request.data.args[0].channel.mode} 
+            to={request.data.args[1]}
+            request={request}
+            onConfirm={this.confirm}
+            onReject={this.reject}/>
         default: return null
       }
     } else return <Loader/>
