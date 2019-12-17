@@ -13,9 +13,10 @@ const Utils = {
           return Reflect.get(target, prop)
 
         return (...args) => {
+
           if (!args.length)
             args[0] = {}
-
+          
           const [firstArg] = args
 
           const {
@@ -132,7 +133,7 @@ const Utils = {
 
   isValidAddress(address) {
     const values = ['9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
-    if (address.length !== 81)
+    if (address.length !== 81 && address.length != 90)
       return false;
     [...address].forEach(c => {
       if (values.indexOf(c) === -1)

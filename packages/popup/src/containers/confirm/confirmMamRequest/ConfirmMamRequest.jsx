@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import { popupMessanger } from '@pegasus/utils/messangers'
-import Utils from '@pegasus/utils/utils'
 
-class ConfirmMamOperation extends Component {
+class ConfirmMamRequest extends Component {
 
   constructor(props, context) {
     super(props, context)
@@ -23,12 +22,12 @@ class ConfirmMamOperation extends Component {
   }
 
   async confirm(request) {
-    await popupMessanger.confirmMamRequest(request)
+    await popupMessanger.confirmRequest(request)
     popupMessanger.closePopup()
   }
 
   async reject(request) {
-    await popupMessanger.confirmMamRequest(request)
+    await popupMessanger.confirmRequest(request)
   }
 
   render() {
@@ -92,4 +91,4 @@ class ConfirmMamOperation extends Component {
   }
 }
 
-export default ConfirmMamOperation
+export default ConfirmMamRequest

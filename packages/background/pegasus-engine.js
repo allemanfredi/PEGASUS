@@ -81,6 +81,9 @@ class PegasusEngine {
     this.customizatorController.setNetworkController(
       this.networkController
     )
+    this.customizatorController.setTransferController(
+      this.transferController
+    )
     this.mamController.setNetworkController(
       this.networkController
     )
@@ -233,34 +236,6 @@ class PegasusEngine {
     this.walletController.setState(state)
   }
 
-  pushTransfers (transfers, uuid, resolve, website) {
-    this.transferController.pushTransfers(transfers, uuid, resolve, website)
-  }
-
-  pushTransfersFromPopup (transfers) {
-    this.transferController.pushTransfersFromPopup(transfers)
-  }
-
-  confirmTransfers (transfers) {
-    this.transferController.confirmTransfers(transfers)
-  }
-
-  removeTransfer (transfers) {
-    this.transferController.removeTransfer(transfers)
-  }
-
-  getTransfers () {
-    return this.transferController.getTransfers()
-  }
-
-  rejectAllTransfers () {
-    this.transferController.rejectAllTransfers()
-  }
-
-  rejectTransfer (transfers) {
-    this.transferController.rejectTransfer(transfers)
-  }
-
   openPopup () {
     this.popupController.openPopup()
   }
@@ -269,18 +244,26 @@ class PegasusEngine {
     this.popupController.closePopup()
   }
 
+  executeRequestFromPopup (request) {
+    return this.customizatorController.executeRequestFromPopup(request)
+  }
+
   pushRequest (method, { uuid, resolve, data, website }) {
-    this.customizatorController.pushRequest(
+    this.customizatorController.pushRequest({
       method,
       uuid,
       resolve,
       data,
       website
-    )
+    })
   }
 
   getRequests () {
     return this.customizatorController.getRequests()
+  }
+
+  getRequestsWithUserInteraction () {
+    return this.customizatorController.getRequestsWithUserInteraction()
   }
 
   executeRequests () {
@@ -289,6 +272,14 @@ class PegasusEngine {
 
   rejectRequests() {
     this.customizatorController.rejectRequests()
+  }
+
+  confirmRequest (request) {
+    this.customizatorController.confirmRequest(request)
+  }
+
+  rejectRequest (request) {
+    this.customizatorController.rejectRequest(request)
   }
 
   connect(uuid, resolve, website) {
@@ -365,18 +356,6 @@ class PegasusEngine {
     this.mamController.fetchFromPopup(network.provider, options.root, options.mode, options.sideKey, data => {
       backgroundMessanger.newMamData(data)
     })
-  }
-
-  getMamRequestsWithUserInteraction () {
-    return this.customizatorController.getMamRequestsWithUserInteraction()
-  }
-
-  confirmMamRequest (request) {
-    this.customizatorController.confirmMamRequest(request)
-  }
-
-  rejectMamRequest (request) {
-    this.customizatorController.rejectMamRequest(request)
   }
 }
 

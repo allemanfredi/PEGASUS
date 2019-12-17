@@ -3,7 +3,6 @@ import Alert from '../../components/alert/Alert'
 import { popupMessanger } from '@pegasus/utils/messangers'
 import Spinner from '../../components/spinner/Spinner'
 
-
 class Add extends Component {
   constructor(props, context) {
     super(props, context);

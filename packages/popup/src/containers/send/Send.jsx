@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { popupMessanger } from '@pegasus/utils/messangers'
-import Loader from '../../components/loader/Loader'
 import Utils from '@pegasus/utils/utils'
+import ConfirmTransfers from '../confirm/confirmTransfers/ConfirmTransfers'
 import randomUUID from 'uuid/v4'
 
 class Send extends Component {
@@ -9,6 +9,8 @@ class Send extends Component {
     super(props, context)
 
     this.clickTransfer = this.clickTransfer.bind(this)
+    this.confirmTransfer = this.confirmTransfer.bind(this)
+    this.rejectTransfer = this.rejectTransfer.bind(this)
 
     this.state = {
       address: '',
@@ -18,11 +20,12 @@ class Send extends Component {
       value: '',
       message: '',
       isLoading: false,
-      error: null
+      error: null,
+      needConfirmation: false
     }
   }
 
-  async clickTransfer() {
+  clickTransfer() {
     this.setState({
       error: null
     })
@@ -30,11 +33,6 @@ class Send extends Component {
     if (!Utils.isValidAddress(this.state.dstAddress)) {
       this.setState({
         error: 'Invalid Address'
-      })
-    }
-    if (!Utils.isChecksummed(this.state.dstAddress)) {
-      this.setState({
-        error: 'Address should be 90 characters long and should have a checksum'
       })
       return
     }
@@ -46,31 +44,53 @@ class Send extends Component {
       message: this.state.message,
     }]
 
-    const uuid = randomUUID()
-
     const data = {
-      uuid,
       args: [
         transfer,
       ]
     }
-    
-    popupMessanger.pushTransfersFromPopup(data)
-    this.props.onAskConfirm()
+
+    this.setState({ 
+      needConfirmation: true,
+      transfer: {
+        method: 'prepareTransfers',
+        data,
+      }
+    })
+    this.props.onHideTop(true)
+  }
+
+  async confirmTransfer() {
+     const res = await popupMessanger.executeRequestFromPopup(this.state.transfer)
+     if (res.success) {
+       this.props.onHideTop(false)
+       this.props.onBack()
+     }
+  }
+
+  rejectTransfer() {
+    this.props.onHideTop(false)
+    this.setState({
+      needConfirmation: false,
+      transfer: null
+    })
   }
 
   render() {
     return (
-      <div className="container">
-        {
-          !this.state.isLoading ?
+      this.state.needConfirmation
+        ? <ConfirmTransfers transfer={this.state.transfer}
+            onConfirm={this.confirmTransfer}
+            onReject={this.rejectTransfer}
+            duplex={this.props.duplex} />
+        : <div className="container">
             <div>
               <div className='row mt-4'>
                 <div className='col-12'>
                   <label htmlFor='inp-address' className='inp'>
-                    <input value={this.state.dstAddress} 
-                      onChange={e => this.setState({ dstAddress: e.target.value })} 
-                      type='text' id='inp-address' 
+                    <input value={this.state.dstAddress}
+                      onChange={e => this.setState({ dstAddress: e.target.value })}
+                      type='text' id='inp-address'
                       placeholder='&nbsp;' />
                     <span className='label'>address</span>
                     <span className='border'></span>
@@ -80,10 +100,10 @@ class Send extends Component {
               <div className='row mt-4'>
                 <div className='col-12'>
                   <label htmlFor='inp-message' className='inp'>
-                    <input value={this.state.message} 
-                      onChange={e => this.setState({ message: e.target.value })} 
-                      type='text' 
-                      id='inp-message' 
+                    <input value={this.state.message}
+                      onChange={e => this.setState({ message: e.target.value })}
+                      type='text'
+                      id='inp-message'
                       placeholder='&nbsp;' />
                     <span className='label'>message</span>
                     <span className='border'></span>
@@ -93,10 +113,10 @@ class Send extends Component {
               <div className='row mt-4'>
                 <div className='col-6'>
                   <label htmlFor='inp-tag' className='inp'>
-                    <input value={this.state.tag} 
-                      onChange={e => this.setState({ tag: e.target.value })} 
-                      type='text' 
-                      id='inp-message' 
+                    <input value={this.state.tag}
+                      onChange={e => this.setState({ tag: e.target.value })}
+                      type='text'
+                      id='inp-message'
                       placeholder='&nbsp;' />
                     <span className='label'>tag</span>
                     <span className='border'></span>
@@ -104,10 +124,10 @@ class Send extends Component {
                 </div>
                 <div className="col-6">
                   <label htmlFor='inp-value' className='inp'>
-                    <input value={this.state.value} 
-                      onChange={e => this.setState({ value: e.target.value })} 
-                      type='text' 
-                      id='inp-value' 
+                    <input value={this.state.value}
+                      onChange={e => this.setState({ value: e.target.value })}
+                      type='text'
+                      id='inp-value'
                       placeholder='&nbsp;' />
                     <span className='label'>value</span>
                     <span className='border'></span>
@@ -123,24 +143,22 @@ class Send extends Component {
                       </div>
                     </div>
                   </div>
-                : ''
+                  : ''
               }
               <div className={'row ' + (this.state.error ? 'mt-1' : 'mt-11')}>
                 <div className='col-12 text-center'>
-                  <button disabled={this.state.dstAddress === '' ? true : false} 
+                  <button disabled={this.state.dstAddress === '' ? true : false}
                     onClick={this.clickTransfer}
                     className='btn btn-blue text-bold btn-big'>
-                      Send
-                  </button>
+                    Send
+                    </button>
                 </div>
               </div>
               <div className="row mt-2">
                 <div className="col-12 text-center text-xxs text-blue">Address is mandatory. if value is empty it's interpreted as 0 and the wallet will generate a 0 value transaction</div>
               </div>
             </div>
-            : <Loader />
-          }
-      </div>
+          </div>
     )
   }
 }

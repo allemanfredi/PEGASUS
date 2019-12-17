@@ -3,9 +3,8 @@ import Home from '../home/Home'
 import Login from '../login/Login'
 import Init from '../init/Init'
 import Restore from '../restore/Restore'
-import Confirm from '../confirm/Confirm'
+import ConfirmRequest from '../confirm/ConfirmRequest'
 import Connector from '../connector/Connector'
-import ConfirmMamOperation from '../mam/ConfirmMamOperation'
 import Duplex from '@pegasus/utils/duplex'
 import { popupMessanger } from '@pegasus/utils/messangers'
 import { APP_STATE } from '@pegasus/utils/states'
@@ -21,14 +20,10 @@ class Main extends Component {
     this.onLogout = this.onLogout.bind(this)
     this.onRestore = this.onRestore.bind(this)
     this.onBack = this.onBack.bind(this)
-    this.onRejectAll = this.onRejectAll.bind(this)
-    this.onAskConfirm = this.onAskConfirm.bind(this)
-    this.onNotConfirms = this.onNotConfirms.bind(this)
     this.onPermissionGranted = this.onPermissionGranted.bind(this)
     this.onPermissionNotGranted = this.onPermissionNotGranted.bind(this)
 
     this.home = React.createRef()
-    this.confirm = React.createRef()
     this.connector = React.createRef()
 
     this.state = {
@@ -41,23 +36,19 @@ class Main extends Component {
   async componentDidMount() {
     await popupMessanger.checkSession()
     let state = await popupMessanger.getState()
+
     if (state >= APP_STATE.WALLET_LOCKED) {
       this.props.showHeader(true)
     }
     if (state >= APP_STATE.WALLET_UNLOCKED) {
       popupMessanger.startHandleAccountData()
     }
-    if (state === APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
-      this.props.showHeader(false)
-
-    if (state === APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
-      this.props.showHeader(false)
-
-    if (state === APP_STATE.WALLET_REQUEST_PERMISSION_MAM_OPERATION)
+    if (state === APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION)
       this.props.showHeader(false)
 
     const requests = await popupMessanger.getRequests()
-    const mamRequestsWithUserInteraction = await popupMessanger.getMamRequestsWithUserInteraction()
+    const requestsWithUserInteraction = await popupMessanger.getRequestsWithUserInteraction()
+    
     //impossible to load data from the storage until that a user log in
     if (state >= APP_STATE.WALLET_UNLOCKED) {
 
@@ -70,14 +61,14 @@ class Main extends Component {
           state = APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION 
         }
 
-        if (connection.enabled === true && mamRequestsWithUserInteraction.length > 0) {
+        if (connection.enabled === true && requestsWithUserInteraction.length > 0) {
           this.props.showHeader(false)
-          state = APP_STATE.WALLET_REQUEST_PERMISSION_MAM_OPERATION
-          popupMessanger.setState(APP_STATE.WALLET_REQUEST_PERMISSION_MAM_OPERATION)
+          state = APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION
+          popupMessanger.setState(APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION)
         }
       }
 
-      if (!connection && state === APP_STATE.WALLET_TRANSFERS_IN_QUEUE) {
+      if (!connection && state === APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION) {
         this.props.showHeader(false)
         state = APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION 
       }
@@ -85,7 +76,7 @@ class Main extends Component {
       if (
         !connection &&
         state >= APP_STATE.WALLET_UNLOCKED &&
-        (requests.length > 0 || mamRequestsWithUserInteraction.length > 0)
+        requests.length > 0
       ) {
         this.props.showHeader(false)
         state = APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION 
@@ -111,12 +102,10 @@ class Main extends Component {
 
     const website = await popupMessanger.getWebsite()
     const connection = await popupMessanger.getConnection(website ? website.origin : 'offline')
-    const transfers = await popupMessanger.getTransfers()
     const requests = await popupMessanger.getRequests()
-    const mamRequestsWithUserInteraction = await popupMessanger.getMamRequestsWithUserInteraction()
     
     //no connections but request from injection with wallet locked
-    if (!connection && (transfers.length > 0 || requests.length > 0 || mamRequestsWithUserInteraction.length > 0)) {
+    if (!connection && requests.length > 0) {
       popupMessanger.updateConnection({
         website,
         requestToConnect: true,
@@ -131,9 +120,7 @@ class Main extends Component {
 
     //unlocked and no injection requests
     else if ((!connection || connection.enabled) && 
-      transfers.length === 0 &&
-      requests.length === 0 && 
-      mamRequestsWithUserInteraction.length === 0
+      requests.length === 0
     ){
       popupMessanger.startHandleAccountData()
       this.props.showHeader(true)
@@ -149,20 +136,12 @@ class Main extends Component {
       return
     } 
 
-    else if (transfers.length > 0) {
-      this.props.showHeader(false)
-      this.setState({ appState: APP_STATE.WALLET_TRANSFERS_IN_QUEUE })
-      popupMessanger.setState(APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
-      this.changeTransfers(transfers)
-      return
-    }
-
-    else if (mamRequestsWithUserInteraction.length > 0) {
+    /*else if (requests.length > 0) {
       this.props.showHeader(false)
       this.setState({ appState: APP_STATE.WALLET_REQUEST_PERMISSION_MAM_OPERATION })
       popupMessanger.setState(APP_STATE.WALLET_REQUEST_PERMISSION_MAM_OPERATION)
       return
-    }
+    }*/
 
     else if (connection.enabled === true){
       popupMessanger.closePopup()
@@ -171,8 +150,7 @@ class Main extends Component {
   }
 
   async onPermissionGranted() {
-    const transfers = await popupMessanger.getTransfers()
-    const mamRequestsWithUserInteraction = await popupMessanger.getMamRequestsWithUserInteraction()
+    const requestsWithUserInteraction = await popupMessanger.getRequestsWithUserInteraction()
     const website = await popupMessanger.getWebsite()
     popupMessanger.pushConnection({
       website,
@@ -182,17 +160,11 @@ class Main extends Component {
     })
     
     await popupMessanger.completeConnection()
-    if (transfers.length > 0) {
+
+    if (requestsWithUserInteraction.length > 0) {
       this.props.showHeader(false)
-      this.setState({ appState: APP_STATE.WALLET_TRANSFERS_IN_QUEUE })
-      popupMessanger.setState(APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
-      this.changeTransfers(transfers)
-      return
-    } 
-    else if (mamRequestsWithUserInteraction.length > 0) {
-      this.props.showHeader(false)
-      this.setState({ appState: APP_STATE.WALLET_REQUEST_PERMISSION_MAM_OPERATION })
-      popupMessanger.setState(APP_STATE.WALLET_REQUEST_PERMISSION_MAM_OPERATION)
+      this.setState({ appState: APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION })
+      popupMessanger.setState(APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION)
       return
     } else {
       popupMessanger.closePopup()
@@ -251,35 +223,11 @@ class Main extends Component {
     popupMessanger.setState(APP_STATE.WALLET_LOCKED)
   }
 
-  onRejectAll() {
+  /*onRejectAll() {
     this.props.showHeader(true)
     this.setState({ appState: APP_STATE.WALLET_UNLOCKED })
     popupMessanger.rejectAllTransfers()
-  }
-
-  onNotConfirms() {
-    this.props.showHeader(true)
-    this.setState({ appState: APP_STATE.WALLET_UNLOCKED })
-  }
-
-  //duplex function
-  changeTransfers(transfers) {
-    this.confirm.current.changeTransfers(transfers)
-  }
-
-  setConfirmationLoading(isLoading) {
-    this.confirm.current.setConfirmationLoading(isLoading)
-  }
-
-  setConfirmationError(error) {
-    this.confirm.current.setConfirmationError(error)
-  }
-
-  onAskConfirm() {
-    this.props.showHeader(false)
-    this.setState({ appState: APP_STATE.WALLET_TRANSFERS_IN_QUEUE })
-    popupMessanger.setState(APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
-  }
+  }*/
 
   //add network
   addCustomNetwork() {
@@ -298,21 +246,18 @@ class Main extends Component {
                   onSuccess={this.onSuccessFromRestore}
                   onBack={this.onBack}/>
       case APP_STATE.WALLET_UNLOCKED:
-        return <Home ref={this.home} 
+        return <Home ref={this.home}
+                  duplex={this.props.duplex}
                   account={this.props.account} 
                   network={this.props.network} 
                   onLogout={this.onLogout} 
-                  onAskConfirm={this.onAskConfirm}/>
-      case APP_STATE.WALLET_TRANSFERS_IN_QUEUE:
-        return <Confirm ref={this.confirm} 
-                  onNotConfirms={this.onNotConfirms}
-                  onRejectAll={this.onRejectAll} />
+                  onShowHeader={show => this.props.showHeader(show)}/>
+      case APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION:
+        return <ConfirmRequest duplex={this.props.duplex}/>
       case APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION:
         return <Connector ref={this.connector} 
                   onPermissionGranted={this.onPermissionGranted}
                   onPermissionNotGranted={this.onPermissionNotGranted} />
-      case APP_STATE.WALLET_REQUEST_PERMISSION_MAM_OPERATION:
-        return <ConfirmMamOperation />
       default:
         return ''
     }

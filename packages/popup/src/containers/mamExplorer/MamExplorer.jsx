@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import ReactJson from 'react-json-view'
 import { popupMessanger } from '@pegasus/utils/messangers'
 import Utils from '@pegasus/utils/utils'
-import Duplex from '@pegasus/utils/duplex'
 import Alert from '../../components/alert/Alert'
 import Picklist from '../../components/picklist/Picklist'
 
@@ -26,12 +25,10 @@ class MamExplorer extends Component {
       alertText: '',
       alertType: ''
     }
-
-    this.duplex = new Duplex.Popup()
   }
 
   async componentWillMount() {
-    this.duplex.on('newMamData', data => this.setState(
+    this.props.duplex.on('newMamData', data => this.setState(
       {
         opened: [...this.state.opened, false],
         data: [...this.state.data, data]

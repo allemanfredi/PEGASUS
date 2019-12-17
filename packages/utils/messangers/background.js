@@ -4,8 +4,8 @@ export default {
     this.duplex = duplex
   },
 
-  setTransfers (transfers) {
-    this.duplex.send('popup', 'setTransfers', transfers, false)
+  setRequests (requests) {
+    this.duplex.send('popup', 'setRequests', requests, false)
   },
 
   setNetworks (networks) {
@@ -16,12 +16,12 @@ export default {
     this.duplex.send('popup', 'setNetwork', network, false)
   },
 
-  setConfirmationLoading(loading) {
-    this.duplex.send('popup', 'setConfirmationLoading', loading, false)
+  setTransfersConfirmationLoading(loading) {
+    this.duplex.send('popup', 'setTransfersConfirmationLoading', loading, false)
   },
 
-  setConfirmationError (error) {
-    this.duplex.send('popup', 'setConfirmationError', error, false)
+  setTransfersConfirmationError (error) {
+    this.duplex.send('popup', 'setTransfersConfirmationError', error, false)
   },
 
   setAccount (account) {

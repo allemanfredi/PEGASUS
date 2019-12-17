@@ -127,24 +127,8 @@ export default {
     return this.duplex.send('setState', state)
   },
 
-  getTransfers () {
-    return this.duplex.send('getTransfers')
-  },
-
   pushTransfersFromPopup (transfer) {
     return this.duplex.send('pushTransfersFromPopup', transfer)
-  },
-
-  rejectTransfer (transfer) {
-    return this.duplex.send('rejectTransfer', transfer)
-  },
-
-  rejectAllTransfers () {
-    return this.duplex.send('rejectAllTransfers')
-  },
-
-  confirmTransfers (transfer) {
-    return this.duplex.send('confirmTransfers', transfer)
   },
 
   startHandleAccountData () {
@@ -206,21 +190,25 @@ export default {
   getRequests () {
     return this.duplex.send('getRequests')
   },
+
+  getRequestsWithUserInteraction () {
+    return this.duplex.send('getRequestsWithUserInteraction')
+  },
   
   rejectRequests() {
     return this.duplex.send('rejectRequests')
   },
 
-  getMamRequestsWithUserInteraction() {
-    return this.duplex.send('getMamRequestsWithUserInteraction')
+  confirmRequest(request) {
+    return this.duplex.send('confirmRequest', request)
   },
 
-  confirmMamRequest(request) {
-    return this.duplex.send('confirmMamRequest', request)
+  rejectRequest(request) {
+    return this.duplex.send('rejectRequest', request)
   },
 
-  rejectMamRequest(request) {
-    return this.duplex.send('rejectMamRequest', request)
+  executeRequestFromPopup(request) {
+    return this.duplex.send('executeRequestFromPopup', request)
   }
 
 }

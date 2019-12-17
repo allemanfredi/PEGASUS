@@ -55,14 +55,12 @@ const backgroundScript = {
     duplex.on('getState', this.engine.getState)
     duplex.on('setState', this.engine.setState)
 
-    duplex.on('getTransfers', this.engine.getTransfers)
-    duplex.on('pushTransfersFromPopup',this.engine.pushTransfersFromPopup)
-    duplex.on('rejectAllTransfers', this.engine.rejectAllTransfers)
-    duplex.on('rejectTransfer', this.engine.rejectTransfer)
-    duplex.on('confirmTransfers', this.engine.confirmTransfers)
-
     duplex.on('getRequests', this.engine.getRequests)
     duplex.on('rejectRequests', this.engine.rejectRequests)
+    duplex.on('getRequestsWithUserInteraction', this.engine.getRequestsWithUserInteraction)
+    duplex.on('confirmRequest', this.engine.confirmRequest)
+    duplex.on('rejectRequest', this.engine.rejectRequest)
+    duplex.on('executeRequestFromPopup', this.engine.executeRequestFromPopup)
 
     duplex.on('startHandleAccountData', this.engine.startHandleAccountData)
     duplex.on('stopHandleAccountData', this.engine.stopHandleAccountData)
@@ -81,9 +79,6 @@ const backgroundScript = {
     duplex.on('getWebsite', this.engine.getWebsite)
 
     duplex.on('startFetchMam', this.engine.startFetchMam)
-    duplex.on('getMamRequestsWithUserInteraction', this.engine.getMamRequestsWithUserInteraction)
-    duplex.on('confirmMamRequest', this.engine.confirmMamRequest)
-    duplex.on('rejectMamRequest', this.engine.rejectMamRequest)
   },
 
   bindTabDuplex () {
@@ -108,7 +103,7 @@ const backgroundScript = {
           break
         }
         case 'getCurrentAccount': {
-          this.engine.pushRequest('getCurrentAccount', { uuid, resolve, data, website })
+          this.engine.pushRequest('getCurrentAccount', { uuid, resolve, website })
           break
         }
         case 'getCurrentNode': {
@@ -116,7 +111,7 @@ const backgroundScript = {
           break
         }
         case 'prepareTransfers': {
-          this.engine.pushTransfers(data, uuid, resolve, website)
+          this.engine.pushRequest('prepareTransfers', { data, uuid, resolve, website })
           break
         }
         case 'mam_init' : {
@@ -133,6 +128,10 @@ const backgroundScript = {
         }
         case 'mam_create' : {
           this.engine.pushRequest('mam_create', { uuid, resolve, data, website })
+          break
+        }
+        case 'mam_decode' : {
+          this.engine.pushRequest('mam_decode', { uuid, resolve, data, website })
           break
         }
       }

@@ -56,10 +56,11 @@ class Home extends Component {
       showMam: false,
       showExportSeed: false,
       showImportSeed: false,
+      showNavbar: true,
       alertType: '',
       alertText: '',
       actionToConfirm: '',
-      isLoading: false
+      isLoading: false,
     }
 
     this.duplex = new Duplex.Popup()
@@ -235,21 +236,25 @@ class Home extends Component {
   render() {
     return (
       <div>
-        <Navbar account={this.props.account}
-          network={this.props.network}
-          showBtnSettings={this.state.showHome}
-          showBtnEllipse={this.state.showHome}
-          showBtnBack={!this.state.showHome}
-          text={this.state.showHome ? this.props.account.name : (this.state.showSend ? 'Send' : (this.state.showReceive ? 'Receive' : this.state.showAdd ? 'Add account' : (this.state.showNetwork ? 'Add custom node' : (this.state.showMam ? 'MAM Explorer' : (this.state.showExportSeed ? 'Export Seed ' : (this.state.showImportSeed ? 'Import Seed' : ''))))))}
-          onClickSettings={this.onClickSettings}
-          onClickMap={this.onClickMap}
-          onBack={this.onBack}
-          onDeleteAccount={this.onDeleteAccount}
-          onViewAccountOnExplorer={this.onViewAccountOnExplorer}
-          onExportSeed={this.onExportSeed}
-          onImportSeed={this.onImportSeed}
-          onDeleteCurrentNetwork={this.onDeleteCurrentNetwork}>
-        </Navbar>
+        {
+          this.state.showNavbar
+            ? <Navbar account={this.props.account}
+                network={this.props.network}
+                showBtnSettings={this.state.showHome}
+                showBtnEllipse={this.state.showHome}
+                showBtnBack={!this.state.showHome}
+                text={this.state.showHome ? this.props.account.name : (this.state.showSend ? 'Send' : (this.state.showReceive ? 'Receive' : this.state.showAdd ? 'Add account' : (this.state.showNetwork ? 'Add custom node' : (this.state.showMam ? 'MAM Explorer' : (this.state.showExportSeed ? 'Export Seed ' : (this.state.showImportSeed ? 'Import Seed' : ''))))))}
+                onClickSettings={this.onClickSettings}
+                onClickMap={this.onClickMap}
+                onBack={this.onBack}
+                onDeleteAccount={this.onDeleteAccount}
+                onViewAccountOnExplorer={this.onViewAccountOnExplorer}
+                onExportSeed={this.onExportSeed}
+                onImportSeed={this.onImportSeed}
+                onDeleteCurrentNetwork={this.onDeleteCurrentNetwork}>
+              </Navbar>
+            : null
+        }
         {
           !(Object.keys(this.props.account).length === 0 && this.props.account.constructor === Object)
             ? <React.Fragment>
@@ -269,8 +274,13 @@ class Home extends Component {
                 {
                   this.state.showSend
                     ? <Send account={this.props.account}
+                        duplex={this.props.duplex}
                         network={this.props.network}
-                        onAskConfirm={() => this.props.onAskConfirm()} /> 
+                        onBack={this.onBack}
+                        onHideTop={show => {
+                          this.props.onShowHeader(!show)
+                          this.setState({ showNavbar: !show })
+                        }}/> 
                     : ''
                 }
                 {
@@ -293,6 +303,7 @@ class Home extends Component {
                 {
                   this.state.showMam
                     ? <MamExplorer account={this.props.account}
+                        duplex={this.props.duplex}
                         network={this.props.network}
                         onBack={this.onBack} /> 
                     : ''
