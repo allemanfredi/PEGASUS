@@ -284,6 +284,9 @@ class CustomizatorController {
       case 'mam_fetch': {
         return this.mamController.fetch(...data.args)
       }
+      case 'mam_fetchSingle': {
+        return this.mamController.fetchSingle(...data.args)
+      }
       default: {
         return {
           error: 'Method Not Found',

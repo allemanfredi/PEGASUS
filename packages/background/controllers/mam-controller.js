@@ -78,6 +78,7 @@ class MamController {
       state.channel.side_key = Utils.aes256decrypt(encryptedState.channel.side_key, encryptionKey)
 
     const stateToStore = Mam.changeMode(state, mode, sidekey)
+    
     const root = Mam.getRoot(stateToStore)
 
     stateToStore.seed = Utils.aes256encrypt(stateToStore.seed, encryptionKey)
@@ -213,10 +214,7 @@ class MamController {
       //private/public
       state = Mam.decode(payload, null, root)
     } else {
-      return {
-        success: false,
-        error: 'Channel Not Found'
-      }
+      state = Mam.decode(payload, null, root)
     }
     
     if (state.channel.side_key) {
@@ -295,6 +293,47 @@ class MamController {
       resolve({
         success: true,
         data: packets
+      })
+    })
+  }
+
+  fetchSingle(root, mode) {
+    return new Promise(async resolve => {
+      let sidekey = null
+
+      if (mode === 'restricted') {
+        const encryptionKey = this.walletController.getKey()
+        const mamChannels = this.storageController.getMamChannels()
+        const currentAccount = this.walletController.getCurrentAccount()
+        
+        if (!mamChannels[currentAccount.id].subscriber){
+          mamChannels[currentAccount.id]['subscriber'] = {}
+        }
+
+        sidekey = this._searchSidekeyIntoUserChannelsByRoot(
+          mamChannels[currentAccount.id],
+          root
+        )
+
+        if (sidekey) {
+          sidekey = Utils.aes256decrypt(sidekey, encryptionKey)
+        } else {
+          resolve({
+            success: false,
+            data: `Sidekey Not Found for ${root}`
+          })
+          return
+        }
+      }
+
+      const network = this.networkController.getCurrentNetwork()
+      Mam.init(network.provider)
+
+      const packet = await Mam.fetchSingle(root, mode, sidekey)
+
+      resolve({
+        success: true,
+        data: packet
       })
     })
   }

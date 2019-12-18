@@ -144,6 +144,10 @@ const backgroundScript = {
           this.engine.pushRequest('mam_fetch', { uuid, resolve, data, website })
           break
         }
+        case 'mam_fetchSingle' : {
+          this.engine.pushRequest('mam_fetchSingle', { uuid, resolve, data, website })
+          break
+        }
       }
     })
   }

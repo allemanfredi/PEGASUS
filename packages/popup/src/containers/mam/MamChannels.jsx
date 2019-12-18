@@ -25,7 +25,7 @@ class MamChannels extends Component {
     return (
       <div className="container">
         {
-          !this.state.showRegisterChannel && !this.state.showChannelList
+          !this.state.showRegisterChannel// && !this.state.showChannelList
             ? <React.Fragment>
                 <div className='row mt-4'>
                   <div className='col-12 text-center'>
@@ -41,7 +41,7 @@ class MamChannels extends Component {
                   </button>
                   </div>
                 </div>
-                <div className='row mt-4'>
+                {/*<div className='row mt-4'>
                   <div className='col-12 text-center'>
                     <button onClick={() => {
                         if (!this.state.showChannelList)
@@ -55,7 +55,7 @@ class MamChannels extends Component {
                       Show Channels
                   </button>
                   </div>
-                </div>
+                    </div>*/}
               </React.Fragment>
             : null
         }
