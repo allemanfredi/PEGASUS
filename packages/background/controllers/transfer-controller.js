@@ -1,4 +1,3 @@
-import Duplex from '@pegasus/utils/duplex'
 import { backgroundMessanger } from '@pegasus/utils/messangers'
 import Utils from '@pegasus/utils/utils'
 import { composeAPI } from '@iota/core'
@@ -7,9 +6,6 @@ import { asciiToTrytes } from '@iota/converter'
 class TransferController {
 
   constructor (options) {
-
-    const duplex = new Duplex.Host()
-    backgroundMessanger.init(duplex)
 
     const {
       connectorController,
