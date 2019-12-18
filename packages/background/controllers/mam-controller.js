@@ -300,7 +300,6 @@ class MamController {
   }
 
   _searchSidekeyIntoUserChannelsByRoot (userMamChannels, root) {
-    console.log(userMamChannels)
     let sidekey = null
     for (let state of Object.values(userMamChannels.owner)) {
       if (state.root === root) {
