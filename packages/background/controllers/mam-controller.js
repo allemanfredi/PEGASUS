@@ -47,7 +47,7 @@ class MamController {
     }
 
     mamChannels[currentAccount.id]['owner'][id] = { ...stateToStore, root}
-    this.storageController.setMamChannels(mamChannels, true)
+    this.storageController.setMamChannels(mamChannels)
 
     state.seed = Utils.sha256(state.seed)
     delete state.channel.side_key
@@ -94,7 +94,7 @@ class MamController {
 
     mamChannels[currentAccount.id]['owner'][id] = { ...stateToStore, root }
     
-    this.storageController.setMamChannels(mamChannels, true)
+    this.storageController.setMamChannels(mamChannels)
 
     const stateToReturn = Utils.copyObject(stateToStore)
     stateToReturn.seed = id

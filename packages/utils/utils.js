@@ -162,6 +162,10 @@ const Utils = {
 
   copyObject (obj) {
     return JSON.parse(JSON.stringify(obj))
+  },
+
+  isEmptyObject (obj) {
+    return Object.entries(obj).length === 0 && obj.constructor === Object
   }
 
 }

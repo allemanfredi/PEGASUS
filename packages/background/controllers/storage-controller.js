@@ -7,7 +7,7 @@ class StorageController {
     this.encryptionkey = null
     this.data = null
     this.connections = []
-    this.mamChannels = []
+    this.mamChannels = {}
 
     const edata = localStorage.getItem('data')
     if (!edata)
@@ -53,17 +53,18 @@ class StorageController {
     return this.connections
   }
 
-  setConnections (connections, writeToStorage = false) {
+  setConnections (connections, writeToStorage = true) {
+    this.connections = connections
+
     if (writeToStorage) {
-      const econnections = Utils.aes256encrypt(JSON.stringify(this.connections), this.encryptionkey)
+      const econnections = Utils.aes256encrypt(JSON.stringify(connections), this.encryptionkey)
       localStorage.setItem('connections', econnections)
     }
-    this.connections = connections
     return
   }
 
   getMamChannels() {    
-    if (!this.mamChannels) {
+    if (Utils.isEmptyObject(this.mamChannels)) {
       const eMamChannels = localStorage.getItem('mamChannels')
       this.mamChannels = Utils.aes256decrypt(eMamChannels, this.encryptionkey)
       this.mamChannels = JSON.parse(this.mamChannels)
@@ -71,12 +72,13 @@ class StorageController {
     return this.mamChannels
   }
 
-  setMamChannels (mamChannels, writeToStorage = false) {
+  setMamChannels (mamChannels, writeToStorage = true) {
+    this.mamChannels = mamChannels
+
     if (writeToStorage) {
-      const eMamChannels = Utils.aes256encrypt(JSON.stringify(this.mamChannels), this.encryptionkey)
+      const eMamChannels = Utils.aes256encrypt(JSON.stringify(mamChannels), this.encryptionkey)
       localStorage.setItem('mamChannels', eMamChannels)
     }
-    this.mamChannels = mamChannels
     return
   }
 
