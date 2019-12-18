@@ -169,7 +169,7 @@ class Home extends Component {
   onBack() {
 
     if (!this.state.canGoBack){
-      this.main.mamChannels.goBack()
+      this.mamChannels.current.goBack()
       return
     }
 
@@ -349,7 +349,7 @@ class Home extends Component {
                     ? <MamChannels ref={this.mamChannels}
                         account={this.props.account}
                         onBack={this.onBack}
-                        onChangeCanGoBack={value => this.setState({onChangeCanGoBack: value})} /> 
+                        onChangeCanGoBack={value => this.setState({canGoBack: value})} /> 
                     : ''
                 }
                 {

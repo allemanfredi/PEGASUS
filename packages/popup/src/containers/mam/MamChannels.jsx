@@ -29,10 +29,9 @@ class MamChannels extends Component {
             ? <React.Fragment>
                 <div className='row mt-4'>
                   <div className='col-12 text-center'>
-                    <button disabled={this.state.dstAddress === '' ? true : false}
-                      onClick={() => {
+                    <button onClick={() => {
                         if (!this.state.showRegisterChannel)
-                          this.props.onChangeCanGoBack(false)
+                          this.props.onChangeCanGoBack(null)
                         else 
                           this.props.onChangeCanGoBack(true)
                         this.setState({ showRegisterChannel: !this.state.showRegisterChannel })
@@ -44,10 +43,9 @@ class MamChannels extends Component {
                 </div>
                 <div className='row mt-4'>
                   <div className='col-12 text-center'>
-                    <button disabled={this.state.dstAddress === '' ? true : false}
-                      onClick={() => {
+                    <button onClick={() => {
                         if (!this.state.showChannelList)
-                          this.props.onChangeCanGoBack(false)
+                          this.props.onChangeCanGoBack(null)
                         else 
                           this.props.onChangeCanGoBack(true)
                         
