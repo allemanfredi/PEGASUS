@@ -80,7 +80,7 @@ class Settings extends Component {
                     <img className="border-radius-50" src='./material/logo/pegasus-128.png' height='80' width='80' alt='pegasus logo' />
                   </div>
                 </div>
-                <div className='row mt-3'>
+                <div className='row mt-2'>
                   <div className="col-2"></div>
                   <div /*ref={edit => this.edit = edit} onClick={() => this.setState({ showEdit: true })}*/ className='col-8 text-center text-sm cursor-text'>
                     {/*
@@ -111,7 +111,7 @@ class Settings extends Component {
                     }
                   </div>
                 </div>
-                <div className='row mt-3'>
+                <div className='row mt-2'>
                   <div className='col-6 text-right text-sm text text-bold pr-1'>
                     {
                       Utils.iotaReducer(

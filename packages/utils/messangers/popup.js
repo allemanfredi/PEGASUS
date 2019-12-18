@@ -187,6 +187,10 @@ export default {
     return this.duplex.send('registerMamChannel', channel)
   },
 
+  getMamChannels () {
+    return this.duplex.send('getMamChannels')
+  },
+
   getWebsite() {
     return this.duplex.send('getWebsite')
   },

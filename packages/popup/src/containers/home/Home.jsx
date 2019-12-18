@@ -169,6 +169,7 @@ class Home extends Component {
   onBack() {
 
     if (!this.state.canGoBack){
+      console.log("ciao")
       this.mamChannels.current.goBack()
       return
     }

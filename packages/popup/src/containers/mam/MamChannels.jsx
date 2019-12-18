@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import RegisterMamChannel from './RegisterMamChannel.jsx/RegisterMamChannel'
+import RegisterMamChannel from './registerMamChannel/RegisterMamChannel'
+import ShowChannelsList from './showChannelsList/ShowChannelsList'
 
 class MamChannels extends Component {
   constructor(props, context) {
@@ -9,7 +10,7 @@ class MamChannels extends Component {
 
     this.state = {
       showRegisterChannel: false,
-      showChannelList: false,
+      showChannelsList: false,
       error: null
     }
   }
@@ -17,51 +18,54 @@ class MamChannels extends Component {
   goBack() {
     this.setState({
       showRegisterChannel: false,
-      showChannelList: false
+      showChannelsList: false
     })
+    this.props.onChangeCanGoBack(true)
   }
 
   render() {
     return (
       <div className="container">
         {
-          !this.state.showRegisterChannel// && !this.state.showChannelList
+          !this.state.showRegisterChannel && !this.state.showChannelsList
             ? <React.Fragment>
-                <div className='row mt-4'>
+                <div className='row mt-18'>
                   <div className='col-12 text-center'>
                     <button onClick={() => {
                         if (!this.state.showRegisterChannel)
                           this.props.onChangeCanGoBack(null)
-                        else 
-                          this.props.onChangeCanGoBack(true)
+                          
                         this.setState({ showRegisterChannel: !this.state.showRegisterChannel })
                       }}
-                      className='btn btn-blue text-bold btn-big'>
+                      className='btn btn-border-blue text-bold btn-big'>
                       Register Channel
                   </button>
                   </div>
                 </div>
-                {/*<div className='row mt-4'>
+                <div className='row mt-2'>
                   <div className='col-12 text-center'>
                     <button onClick={() => {
-                        if (!this.state.showChannelList)
+                        if (!this.state.showChannelsList)
                           this.props.onChangeCanGoBack(null)
-                        else 
-                          this.props.onChangeCanGoBack(true)
                         
-                        this.setState({ showChannelList: !this.state.showChannelList })
+                        this.setState({ showChannelsList: !this.state.showChannelsList })
                       }}
-                      className='btn btn-blue text-bold btn-big'>
+                      className='btn btn-border-blue text-bold btn-big'>
                       Show Channels
                   </button>
                   </div>
-                    </div>*/}
+                </div>
               </React.Fragment>
             : null
         }
         {
           this.state.showRegisterChannel
             ? <RegisterMamChannel onBack={() => this.props.onBack()}/>
+            : null
+        }
+        {
+          this.state.showChannelsList
+            ? <ShowChannelsList onBack={() => this.props.onBack()}/>
             : null
         }
       </div>
