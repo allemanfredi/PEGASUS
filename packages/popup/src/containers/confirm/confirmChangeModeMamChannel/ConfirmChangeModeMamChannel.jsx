@@ -34,7 +34,7 @@ class ConfirmChangeModeMamChannel extends Component {
 
         <div className="row mt-2">
           <div className="col-6 text-left text-xxs my-auto text-gray">
-            From:
+            from:
           </div>
           <div className="col-6 text-right text-sm text-gray">
             {this.props.from}
@@ -43,16 +43,25 @@ class ConfirmChangeModeMamChannel extends Component {
 
         <div className="row mt-2">
           <div className="col-6 text-left text-xxs my-auto text-gray my-auto">
-            To:
+            to:
           </div>
           <div className="col-6 text-right text-md text-blue font-weight-bold">
             {this.props.to === '' ? 'public' : this.props.to}
           </div>
         </div>
 
-        <hr className="mt-6 mb-2"/>
+        <div className="row mt-2">
+          <div className="col-6 text-left text-xxs my-auto text-gray my-auto">
+            sidekey:
+          </div>
+          <div className="col-6 text-right text-sm text-blue font-weight-bold">
+            {this.props.sidekey  ? this.props.sidekey : '-'}
+          </div>
+        </div>
 
-        <div className="row mt-6">
+        <hr className="mt-3 mb-2"/>
+
+        <div className="row mt-5">
           <div className="col-6 pl-5 pr-5">
             <button onClick={() => this.props.onReject(this.props.request)}
               className="btn btn-border-blue text-sm text-bold btn-big">

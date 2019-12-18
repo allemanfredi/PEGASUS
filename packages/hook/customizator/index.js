@@ -9,11 +9,16 @@ import * as validators from '@iota/validators'
 import * as unitConverter from '@iota/unit-converter'
 import Mam from '@iota/mam/lib/mam.web.min.js'
 import Utils from '@pegasus/utils/utils'
+import randomUUID from 'uuid/v4'
 
 export default {
 
-  init (requestHandler) {
+  init (requestHandler, eventChannel) {
     this.request = requestHandler
+    this.eventChannel = eventChannel
+    this._handleEvents()
+
+    this.callbacks = {}
   },
 
   getCustomIota (provider) {
@@ -23,8 +28,30 @@ export default {
 
     const mam = {}
     Object.keys(Mam).forEach(method => {
-      mam[method] = (...args) => this._handleInjectedRequest(args, method, 'mam_')
+      mam[method] = (...args) => Utils.injectPromise(this.request, 'mam_' + method, { args })
     })
+
+    mam.fetch = (...args) => {
+      const uuid = randomUUID()
+      
+      const isFunction = Utils.isFunction(args[2])
+      if (isFunction) {
+        this.callbacks[uuid] = args[2]
+        args[2] = {
+          uuid,
+          reply: true
+        }
+      } else {
+        const limit = args[2]
+        args[2] = {
+          uuid,
+          reply: false
+        }
+        args.push(limit)
+      }
+      
+      return Utils.injectPromise(this.request, 'mam_fetch', { args })
+    }
 
     const iota = {
       bundle,
@@ -42,7 +69,7 @@ export default {
     const additionalMethods = [
       'connect',
       'getCurrentAccount',
-      'getCurrentNode'
+      'getCurrentProvider'
     ]
     additionalMethods.forEach(method => {
       iota[method] = (...args) => this._handleInjectedRequest(args, method)
@@ -54,6 +81,20 @@ export default {
     delete iota.core.getNewAddress
 
     return iota
+  },
+
+  //TODO find a new way to handle mam fetch responses from background because
+  //in this way the message is sent to all tab and not only to which has made the request
+  _handleEvents () {
+    this.eventChannel.on('mam_onFetch', e => {
+      const {
+        data,
+        uuid
+      } = e
+
+      if (this.callbacks[uuid])
+        this.callbacks[uuid](data)        
+    })
   },
 
   _handleInjectedRequest(args, method, prefix = '') {

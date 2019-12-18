@@ -106,8 +106,8 @@ const backgroundScript = {
           this.engine.pushRequest('getCurrentAccount', { uuid, resolve, website })
           break
         }
-        case 'getCurrentNode': {
-          this.engine.pushRequest('getCurrentNode', { uuid, resolve, website })
+        case 'getCurrentProvider': {
+          this.engine.pushRequest('getCurrentProvider', { uuid, resolve, website })
           break
         }
         case 'prepareTransfers': {
@@ -132,6 +132,14 @@ const backgroundScript = {
         }
         case 'mam_decode' : {
           this.engine.pushRequest('mam_decode', { uuid, resolve, data, website })
+          break
+        }
+        case 'mam_attach' : {
+          this.engine.pushRequest('mam_attach', { uuid, resolve, data, website })
+          break
+        }
+        case 'mam_fetch' : {
+          this.engine.pushRequest('mam_fetch', { uuid, resolve, data, website })
           break
         }
       }

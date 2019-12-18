@@ -66,6 +66,7 @@ class ConfirmRequest extends Component {
           return <ConfirmChangeModeMamChannel 
             from={request.data.args[0].channel.mode} 
             to={request.data.args[1]}
+            sidekey={request.data.args[2] ? request.data.args[2] : null}
             request={request}
             onConfirm={this.confirm}
             onReject={this.reject}/>

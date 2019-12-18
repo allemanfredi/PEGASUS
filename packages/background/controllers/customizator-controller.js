@@ -126,7 +126,9 @@ class CustomizatorController {
         this.popupController.openPopup()
       } else {
         
-        const res = await this.execute({method, uuid, resolve, data })
+        const res = await this.execute({ method, uuid, resolve, data })
+        this._removeRequest({ method, uuid, resolve, data })
+
         resolve({
           data: res.success ? res.data : res.error,
           success: res.success,
@@ -151,6 +153,8 @@ class CustomizatorController {
         } = request
 
         const res = await this.execute(request)
+        this._removeRequest(request)
+
         resolve({
           data: res.success ? res.data : res.error,
           success: res.success,
@@ -247,7 +251,7 @@ class CustomizatorController {
           success: true
         }))
       }
-      case 'getCurrentNode': {
+      case 'getCurrentProvider': {
         const network = this.networkController.getCurrentNetwork()
         return new Promise(resolve => resolve({
           data: network.provider,
@@ -258,38 +262,28 @@ class CustomizatorController {
         const res = this.mamController.init(...data.args)
         return new Promise(resolve => resolve(res))
       }
-      /*case 'mam_changeMode': {
+      case 'mam_changeMode': {
         const res = this.mamController.changeMode(...data.args)
-        if (res.success === true)
-          resolve({data: res.data, success: true, uuid})
-        else
-          resolve({data: res.error, success: false, uuid})
-        break
+        return new Promise(resolve => resolve(res))
       }
       case 'mam_getRoot': {
         const res = this.mamController.getRoot(...data.args)
-        if (res.success === true)
-          resolve({data: res.data, success: true, uuid})
-        else
-          resolve({data: res.error, success: false, uuid})
-        break
+        return new Promise(resolve => resolve(res))
       }
       case 'mam_create': {
         const res = this.mamController.create(...data.args)
-        if (res.success === true)
-          resolve({data: res.data, success: true, uuid})
-        else
-          resolve({data: res.error, success: false, uuid})
-        break
+        return new Promise(resolve => resolve(res))
       }
       case 'mam_decode': {
         const res = this.mamController.decode(...data.args)
-        if (res.success === true)
-          resolve({data: res.data, success: true, uuid})
-        else
-          resolve({data: res.error, success: false, uuid})
-        break
-      }*/
+        return new Promise(resolve => resolve(res))
+      }
+      case 'mam_attach': {
+        return this.mamController.attach(...data.args)
+      }
+      case 'mam_fetch': {
+        return this.mamController.fetch(...data.args)
+      }
       default: {
         return {
           error: 'Method Not Found',

@@ -41,5 +41,12 @@ export default {
 
   setAppState (state) {
     this.duplex.send('popup', 'setAppState', state, false)
+  },
+
+  sendToContentScript (action, data) {
+    this.duplex.send('tab', 'tunnel', {
+      action,
+      data
+    }, false)
   }
 }
