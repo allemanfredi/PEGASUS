@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { popupMessanger } from '@pegasus/utils/messangers'
 import Utils from '@pegasus/utils/utils'
 import ConfirmTransfers from '../confirm/confirmTransfers/ConfirmTransfers'
-import randomUUID from 'uuid/v4'
 
 class Send extends Component {
   constructor(props, context) {

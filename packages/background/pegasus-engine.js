@@ -357,6 +357,14 @@ class PegasusEngine {
       backgroundMessanger.newMamData(data)
     })
   }
+
+  getMamChannels () {
+    return this.mamController.getMamChannels()
+  }
+
+  registerMamChannel(channel) {
+    return this.mamController.registerMamChannel(channel)
+  }
 }
 
 export default PegasusEngine

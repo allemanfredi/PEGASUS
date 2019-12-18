@@ -183,6 +183,10 @@ export default {
     return this.duplex.send('startFetchMam', options)
   },
 
+  registerMamChannel (channel) {
+    return this.duplex.send('registerMamChannel', channel)
+  },
+
   getWebsite() {
     return this.duplex.send('getWebsite')
   },
@@ -210,5 +214,4 @@ export default {
   executeRequestFromPopup(request) {
     return this.duplex.send('executeRequestFromPopup', request)
   }
-
 }

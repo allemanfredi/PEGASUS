@@ -79,6 +79,8 @@ const backgroundScript = {
     duplex.on('getWebsite', this.engine.getWebsite)
 
     duplex.on('startFetchMam', this.engine.startFetchMam)
+    duplex.on('getMamChannels', this.engine.getMamChannels)
+    duplex.on('registerMamChannel', this.engine.registerMamChannel)
   },
 
   bindTabDuplex () {

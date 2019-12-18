@@ -9,6 +9,7 @@ import Network from '../network/Network'
 import MamExplorer from '../mamExplorer/MamExplorer'
 import ExportSeed from '../exportSeed/ExportSeed'
 import ImportSeed from '../importSeed/ImportSeed'
+import MamChannels from '../mam/MamChannels'
 import Loader from '../../components/loader/Loader'
 import Navbar from '../../components/navbar/Navbar'
 import Alert from '../../components/alert/Alert'
@@ -20,8 +21,7 @@ class Home extends Component {
   constructor(props, context) {
     super(props, context)
 
-    //transactions components
-    this.transactions = React.createRef()
+    this.mamChannels = React.createRef()
 
     this.onClickSend = this.onClickSend.bind(this)
     this.onClickSettings = this.onClickSettings.bind(this)
@@ -39,6 +39,7 @@ class Home extends Component {
     this.onAddNetwork = this.onAddNetwork.bind(this)
     this.onDeleteCurrentNetwork = this.onDeleteCurrentNetwork.bind(this)
     this.onMamExplorer = this.onMamExplorer.bind(this)
+    this.onMamChannels = this.onMamChannels.bind(this)
 
     this.state = {
       error: '',
@@ -56,11 +57,13 @@ class Home extends Component {
       showMam: false,
       showExportSeed: false,
       showImportSeed: false,
+      showMamChannels: false,
       showNavbar: true,
       alertType: '',
       alertText: '',
       actionToConfirm: '',
       isLoading: false,
+      canGoBack: true
     }
 
     this.duplex = new Duplex.Popup()
@@ -164,6 +167,12 @@ class Home extends Component {
   }
 
   onBack() {
+
+    if (!this.state.canGoBack){
+      this.main.mamChannels.goBack()
+      return
+    }
+
     this.setState(() => {
       return {
         showSend: false,
@@ -175,6 +184,7 @@ class Home extends Component {
         showMam: false,
         showExportSeed: false,
         showImportSeed: false,
+        showMamChannels: false,
         showHome: true
       }
     })
@@ -233,7 +243,18 @@ class Home extends Component {
     })
   }
 
+  onMamChannels () {
+    this.setState(() => {
+      return {
+        showMamChannels: true,
+        showHome: false,
+        showSettings: false
+      }
+    })
+  }
+
   render() {
+    
     return (
       <div>
         {
@@ -243,7 +264,7 @@ class Home extends Component {
                 showBtnSettings={this.state.showHome}
                 showBtnEllipse={this.state.showHome}
                 showBtnBack={!this.state.showHome}
-                text={this.state.showHome ? this.props.account.name : (this.state.showSend ? 'Send' : (this.state.showReceive ? 'Receive' : this.state.showAdd ? 'Add account' : (this.state.showNetwork ? 'Add custom node' : (this.state.showMam ? 'MAM Explorer' : (this.state.showExportSeed ? 'Export Seed ' : (this.state.showImportSeed ? 'Import Seed' : ''))))))}
+                text={this.state.showHome ? this.props.account.name : (this.state.showSend ? 'Send' : (this.state.showReceive ? 'Receive' : this.state.showAdd ? 'Add account' : (this.state.showNetwork ? 'Add custom node' : (this.state.showMam ? 'MAM Explorer' : (this.state.showExportSeed ? 'Export Seed ' : (this.state.showImportSeed ? 'Import Seed' : (this.state.showMamChannels ? 'MAM Channels' : '')))))))}
                 onClickSettings={this.onClickSettings}
                 onClickMap={this.onClickMap}
                 onBack={this.onBack}
@@ -268,7 +289,8 @@ class Home extends Component {
                         onShowMap={this.onClickMap}
                         onLogout={this.onLogout}
                         onClose={this.onCloseSettings}
-                        onMamExplorer={this.onMamExplorer} />
+                        onMamExplorer={this.onMamExplorer}
+                        onMamChannels={this.onMamChannels} />
                     : ''
                 }
                 {
@@ -318,8 +340,16 @@ class Home extends Component {
                 {
                   this.state.showImportSeed
                     ? <ImportSeed account={this.props.account}
-                          rk={this.props.network}
+                        network={this.props.network}
                         onBack={this.onBack} /> 
+                    : ''
+                }
+                {
+                  this.state.showMamChannels
+                    ? <MamChannels ref={this.mamChannels}
+                        account={this.props.account}
+                        onBack={this.onBack}
+                        onChangeCanGoBack={value => this.setState({onChangeCanGoBack: value})} /> 
                     : ''
                 }
                 {
@@ -359,8 +389,7 @@ class Home extends Component {
                           </div>
                           <div className="col-2"></div>
                         </div>
-                        <Transactions ref={this.transactions}
-                          account={this.props.account}
+                        <Transactions account={this.props.account}
                           network={this.props.network}
                           isLoading={this.state.isLoading}
                           onReload={this.onReload}

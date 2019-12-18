@@ -273,6 +273,52 @@ class MamController {
     }
   }
 
+  /*
+    channel = {
+      side_key: null,
+      mode: 'public',
+      next_root: null,
+      security,
+      start: 0,
+      count: 1,
+      next_count: 1,
+      index: 0
+    }
+  */
+  registerMamChannel (channel) {
+    const mamChannels = this.storageController.getMamChannels()
+    const currentAccount = this.walletController.getCurrentAccount()
+
+
+    if (!mamChannels[currentAccount.id]) {
+      mamChannels[currentAccount.id] = {
+        subscriber: {},
+        owner: {}
+      }
+    }
+
+    if (!mamChannels[currentAccount.id].subscriber) {
+      mamChannels[currentAccount.id]['subscriber'] = {}
+    }
+    
+    const id = Utils.sha256(channel.root)
+    mamChannels[currentAccount.id]['subscriber'][id] = {
+      channel: {
+        side_key: channel.sidekey,
+        mode: channel.mode
+      }
+    }
+
+    this.storageController.setMamChannels(mamChannels)
+    return true
+  } 
+
+  getMamChannels () {
+    const mamChannels = this.storageController.getMamChannels()
+    const currentAccount = this.walletController.getCurrentAccount()
+    return mamChannels[currentAccount.id]
+  }
+
 }
 
 export default MamController
