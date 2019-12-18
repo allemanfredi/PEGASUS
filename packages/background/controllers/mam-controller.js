@@ -23,7 +23,7 @@ class MamController {
     this.walletController = walletController
   }
 
-  init (seed = null, security = 2) {
+  init (security = 2) {
     const network = this.networkController.getCurrentNetwork()
 
     //if i put seed = null (as specified in the doc) doesn't work
@@ -174,6 +174,64 @@ class MamController {
     }
   }
 
+  decode (payload, root) {
+    const encryptionKey = this.walletController.getKey()
+    const mamChannels = this.storageController.getMamChannels()
+    const currentAccount = this.walletController.getCurrentAccount()
+    
+    if (!mamChannels[currentAccount.id]) {
+      mamChannels[currentAccount.id] = {
+        subscriber: {},
+        owner: {}
+      }
+      this.storageController.setMamChannels(mamChannels)
+      return {
+        success: false,
+        error: 'Channel Not Found'
+      }
+    }
+
+    if (!mamChannels[currentAccount.id]['subscriber']) {
+      mamChannels[currentAccount.id]['subscriber'] = {}
+    }
+
+    if (!mamChannels[currentAccount.id]['owner']) {
+      mamChannels[currentAccount.id]['owner'] = {}
+    }
+
+    const userMamChannels = mamChannels[currentAccount.id]
+
+    const sidekey = this._searchSidekeyIntoUserChannelsByRoot(userMamChannels, root)
+    const foundRoot = this._searchRootIntoUserChannels(userMamChannels, root)
+
+    let state = null
+    if (sidekey && foundRoot) {
+      //restricted
+      const decryptedSidekey = Utils.aes256decrypt(sidekey, encryptionKey)
+      state = Mam.decode(payload, decryptedSidekey, root)
+    } else if (foundRoot){
+      //private/public
+      state = Mam.decode(payload, null, root)
+    } else {
+      return {
+        success: false,
+        error: 'Channel Not Found'
+      }
+    }
+    
+    if (state.channel.side_key) {
+      state.channel.side_key = Utils.sha256(state.channel.side_key)
+    }
+    if (state.seed) {
+      state.seed = Utils.sha256(state.seed)
+    }
+
+    return {
+      success: true,
+      data: state
+    }
+  }
+
   attach (payload, root, depth = 3, minWeightMagnitude = 9, tag = null) {
     return new Promise((async resolve => {
       const network = this.networkController.getCurrentNetwork()
@@ -242,6 +300,7 @@ class MamController {
   }
 
   _searchSidekeyIntoUserChannelsByRoot (userMamChannels, root) {
+    console.log(userMamChannels)
     let sidekey = null
     for (let state of Object.values(userMamChannels.owner)) {
       if (state.root === root) {
@@ -258,6 +317,25 @@ class MamController {
     }
 
     return sidekey
+  }
+
+  _searchRootIntoUserChannels (userMamChannels, root) {
+    let foundRoot = null
+    for (let state of Object.values(userMamChannels.owner)) {
+      if (state.root === root) {
+        foundRoot = state.root
+      }
+    }
+
+    if (!foundRoot) {
+      for (let state of Object.values(userMamChannels.subscriber)) {
+        if (state.root === root) {
+          foundRoot = state.root
+        }
+      }
+    }
+
+    return foundRoot
   }
 
   fetchFromPopup (provider, root, mode, sidekey, callback) {
