@@ -1,6 +1,4 @@
 import { backgroundMessanger } from '@pegasus/utils/messangers'
-import Duplex from '@pegasus/utils/duplex'
-
 
 class NetworkController {
 
@@ -13,9 +11,6 @@ class NetworkController {
 
     this.storageController = storageController
     this.customizatorController = customizatorController
-
-    const duplex = new Duplex.Host()
-    backgroundMessanger.init(duplex)
   }
 
   setCurrentNetwork (network) {

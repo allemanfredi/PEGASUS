@@ -39,6 +39,6 @@
     "webpack-cli": "^3.1.2"
   },
   "dependencies": {
-    "extensionizer": "^1.0.1"
+    "base64-loader": "^1.0.0"
   }
 }

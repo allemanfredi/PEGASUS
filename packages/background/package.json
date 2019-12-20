@@ -11,8 +11,11 @@
     "@iota/extract-json": "^1.0.0-beta.23",
     "@iota/http-client": "^1.0.0-beta.23",
     "@iota/mam": "^0.7.3",
+    "argon2-browser": "^1.12.0",
     "eventemitter3": "^3.1.0",
-    "extensionizer": "^1.0.1"
+    "extensionizer": "^1.0.1",
+    "file-saver": "^2.0.2",
+    "kdbxweb": "^1.5.7"
   },
   "scripts": {
     "build": "webpack --config ../../webpack.config.js --progress --colors -o ../../dist/background.js",

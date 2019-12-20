@@ -23,7 +23,7 @@ class Alert extends Component {
             <div className='col-12 text-center'>
             {
               this.props.type === 'error' ? <img src='./material/img/error.png' height='80' width='80' alt='error' /> :
-              this.props.type == 'success' ? <img src='./material/img/success.png' height='80' width='80' alt='success' /> :
+              this.props.type === 'success' ? <img src='./material/img/success.png' height='80' width='80' alt='success' /> :
               this.props.type === 'confirm' ? <img src='./material/img/question.png' height='80' width='80' alt='question' /> : ''
             }
             </div>

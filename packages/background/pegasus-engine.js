@@ -12,6 +12,7 @@ import walletController from './controllers/wallet-controller'
 import SessionsController from './controllers/session-controller'
 import PopupController from './controllers/popup-controller'
 import TransferController from './controllers/transfer-controller'
+import SeedVaultController from './controllers/seed-vault-controller'
 
 const SESSION_TIME = 30000
 const ACCOUNT_RELOAD_TIME = 90000
@@ -71,6 +72,10 @@ class PegasusEngine {
     })
 
     this.mamController = new MamController()
+
+    this.seedVaultController = new SeedVaultController({
+      walletController: this.walletController
+    })
 
     this.customizatorController.setWalletController(
       this.walletController
@@ -350,6 +355,9 @@ class PegasusEngine {
     }, ACCOUNT_RELOAD_TIME)
   }
   
+  createSeedVault (password) {
+    return this.seedVaultController.createSeedVault(password)
+  }
 
   startFetchMam (options) {
     const network = this.networkController.getCurrentNetwork()
