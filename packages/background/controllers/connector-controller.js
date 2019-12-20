@@ -16,6 +16,7 @@ class ConnectorController {
     if (!this.storageController) {
       return null
     }
+
     if (this.connectionToStore && this.connectionToStore.website.origin === origin) {
       const connection = this.connectionToStore
       this.pushConnection(connection)

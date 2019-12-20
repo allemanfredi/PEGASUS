@@ -338,6 +338,8 @@ class MamController {
     })
   }
 
+  //TODO: subscribe and listen
+
   _searchSidekeyIntoUserChannelsByRoot (userMamChannels, root) {
     let sidekey = null
     for (let state of Object.values(userMamChannels.owner)) {
@@ -422,7 +424,8 @@ class MamController {
       channel: {
         side_key: channel.sidekey,
         mode: channel.mode
-      }
+      },
+      root: channel.root
     }
 
     this.storageController.setMamChannels(mamChannels)

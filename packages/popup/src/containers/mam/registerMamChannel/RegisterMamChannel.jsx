@@ -77,7 +77,7 @@ class RegisterMamChannel extends Component {
         <div className='row mt-3'>
           <div className='col-12'>
             <Picklist placeholder="mode"
-              text={this.state.mode}
+              text={this.state.registerChannelMode}
               options={this.state.channelModes}
               onSelect={registerChannelMode => this.setState({ registerChannelMode })} />
           </div>

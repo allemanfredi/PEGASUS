@@ -161,7 +161,11 @@ class CustomizatorController {
           uuid 
         })
       } else {
-        request.resolve({ data: 'No granted permissions', success: false, uuid })
+        request.resolve({ 
+          data: 'No granted permissions',
+          success: false,
+          uuid: request.uuid
+        })
       }
     })
   }
