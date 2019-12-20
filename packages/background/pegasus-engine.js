@@ -30,8 +30,12 @@ class PegasusEngine {
     this.popupController = new PopupController()
     this.storageController = new StorageController()
     this.notificationsController = new NotificationsController()
-
+    
     this.connectorController = new ConnectorController({
+      storageController: this.storageController
+    })
+
+    this.mamController = new MamController({
       storageController: this.storageController
     })
 
@@ -39,7 +43,8 @@ class PegasusEngine {
       popupController: this.popupController,
       connectorController: this.connectorController,
       walletController: null, //DEFINED BELOW
-      networkController: null //DEFINED BELOW
+      networkController: null, //DEFINED BELOW
+      mamController: this.mamController
     })
 
     this.networkController = new NetworkController({
@@ -72,16 +77,25 @@ class PegasusEngine {
     })
 
     this.mamController = new MamController()
-
+    
     this.seedVaultController = new SeedVaultController({
       walletController: this.walletController
     })
-
+    
     this.customizatorController.setWalletController(
       this.walletController
     )
     this.customizatorController.setNetworkController(
       this.networkController
+    )
+    this.customizatorController.setTransferController(
+      this.transferController
+    )
+    this.mamController.setNetworkController(
+      this.networkController
+    )
+    this.mamController.setWalletController(
+      this.walletController
     )
     /* E N D   C O N T R O L L E R S */
 
@@ -229,34 +243,6 @@ class PegasusEngine {
     this.walletController.setState(state)
   }
 
-  pushTransfers (transfers, uuid, resolve, website) {
-    this.transferController.pushTransfers(transfers, uuid, resolve, website)
-  }
-
-  pushTransfersFromPopup (transfers) {
-    this.transferController.pushTransfersFromPopup(transfers)
-  }
-
-  confirmTransfers (transfers) {
-    this.transferController.confirmTransfers(transfers)
-  }
-
-  removeTransfer (transfers) {
-    this.transferController.removeTransfer(transfers)
-  }
-
-  getTransfers () {
-    return this.transferController.getTransfers()
-  }
-
-  rejectAllTransfers () {
-    this.transferController.rejectAllTransfers()
-  }
-
-  rejectTransfer (transfers) {
-    this.transferController.rejectTransfer(transfers)
-  }
-
   openPopup () {
     this.popupController.openPopup()
   }
@@ -265,18 +251,26 @@ class PegasusEngine {
     this.popupController.closePopup()
   }
 
+  executeRequestFromPopup (request) {
+    return this.customizatorController.executeRequestFromPopup(request)
+  }
+
   pushRequest (method, { uuid, resolve, data, website }) {
-    this.customizatorController.pushRequest(
+    this.customizatorController.pushRequest({
       method,
       uuid,
       resolve,
       data,
       website
-    )
+    })
   }
 
   getRequests () {
     return this.customizatorController.getRequests()
+  }
+
+  getRequestsWithUserInteraction () {
+    return this.customizatorController.getRequestsWithUserInteraction()
   }
 
   executeRequests () {
@@ -285,6 +279,14 @@ class PegasusEngine {
 
   rejectRequests() {
     this.customizatorController.rejectRequests()
+  }
+
+  confirmRequest (request) {
+    this.customizatorController.confirmRequest(request)
+  }
+
+  rejectRequest (request) {
+    this.customizatorController.rejectRequest(request)
   }
 
   connect(uuid, resolve, website) {
@@ -361,9 +363,17 @@ class PegasusEngine {
 
   startFetchMam (options) {
     const network = this.networkController.getCurrentNetwork()
-    this.mamController.fetch(network.provider, options.root, options.mode, options.sideKey, data => {
+    this.mamController.fetchFromPopup(network.provider, options.root, options.mode, options.sideKey, data => {
       backgroundMessanger.newMamData(data)
     })
+  }
+
+  getMamChannels () {
+    return this.mamController.getMamChannels()
+  }
+
+  registerMamChannel(channel) {
+    return this.mamController.registerMamChannel(channel)
   }
 }
 

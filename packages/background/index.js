@@ -55,14 +55,12 @@ const backgroundScript = {
     duplex.on('getState', this.engine.getState)
     duplex.on('setState', this.engine.setState)
 
-    duplex.on('getTransfers', this.engine.getTransfers)
-    duplex.on('pushTransfersFromPopup',this.engine.pushTransfersFromPopup)
-    duplex.on('rejectAllTransfers', this.engine.rejectAllTransfers)
-    duplex.on('rejectTransfer', this.engine.rejectTransfer)
-    duplex.on('confirmTransfers', this.engine.confirmTransfers)
-
     duplex.on('getRequests', this.engine.getRequests)
     duplex.on('rejectRequests', this.engine.rejectRequests)
+    duplex.on('getRequestsWithUserInteraction', this.engine.getRequestsWithUserInteraction)
+    duplex.on('confirmRequest', this.engine.confirmRequest)
+    duplex.on('rejectRequest', this.engine.rejectRequest)
+    duplex.on('executeRequestFromPopup', this.engine.executeRequestFromPopup)
 
     duplex.on('startHandleAccountData', this.engine.startHandleAccountData)
     duplex.on('stopHandleAccountData', this.engine.stopHandleAccountData)
@@ -83,6 +81,8 @@ const backgroundScript = {
     duplex.on('getWebsite', this.engine.getWebsite)
 
     duplex.on('startFetchMam', this.engine.startFetchMam)
+    duplex.on('getMamChannels', this.engine.getMamChannels)
+    duplex.on('registerMamChannel', this.engine.registerMamChannel)
   },
 
   bindTabDuplex () {
@@ -107,15 +107,47 @@ const backgroundScript = {
           break
         }
         case 'getCurrentAccount': {
-          this.engine.pushRequest('getCurrentAccount', { uuid, resolve, data, website })
+          this.engine.pushRequest('getCurrentAccount', { uuid, resolve, website })
           break
         }
-        case 'getCurrentNode': {
-          this.engine.pushRequest('getCurrentNode', { uuid, resolve, website })
+        case 'getCurrentProvider': {
+          this.engine.pushRequest('getCurrentProvider', { uuid, resolve, website })
           break
         }
         case 'prepareTransfers': {
-          this.engine.pushTransfers(data, uuid, resolve, website)
+          this.engine.pushRequest('prepareTransfers', { data, uuid, resolve, website })
+          break
+        }
+        case 'mam_init' : {
+          this.engine.pushRequest('mam_init', { uuid, resolve, data, website })
+          break
+        }
+        case 'mam_changeMode' : {
+          this.engine.pushRequest('mam_changeMode', { uuid, resolve, data, website })
+          break
+        }
+        case 'mam_getRoot' : {
+          this.engine.pushRequest('mam_getRoot', { uuid, resolve, data, website })
+          break
+        }
+        case 'mam_create' : {
+          this.engine.pushRequest('mam_create', { uuid, resolve, data, website })
+          break
+        }
+        case 'mam_decode' : {
+          this.engine.pushRequest('mam_decode', { uuid, resolve, data, website })
+          break
+        }
+        case 'mam_attach' : {
+          this.engine.pushRequest('mam_attach', { uuid, resolve, data, website })
+          break
+        }
+        case 'mam_fetch' : {
+          this.engine.pushRequest('mam_fetch', { uuid, resolve, data, website })
+          break
+        }
+        case 'mam_fetchSingle' : {
+          this.engine.pushRequest('mam_fetchSingle', { uuid, resolve, data, website })
           break
         }
       }

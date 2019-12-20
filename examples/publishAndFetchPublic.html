@@ -1,0 +1,98 @@
+<!--
+  NOTE: this is the example taken from https://github.com/iotaledger/mam.client.js/blob/master/example/publishAndFetchPublic.html
+  but used with the mam.client.js injected by Pegasus
+-->
+<html>
+<meta charset="utf-8" />
+
+<head>
+  <title>MAM Example Publish and Fetch</title>
+</head>
+
+<body>
+  <div id="output"></div>
+  <button onClick="start()">start</button>
+  <script>
+    const TRYTE_ALPHABET = '9ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+
+    const asciiToTrytes = (input) => {
+      let trytes = ''
+      for (let i = 0; i < input.length; i++) {
+        var dec = input[i].charCodeAt(0)
+        trytes += TRYTE_ALPHABET[dec % 27]
+        trytes += TRYTE_ALPHABET[(dec - dec % 27) / 27]
+      }
+      return trytes
+    }
+
+    const trytesToAscii = (trytes) => {
+      let ascii = ''
+      for (let i = 0; i < trytes.length; i += 2) {
+        ascii += String.fromCharCode(TRYTE_ALPHABET.indexOf(trytes[i]) + TRYTE_ALPHABET.indexOf(trytes[i + 1]) * 27)
+      }
+      return ascii
+    }
+
+    const start = async () => {
+      const outputHtml = document.querySelector("#output")
+
+      const mode = 'public'
+
+      if (!window.iota) {
+        outputHtml.innerHTML += `Pegasus Not Installed`
+        return
+      }
+
+      const provider = await window.iota.getCurrentProvider()
+
+      const mamExplorerLink = `https://mam-explorer.firebaseapp.com/?provider=${encodeURIComponent(provider)}&mode=${mode}&root=`
+
+      // Initialise MAM State
+      let mamState = await window.iota.mam.init()
+
+      // Publish to tangle
+      const publish = async packet => {
+        // Create MAM Payload - STRING OF TRYTES
+        const trytes = asciiToTrytes(JSON.stringify(packet))
+        const message = await window.iota.mam.create(mamState, trytes)
+
+        // Save new mamState
+        mamState = message.state
+
+        // Attach the payload
+        await window.iota.mam.attach(message.payload, message.address, 3, 9)
+
+        outputHtml.innerHTML += `Published: ${packet}<br/>`
+        return message.root
+      }
+
+      const publishAll = async () => {
+        const root = await publish('ALICE')
+
+        await publish('BOB')
+
+        await publish('CHARLIE')
+
+        return root
+      }
+
+      // Callback used to pass data out of the fetch
+      const logData = data => outputHtml.innerHTML += `async Fetched and parsed ${JSON.parse(trytesToAscii(data))}<br/>`
+
+      const root = await publishAll()
+
+      // Output asyncronously using "logData" callback function
+      await window.iota.mam.fetch(root, mode, logData)
+
+      // Output syncronously once fetch is completed
+      const result = await window.iota.mam.fetch(root, mode)
+      result.messages.forEach(message => {
+        outputHtml.innerHTML += `sync Fetched and parsed ${JSON.parse(trytesToAscii(message))}<br/>`
+      })
+
+      outputHtml.innerHTML += `Verify with MAM Explorer:<br/><a target="_blank" href="${mamExplorerLink}${root}">${mamExplorerLink}${root}</a>`
+    }
+  </script>
+</body>
+
+</html>

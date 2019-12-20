@@ -76,8 +76,6 @@ class App extends Component {
 
   bindDuplexRequests() {
     this.duplex.on('setTransfers', transfers => this.main.current.changeTransfers(transfers))
-    this.duplex.on('setConfirmationLoading', isLoading => this.main.current.setConfirmationLoading(isLoading))
-    this.duplex.on('setConfirmationError', error => this.main.current.setConfirmationError(error))
     this.duplex.on('setAccount', account => this.setState({ account }))
     this.duplex.on('setNetworks', networks => this.setState({ networks }))
     this.duplex.on('setNetwork', network => this.setState({ network }))
@@ -100,7 +98,8 @@ class App extends Component {
           <Main showHeader={this.onShowHeader}
             ref={this.main}
             network={this.state.network}
-            account={this.state.account} />
+            account={this.state.account}
+            duplex={this.duplex} />
         </div>
       </div>
     )

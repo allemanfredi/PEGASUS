@@ -1,5 +1,6 @@
 import { composeAPI } from '@iota/core'
 import { APP_STATE } from '@pegasus/utils/states'
+import { backgroundMessanger } from '@pegasus/utils/messangers'
 
 class CustomizatorController {
   constructor (options, provider) {
@@ -8,13 +9,15 @@ class CustomizatorController {
       connectorController,
       walletController,
       popupController,
-      networkController
+      networkController,
+      mamController
     } = options
 
     this.connectorController = connectorController
     this.walletController = walletController
     this.popupController = popupController
     this.networkController = networkController
+    this.mamController = mamController
 
     this.requests = []
 
@@ -30,6 +33,10 @@ class CustomizatorController {
     return this.requests
   }
 
+  getRequestsWithUserInteraction () {
+    return this.requests.filter(request => request.needUserInteraction === true)
+  }
+
   setProvider (provider) {
     this.iota = composeAPI({ provider })
   }
@@ -42,13 +49,29 @@ class CustomizatorController {
     this.networkController = networkController
   }
 
-  // CUSTOM iotajs functions
-  // if wallet is locked user must login, after having do it, wallet will execute 
-  //every request put in the queue IF USER  GRANTed PERMISSIONS
-  pushRequest (method, uuid, resolve, data, website) {
+  setTransferController (transferController) {
+    this.transferController = transferController
+  }
+
+  async pushRequest (request) {
+
+    const {
+      method,
+      uuid,
+      resolve,
+      data,
+      website
+    } = request
+
     const connection = this.connectorController.getConnection(website.origin)
     let mockConnection = connection
     let isPopupAlreadyOpened = false
+
+    const requestsWithUserInteraction = [
+      'mam_init',
+      'mam_changeMode',
+      'prepareTransfers'
+    ]
 
     const popup = this.popupController.getPopup()
 
@@ -79,71 +102,208 @@ class CustomizatorController {
       if (!popup && isPopupAlreadyOpened === false){
         this.popupController.openPopup()
       }
-
-      const request = {
+      
+      this.requests.push({
         connection: mockConnection,
         method,
         uuid,
         resolve,
-        data
+        data,
+        needUserInteraction: requestsWithUserInteraction.includes(method)
+      })
+
+    } else if (connection.enabled && state >= APP_STATE.WALLET_UNLOCKED) {
+
+      if (requestsWithUserInteraction.includes(method)) {
+        this.requests.push({
+          connection,
+          method,
+          uuid,
+          resolve,
+          data,
+          needUserInteraction: true
+        })
+        this.popupController.openPopup()
+      } else {
+        
+        const res = await this.execute({ method, uuid, resolve, data })
+        this._removeRequest({ method, uuid, resolve, data })
+
+        resolve({
+          data: res.success ? res.data : res.error,
+          success: res.success,
+          uuid 
+        })
       }
-      this.requests.push(request)
-    } else if (connection.enabled) {
-      this.request(method, { uuid, resolve, data })
     } 
   }
 
+  async executeRequestFromPopup (request) {
+    return this.execute(request)
+  }
+
+  //request that does not need of popup interaction (ex: getCurrentAccount)
   executeRequests () {
-    this.requests.forEach(request => {
-      const method = request.method
-      const uuid = request.uuid
-      const resolve = request.resolve
+    this.requests.filter(req => req.needUserInteraction !== true).forEach(async request => {
       if (request.connection.enabled) {
-        const data = request.data
-        
-        const seed = this.walletController.getCurrentSeed()
-        
-        this.request(method, {
-          uuid,
+
+        const {
           resolve,
-          seed,
-          data
+          uuid
+        } = request
+
+        const res = await this.execute(request)
+        this._removeRequest(request)
+
+        resolve({
+          data: res.success ? res.data : res.error,
+          success: res.success,
+          uuid 
         })
       } else {
-        resolve({ data: 'no permissions', success: false, uuid })
+        request.resolve({ 
+          data: 'No granted permissions',
+          success: false,
+          uuid: request.uuid
+        })
       }
     })
-    this.requests = []
+  }
+
+  async confirmRequest (request) {
+    const requestToExecute= this.requests.find(
+      req => req.uuid === request.uuid
+    )
+
+    const {
+      uuid,
+      resolve
+    } = requestToExecute
+
+    const res = await this.execute(requestToExecute)
+
+    if (res.tryAgain)
+      return
+    
+    this._removeRequest(request)
+    
+    if (this.requests.length === 0){
+      this.popupController.closePopup()
+      backgroundMessanger.setAppState(APP_STATE.WALLET_UNLOCKED)
+    }
+    else {
+      backgroundMessanger.setRequests(this.requests)
+    }
+
+    resolve({
+      data: res.success ? res.data : res.error,
+      success: res.success,
+      uuid 
+    })
+  }
+
+  rejectRequest (request) {
+    const requestToReject= this.requests.find(
+      req => req.uuid === request.uuid
+    )
+
+    requestToReject.resolve({
+      data: 'Request has been rejected by the user',
+      success: false,
+      uuid: requestToReject.uuid
+    })
+
+    this._removeRequest(request)
+
+    if (this.requests.length === 0){
+      this.popupController.closePopup()
+      backgroundMessanger.setAppState(APP_STATE.WALLET_UNLOCKED)
+    }
+    else {
+      backgroundMessanger.setRequests(this.requests)
+    }
   }
 
   rejectRequests() {
-    this.requests.forEach(r => {
-      r.resolve({
+    this.requests.forEach(request => {
+      request.resolve({
         data: 'Request has been rejected by the user',
         success: false,
-        uuid: r.uuid
+        uuid: request.uuid
       })
     })
     this.requests = []
     this.popupController.closePopup()
+    backgroundMessanger.setAppState(APP_STATE.WALLET_UNLOCKED)
   }
 
-  async request (method, { uuid, resolve, data }) {
+  execute (request) {
+
+    const {
+      method,
+      data
+    } = request
+
     switch (method) {
+      case 'prepareTransfers': {
+        return this.transferController.confirmTransfers(...data.args)
+      }
       case 'getCurrentAccount': {
         const account = this.walletController.getCurrentAccount()
-        resolve({ data: account.data.latestAddress, success: true, uuid })
-        break
+        return new Promise(resolve => resolve({
+          data: account.data.latestAddress,
+          success: true
+        }))
       }
-      case 'getCurrentNode': {
+      case 'getCurrentProvider': {
         const network = this.networkController.getCurrentNetwork()
-        resolve({ data: network.provider, success: true, uuid })
-        break
+        return new Promise(resolve => resolve({
+          data: network.provider,
+          success: true
+        }))
+      }
+      case 'mam_init': {
+        const res = this.mamController.init(...data.args)
+        return new Promise(resolve => resolve(res))
+      }
+      case 'mam_changeMode': {
+        const res = this.mamController.changeMode(...data.args)
+        return new Promise(resolve => resolve(res))
+      }
+      case 'mam_getRoot': {
+        const res = this.mamController.getRoot(...data.args)
+        return new Promise(resolve => resolve(res))
+      }
+      case 'mam_create': {
+        const res = this.mamController.create(...data.args)
+        return new Promise(resolve => resolve(res))
+      }
+      case 'mam_decode': {
+        const res = this.mamController.decode(...data.args)
+        return new Promise(resolve => resolve(res))
+      }
+      case 'mam_attach': {
+        return this.mamController.attach(...data.args)
+      }
+      case 'mam_fetch': {
+        return this.mamController.fetch(...data.args)
+      }
+      case 'mam_fetchSingle': {
+        return this.mamController.fetchSingle(...data.args)
       }
       default: {
-        resolve({ data: 'Method Not Found', success: false, uuid })
+        return {
+          error: 'Method Not Found',
+          success: false
+        }
       }
     }
+  }
+
+  _removeRequest (request) {
+    this.requests = this.requests.filter(
+      req => req.uuid !== request.uuid
+    )
   }
 }
 

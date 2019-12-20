@@ -10,10 +10,13 @@ const hook = {
     this._bindEvents()
 
     this.connection('init').then(({ selectedProvider }) => {
-      customizator.init(this.connection)    
+      customizator.init(
+        this.connection,
+        this.eventChannel
+      )    
       this.injectIotaJs(selectedProvider)
 
-      console.log('Pegasus initiated succesfully')
+      console.log('Pegasus injected iotajs succesfully')
     }).catch(err => {
       console.log('Failed to initialise Pegasus', err)
     })

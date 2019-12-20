@@ -9,21 +9,22 @@ import Network from '../network/Network'
 import MamExplorer from '../mamExplorer/MamExplorer'
 import ExportSeed from '../exportSeed/ExportSeed'
 import ImportSeed from '../importSeed/ImportSeed'
+import MamChannels from '../mam/MamChannels'
 import Loader from '../../components/loader/Loader'
 import Navbar from '../../components/navbar/Navbar'
 import Alert from '../../components/alert/Alert'
 import { popupMessanger } from '@pegasus/utils/messangers'
 import Utils from '@pegasus/utils/utils'
 import Duplex from '@pegasus/utils/duplex'
+import ReactTooltip from 'react-tooltip'
 
 class Home extends Component {
   constructor(props, context) {
     super(props, context)
 
-    //transactions components
-    this.transactions = React.createRef()
+    this.mamChannels = React.createRef()
     this.exportSeed = React.createRef()
-
+    
     this.onClickSend = this.onClickSend.bind(this)
     this.onClickSettings = this.onClickSettings.bind(this)
     this.onCloseSettings = this.onCloseSettings.bind(this)
@@ -40,6 +41,8 @@ class Home extends Component {
     this.onAddNetwork = this.onAddNetwork.bind(this)
     this.onDeleteCurrentNetwork = this.onDeleteCurrentNetwork.bind(this)
     this.onMamExplorer = this.onMamExplorer.bind(this)
+    this.onMamChannels = this.onMamChannels.bind(this)
+    this.copyToClipboard = this.copyToClipboard.bind(this)
 
     this.state = {
       error: '',
@@ -57,6 +60,8 @@ class Home extends Component {
       showMam: false,
       showExportSeed: false,
       showImportSeed: false,
+      showMamChannels: false,
+      showNavbar: true,
       alertType: '',
       alertText: '',
       actionToConfirm: '',
@@ -168,6 +173,8 @@ class Home extends Component {
   onBack() {
 
     if (!this.state.canGoBack){
+      if (this.mamChannels.current)
+        this.mamChannels.current.goBack()
       if (this.exportSeed.current)
         this.exportSeed.current.goBack()
       return
@@ -184,6 +191,7 @@ class Home extends Component {
         showMam: false,
         showExportSeed: false,
         showImportSeed: false,
+        showMamChannels: false,
         showHome: true
       }
     })
@@ -242,24 +250,48 @@ class Home extends Component {
     })
   }
 
+  onMamChannels () {
+    this.setState(() => {
+      return {
+        showMamChannels: true,
+        showHome: false,
+        showSettings: false
+      }
+    })
+  }
+
+  copyToClipboard(text) {
+    const textField = document.createElement('textarea')
+    textField.innerText = text
+    document.body.appendChild(textField)
+    textField.select()
+    document.execCommand('copy')
+    textField.remove()
+  }
+
   render() {
+    
     return (
       <div>
-        <Navbar account={this.props.account}
-          network={this.props.network}
-          showBtnSettings={this.state.showHome}
-          showBtnEllipse={this.state.showHome}
-          showBtnBack={!this.state.showHome}
-          text={this.state.showHome ? this.props.account.name : (this.state.showSend ? 'Send' : (this.state.showReceive ? 'Receive' : this.state.showAdd ? 'Add account' : (this.state.showNetwork ? 'Add custom node' : (this.state.showMam ? 'MAM Explorer' : (this.state.showExportSeed ? 'Export Seed ' : (this.state.showImportSeed ? 'Import Seed' : ''))))))}
-          onClickSettings={this.onClickSettings}
-          onClickMap={this.onClickMap}
-          onBack={this.onBack}
-          onDeleteAccount={this.onDeleteAccount}
-          onViewAccountOnExplorer={this.onViewAccountOnExplorer}
-          onExportSeed={this.onExportSeed}
-          onImportSeed={this.onImportSeed}
-          onDeleteCurrentNetwork={this.onDeleteCurrentNetwork}>
-        </Navbar>
+        {
+          this.state.showNavbar
+            ? <Navbar account={this.props.account}
+                network={this.props.network}
+                showBtnSettings={this.state.showHome}
+                showBtnEllipse={this.state.showHome}
+                showBtnBack={!this.state.showHome}
+                text={this.state.showHome ? this.props.account.name : (this.state.showSend ? 'Send' : (this.state.showReceive ? 'Receive' : this.state.showAdd ? 'Add account' : (this.state.showNetwork ? 'Add custom node' : (this.state.showMam ? 'MAM Explorer' : (this.state.showExportSeed ? 'Export Seed ' : (this.state.showImportSeed ? 'Import Seed' : (this.state.showMamChannels ? 'MAM Channels' : '')))))))}
+                onClickSettings={this.onClickSettings}
+                onClickMap={this.onClickMap}
+                onBack={this.onBack}
+                onDeleteAccount={this.onDeleteAccount}
+                onViewAccountOnExplorer={this.onViewAccountOnExplorer}
+                onExportSeed={this.onExportSeed}
+                onImportSeed={this.onImportSeed}
+                onDeleteCurrentNetwork={this.onDeleteCurrentNetwork}>
+              </Navbar>
+            : null
+        }
         {
           !(Object.keys(this.props.account).length === 0 && this.props.account.constructor === Object)
             ? <React.Fragment>
@@ -273,14 +305,20 @@ class Home extends Component {
                         onShowMap={this.onClickMap}
                         onLogout={this.onLogout}
                         onClose={this.onCloseSettings}
-                        onMamExplorer={this.onMamExplorer} />
+                        onMamExplorer={this.onMamExplorer}
+                        onMamChannels={this.onMamChannels} />
                     : ''
                 }
                 {
                   this.state.showSend
                     ? <Send account={this.props.account}
+                        duplex={this.props.duplex}
                         network={this.props.network}
-                        onAskConfirm={() => this.props.onAskConfirm()} /> 
+                        onBack={this.onBack}
+                        onHideTop={show => {
+                          this.props.onShowHeader(!show)
+                          this.setState({ showNavbar: !show })
+                        }}/> 
                     : ''
                 }
                 {
@@ -303,6 +341,7 @@ class Home extends Component {
                 {
                   this.state.showMam
                     ? <MamExplorer account={this.props.account}
+                        duplex={this.props.duplex}
                         network={this.props.network}
                         onBack={this.onBack} /> 
                     : ''
@@ -319,8 +358,16 @@ class Home extends Component {
                 {
                   this.state.showImportSeed
                     ? <ImportSeed account={this.props.account}
-                          rk={this.props.network}
+                        network={this.props.network}
                         onBack={this.onBack} /> 
+                    : ''
+                }
+                {
+                  this.state.showMamChannels
+                    ? <MamChannels ref={this.mamChannels}
+                        account={this.props.account}
+                        onBack={this.onBack}
+                        onChangeCanGoBack={value => this.setState({canGoBack: value})} /> 
                     : ''
                 }
                 {
@@ -333,14 +380,22 @@ class Home extends Component {
                 }
                 {
                   this.state.showHome
-                    ? <div>
-                        <div className='row mt-4'>
-                          <div className='col-12 text-center'>
-                            <img src='./material/logo/iota-logo.png' height='60' width='60' alt='iota logo' />
+                    ? <div className="container">
+                        <div className='row mt-3 mb-2'>
+                          <div className='col-3 text-left'>
+                            <img src='./material/logo/iota-logo.png' height='40' width='40' alt='iota logo' />
                           </div>
-                        </div>
-                        <div className="row mt-1">
-                          <div className='col-12 text-center text-black text-md'>
+                          <div onClick={() => this.copyToClipboard(Utils.checksummed(this.props.account.data.latestAddress))}
+                            className='col-6 my-auto text-center font-weight-bold cursor-pointer'
+                            data-tip="copy to clipboard">
+                            {
+                              Utils.showAddress(
+                                Utils.checksummed(this.props.account.data.latestAddress),
+                                4,
+                                6
+                              )}
+                          </div>
+                          <div className='col-3 text-right text-black text-lg my-auto'>
                             {
                               Utils.iotaReducer(
                               this.props.account.data.balance[this.props.network.type]
@@ -350,25 +405,23 @@ class Home extends Component {
                             }
                           </div>
                         </div>
-                        <div className='row mt-1 mb-4'>
-                          <div className="col-2"></div>
-                          <div className='col-4 text-center'>
-                            <button onClick={this.onClickReceive} className='btn btn-border-blue btn-big'>Receive</button>
-                          </div>
-                          <div className='col-4 text-center'>
-                            <button onClick={this.onClickSend} className='btn btn-border-blue btn-big'>Send</button>
-                          </div>
-                          <div className="col-2"></div>
-                        </div>
-                        <Transactions ref={this.transactions}
-                          account={this.props.account}
+                        <Transactions account={this.props.account}
                           network={this.props.network}
                           isLoading={this.state.isLoading}
                           onReload={this.onReload}
                         />
+                        <div className='row mt-3'>
+                          <div className='col-6 text-center'>
+                            <button onClick={this.onClickReceive} className='btn btn-border-blue btn-big'>Receive</button>
+                          </div>
+                          <div className='col-6 text-center'>
+                            <button onClick={this.onClickSend} className='btn btn-border-blue btn-big'>Send</button>
+                          </div>
+                        </div>
                       </div>
                     : ''
                 }
+                <ReactTooltip />
               </React.Fragment>
             : <Loader />
         }

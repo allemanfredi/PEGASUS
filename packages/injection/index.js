@@ -7,7 +7,6 @@ const injection = {
   duplex: new Duplex.Tab(),
 
   init () {
-    console.log('Initialising Pegasus')
     this.registerListeners()
     this.inject()
   },
@@ -42,8 +41,6 @@ const injection = {
       container,
       injectionSite.children[0]
     )
-
-    console.log('Pegasus injected')
   }
 }
 

@@ -24,17 +24,17 @@ class SessionController {
   checkSession() {
     const currentState = this.walletController.getState()
 
-    // transfers queue not empty during an extension hard reload cause show confirm view with 0 transfer 
-    // since the transfers are deleted during the hard rel
+    // requests queue not empty during an extension hard reload cause show confirm view with 0 request 
+    // since the requests are deleted during the hard rel
     if (
-      currentState === APP_STATE.WALLET_TRANSFERS_IN_QUEUE &&
-      this.engine.getTransfers().length === 0 && !this.password
+      currentState === APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION &&
+      this.engine.getRequests().length === 0 && !this.password
     ) {
       this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
       return
     }
 
-    if (currentState === APP_STATE.WALLET_TRANSFERS_IN_QUEUE)
+    if (currentState === APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION)
       return
 
     const password = this.walletController.getPassword()

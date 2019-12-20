@@ -127,24 +127,8 @@ export default {
     return this.duplex.send('setState', state)
   },
 
-  getTransfers () {
-    return this.duplex.send('getTransfers')
-  },
-
   pushTransfersFromPopup (transfer) {
     return this.duplex.send('pushTransfersFromPopup', transfer)
-  },
-
-  rejectTransfer (transfer) {
-    return this.duplex.send('rejectTransfer', transfer)
-  },
-
-  rejectAllTransfers () {
-    return this.duplex.send('rejectAllTransfers')
-  },
-
-  confirmTransfers (transfer) {
-    return this.duplex.send('confirmTransfers', transfer)
   },
 
   startHandleAccountData () {
@@ -199,6 +183,14 @@ export default {
     return this.duplex.send('startFetchMam', options)
   },
 
+  registerMamChannel (channel) {
+    return this.duplex.send('registerMamChannel', channel)
+  },
+
+  getMamChannels () {
+    return this.duplex.send('getMamChannels')
+  },
+
   getWebsite() {
     return this.duplex.send('getWebsite')
   },
@@ -206,13 +198,27 @@ export default {
   getRequests () {
     return this.duplex.send('getRequests')
   },
+
+  getRequestsWithUserInteraction () {
+    return this.duplex.send('getRequestsWithUserInteraction')
+  },
   
   rejectRequests() {
     return this.duplex.send('rejectRequests')
   },
-
+  
   createSeedVault(password) {
     return this.duplex.send('createSeedVault', password)
   }
+  confirmRequest(request) {
+    return this.duplex.send('confirmRequest', request)
+  },
 
+  rejectRequest(request) {
+    return this.duplex.send('rejectRequest', request)
+  },
+
+  executeRequestFromPopup(request) {
+    return this.duplex.send('executeRequestFromPopup', request)
+  }
 }

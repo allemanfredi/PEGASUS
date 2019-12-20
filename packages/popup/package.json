@@ -12,7 +12,8 @@
     "react-dom": "^16.4.2",
     "react-json-view": "latest",
     "react-router-dom": "^4.1.1",
-    "react-scripts": "2.1.3"
+    "react-scripts": "2.1.3",
+    "react-tooltip": "^3.11.1"
   },
   "scripts": {
     "start": "react-scripts start",

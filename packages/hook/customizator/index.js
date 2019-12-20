@@ -7,34 +7,50 @@ import * as extractJson from '@iota/extract-json'
 import * as transaction from '@iota/transaction'
 import * as validators from '@iota/validators'
 import * as unitConverter from '@iota/unit-converter'
+import Mam from '@iota/mam/lib/mam.web.min.js'
 import Utils from '@pegasus/utils/utils'
+import randomUUID from 'uuid/v4'
 
 export default {
 
-  init (requestHandler) {
+  init (requestHandler, eventChannel) {
     this.request = requestHandler
+    this.eventChannel = eventChannel
+    this._handleEvents()
+
+    this.callbacks = {}
   },
 
   getCustomIota (provider) {
     const core = composeAPI({ provider })
 
-    core.prepareTransfers = (...args) => {
-      const cb = args[args.length - 1]
-        ? args[args.length - 1]
-        : null
+    core.prepareTransfers = (...args) => this._handleInjectedRequest(args, 'prepareTransfers')
 
-      if (!Utils.isFunction(cb)) {
-        return Utils.injectPromise(this.request, 'prepareTransfers', { args })
+    const mam = {}
+    Object.keys(Mam).forEach(method => {
+      mam[method] = (...args) => Utils.injectPromise(this.request, 'mam_' + method, { args })
+    })
+
+    mam.fetch = (...args) => {
+      const uuid = randomUUID()
+      
+      const isFunction = Utils.isFunction(args[2])
+      if (isFunction) {
+        this.callbacks[uuid] = args[2]
+        args[2] = {
+          uuid,
+          reply: true
+        }
       } else {
-
-        args = args
-          ? args.slice(0, args.length - 1)
-          : null
-
-        this.request('prepareTransfers', { args })
-          .then(res => cb(res, null))
-          .catch(err => cb(null, err))
+        const limit = args[2]
+        args[2] = {
+          uuid,
+          reply: false
+        }
+        args.push(limit)
       }
+      
+      return Utils.injectPromise(this.request, 'mam_fetch', { args })
     }
 
     const iota = {
@@ -46,34 +62,17 @@ export default {
       extractJson,
       transaction,
       unitConverter,
-      validators
+      validators,
+      mam
     }
 
     const additionalMethods = [
       'connect',
       'getCurrentAccount',
-      'getCurrentNode'
+      'getCurrentProvider'
     ]
     additionalMethods.forEach(method => {
-      iota[method] = (...args) => {
-
-        const cb = args[args.length - 1]
-          ? args[args.length - 1]
-          : null
-
-        if (!Utils.isFunction(cb)) {
-          return Utils.injectPromise(this.request, method, { args })
-        } else {
-
-          args = args
-            ? args.slice(0, args.length - 1)
-            : null
-
-          this.request(method, { args })
-            .then(res => cb(res, null))
-            .catch(err => cb(null, err))
-        }
-      }
+      iota[method] = (...args) => this._handleInjectedRequest(args, method)
     })
 
     //disabled for security reasons
@@ -82,5 +81,38 @@ export default {
     delete iota.core.getNewAddress
 
     return iota
-  }
+  },
+
+  //TODO find a new way to handle mam fetch responses from background because
+  //in this way the message is sent to all tab and not only to which has made the request
+  _handleEvents () {
+    this.eventChannel.on('mam_onFetch', e => {
+      const {
+        data,
+        uuid
+      } = e
+
+      if (this.callbacks[uuid])
+        this.callbacks[uuid](data)        
+    })
+  },
+
+  _handleInjectedRequest(args, method, prefix = '') {
+    const cb = args[args.length - 1]
+      ? args[args.length - 1]
+      : null
+
+    if (!Utils.isFunction(cb)) {
+      return Utils.injectPromise(this.request, prefix + method, { args })
+    } else {
+
+      args = args
+        ? args.slice(0, args.length - 1)
+        : null
+
+      this.request(prefix + method, { args })
+        .then(res => cb(res, null))
+        .catch(err => cb(null, err))
+    }
+  },
 }

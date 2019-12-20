@@ -3,9 +3,9 @@ import { addChecksum, isValidChecksum } from '@iota/checksum'
 
 const Utils = {
 
-  requestHandler (target) {
+  requestHandler(target) {
     return new Proxy(target, {
-      get (target, prop) {
+      get(target, prop) {
         if (!Reflect.has(target, prop))
           throw new Error(`Object does not have property '${prop}'`)
 
@@ -13,9 +13,10 @@ const Utils = {
           return Reflect.get(target, prop)
 
         return (...args) => {
+
           if (!args.length)
             args[0] = {}
-
+          
           const [firstArg] = args
 
           const {
@@ -35,7 +36,7 @@ const Utils = {
     })
   },
 
-  injectPromise (func, ...args) {
+  injectPromise(func, ...args) {
     return new Promise((resolve, reject) => {
       func(...args)
         .then(res => resolve(res))
@@ -43,15 +44,15 @@ const Utils = {
     })
   },
 
-  isFunction (obj) {
+  isFunction(obj) {
     return typeof obj === 'function'
   },
 
-  sha256 (text) {
+  sha256(text) {
     return crypto.createHash('sha256').update(text).digest('hex')
   },
 
-  randomBytes (size, max) {
+  randomBytes(size, max) {
     if (size !== parseInt(size, 10) || size < 0)
       return false
 
@@ -65,15 +66,15 @@ const Utils = {
     return Array.from(bytes)
   },
 
-  byteToChar (trit) {
+  byteToChar(trit) {
     return '9ABCDEFGHIJKLMNOPQRSTUVWXYZ'.charAt(trit % 27)
   },
 
-  charToByte (char) {
+  charToByte(char) {
     return '9ABCDEFGHIJKLMNOPQRSTUVWXYZ'.indexOf(char.toUpperCase())
   },
 
-  timestampToDate (timestamp) {
+  timestampToDate(timestamp) {
     const date = new Date(timestamp)
     const todate = date.getDate()
     const tomonth = date.getMonth() + 1
@@ -81,7 +82,7 @@ const Utils = {
     return `${tomonth}/${todate}/${toyear}`
   },
 
-  timestampToDateMilliseconds (timestamp) {
+  timestampToDateMilliseconds(timestamp) {
     const date = new Date(timestamp)
     const todate = date.getDate()
     const tomonth = date.getMonth() + 1
@@ -92,21 +93,21 @@ const Utils = {
     return `${hours}:${minutes.substr(-2)}:${seconds.substr(-2)} - ${tomonth}/${todate}/${toyear}`
   },
 
-  aes256encrypt (text, key) {
+  aes256encrypt(text, key) {
     const cipher = crypto.createCipher('aes-256-ctr', key)
     let crypted = cipher.update(text, 'utf8', 'hex')
     crypted += cipher.final('hex')
     return crypted
   },
 
-  aes256decrypt (text, key) {
+  aes256decrypt(text, key) {
     const decipher = crypto.createDecipher('aes-256-ctr', key)
     let dec = decipher.update(text, 'hex', 'utf8')
     dec += decipher.final('utf8')
     return dec
   },
 
-  iotaReducer (amount) {
+  iotaReducer(amount) {
     if (amount < Math.pow(10, 3)) {
       const num = amount
       if (num % 1 !== 0) return num.toFixed(2) + 'i'
@@ -130,9 +131,9 @@ const Utils = {
     }
   },
 
-  isValidAddress (address) {
+  isValidAddress(address) {
     const values = ['9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
-    if (address.length !== 81)
+    if (address.length !== 81 && address.length != 90)
       return false;
     [...address].forEach(c => {
       if (values.indexOf(c) === -1)
@@ -141,22 +142,30 @@ const Utils = {
     return true
   },
 
-  sleep (ms) {
-    return new Promise(resolve => 
+  sleep(ms) {
+    return new Promise(resolve =>
       setTimeout(resolve, ms)
     )
   },
 
-  checksummed (address) {
+  checksummed(address) {
     return addChecksum(address)
   },
 
-  isChecksummed (address) {
+  isChecksummed(address) {
     return isValidChecksum(address)
   },
 
-  showAddress (address, limitStart, limitEnd) {
+  showAddress(address, limitStart, limitEnd) {
     return `${address.slice(0, limitStart)}...${address.slice(address.length - limitEnd, address.length)}`
+  },
+
+  copyObject (obj) {
+    return JSON.parse(JSON.stringify(obj))
+  },
+
+  isEmptyObject (obj) {
+    return Object.entries(obj).length === 0 && obj.constructor === Object
   }
 
 }

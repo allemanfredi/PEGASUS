@@ -16,6 +16,7 @@ class ConnectorController {
     if (!this.storageController) {
       return null
     }
+
     if (this.connectionToStore && this.connectionToStore.website.origin === origin) {
       const connection = this.connectionToStore
       this.pushConnection(connection)
@@ -47,7 +48,7 @@ class ConnectorController {
         return c
       }
     })
-    this.storageController.setConnections(updatedConnections)
+    this.storageController.setConnections(updatedConnections, true)
   }
 
   connect(uuid, resolve, website)  {
