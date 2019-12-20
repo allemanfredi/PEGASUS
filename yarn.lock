@@ -2683,6 +2683,11 @@ are-we-there-yet@~1.1.2:
     delegates "^1.0.0"
     readable-stream "^2.0.6"
 
+argon2-browser@^1.12.0:
+  version "1.12.0"
+  resolved "https://registry.yarnpkg.com/argon2-browser/-/argon2-browser-1.12.0.tgz#06bb981973825d3fbc86d06429327756ad884139"
+  integrity sha512-qdEW311acXGGLTjslqO5f7cKG3foP6QUkeuav9au00aRY/B5AvNrqAVlL47a2MUdr6i7dx8Xp+5OreRGoXvCgQ==
+
 argparse@^1.0.7:
   version "1.0.10"
   resolved "https://registry.yarnpkg.com/argparse/-/argparse-1.0.10.tgz#bcd6791ea5ae09725e17e5ad988134cd40b3d911"
@@ -3759,6 +3764,11 @@ base64-js@^1.0.2:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.3.1.tgz#58ece8cb75dd07e71ed08c736abc5fac4dbf8df1"
   integrity sha512-mLQ4i2QO1ytvGWFWmcngKO//JXAQueZvwEKtjgQFM4jIK0kU+ytMfplL8j+n5mspOfjHwoAg+9yhb7BwAHm36g==
+
+base64-loader@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/base64-loader/-/base64-loader-1.0.0.tgz#e530bad88e906dd2a1fad0af2d9e683fa8bd92a8"
+  integrity sha1-5TC62I6QbdKh+tCvLZ5oP6i9kqg=
 
 base@^0.11.1:
   version "0.11.2"
@@ -6250,6 +6260,11 @@ file-loader@2.0.0:
     loader-utils "^1.0.2"
     schema-utils "^1.0.0"
 
+file-saver@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/file-saver/-/file-saver-2.0.2.tgz#06d6e728a9ea2df2cce2f8d9e84dfcdc338ec17a"
+  integrity sha512-Wz3c3XQ5xroCxd1G8b7yL0Ehkf0TC9oYC6buPFkNnU9EnaPlifeAFCyCh+iewXTyFRcg0a6j3J7FmJsIhlhBdw==
+
 filename-regex@^2.0.0:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/filename-regex/-/filename-regex-2.0.1.tgz#c1c4b9bee3e09725ddb106b75c1e301fe2f18b26"
@@ -8493,6 +8508,15 @@ jsx-ast-utils@^2.0.1, jsx-ast-utils@^2.2.1:
     array-includes "^3.0.3"
     object.assign "^4.1.0"
 
+kdbxweb@^1.5.7:
+  version "1.5.7"
+  resolved "https://registry.yarnpkg.com/kdbxweb/-/kdbxweb-1.5.7.tgz#ecf009554fd96ded86ec7b46c94efdf13986e0d8"
+  integrity sha512-+3YKYprvdM1Ot88dN0sqq7+DImP8cY4JjHAwSpQYBkNTVRzHm6gDV5UCa/WNPNx3p7POI14AiFpMlp1U8AdaoQ==
+  dependencies:
+    pako "github:keeweb/pako#653c0b00d8941c89d09ed4546d2179001ec44efc"
+    text-encoding "github:keeweb/text-encoding#4dfb7cb0954c222852092f8b06ae4f6b4f60bfbb"
+    xmldom "github:keeweb/xmldom#ec8f61f723e2f403adaf7a1bbf55ced4ff1ea0c6"
+
 killable@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/killable/-/killable-1.0.1.tgz#4c8ce441187a061c7474fb87ca08e2a638194892"
@@ -8599,16 +8623,6 @@ levn@^0.3.0, levn@~0.3.0:
   dependencies:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
-
-lib2@^0.0.4:
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/lib2/-/lib2-0.0.4.tgz#2cfdfd3243014f341fc1d1edebe9cf41e79366e9"
-  integrity sha1-LP39MkMBTzQfwdHt6+nPQeeTZuk=
-
-lib@^4.0.2:
-  version "4.0.5"
-  resolved "https://registry.yarnpkg.com/lib/-/lib-4.0.5.tgz#3564dfb630819ad3eb73643abd535d73e2cbde91"
-  integrity sha512-tDg4tRypj1SxDVUN24UIGjPcrs0ct/3Lv6uuOcDrStzwThvb6P/UbyJh/UM+jBZtTXzHTBUpf4deWTcu6Ya5xA==
 
 load-json-file@^1.0.0:
   version "1.1.0"
@@ -9950,6 +9964,10 @@ p-waterfall@^1.0.0:
   integrity sha1-ftlLPOszMngjU69qrhGqn8I1uwA=
   dependencies:
     p-reduce "^1.0.0"
+
+"pako@github:keeweb/pako#653c0b00d8941c89d09ed4546d2179001ec44efc":
+  version "1.0.3"
+  resolved "https://codeload.github.com/keeweb/pako/tar.gz/653c0b00d8941c89d09ed4546d2179001ec44efc"
 
 pako@~1.0.5:
   version "1.0.10"
@@ -12792,6 +12810,10 @@ test-exclude@^4.2.1:
     read-pkg-up "^1.0.1"
     require-main-filename "^1.0.1"
 
+"text-encoding@github:keeweb/text-encoding#4dfb7cb0954c222852092f8b06ae4f6b4f60bfbb":
+  version "0.6.0"
+  resolved "https://codeload.github.com/keeweb/text-encoding/tar.gz/4dfb7cb0954c222852092f8b06ae4f6b4f60bfbb"
+
 text-extensions@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/text-extensions/-/text-extensions-2.0.0.tgz#43eabd1b495482fae4a2bf65e5f56c29f69220f6"
@@ -13851,6 +13873,10 @@ xmlchars@^2.1.1:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/xmlchars/-/xmlchars-2.2.0.tgz#060fe1bcb7f9c76fe2a17db86a9bc3ab894210cb"
   integrity sha512-JZnDKK8B0RCDw84FNdDAIpZK+JuJw+s7Lz8nksI7SIuU3UXJJslUthsi+uWBUYOwPFwW7W7PRLRfUKpxjtjFCw==
+
+"xmldom@github:keeweb/xmldom#ec8f61f723e2f403adaf7a1bbf55ced4ff1ea0c6":
+  version "0.1.21"
+  resolved "https://codeload.github.com/keeweb/xmldom/tar.gz/ec8f61f723e2f403adaf7a1bbf55ced4ff1ea0c6"
 
 xregexp@4.0.0:
   version "4.0.0"

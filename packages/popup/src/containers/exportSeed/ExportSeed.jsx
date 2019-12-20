@@ -1,101 +1,97 @@
 import React, { Component } from 'react'
-import { popupMessanger } from '@pegasus/utils/messangers'
+import ExportSeedText from './exportSeedText/ExportSeedText'
+import ExportSeedVault from './exportSeedVault/ExportSeedVault'
 
 class ExportSeed extends Component {
 
   constructor(props, context) {
     super(props, context)
 
-    this.getSeed = this.getSeed.bind(this)
-    this.copyToClipboard = this.copyToClipboard.bind(this)
+    this.goBack = this.goBack.bind(this)
 
     this.state = {
-      psw: '',
-      seed: null,
-      shake: false
+      showExportSeedVault: false,
+      showExportSeedText: false
     }
   }
 
-  async getSeed(e) {
-    e.preventDefault()
-    this.setState({ shake: false })
-    const seed = await popupMessanger.unlockSeed(this.state.psw)
+  goBack() {
     this.setState({
-      seed,
-      psw: '',
-      shake: !seed ? true : false
+      showExportSeedVault: false,
+      showExportSeedText: false
     })
-  }
-
-  copyToClipboard(e) {
-    const textField = document.createElement('textarea')
-    textField.innerText = this.props.account.data.latestAddress
-    document.body.appendChild(textField)
-    textField.select()
-    document.execCommand('copy')
-    textField.remove()
+    this.props.onChangeCanGoBack(true)
   }
 
   render() {
     return (
-      <div className={this.state.shake ? 'container shake' : 'container'}>
-        <div className="row mt-3 mb-3">
-          <div className="col-12 text-center text-lg text-blue text-bold">
-            {
-              !this.state.seed 
-                ? 'Insert your password to export the seed'
-                : 'Please keep it as safely as possible!'
-            }
-          </div>
-        </div>
+      <React.Fragment>
         {
-          !this.state.seed 
-            ? <React.Fragment>
-                <div className="row mt-20">
+          !this.state.showExportSeedVault && !this.state.showExportSeedText
+            ? <div className="container">
+                <div className="row cursor-pointer" 
+                  onClick={() => {
+                    if (!this.state.showExportSeedVault)
+                          this.props.onChangeCanGoBack(null)
+                    this.setState({ showExportSeedVault: ! this.state.showExportSeedVault})
+                  }}>
                   <div className="col-12">
-                    <form onSubmit={this.getSeed}>
-                      <label htmlFor="inp-psw" className="inp">
-                        <input value={this.state.psw} 
-                          onChange={e => this.setState({ psw: e.target.value })} 
-                          type="password"
-                          id="inp-psw" placeholder='&nbsp;'/>
-                        <span className="label">password</span>
-                        <span className="border"></span>
-                      </label>
-                    </form>
+                    <div className="row mt-3">
+                      <div className="col-3">
+                        <img src="./material/img/vault.svg" height="50" width="50" alt="vault logo"/>
+                      </div>
+                      <div className="col-9 text-blue text-left text-md font-weight-bold my-auto">
+                        Export SeedVault
+                      </div>
+                    </div>
+                    <div className="row mt-3 justify-content-center">
+                      <div className="col-10 text-center text-xs text-gray">
+                        Before to export the seed vault you will need to enter the password to encrypt the exported seed
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="row mt-3">
+
+                <hr className="mt-2 mb-2"/>
+
+                <div className="row cursor-pointer"
+                  onClick={() => {
+                    if (!this.state.showExportSeedText)
+                          this.props.onChangeCanGoBack(null)
+                    this.setState({ showExportSeedText: ! this.state.showExportSeedText})
+                  }}>
                   <div className="col-12">
-                    <button disabled={!this.state.psw.length > 0}
-                      onClick={this.getSeed}
-                      type="submit"
-                      className="btn btn-blue text-bold btn-big">
-                        Unlock
-                    </button>
+                    <div className="row mt-3">
+                      <div className="col-3">
+                        <img src="./material/img/text.svg" height="50" width="50" alt="text logo"/>
+                      </div>
+                      <div className="col-9 text-blue text-left text-md font-weight-bold my-auto">
+                        Export as Text
+                      </div>
+                    </div>
+                    <div className="row mt-3 justify-content-center">
+                      <div className="col-10 text-center text-xs text-gray">
+                        Before you can export the seed you will need to enter the login password
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </React.Fragment>
-            : <React.Fragment>
-                <div className="row mt-10">
-                  <div className="col-1"></div>
-                  <div className="col-10 text-center text-xs break-text border-light-gray pt-1 pb-1">
-                    {this.state.seed}
-                  </div>
-                  <div className="col-1"></div>
-                </div>
-                <div className="row mt-10">
-                  <div className="col-12">
-                    <button onClick={this.copyToClipboard} 
-                      type='button' 
-                      className='btn btn-blue text-bold btn-big'>
-                        Copy To Clipboard
-                    </button>
-                  </div>
-                </div>
-              </React.Fragment>
+
+                <hr className="mt-2 mb-2"/>
+              </div>
+            : null
         }
-      </div>
+        {
+          this.state.showExportSeedText
+            ? <ExportSeedText/>
+            : null
+        }
+        {
+          this.state.showExportSeedVault
+            ? <ExportSeedVault/>
+            : null
+        }
+      </React.Fragment>
     )
   }
 }

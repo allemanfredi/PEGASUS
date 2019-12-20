@@ -23,7 +23,8 @@ class Home extends Component {
     super(props, context)
 
     this.mamChannels = React.createRef()
-
+    this.exportSeed = React.createRef()
+    
     this.onClickSend = this.onClickSend.bind(this)
     this.onClickSettings = this.onClickSettings.bind(this)
     this.onCloseSettings = this.onCloseSettings.bind(this)
@@ -146,6 +147,7 @@ class Home extends Component {
         this.setState({ showAlert: false })
         break
       }
+      default: break;
     }
 
   }
@@ -171,7 +173,10 @@ class Home extends Component {
   onBack() {
 
     if (!this.state.canGoBack){
-      this.mamChannels.current.goBack()
+      if (this.mamChannels.current)
+        this.mamChannels.current.goBack()
+      if (this.exportSeed.current)
+        this.exportSeed.current.goBack()
       return
     }
 
@@ -343,8 +348,10 @@ class Home extends Component {
                 }
                 {
                   this.state.showExportSeed
-                    ? <ExportSeed account={this.props.account}
+                    ? <ExportSeed ref={this.exportSeed}
+                        account={this.props.account}
                         network={this.props.network}
+                        onChangeCanGoBack={value => this.setState({canGoBack: value})}
                         onBack={this.onBack} /> 
                     : ''
                 }

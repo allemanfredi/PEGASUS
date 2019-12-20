@@ -6,6 +6,7 @@ module.exports = {
     devtool: 'source-map',
     target: 'web',
     module: {
+        noParse: /\.wasm$/,
         rules: [
             {
                 test: /\.js$/,
@@ -17,8 +18,16 @@ module.exports = {
                         plugins: [ '@babel/plugin-transform-runtime' ]
                     }
                 }
-            }
+            },
+            {
+                test: /\.wasm$/,
+                loaders: ['base64-loader'],
+                type: 'javascript/auto'
+            },
         ]
+    },
+    node: {
+        fs: 'empty',
     },
     resolve: {
         modules: [ '../../node_modules' ]

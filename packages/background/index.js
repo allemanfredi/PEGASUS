@@ -67,6 +67,8 @@ const backgroundScript = {
     duplex.on('loadAccountData', this.engine.loadAccountData)
     duplex.on('reloadAccountData', this.engine.reloadAccountData)
 
+    duplex.on('createSeedVault', this.engine.createSeedVault)
+
     duplex.on('openPopup', this.engine.openPopup)
     duplex.on('closePopup', this.engine.closePopup)
 
