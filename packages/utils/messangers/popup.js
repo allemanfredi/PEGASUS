@@ -209,7 +209,8 @@ export default {
   
   createSeedVault(password) {
     return this.duplex.send('createSeedVault', password)
-  }
+  },
+  
   confirmRequest(request) {
     return this.duplex.send('confirmRequest', request)
   },

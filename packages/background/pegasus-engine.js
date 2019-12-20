@@ -75,8 +75,6 @@ class PegasusEngine {
       popupController: this.popupController,
       networkController: this.networkController
     })
-
-    this.mamController = new MamController()
     
     this.seedVaultController = new SeedVaultController({
       walletController: this.walletController
