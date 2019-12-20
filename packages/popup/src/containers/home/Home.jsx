@@ -381,6 +381,7 @@ class Home extends Component {
                 {
                   this.state.showHome
                     ? <div className="container">
+                        <ReactTooltip />
                         <div className='row mt-3 mb-2'>
                           <div className='col-3 text-left'>
                             <img src='./material/logo/iota-logo.png' height='40' width='40' alt='iota logo' />
@@ -421,7 +422,6 @@ class Home extends Component {
                       </div>
                     : ''
                 }
-                <ReactTooltip />
               </React.Fragment>
             : <Loader />
         }

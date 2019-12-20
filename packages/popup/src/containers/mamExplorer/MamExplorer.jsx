@@ -72,6 +72,8 @@ class MamExplorer extends Component {
   }
 
   render() {
+    console.log(this.state.data)
+
     return (
       <div className="container overflow-auto-490h">
         <React.Fragment>
@@ -143,7 +145,11 @@ class MamExplorer extends Component {
                         ?
                          <div className="row mt-2">
                             <div className="col-12">
-                              <ReactJson src={data} />
+                              {
+                                Utils.isObject(data)
+                                  ? <ReactJson src={data} />
+                                  : data
+                              }
                             </div>
                           </div>
                         : ''

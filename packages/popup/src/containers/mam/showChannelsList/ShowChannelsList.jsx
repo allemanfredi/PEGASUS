@@ -1,14 +1,20 @@
 import React, { Component } from 'react'
 import { popupMessanger } from '@pegasus/utils/messangers'
 import Utils from '@pegasus/utils/utils'
+import ReactTooltip from 'react-tooltip'
 
 class ShowChannelsList extends Component {
   constructor(props, context) {
     super(props, context)
 
+    this.copyToClipboard = this.copyToClipboard.bind(this)
+
     this.state = {
-      channels: []
+      channels: [],
+      copyToClipboardText: 'copy to clipboard',
     }
+    
+    this.tooltipRefs = []
   }
 
   async componentWillMount() {
@@ -21,10 +27,22 @@ class ShowChannelsList extends Component {
       state.ownership = 'subscriber'
       return state
     })
-
-
-    console.log(subscriberChannels, ownerChannels)
     this.setState({ channels: [...ownerChannels, ...subscriberChannels] })
+  }
+
+  copyToClipboard(text, index) {
+    const textField = document.createElement('textarea')
+    textField.innerText = text
+    document.body.appendChild(textField)
+    textField.select()
+    document.execCommand('copy')
+    textField.remove()
+
+
+    setTimeout(() => {
+      ReactTooltip.hide(this.tooltipRefs[index])
+      this.setState({copyToClipboardText : 'copy to clipboard'})
+    },1500)
   }
 
   render() {
@@ -49,11 +67,19 @@ class ShowChannelsList extends Component {
           {
             this.state.channels.map((state, index) => {
               return <React.Fragment>
+                <ReactTooltip/>
                 <div className="row">
                   <div className="col-3 text-left text-xxs text-gray my-auto">
                     {state.ownership}
                   </div>
-                  <div className="col-4 text-left text-black text-xxs font-weight-bold my-auto">
+                  <div className="col-4 text-left text-black text-xxs font-weight-bold my-auto cursor-pointer"
+                    onClick={() => {
+                      this.setState({copyToClipboardText : 'copied'})
+                      this.copyToClipboard(state.root, index)
+                    }}
+                    data-tip={this.state.copyToClipboardText}
+                    ref={ref => this.tooltipRefs[index] = ref}
+                  >
                     {Utils.showAddress(state.root, 4, 6)}
                   </div>
                   <div className="col-3 text-left text-blue my-auto">
