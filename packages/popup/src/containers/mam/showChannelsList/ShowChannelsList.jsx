@@ -31,16 +31,16 @@ class ShowChannelsList extends Component {
     return (
       <React.Fragment>
         <div className="row mt-3">
-          <div className="col-3 text-left text-xs text-gray">
+          <div className="col-3 text-left text-xs text-black font-weight-bold">
             ownership
           </div>
-          <div className="col-4 text-left text-xs text-gray">
+          <div className="col-4 text-left text-xs text-black font-weight-bold">
             root
           </div>
-          <div className="col-3 text-left text-xs text-gray">
+          <div className="col-3 text-left text-xs text-black font-weight-bold">
             mode
           </div>
-          <div className="col-2 text-right  text-xs text-gray">
+          <div className="col-2 text-right  text-xs text-black font-weight-bold">
             subsc.
           </div>
         </div>
@@ -50,7 +50,7 @@ class ShowChannelsList extends Component {
             this.state.channels.map((state, index) => {
               return <React.Fragment>
                 <div className="row">
-                  <div className="col-3 text-left text-gray my-auto">
+                  <div className="col-3 text-left text-xxs text-gray my-auto">
                     {state.ownership}
                   </div>
                   <div className="col-4 text-left text-black text-xxs font-weight-bold my-auto">
