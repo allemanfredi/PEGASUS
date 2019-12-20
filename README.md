@@ -106,6 +106,8 @@ window.iota
 }
 ```
 
+The functions __`subscribe`__ and __`listen`__ within __`mam.client.js`__ are not available (through injection) yet.
+
 &nbsp;
 
 ***
