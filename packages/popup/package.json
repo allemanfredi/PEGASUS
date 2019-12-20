@@ -6,8 +6,6 @@
   "private": true,
   "dependencies": {
     "babel-polyfill": "^6.26.0",
-    "lib": "^4.0.2",
-    "lib2": "^0.0.4",
     "password-validator": "^4.1.1",
     "qrcode.react": "^0.8.0",
     "react": "^16.8.1",
