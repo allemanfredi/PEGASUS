@@ -28,34 +28,57 @@ class MamChannels extends Component {
       <div className="container">
         {
           !this.state.showRegisterChannel && !this.state.showChannelsList
-            ? <React.Fragment>
-                <div className='row mt-18'>
-                  <div className='col-12 text-center'>
-                    <button onClick={() => {
-                        if (!this.state.showRegisterChannel)
+            ? <div className="container">
+                <div className="row cursor-pointer" 
+                  onClick={() => {
+                    if (!this.state.showRegisterChannel)
                           this.props.onChangeCanGoBack(null)
-                          
-                        this.setState({ showRegisterChannel: !this.state.showRegisterChannel })
-                      }}
-                      className='btn btn-border-blue text-bold btn-big'>
-                      Register Channel
-                  </button>
+                    this.setState({ showRegisterChannel: ! this.state.showRegisterChannel})
+                  }}>
+                  <div className="col-12">
+                    <div className="row mt-3">
+                      <div className="col-3">
+                        <img src="./material/img/documentary.svg" height="50" width="50" alt="documentary logo"/>
+                      </div>
+                      <div className="col-9 text-blue text-left text-md font-weight-bold my-auto">
+                        Register Channel
+                      </div>
+                    </div>
+                    <div className="row mt-3 justify-content-center">
+                      <div className="col-10 text-center text-xs text-gray">
+                        It is possible to manually add a MAM Channel (as subscriber)
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className='row mt-2'>
-                  <div className='col-12 text-center'>
-                    <button onClick={() => {
-                        if (!this.state.showChannelsList)
+
+                <hr className="mt-2"/>
+
+                <div className="row cursor-pointer"
+                  onClick={() => {
+                    if (!this.state.showChannelsList)
                           this.props.onChangeCanGoBack(null)
-                        
-                        this.setState({ showChannelsList: !this.state.showChannelsList })
-                      }}
-                      className='btn btn-border-blue text-bold btn-big'>
-                      Show Channels
-                  </button>
+                    this.setState({ showChannelsList: ! this.state.showChannelsList})
+                  }}>
+                  <div className="col-12">
+                    <div className="row mt-3">
+                      <div className="col-3">
+                        <img src="./material/img/channel-list.svg" height="50" width="50" alt="list logo"/>
+                      </div>
+                      <div className="col-9 text-blue text-left text-md font-weight-bold my-auto">
+                        Show Channels List
+                      </div>
+                    </div>
+                    <div className="row mt-3 justify-content-center">
+                      <div className="col-10 text-center text-xs text-gray">
+                        Before you can export the seed you will need to enter the login password
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </React.Fragment>
+
+                <hr className="mt-2 mb-2"/>
+              </div>
             : null
         }
         {

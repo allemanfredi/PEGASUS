@@ -68,8 +68,8 @@ class Transactions extends Component {
       <React.Fragment>
         <div className="container">
           <div className="row">
-            <div className="col-6 text-left text-black text-gray text-xs">History</div>
-            <div className="col-6 text-right">
+            <div className="col-6 text-left text-black text-gray text-xs pl-0">History</div>
+            <div className="col-6 text-right pr-0">
             {
               this.props.isLoading
                 ? <Spinner/>

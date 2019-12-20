@@ -16,6 +16,7 @@ import Alert from '../../components/alert/Alert'
 import { popupMessanger } from '@pegasus/utils/messangers'
 import Utils from '@pegasus/utils/utils'
 import Duplex from '@pegasus/utils/duplex'
+import ReactTooltip from 'react-tooltip'
 
 class Home extends Component {
   constructor(props, context) {
@@ -40,6 +41,7 @@ class Home extends Component {
     this.onDeleteCurrentNetwork = this.onDeleteCurrentNetwork.bind(this)
     this.onMamExplorer = this.onMamExplorer.bind(this)
     this.onMamChannels = this.onMamChannels.bind(this)
+    this.copyToClipboard = this.copyToClipboard.bind(this)
 
     this.state = {
       error: '',
@@ -169,7 +171,6 @@ class Home extends Component {
   onBack() {
 
     if (!this.state.canGoBack){
-      console.log("ciao")
       this.mamChannels.current.goBack()
       return
     }
@@ -252,6 +253,15 @@ class Home extends Component {
         showSettings: false
       }
     })
+  }
+
+  copyToClipboard(text) {
+    const textField = document.createElement('textarea')
+    textField.innerText = text
+    document.body.appendChild(textField)
+    textField.select()
+    document.execCommand('copy')
+    textField.remove()
   }
 
   render() {
@@ -363,14 +373,22 @@ class Home extends Component {
                 }
                 {
                   this.state.showHome
-                    ? <div>
-                        <div className='row mt-4'>
-                          <div className='col-12 text-center'>
-                            <img src='./material/logo/iota-logo.png' height='60' width='60' alt='iota logo' />
+                    ? <div className="container">
+                        <div className='row mt-3 mb-2'>
+                          <div className='col-3 text-left'>
+                            <img src='./material/logo/iota-logo.png' height='40' width='40' alt='iota logo' />
                           </div>
-                        </div>
-                        <div className="row mt-1">
-                          <div className='col-12 text-center text-black text-md'>
+                          <div onClick={() => this.copyToClipboard(Utils.checksummed(this.props.account.data.latestAddress))}
+                            className='col-6 my-auto text-center font-weight-bold cursor-pointer'
+                            data-tip="copy to clipboard">
+                            {
+                              Utils.showAddress(
+                                Utils.checksummed(this.props.account.data.latestAddress),
+                                4,
+                                6
+                              )}
+                          </div>
+                          <div className='col-3 text-right text-black text-lg my-auto'>
                             {
                               Utils.iotaReducer(
                               this.props.account.data.balance[this.props.network.type]
@@ -380,24 +398,23 @@ class Home extends Component {
                             }
                           </div>
                         </div>
-                        <div className='row mt-1 mb-4'>
-                          <div className="col-2"></div>
-                          <div className='col-4 text-center'>
-                            <button onClick={this.onClickReceive} className='btn btn-border-blue btn-big'>Receive</button>
-                          </div>
-                          <div className='col-4 text-center'>
-                            <button onClick={this.onClickSend} className='btn btn-border-blue btn-big'>Send</button>
-                          </div>
-                          <div className="col-2"></div>
-                        </div>
                         <Transactions account={this.props.account}
                           network={this.props.network}
                           isLoading={this.state.isLoading}
                           onReload={this.onReload}
                         />
+                        <div className='row mt-3'>
+                          <div className='col-6 text-center'>
+                            <button onClick={this.onClickReceive} className='btn btn-border-blue btn-big'>Receive</button>
+                          </div>
+                          <div className='col-6 text-center'>
+                            <button onClick={this.onClickSend} className='btn btn-border-blue btn-big'>Send</button>
+                          </div>
+                        </div>
                       </div>
                     : ''
                 }
+                <ReactTooltip />
               </React.Fragment>
             : <Loader />
         }

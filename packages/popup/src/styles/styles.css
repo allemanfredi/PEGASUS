@@ -398,7 +398,7 @@ input#inp-edit {
     color: black;
 }
 .text-gray{
-    color: #9098a9;
+    color: #9098a9 !important;
 }
 .text-red{
     color: red;
@@ -643,7 +643,7 @@ header{
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
-    height: 230px;
+    height: 255px;
     padding-right: 5px;
     padding-left: 5px;
     padding-bottom: 5px;
