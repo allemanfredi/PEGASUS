@@ -64,7 +64,7 @@ class Header extends Component {
             </div>
           </div>
           {
-            this.props.account
+            this.props.account && !Utils.isEmptyObject(this.props.account)
               ? <div className='col-3 my-auto text-right'>
                 <img className="border-radius-50 border-darkblue"
                   src={`./material/profiles/${this.props.account.avatar ? this.props.account.avatar : 1}.svg`}
