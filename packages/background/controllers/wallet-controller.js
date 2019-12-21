@@ -66,6 +66,7 @@ class WalletController {
     }
 
     if (pswToCompare === hash) {
+      this.setState(APP_STATE.WALLET_UNLOCKED)
       const account = this.getCurrentAccount()
       const network = this.networkController.getCurrentNetwork()
 
@@ -116,7 +117,6 @@ class WalletController {
 
       return obj
     } catch (err) {
-      console.log(err)
       throw new Error(err)
     }
   }
@@ -163,17 +163,20 @@ class WalletController {
     }
   }
 
-  async addAccount (name, isCurrent) {
+  async addAccount (account, isCurrent) {
+
     if (isCurrent) {
       const data = this.storageController.getData()
-      data.forEach(account => { account.current = false })
+      data.forEach(acc => { acc.current = false })
       this.storageController.setData(data)
     }
 
     const network = this.networkController.getCurrentNetwork()
     const iota = composeAPI({ provider: network.provider })
-    const seed = this.generateSeed().toString().replace(/,/g, '')
-    const accountData = await iota.getAccountData(seed, { start: 0, security: 2 })
+    const seed = account.seed.toString().replace(/,/g, '')
+    const accountData = await iota.getAccountData(seed,
+       { start: 0, security: 2 }
+    )
 
     accountData.balance = {
       testnet: 0,
@@ -183,36 +186,42 @@ class WalletController {
     const key = this.getKey()
     const eseed = Utils.aes256encrypt(seed, key)
 
-    const account = {
-      name: name,
+    const accountToAdd = {
+      name: account.name,
+      avatar: account.avatar,
       seed: eseed,
       transactions: [],
       data: accountData,
       current: Boolean(isCurrent),
-      id: Utils.sha256(name)
+      id: Utils.sha256(account.name)
     }
 
     const data = this.storageController.getData()
 
-    const alreadyExists = data.filter(a => a.id === account.id)
+    const alreadyExists = data.filter(a => a.id === accountToAdd.id)
     if (alreadyExists.length > 0) {
       return null
     }
 
-    data.push(account)
+    data.push(accountToAdd)
     this.storageController.setData(data)
 
+    this.setState(APP_STATE.WALLET_UNLOCKED)
+
     backgroundMessanger.setProvider(network.provider)
-    backgroundMessanger.setAccount(account)
+    backgroundMessanger.setAccount(accountToAdd)
     return
   }
 
   getCurrentAccount () {
+    const state = this.getState()
+    if (state < APP_STATE.WALLET_UNLOCKED)
+      return null
+    
     if (!this.storageController)
       return null
 
     const accounts = this.storageController.getData()
-    const state = this.getState()
     if (accounts.length === 0 && state === APP_STATE.WALLET_NOT_INITIALIZED)
       return null
 
@@ -340,6 +349,9 @@ class WalletController {
     return true 
   }
 
+  logout() {
+    backgroundMessanger.setAccount(null)
+  }
 }
 
 export default WalletController

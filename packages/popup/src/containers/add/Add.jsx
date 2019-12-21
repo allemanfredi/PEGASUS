@@ -25,6 +25,7 @@ class Add extends Component {
       showAlert: false,
       alertType: '',
       alertText: '',
+      selectedAvatar: 0
     }
   }
 
@@ -52,9 +53,15 @@ class Add extends Component {
     }
     this.updateStatusInitialization(this.state.indexInitialization, true)
     this.setState({ indexInitialization: this.state.indexInitialization + 1 })
-    if (this.state.indexInitialization === 2) {
+    if (this.state.indexInitialization === 3) {
       this.setState({ isLoading: true })
-      await popupMessanger.addAccount(this.state.name, true)
+      
+      const account = {
+        name: this.state.name,
+        avatar: this.state.selectedAvatar,
+        seed: this.state.seed
+      }
+      await popupMessanger.addAccount(account, true)
       await popupMessanger.writeOnLocalStorage()
       this.setState({ isLoading: false })
       this.props.onBack()
@@ -109,32 +116,32 @@ class Add extends Component {
     return (
       <React.Fragment>
         {
-          this.state.showAlert 
+          this.state.showAlert
             ? <Alert type={this.state.alertType}
-                text={this.state.alertText}
-                onClose={this.onCloseAlert}
-              /> 
+              text={this.state.alertText}
+              onClose={this.onCloseAlert}
+            />
             : ''
         }
         {
-          this.state.isLoading 
+          this.state.isLoading
             ? <React.Fragment>
-                <div className="container">
-                  <div className='row mt-5 mb-3'>
-                    <div className='col-12 text-center text-lg text-blue'>I'm creating the new Account!</div>
-                  </div>
-                  <div className='row mt-4'>
-                    <div className="col-12 text-center">
-                      <Spinner size={'big'}/>
-                    </div>
+              <div className="container">
+                <div className='row mt-5 mb-3'>
+                  <div className='col-12 text-center text-lg text-blue'>I'm creating the new Account!</div>
+                </div>
+                <div className='row mt-4'>
+                  <div className="col-12 text-center">
+                    <Spinner size={'big'} />
                   </div>
                 </div>
-              </React.Fragment>
-            : 
+              </div>
+            </React.Fragment>
+            :
             <React.Fragment>
-            {
-              this.state.initialization[0] 
-                ? <div className="container">
+              {
+                this.state.initialization[0]
+                  ? <div className="container">
                     <div className='row mt-5 mb-3'>
                       <div className='col-12 text-center text-lg text-blue'>Let's add a name</div>
                     </div>
@@ -148,11 +155,11 @@ class Add extends Component {
                       </div>
                     </div>
                   </div>
-                : ''
-            }
-            {
-              this.state.initialization[1] 
-                ? <div className="container">
+                  : ''
+              }
+              {
+                this.state.initialization[1]
+                  ? <div className="container">
                     <div className='row mt-2'>
                       <div className='col-12 text-center text-lg text-blue'>
                         Let's generate a seed
@@ -183,11 +190,61 @@ class Add extends Component {
                       })
                     }
                   </div>
-                : ''
-            }
-            {
-              this.state.initialization[2] 
-                ? <div className="container">
+                  : ''
+              }
+              {
+                this.state.initialization[2]
+                  ? <div className="container">
+                      <div className='row mt-3'>
+                        <div className='col-12 text-center text-lg text-blue'>
+                          Choose your avatar!
+                        </div>
+                      </div>
+                      <div className='row mt-1'>
+                        <div className='col-12 text-center text-sm text-gray'>
+                          (click on the image you want to select)
+                        </div>
+                      </div>
+                      <div className="row mt-6">
+                        <div className='col-4 text-center cursor-pointer'
+                          onClick={() => this.setState({selectedAvatar: 1})}>
+                          <img className={this.state.selectedAvatar === 1 ? 'border-darkblue border-radius-50' : ''} 
+                            src="./material/profiles/1.svg" height="70" width="70"/>
+                        </div>
+                        <div className='col-4 text-center cursor-pointer'
+                          onClick={() => this.setState({selectedAvatar: 2})}>
+                          <img className={this.state.selectedAvatar === 2 ? 'border-darkblue border-radius-50' : ''} 
+                            src="./material/profiles/2.svg" height="70" width="70"/>
+                        </div>
+                        <div className='col-4 text-center cursor-pointer'
+                          onClick={() => this.setState({selectedAvatar: 3})}>
+                          <img className={this.state.selectedAvatar === 3 ? 'border-darkblue border-radius-50' : ''} 
+                            src="./material/profiles/3.svg" height="70" width="70"/>
+                        </div>
+                      </div>
+                      <div className="row mt-4">
+                        <div className='col-4 text-center cursor-pointer'
+                          onClick={() => this.setState({selectedAvatar: 4})}>
+                          <img className={this.state.selectedAvatar === 4 ? 'border-darkblue border-radius-50' : ''} 
+                            src="./material/profiles/4.svg" height="70" width="70"/>
+                        </div>
+                        <div className='col-4 text-center cursor-pointer'
+                          onClick={() => this.setState({selectedAvatar: 5})}>
+                          <img className={this.state.selectedAvatar === 5 ? 'border-darkblue border-radius-50' : ''} 
+                            src="./material/profiles/5.svg" height="70" width="70"/>
+                        </div>
+                        <div className='col-4 text-center cursor-pointer'
+                          onClick={() => this.setState({selectedAvatar: 6})}>
+                          <img className={this.state.selectedAvatar === 6 ? 'border-darkblue border-radius-50' : ''} 
+                            src="./material/profiles/6.svg" height="70" width="70"/>
+                        </div>
+                      </div>
+                    </div>
+                  : ''
+              }
+              {
+                this.state.initialization[3]
+                  ? <div className="container">
                     <div className='row mt-3 mb-3'>
                       <div className='col-12 text-center text-lg text-blue'>Let's export the seed</div>
                     </div>
@@ -203,37 +260,40 @@ class Add extends Component {
                     </div>
                     <div className='row mt-6'>
                       <div className='col-12 text-center'>
-                        <button onClick={this.copyToClipboard} 
+                        <button onClick={this.copyToClipboard}
                           className='btn btn-blue text-bold btn-big'>
-                            <span className='fa fa-clipboard'></span> Copy to clipboard
+                          <span className='fa fa-clipboard'></span> Copy to clipboard
                         </button>
                       </div>
                     </div>
                   </div>
-                : ''
-            }
-            <div className='container-menu-init'>
-              <div className='row'>
-                <div className='col-6 text-center pl-0 pr-0'>
-                  <button disabled={this.state.initialization[0] ? true : false} 
-                    onClick={this.goBack} type='submit' 
-                    className='btn btn-light-blue text-bold no-border'>
+                  : ''
+              }
+
+              <div className='container-menu-init'>
+                <div className='row'>
+                  <div className='col-6 text-center pl-0 pr-0'>
+                    <button disabled={this.state.initialization[0] ? true : false}
+                      onClick={this.goBack} type='submit'
+                      className='btn btn-light-blue text-bold no-border'>
                       <span className='fa fa-arrow-left'></span>
-                  </button>
-                </div>
-                <div className='col-6 text-center pl-0 pr-0'>
-                  <button disabled={this.state.initialization[0] ? (this.state.name.length > 0 ? false : true) :
-                    this.state.initialization[1] ? (this.state.randomLetters === 0 ? false : true) : ''}
-                    onClick={this.goOn}
-                    type='submit'
-                    className='btn btn-blue text-bold no-border'
-                  ><span className='fa fa-arrow-right'></span>
-                  </button>
+                    </button>
+                  </div>
+                  <div className='col-6 text-center pl-0 pr-0'>
+                    <button disabled={
+                      this.state.initialization[0] ? (this.state.name.length > 0 ? false : true) :
+                      this.state.initialization[1] ? (this.state.randomLetters === 0 ? false : true) : 
+                      this.state.initialization[2] ? (this.state.selectedAvatar === 0 ? true : false) :  ''}
+                      onClick={this.goOn}
+                      type='submit'
+                      className='btn btn-blue text-bold no-border'
+                    ><span className='fa fa-arrow-right'></span>
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </React.Fragment>
-          }
+            </React.Fragment>
+        }
       </React.Fragment>
     )
   }

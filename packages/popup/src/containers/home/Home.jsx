@@ -217,6 +217,7 @@ class Home extends Component {
 
   onLogout() { 
     this.props.onLogout() 
+    popupMessanger.logout()
   }
 
   addCustomNetwork() {
@@ -270,7 +271,6 @@ class Home extends Component {
   }
 
   render() {
-    
     return (
       <div>
         {
@@ -280,7 +280,7 @@ class Home extends Component {
                 showBtnSettings={this.state.showHome}
                 showBtnEllipse={this.state.showHome}
                 showBtnBack={!this.state.showHome}
-                text={this.state.showHome ? this.props.account.name : (this.state.showSend ? 'Send' : (this.state.showReceive ? 'Receive' : this.state.showAdd ? 'Add account' : (this.state.showNetwork ? 'Add custom node' : (this.state.showMam ? 'MAM Explorer' : (this.state.showExportSeed ? 'Export Seed ' : (this.state.showImportSeed ? 'Import Seed' : (this.state.showMamChannels ? 'MAM Channels' : '')))))))}
+                text={this.state.showHome && this.props.account ? this.props.account.name : (this.state.showSend ? 'Send' : (this.state.showReceive ? 'Receive' : this.state.showAdd ? 'Add account' : (this.state.showNetwork ? 'Add custom node' : (this.state.showMam ? 'MAM Explorer' : (this.state.showExportSeed ? 'Export Seed ' : (this.state.showImportSeed ? 'Import Seed' : (this.state.showMamChannels ? 'MAM Channels' : '')))))))}
                 onClickSettings={this.onClickSettings}
                 onClickMap={this.onClickMap}
                 onBack={this.onBack}

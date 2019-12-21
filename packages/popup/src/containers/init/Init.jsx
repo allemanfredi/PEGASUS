@@ -39,6 +39,7 @@ class Init extends Component {
       initialization: [true, false, false, false],
       indexInitialization: 0,
       isCopiedToClipboard: false,
+      selectedAvatar: 0
     }
   }
 
@@ -92,7 +93,7 @@ class Init extends Component {
     this.updateStatusInitialization(this.state.indexInitialization, true);
     this.setState({ indexInitialization: this.state.indexInitialization + 1 })
 
-    if (this.state.indexInitialization === 3) { //create wallet
+    if (this.state.indexInitialization === 4) { //create wallet
       this.setState({ isCreatingWallet: true })
       await this.createWallet()
       this.setState({ isCreatingWallet: false })
@@ -142,20 +143,21 @@ class Init extends Component {
     return new Promise(async (resolve, reject) => {
       try {
         await popupMessanger.storePassword(this.state.psw)
-        console.log("ciao1")
-        await popupMessanger.initStorageDataService(this.state.psw)
-        console.log("ciao2")
+        await popupMessanger.setStorageKey(this.state.psw)
 
-        await popupMessanger.addAccount(this.state.name, true)
-        console.log("ciao3")
+        const account = {
+          name: this.state.name,
+          avatar: this.state.selectedAvatar,
+          seed: this.state.seed
+        }
+        await popupMessanger.addAccount(account, true)
 
         popupMessanger.writeOnLocalStorage()
         resolve()
       } catch (err) {
-        console.log(err)
-        reject('Impossible to create the wallet');
+        reject('Impossible to create the wallet')
       }
-    });
+    })
   }
 
   render() {
@@ -272,7 +274,57 @@ class Init extends Component {
                   : ''
               }
               {
-                this.state.initialization[3] ?
+                this.state.initialization[3]
+                  ? <div className="container">
+                      <div className='row mt-3'>
+                        <div className='col-12 text-center text-lg text-blue'>
+                          Choose your avatar!
+                        </div>
+                      </div>
+                      <div className='row mt-1'>
+                        <div className='col-12 text-center text-sm text-gray'>
+                          (click on the image you want to select)
+                        </div>
+                      </div>
+                      <div className="row mt-6">
+                        <div className='col-4 text-center cursor-pointer'
+                          onClick={() => this.setState({selectedAvatar: 1})}>
+                          <img className={this.state.selectedAvatar === 1 ? 'border-darkblue border-radius-50' : ''} 
+                            src="./material/profiles/1.svg" height="70" width="70"/>
+                        </div>
+                        <div className='col-4 text-center cursor-pointer'
+                          onClick={() => this.setState({selectedAvatar: 2})}>
+                          <img className={this.state.selectedAvatar === 2 ? 'border-darkblue border-radius-50' : ''} 
+                            src="./material/profiles/2.svg" height="70" width="70"/>
+                        </div>
+                        <div className='col-4 text-center cursor-pointer'
+                          onClick={() => this.setState({selectedAvatar: 3})}>
+                          <img className={this.state.selectedAvatar === 3 ? 'border-darkblue border-radius-50' : ''} 
+                            src="./material/profiles/3.svg" height="70" width="70"/>
+                        </div>
+                      </div>
+                      <div className="row mt-4">
+                        <div className='col-4 text-center cursor-pointer'
+                          onClick={() => this.setState({selectedAvatar: 4})}>
+                          <img className={this.state.selectedAvatar === 4 ? 'border-darkblue border-radius-50' : ''} 
+                            src="./material/profiles/4.svg" height="70" width="70"/>
+                        </div>
+                        <div className='col-4 text-center cursor-pointer'
+                          onClick={() => this.setState({selectedAvatar: 5})}>
+                          <img className={this.state.selectedAvatar === 5 ? 'border-darkblue border-radius-50' : ''} 
+                            src="./material/profiles/5.svg" height="70" width="70"/>
+                        </div>
+                        <div className='col-4 text-center cursor-pointer'
+                          onClick={() => this.setState({selectedAvatar: 6})}>
+                          <img className={this.state.selectedAvatar === 6 ? 'border-darkblue border-radius-50' : ''} 
+                            src="./material/profiles/6.svg" height="70" width="70"/>
+                        </div>
+                      </div>
+                    </div>
+                  : ''
+              }
+              {
+                this.state.initialization[4] ?
                   <div className="container">
                     <div className='row mt-3 mb-3'>
                       <div className='col-12 text-center text-lg text-blue'>Let's export the seed</div>
@@ -305,9 +357,11 @@ class Init extends Component {
                       className='btn btn-light-blue text-bold no-border   '><span className='fa fa-arrow-left'></span></button>
                   </div>
                   <div className='col-6 text-center pl-0 pr-0'>
-                    <button disabled={this.state.initialization[0] ? (this.state.name.length > 0 ? false : true) :
+                    <button disabled={
+                      this.state.initialization[0] ? (this.state.name.length > 0 ? false : true) :
                       this.state.initialization[1] ? (this.state.pswAcceptable ? false : true) :
-                        this.state.initialization[2] ? (this.state.randomLetters === 0 ? false : true) : ''}
+                      this.state.initialization[2] ? (this.state.randomLetters === 0 ? false : true) : 
+                      this.state.initialization[3] ? (this.state.selectedAvatar === 0 ? true : false) : ''}
                       onClick={this.goOn}
                       type='submit'
                       className='btn btn-blue text-bold no-border'

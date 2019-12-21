@@ -63,8 +63,8 @@ export default {
     return this.duplex.send('deleteCurrentNetwork')
   },
 
-  addAccount (name, isCurrent) {
-    return this.duplex.send('addAccount', { name, isCurrent })
+  addAccount (account, isCurrent) {
+    return this.duplex.send('addAccount', { account, isCurrent })
   },
 
   isAccountNameAlreadyExists (name) {
@@ -221,5 +221,9 @@ export default {
 
   executeRequestFromPopup(request) {
     return this.duplex.send('executeRequestFromPopup', request)
+  },
+
+  logout() {
+    return this.duplex.send('logout')
   }
 }

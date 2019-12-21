@@ -88,6 +88,7 @@ class App extends Component {
           {
             this.state.showHeader ? 
               <Header ref={this.header}
+                account={this.state.account}
                 network={this.state.network}
                 networks={this.state.networks}
                 isLogged={this.state.isLogged}
@@ -99,7 +100,7 @@ class App extends Component {
             ref={this.main}
             network={this.state.network}
             account={this.state.account}
-            duplex={this.duplex} />
+            duplex={this.duplex}/>
         </div>
       </div>
     )

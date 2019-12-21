@@ -37,14 +37,11 @@ class ImportSeed extends Component {
     }
     try {
       this.setState({ isLoading: true })
-      const data = await IOTA.getAccountData(this.state.seed)
       const account = {
         seed: this.state.seed,
-        name: this.state.name,
-        network: this.props.network,
-        data: data
+        name: this.state.name
       }
-      popupMessanger.addAccount(account, this.props.network, true)
+      await popupMessanger.addAccount(account, this.props.network, true)
       this.setState({ isLoading: false })
       this.props.onBack()
     } catch (e) {

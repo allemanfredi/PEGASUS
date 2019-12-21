@@ -15,11 +15,11 @@ class StorageController {
 
     const econnections = localStorage.getItem('connections')
     if (!econnections)
-      this.setConnections([])
+      this.setConnections([], false)
 
     const eMamChannels = localStorage.getItem('mamChannels')
     if (!eMamChannels)
-      this.setMamChannels({})
+      this.setMamChannels({}, false)
   }
 
   isReady() {

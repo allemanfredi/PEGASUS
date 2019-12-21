@@ -96,7 +96,7 @@ class Main extends Component {
     })
   }
 
-  async onSuccessFromLogin() {
+  async onSuccessFromLogin() {    
     popupMessanger.startSession()
     popupMessanger.setState(APP_STATE.WALLET_UNLOCKED)
 
@@ -135,13 +135,6 @@ class Main extends Component {
       popupMessanger.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
       return
     } 
-
-    /*else if (requests.length > 0) {
-      this.props.showHeader(false)
-      this.setState({ appState: APP_STATE.WALLET_REQUEST_PERMISSION_MAM_OPERATION })
-      popupMessanger.setState(APP_STATE.WALLET_REQUEST_PERMISSION_MAM_OPERATION)
-      return
-    }*/
 
     else if (connection.enabled === true){
       popupMessanger.closePopup()

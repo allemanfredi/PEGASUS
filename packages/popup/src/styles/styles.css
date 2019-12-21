@@ -393,6 +393,9 @@ input#inp-edit {
 .border-light-gray {
     border: 2px solid #c8ccd4;
 }
+.border-darkblue {
+    border: 2px solid darkblue;
+}
 
 /* DECORATION */
 .text-blue{
@@ -577,11 +580,6 @@ hr {
 /*HEADERS*/
 header{
     background: #efefefba;
-}
-.container-header-logo{
-    margin-left: 2%;
-    margin-top: 10px;
-    margin-bottom: 10px;
 }
 
 .container-selection{

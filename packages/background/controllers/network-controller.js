@@ -25,7 +25,6 @@ class NetworkController {
 
       this.customizatorController.setProvider(network.provider)
     } catch (err) {
-      console.log(err)
       throw new Error(err)
     }
   }
@@ -66,7 +65,6 @@ class NetworkController {
       options.networks.push(network)
       this.storageController.setOptions(options)
 
-      console.log(backgroundMessanger)
       backgroundMessanger.setNetworks(options.networks)
     } catch (err) {
       throw new Error(err)

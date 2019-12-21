@@ -19,15 +19,22 @@ class ShowChannelsList extends Component {
 
   async componentWillMount() {
     const channels = await popupMessanger.getMamChannels()
-    const ownerChannels = Object.values(channels.owner).map(state => {
-      state.ownership = 'owner'
-      return state
-    })
-    const subscriberChannels = Object.values(channels.subscriber).map(state => {
-      state.ownership = 'subscriber'
-      return state
-    })
-    this.setState({ channels: [...ownerChannels, ...subscriberChannels] })
+    
+    if (channels.owner) {
+      const ownerChannels = Object.values(channels.owner).map(state => {
+        state.ownership = 'owner'
+        return state
+      })
+      this.setState({ channels: [...ownerChannels] })
+    }
+    
+    if (channels.subscriber) {
+      const subscriberChannels = Object.values(channels.subscriber).map(state => {
+        state.ownership = 'subscriber'
+        return state
+      })
+      this.setState({ channels: [...subscriberChannels] })
+    }
   }
 
   copyToClipboard(text, index) {

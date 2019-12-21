@@ -83,6 +83,8 @@ const backgroundScript = {
     duplex.on('startFetchMam', this.engine.startFetchMam)
     duplex.on('getMamChannels', this.engine.getMamChannels)
     duplex.on('registerMamChannel', this.engine.registerMamChannel)
+
+    duplex.on('logout', this.engine.logout)
   },
 
   bindTabDuplex () {

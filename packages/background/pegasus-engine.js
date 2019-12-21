@@ -181,8 +181,8 @@ class PegasusEngine {
     this.networkController.deleteCurrentNetwork()
   }
 
-  async addAccount ({ name, isCurrent }) {
-    return this.walletController.addAccount(name, isCurrent)
+  async addAccount ({ account, isCurrent }) {
+    return this.walletController.addAccount(account, isCurrent)
   }
 
   isAccountNameAlreadyExists ({ name }) {
@@ -372,6 +372,10 @@ class PegasusEngine {
 
   registerMamChannel(channel) {
     return this.mamController.registerMamChannel(channel)
+  }
+
+  logout() {
+    return this.walletController.logout()
   }
 }
 
