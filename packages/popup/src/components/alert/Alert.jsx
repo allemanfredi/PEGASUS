@@ -19,7 +19,7 @@ class Alert extends Component {
             </div>
             <div className='col-10' />
           </div>
-          <div className='row mt-2'>
+          <div className='row mt-1'>
             <div className='col-12 text-center'>
             {
               this.props.type === 'error' ? <img src='./material/img/error.png' height='80' width='80' alt='error' /> :
@@ -28,14 +28,14 @@ class Alert extends Component {
             }
             </div>
           </div>
-          <div className='row mt-5'>
+          <div className='row mt-3'>
             <div className='col-12 text-center text-sm text-bold'>
               {this.props.text}
             </div>
           </div>
           {
             this.props.type === 'confirm'
-              ? <div className="row mt-6 mb-1">
+              ? <div className="row mt-5 mb-1">
                   <div className="col-6 pr-5 pl-5">
                     <button onClick={() => this.props.onClose()} className='btn btn-border-blue btn-big'>
                       Cancel

@@ -1,20 +1,51 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
+import Utils from '@pegasus/utils/utils'
+import { composeAPI } from '@iota/core'
 
 class Network extends Component {
   constructor(props, context) {
     super(props, context);
 
-    this.addNetwork = this.addNetwork.bind(this);
+    this.addNetwork = this.addNetwork.bind(this)
 
     this.state = {
       name: '',
       url: '',
       port: '',
-      type: ''
+      type: '',
+      error: null
     }
   }
 
   async addNetwork() {
+
+    if (!Utils.isURL(this.state.url)) {
+      this.setState({
+        error: 'Invalid URL'
+      })
+      return
+    }
+
+    if (isNaN(this.state.port)) {
+      this.setState({
+        error: 'Invalid Port Number'
+      })
+      return
+    }
+
+    const iota = composeAPI({
+      provider: this.state.url
+    })
+
+    try {
+      await iota.getNodeInfo()
+    } catch (err) {
+      this.setState({
+        error: 'Unreachable Node'
+      })
+      return
+    }
+
     const network = {
       name: this.state.name,
       provider: this.state.url + ':' + this.state.port,
@@ -23,7 +54,7 @@ class Network extends Component {
       difficulty: this.state.type === 'mainnet' ? 14 : 9,
       default: false
     }
-    this.props.onAddNetwork(network);
+    this.props.onAddNetwork(network)
   }
 
   render() {
@@ -66,7 +97,18 @@ class Network extends Component {
             <label for="testnet" class="text-xxs">Testnet</label>
           </div>
         </div>
-        <div className='row mt-8'>
+        {
+          this.state.error ?
+            <div className="row mt-3">
+              <div className="col-12 text-xs">
+                <div class="alert alert-danger" role="alert">
+                  {this.state.error}
+                </div>
+              </div>
+            </div>
+            : ''
+        }
+        <div className={'row ' + (!this.state.error ? 'mt-9' : '')}>
           <div className='col-12 text-center'>
             <button disabled={this.state.name === '' ||
               this.state.url === '' ||

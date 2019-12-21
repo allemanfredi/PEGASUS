@@ -80,9 +80,8 @@ class Settings extends Component {
                     <img className="border-radius-50" src='./material/logo/pegasus-128.png' height='80' width='80' alt='pegasus logo' />
                   </div>
                 </div>
-                <div className='row mt-2'>
-                  <div className="col-2"></div>
-                  <div /*ref={edit => this.edit = edit} onClick={() => this.setState({ showEdit: true })}*/ className='col-8 text-center text-sm cursor-text'>
+                <div className='row mt-2 justify-content-center'>
+                  <div /*ref={edit => this.edit = edit} onClick={() => this.setState({ showEdit: true })}*/ className='col-8 text-center text-sm cursor-text font-weight-bold'>
                     {/*
                       this.state.showEdit ?
                         <label htmlFor='inp-edit' className='inp'>
@@ -92,16 +91,19 @@ class Settings extends Component {
                       : */this.props.account.name
                     }
                   </div>
-                  <div className="col-2"></div>
                 </div>
-                <div className='row mt-1'>
-                  <div className="col-1"></div>
+                <div className='row mt-1 justify-content-center'>
                   <div className={'col-10 text-center text-xxs line-height-1-5' + (!this.state.showFullAddress ? ' text-no-overflow' : ' break-text')}>
                     {
-                      Utils.checksummed(this.props.account.data.latestAddress)
+                      !this.state.showFullAddress
+                        ? Utils.showAddress(
+                            Utils.checksummed(this.props.account.data.latestAddress),
+                            6,
+                            8
+                          )
+                        : Utils.checksummed(this.props.account.data.latestAddress)
                     }
                   </div>
-                  <div className="col-1"></div>
                 </div>
                 <div className='row mt-05'>
                   <div onClick={() => this.setState({showFullAddress: !this.state.showFullAddress})} 

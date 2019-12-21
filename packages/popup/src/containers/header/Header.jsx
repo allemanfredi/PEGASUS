@@ -44,8 +44,8 @@ class Header extends Component {
           <div className='col-2 container-header-logo'>
             <img className="border-radius-50" 
                 src='./material/logo/pegasus-64.png' 
-                height='40' 
-                width='40' 
+                height='50' 
+                width='50' 
                 alt='pegasus logo'/>
           </div>
           <div className='col-1'></div>
@@ -72,7 +72,7 @@ class Header extends Component {
             {
               this.state.showNetworks 
                 ? <div ref={ref => this.wrapperRef = ref} className='container-hidden-network'>
-                    <div className='container-hidden-network-header'>Nodes</div>
+                    <div className='container-hidden-network-header'>Providers</div>
                     <div className='container-hidden-network-body'>
                       {
                         this.props.networks.map((network, index) => {
@@ -97,7 +97,7 @@ class Header extends Component {
                       }
                       <hr className="bg-grey ml-1 mr-1 mt-1 mb-1" />
                       <div onClick={() => this.addCustomNetwork()} className='container-hidden-network-item'>
-                        <div className='container-hidden-network-item-name-not-selected'>Add custom Node</div>
+                        <div className='container-hidden-network-item-name-not-selected'>Add custom provider</div>
                       </div>
                     </div>
                 </div>

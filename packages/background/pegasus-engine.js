@@ -15,7 +15,7 @@ import TransferController from './controllers/transfer-controller'
 import SeedVaultController from './controllers/seed-vault-controller'
 
 const SESSION_TIME = 30000
-const ACCOUNT_RELOAD_TIME = 90000
+const ACCOUNT_RELOAD_TIME = 100000
 
 class PegasusEngine {
   constructor () {

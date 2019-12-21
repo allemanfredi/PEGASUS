@@ -17,8 +17,7 @@ export default {
       this.iota.getNodeInfo()
         .then(info => resolve(info))
         .catch(err => {
-          // reject(err);
-          console.log(err)
+          reject(err)
         })
     })
   },
@@ -28,8 +27,7 @@ export default {
       this.iota.getNewAddress(seed)
         .then(address => resolve(address))
         .catch(err => {
-          // reject(err);
-          console.log(err)
+          reject(err)
         })
     })
   },
@@ -39,8 +37,7 @@ export default {
       this.iota.getBalances([address], 100)
         .then(res => resolve(res.balances[0]))
         .catch(err => {
-          // reject(err);
-          console.log(err)
+          reject(err)
         })
     })
   },
@@ -50,8 +47,7 @@ export default {
       this.iota.findTransactionObjects({ addresses })
         .then(transactions => resolve(transactions))
         .catch(err => {
-          // reject(err);
-          console.log(err)
+          reject(err)
         })
     })
   },
@@ -104,21 +100,11 @@ export default {
           resolve(accountData)
         })
         .catch(err => {
-          // reject(err);
-          console.log(err)
+          reject(err)
         })
     })
   },
 
-  getAccountDataSync (seed) {
-    this.iota.getAccountData(seed, { start: 0, security: 2 })
-      .then(accountData => {
-        return accountData
-      })
-      .catch(err => {
-        console.log(err)
-      })
-  },
 
   async getBundle (transaction) {
     return new Promise((resolve, reject) => {
@@ -127,8 +113,7 @@ export default {
           resolve(bundle)
         })
         .catch(err => {
-          // reject(err);
-          console.log(err)
+          reject(err)
         })
     })
   },
@@ -139,27 +124,20 @@ export default {
         .then(isPromotable => {
           resolve(isPromotable)
         }).catch(err => {
-          // reject(err);
-          console.log(err)
+          reject(err)
         })
     })
   },
 
   async promoteTransaction (tail) {
     return new Promise((resolve, reject) => {
-      try {
-        this.iota.promoteTransaction(tail, 3, 14)
-          .then(() => {
-            resolve()
-          })
-          .catch(err => {
-            // reject(err);
-            console.log(err)
-          })
-      } catch (err) {
-        // reject(err);
-        console.log(err)
-      }
+      this.iota.promoteTransaction(tail, 3, 14)
+        .then(() => {
+          resolve()
+        })
+        .catch(err => {
+          reject(err)
+        })
     })
   },
 
@@ -170,8 +148,7 @@ export default {
           resolve(transactions)
         })
         .catch(err => {
-          // reject(err);
-          console.log(err)
+          reject(err)
         })
     })
   },
@@ -183,8 +160,7 @@ export default {
           resolve(transactions)
         })
         .catch(err => {
-          // reject(err);
-          console.log(err)
+          reject(err)
         })
     })
   },
@@ -196,10 +172,8 @@ export default {
         const message = JSON.parse(extractJson(bundle))
         resolve(message)
       } catch (err) {
-        // reject(err);
-        console.log(err)
+        reject(err)
       }
     })
   }
-
 }
