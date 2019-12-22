@@ -163,8 +163,8 @@ export default {
     return this.duplex.send('executeRequests')
   },
 
-  getConnection (connection) {
-    return this.duplex.send('getConnection', connection)
+  getConnection (origin, accountId) {
+    return this.duplex.send('getConnection', {origin,  accountId})
   },
 
   pushConnection (connection) {

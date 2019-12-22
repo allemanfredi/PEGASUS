@@ -5,7 +5,6 @@ import Init from '../init/Init'
 import Restore from '../restore/Restore'
 import ConfirmRequest from '../confirm/ConfirmRequest'
 import Connector from '../connector/Connector'
-import Duplex from '@pegasus/utils/duplex'
 import { popupMessanger } from '@pegasus/utils/messangers'
 import { APP_STATE } from '@pegasus/utils/states'
 
@@ -29,11 +28,10 @@ class Main extends Component {
     this.state = {
       appState: APP_STATE.WALLET_WITHOUT_STATE,
     }
-
-    this.duplex = new Duplex.Popup()
   }
 
   async componentDidMount() {
+    
     await popupMessanger.checkSession()
     let state = await popupMessanger.getState()
 
@@ -52,8 +50,9 @@ class Main extends Component {
     //impossible to load data from the storage until that a user log in
     if (state >= APP_STATE.WALLET_UNLOCKED) {
 
+      const account = await popupMessanger.getCurrentAccount()
       const website = await popupMessanger.getWebsite()
-      const connection = await popupMessanger.getConnection(website ? website.origin : 'offline')
+      const connection = await popupMessanger.getConnection(website ? website.origin : 'offline', account.id)
 
       if (connection) {
         if (connection.requestToConnect === true && state >= APP_STATE.WALLET_UNLOCKED) {
@@ -61,7 +60,7 @@ class Main extends Component {
           state = APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION 
         }
 
-        if (connection.enabled === true && requestsWithUserInteraction.length > 0) {
+        if (connection.enabled === true  && requestsWithUserInteraction.length > 0) {
           this.props.showHeader(false)
           state = APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION
           popupMessanger.setState(APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION)
@@ -88,7 +87,7 @@ class Main extends Component {
   }
 
   bindDuplexRequests() {
-    this.duplex.on('setAppState', appState => {
+    this.props.duplex.on('setAppState', appState => {
       this.setState({ appState })
       if (appState > APP_STATE.WALLET_LOCKED)
         this.props.showHeader(true)
@@ -100,8 +99,10 @@ class Main extends Component {
     popupMessanger.startSession()
     popupMessanger.setState(APP_STATE.WALLET_UNLOCKED)
 
+    const account = await popupMessanger.getCurrentAccount()
     const website = await popupMessanger.getWebsite()
-    const connection = await popupMessanger.getConnection(website ? website.origin : 'offline')
+    const connection = await popupMessanger.getConnection(website ? website.origin : 'offline', account.id)
+
     const requests = await popupMessanger.getRequests()
     
     //no connections but request from injection with wallet locked
@@ -110,7 +111,8 @@ class Main extends Component {
         website,
         requestToConnect: true,
         connected: false,
-        enabled: false
+        enabled: false,
+        accountId: account.id
       })
       this.props.showHeader(false)
       this.setState({ appState: APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION })
@@ -119,7 +121,7 @@ class Main extends Component {
     } 
 
     //unlocked and no injection requests
-    else if ((!connection || connection.enabled) && 
+    else if ((!connection || (connection.enabled)) && 
       requests.length === 0
     ){
       popupMessanger.startHandleAccountData()
@@ -143,13 +145,15 @@ class Main extends Component {
   }
 
   async onPermissionGranted() {
+    const account = await popupMessanger.getCurrentAccount()
     const requestsWithUserInteraction = await popupMessanger.getRequestsWithUserInteraction()
     const website = await popupMessanger.getWebsite()
     popupMessanger.pushConnection({
       website,
       requestToConnect: false,
       connected: true,
-      enabled: true
+      enabled: true,
+      accountId: account.id
     })
     
     await popupMessanger.completeConnection()

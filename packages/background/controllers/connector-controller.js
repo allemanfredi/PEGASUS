@@ -12,25 +12,40 @@ class ConnectorController {
     this.website = null
   }
 
-  getConnection(origin) {
+  setWalletController (walletController) {
+    this.walletController = walletController
+  }
+
+  getConnection(origin, accountId) {
     if (!this.storageController) {
       return null
     }
 
-    if (this.connectionToStore && this.connectionToStore.website.origin === origin) {
+    //not check on accountId because the wallet is still locked and it is not possible to retrieve the current account
+    if (
+      this.connectionToStore && 
+      this.connectionToStore.website.origin === origin 
+    ) {
       const connection = this.connectionToStore
       this.pushConnection(connection)
       this.connectionToStore = null
       return connection
     }
     const connections = this.storageController.getConnections()
-    const connection = connections.find(c => c.website.origin === origin)
+    const connection = connections.find(conn => 
+      conn.website.origin === origin && conn.accountId === accountId
+    )
+
     return connection
   }
 
   pushConnection(connection) {
     const connections = this.storageController.getConnections()
-    const existingConnection = connections.find(c => c.website.origin === connection.website.origin)
+    const existingConnection = connections.find(conn =>
+       conn.website.origin === connection.website.origin && 
+       conn.accountId === connection.accountId
+    )
+
     if (existingConnection) {
       this.updateConnection(connection)
     } else {
@@ -41,22 +56,29 @@ class ConnectorController {
 
   updateConnection(connection) {
     const connections = this.storageController.getConnections()
-    const updatedConnections = connections.map(c => {
-      if (c.website.origin === connection.website.origin) {
+    const updatedConnections = connections.map(conn => {
+      if (
+        conn.website.origin === connection.website.origin &&
+        conn.accountId === connection.accountId
+      ) {
         return connection
       } else {
-        return c
+        return conn
       }
     })
     this.storageController.setConnections(updatedConnections, true)
   }
 
   connect(uuid, resolve, website)  {
+
+    const account = this.walletController.getCurrentAccount()
+
     const connection = {
       website,
       requestToConnect : true,
       connected: false,
       enabled: false,
+      accountId: account ? account.id : null
     }
 
     const connectionRequest = {
@@ -80,6 +102,7 @@ class ConnectorController {
   completeConnection(requests) {
     const website = this.getCurrentWebsite()
     const connectionRequest = this.getConnectionRequest()
+    const account = this.walletController.getCurrentAccount()
     if (connectionRequest) {
       connectionRequest.resolve({
         data: {
@@ -93,10 +116,16 @@ class ConnectorController {
 
     //in case there was already the connection stored
     requests.forEach(request => {
-      if (request.connection.website.origin === website.origin) {
+      if (
+        request.connection.website.origin === website.origin &&
+        (request.connection.accountId === account.id || !request.connection.accountId)
+      ) {
+        request.connection.accountId = account.id
         request.connection.requestToConnect = false
         request.connection.enabled = true
         request.connection.connected = true
+
+        this.updateConnection(request.connection)
       }
     })
 
@@ -106,6 +135,8 @@ class ConnectorController {
   rejectConnection(requests) {
     const website = this.getCurrentWebsite()
     const connectionRequest = this.getConnectionRequest()
+    const account = this.walletController.getCurrentAccount()
+
     if (connectionRequest) {
       connectionRequest.resolve({
         data: {
@@ -118,7 +149,10 @@ class ConnectorController {
     }
 
     requests.forEach(request => {
-      if (request.connection.website.origin === website.origin) {
+      if (
+        request.connection.website.origin === website.origin &&
+        request.connection.accountId === account.id
+      ) {
         request.connection.requestToConnect = false
         request.connection.enabled = false
         request.connection.connected = false

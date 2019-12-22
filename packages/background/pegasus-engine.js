@@ -95,6 +95,9 @@ class PegasusEngine {
     this.mamController.setWalletController(
       this.walletController
     )
+    this.connectorController.setWalletController(
+      this.walletController
+    )
     /* E N D   C O N T R O L L E R S */
 
     if (!this.walletController.isWalletSetup()) {
@@ -296,8 +299,8 @@ class PegasusEngine {
     this.connectorController.connect(uuid, resolve, website)
   }
 
-  getConnection(origin) {
-    return this.connectorController.getConnection(origin)
+  getConnection({origin,  accountId}) {
+    return this.connectorController.getConnection(origin, accountId)
   }
 
   pushConnection(connection) {
