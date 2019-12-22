@@ -2,6 +2,8 @@
 import React, { Component } from 'react'
 import Utils from '@pegasus/utils/utils'
 import { popupMessanger } from '@pegasus/utils/messangers'
+import ReactTooltip from 'react-tooltip'
+import ChangeAvatar from '../changeAvatar/ChangeAvatar'
 
 class Settings extends Component {
   constructor(props, context) {
@@ -10,15 +12,16 @@ class Settings extends Component {
     this.switchAccount = this.switchAccount.bind(this)
     this.updateData = this.updateData.bind(this)
     this.onClose = this.onClose.bind(this)
-    //this.handleClick = this.handleClick.bind(this)
-    //this.onChangeName = this.onChangeName.bind(this)
+    this.handleClick = this.handleClick.bind(this)
+    this.onChangeName = this.onChangeName.bind(this)
 
     this.state = {
       accounts: [],
       showEdit: false,
       editedName: this.props.account.name,
       isDisappearing: false,
-      showFullAddress: false
+      showFullAddress: false,
+      showChangeAvatar: false
     }
   }
 
@@ -47,7 +50,7 @@ class Settings extends Component {
     this.props.onClose()
   }
 
-  /*handleClick(e) {
+  handleClick(e) {
     if (!this.edit.contains(e.target)) {
       this.setState({ showEdit: false })
     }
@@ -55,17 +58,24 @@ class Settings extends Component {
 
   onChangeName(e) {
     this.setState({ editedName: e.target.value })
-    this.props.onChangeName(e.target.value)
-    popupMessanger.updateNameAccount(this.props.account, newName)
-  }*/
+    //this.props.onChangeName(e.target.value)
+    popupMessanger.updateNameAccount(this.props.account, e.target.value)
+  }
 
   render() {
     return (
       <div className='modal mt-6'>
+        {
+          this.state.showChangeAvatar
+            ? <ChangeAvatar account={this.props.account}
+              onClose={() => this.setState({showChangeAvatar: false})}/>
+            : null
+        }
         <div onClick={this.handleClick} 
           id='sidebar-wrapper'
           className={this.state.isDisappearing ? 'sidebar-wrapper-disappear' : ''}>
           <nav id='spy'>
+          <ReactTooltip/>
             <ul className='sidebar-nav nav'>
               <li className='sidebar-header'>
                 <div className="row">
@@ -77,18 +87,26 @@ class Settings extends Component {
                 </div>
                 <div className='row mt-2'>
                   <div className='col-12 text-center'>
-                    <img className="border-radius-50" src={`./material/profiles/${this.props.account.avatar ? this.props.account.avatar : 1}.svg`} height='80' width='80' alt='pegasus logo' />
+                    <img className="border-radius-50 cursor-pointer"
+                      src={`./material/profiles/${this.props.account.avatar ? this.props.account.avatar : 1}.svg`} 
+                      height='80'
+                      width='80'
+                      alt='pegasus logo'
+                      data-tip="change avatar"
+                      onClick={() => this.setState({ showChangeAvatar: !this.state.showChangeAvatar})}/>
                   </div>
                 </div>
                 <div className='row mt-2 justify-content-center'>
-                  <div /*ref={edit => this.edit = edit} onClick={() => this.setState({ showEdit: true })}*/ className='col-8 text-center text-sm cursor-text font-weight-bold'>
-                    {/*
+                  <div ref={edit => this.edit = edit} onClick={() => this.setState({ showEdit: true })}
+                  className='col-8 text-center text-sm cursor-text font-weight-bold'
+                  data-tip="change name">
+                    {
                       this.state.showEdit ?
                         <label htmlFor='inp-edit' className='inp'>
                           <input onChange={this.onChangeName}
                             value={this.state.editedName} autoFocus type='text' id='inp-edit' />
                         </label>
-                      : */this.props.account.name
+                      : this.props.account.name
                     }
                   </div>
                 </div>

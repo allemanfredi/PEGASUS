@@ -306,6 +306,20 @@ class WalletController {
     backgroundMessanger.setAccount(updatedAccount)
   }
 
+  updateAvatarAccount (current, avatar) {
+    const data = this.storageController.getData()
+    let updatedAccount = {}
+    data.forEach(account => {
+      if (account.id === current.id) {
+        account['avatar'] = avatar
+        updatedAccount = account
+      }
+    })
+
+    this.storageController.setData(data)
+    backgroundMessanger.setAccount(updatedAccount)
+  }
+
   deleteAccount (account) {
     const data = this.storageController.getData()
     if (data.length === 1) { return null } else {

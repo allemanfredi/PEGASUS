@@ -87,6 +87,10 @@ export default {
     return this.duplex.send('updateNameAccount', { current, newName })
   },
 
+  updateAvatarAccount (current, avatar) {
+    return this.duplex.send('updateAvatarAccount', { current, avatar })
+  },
+
   deleteAccount (account) {
     return this.duplex.send('deleteAccount', { account })
   },

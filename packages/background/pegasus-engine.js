@@ -202,7 +202,11 @@ class PegasusEngine {
   }
 
   updateNameAccount ({ current, newName }) {
-    this.walletController(current, newName)
+    return this.walletController.updateNameAccount(current, newName)
+  }
+
+  updateAvatarAccount ({ current, avatar }) {
+    return this.walletController.updateAvatarAccount(current, avatar)
   }
 
   deleteAccount ({ account }) {

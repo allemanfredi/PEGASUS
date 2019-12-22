@@ -41,6 +41,7 @@ const backgroundScript = {
     duplex.on('getAllAccounts', this.engine.getAllAccounts)
     duplex.on('setCurrentAccount', this.engine.setCurrentAccount)
     duplex.on('updateNameAccount', this.engine.updateNameAccount)
+    duplex.on('updateAvatarAccount', this.engine.updateAvatarAccount)
     duplex.on('deleteAccount', this.engine.deleteAccount)
 
     duplex.on('resetData', this.engine.resetData)
