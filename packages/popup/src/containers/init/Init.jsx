@@ -287,38 +287,17 @@ class Init extends Component {
                         </div>
                       </div>
                       <div className="row mt-6">
-                        <div className='col-4 text-center cursor-pointer'
-                          onClick={() => this.setState({selectedAvatar: 1})}>
-                          <img className={this.state.selectedAvatar === 1 ? 'border-darkblue border-radius-50' : ''} 
-                            src="./material/profiles/1.svg" height="70" width="70"/>
-                        </div>
-                        <div className='col-4 text-center cursor-pointer'
-                          onClick={() => this.setState({selectedAvatar: 2})}>
-                          <img className={this.state.selectedAvatar === 2 ? 'border-darkblue border-radius-50' : ''} 
-                            src="./material/profiles/2.svg" height="70" width="70"/>
-                        </div>
-                        <div className='col-4 text-center cursor-pointer'
-                          onClick={() => this.setState({selectedAvatar: 3})}>
-                          <img className={this.state.selectedAvatar === 3 ? 'border-darkblue border-radius-50' : ''} 
-                            src="./material/profiles/3.svg" height="70" width="70"/>
-                        </div>
-                      </div>
-                      <div className="row mt-4">
-                        <div className='col-4 text-center cursor-pointer'
-                          onClick={() => this.setState({selectedAvatar: 4})}>
-                          <img className={this.state.selectedAvatar === 4 ? 'border-darkblue border-radius-50' : ''} 
-                            src="./material/profiles/4.svg" height="70" width="70"/>
-                        </div>
-                        <div className='col-4 text-center cursor-pointer'
-                          onClick={() => this.setState({selectedAvatar: 5})}>
-                          <img className={this.state.selectedAvatar === 5 ? 'border-darkblue border-radius-50' : ''} 
-                            src="./material/profiles/5.svg" height="70" width="70"/>
-                        </div>
-                        <div className='col-4 text-center cursor-pointer'
-                          onClick={() => this.setState({selectedAvatar: 6})}>
-                          <img className={this.state.selectedAvatar === 6 ? 'border-darkblue border-radius-50' : ''} 
-                            src="./material/profiles/6.svg" height="70" width="70"/>
-                        </div>
+                        {
+                          [1, 2, 3, 4, 5, 6].map(number => {
+                            return (
+                              <div className={(number > 3 ? 'mt-4' : '') + ' col-4 text-center cursor-pointer'}
+                                onClick={() => this.setState({selectedAvatar: number})}>
+                                <img className={this.state.selectedAvatar === number ? 'border-darkblue border-radius-50' : ''} 
+                                  src={`./material/profiles/${number}.svg`} height="70" width="70"/>
+                              </div>
+                            )
+                          })
+                        }
                       </div>
                     </div>
                   : ''
