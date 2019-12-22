@@ -77,7 +77,7 @@ class Settings extends Component {
                 </div>
                 <div className='row mt-2'>
                   <div className='col-12 text-center'>
-                    <img className="border-radius-50" src='./material/logo/pegasus-128.png' height='80' width='80' alt='pegasus logo' />
+                    <img className="border-radius-50" src={`./material/profiles/${this.props.account.avatar ? this.props.account.avatar : 1}.svg`} height='80' width='80' alt='pegasus logo' />
                   </div>
                 </div>
                 <div className='row mt-2 justify-content-center'>
@@ -133,10 +133,12 @@ class Settings extends Component {
                   return (
                     <li className='sidebar-brand cursor-pointer'>
                       <div className='row'>
-                        <div className='col-2'><i className='fa fa-user'></i></div>
+                        <div className='col-2'>
+                          <img src={`./material/profiles/${account.avatar ? account.avatar : 1}.svg`} height="25" width="25"/>
+                        </div>
                         <div className='col-8'>
                           <span onClick={() => this.switchAccount(account)}>
-                            <div className='text-black'>{account.name}</div>
+                            <div className='text-gray text-xs text-xxs'>{account.name}</div>
                           </span>
                         </div>
                       </div>
@@ -144,7 +146,7 @@ class Settings extends Component {
                   )
                 })
               }
-              <hr />
+              <hr className="mt-1 mb-1"/>
               <li className='sidebar-brand mt-1 mb-1 cursor-pointer'>
                 <div className='row'>
                   <div className='col-2 text-center'><i className='fa fa-steam'></i></div>
@@ -155,7 +157,7 @@ class Settings extends Component {
                   </div>
                 </div>
               </li>
-              <hr />
+              <hr className="mt-1 mb-1"/>
               <li className='sidebar-brand cursor-pointer'>
                 <div className='row'>
                   <div className='col-2 text-center'><i className='fa fa-sign-out'></i></div>

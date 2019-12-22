@@ -365,20 +365,21 @@ class Home extends Component {
                     ? <div className="container">
                         <ReactTooltip />
                         <div className='row mt-3 mb-2'>
-                          <div className='col-3 text-left'>
+                          <div className='col-4 text-left'>
                             <img src='./material/logo/iota-logo.png' height='40' width='40' alt='iota logo' />
                           </div>
                           <div onClick={() => this.copyToClipboard(Utils.checksummed(this.props.account.data.latestAddress))}
-                            className='col-6 my-auto text-center font-weight-bold cursor-pointer'
+                            className='col-4 my-auto text-center text-xs font-weight-bold cursor-pointer pt-3 pb-3 gray-on-hover-with-border-radius'
                             data-tip="copy to clipboard">
                             {
                               Utils.showAddress(
                                 Utils.checksummed(this.props.account.data.latestAddress),
                                 4,
                                 6
-                              )}
+                              )
+                            }
                           </div>
-                          <div className='col-3 text-right text-black text-lg my-auto'>
+                          <div className='col-4 text-right text-black text-lg my-auto'>
                             {
                               Utils.iotaReducer(
                               this.props.account.data.balance[this.props.network.type]

@@ -576,6 +576,13 @@ hr {
     border-radius: 0px;
 }
 
+.gray-on-hover-with-border-radius {
+    background: transparent;
+}
+.gray-on-hover-with-border-radius:hover {
+    background: lightgray;
+    border-radius: 5px
+}
 
 /*HEADERS*/
 header{
