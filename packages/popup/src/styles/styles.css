@@ -52,6 +52,17 @@
     padding: 0px 20px 0px 20px;
 }
 
+.container-change-avatar{
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, 0);
+    top: 25%;
+    width: 300px;
+    padding: 0px 20px 0px 20px;
+}
+
 .container-logo-login{
     text-align: center;
     margin-top: 7%;
@@ -945,6 +956,14 @@ header{
     overflow: auto;
     height: 475px;
     max-height: 475px;
+}
+
+.overflow-auto-250h{
+    overflow: auto;
+    height: 250px;
+    max-height: 250px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .overflow-auto-600h{

@@ -134,11 +134,11 @@ export default class Navbar extends Component {
                     </div> 
                   : ''
               }
-              <hr className="bg-white mt-1 mb-1" /> 
+              {/*<hr className="bg-white mt-1 mb-1" /> 
               <div className="row mt-1 cursor-pointer" onClick={this.showSettings}>
                 <div className="col-2 text-white text-center text-xs"><span className='fa fa-cogs'></span></div>
                 <div className="col-10 text-white text-xs">Settings</div>
-              </div>
+            </div>*/}
             </div>
             : ''
           }

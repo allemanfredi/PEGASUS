@@ -148,6 +148,9 @@ class WalletController {
 
   getCurrentSeed () {
     const account = this.getCurrentAccount()
+    if (!account)
+      return null
+      
     const key = this.getKey()
     const seed = Utils.aes256decrypt(account.seed, key)
     return seed
