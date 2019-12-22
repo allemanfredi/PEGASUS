@@ -296,6 +296,12 @@ class WalletController {
 
   updateNameAccount (current, newName) {
     const data = this.storageController.getData()
+    for (let account of data) {
+      if (account.name === newName) {
+        return false
+      }
+    }
+
     let updatedAccount = {}
     data.forEach(account => {
       if (account.id === current.id) {
@@ -326,13 +332,10 @@ class WalletController {
   deleteAccount (account) {
     const data = this.storageController.getData()
     if (data.length === 1) { return null } else {
-      // remove account
       const app = data.filter(acc => acc.id !== account.id)
 
-      // reset the current status
       app.forEach(account => { account.current = false })
 
-      // set the new current account (the first one of this network)
       app[0].current = true
       this.storageController.setData(app)
       backgroundMessanger.setAccount(app[0])

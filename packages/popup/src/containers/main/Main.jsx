@@ -253,6 +253,7 @@ class Main extends Component {
         return <ConfirmRequest duplex={this.props.duplex}/>
       case APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION:
         return <Connector ref={this.connector} 
+                  account={this.props.account} 
                   onPermissionGranted={this.onPermissionGranted}
                   onPermissionNotGranted={this.onPermissionNotGranted} />
       default:

@@ -16,8 +16,9 @@ class Connector extends Component {
     const website = await popupMessanger.getWebsite()
     this.setState({
       favicon: website.favicon,
-      hostname: website.hostname
+      hostname: website.hostname,
     })
+
   }
 
   render() {
@@ -45,10 +46,11 @@ class Connector extends Component {
               alt="broken-link logo"/>
           </div>
           <div className="col-4 text-center">
-            <img className="border-radius-50" src="./material/logo/pegasus-128.png"
+            <img className="border-radius-50"
+              src={`./material/profiles/${this.props.account.avatar ? this.props.account.avatar : 1}.svg`}
               height="64"
               width="64"
-              alt="pegasus logo"/>
+              alt="avatar"/>
           </div>
         </div>
         <div className="row mt-05">
@@ -59,7 +61,7 @@ class Connector extends Component {
             wants to connect with
           </div>
           <div className="col-4 text-center text-xxs text-bold">
-            Pegasus
+            {this.props.account.name}
           </div>
         </div>
         <div className="row mt-5">
