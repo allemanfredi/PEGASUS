@@ -9,6 +9,8 @@ export default class Navbar extends Component {
     this.exportSeed = this.exportSeed.bind(this)
     this.importSeed = this.importSeed.bind(this)
     this.handleClickOutside = this.handleClickOutside.bind(this)
+    this.showSettings = this.showSettings.bind(this)
+    this.addAccount = this.addAccount.bind(this)
 
     this.state = {
       showEllipseMenu: false
@@ -49,6 +51,16 @@ export default class Navbar extends Component {
     this.props.onImportSeed()
   }
 
+  showSettings () {
+    this.setState({ showEllipseMenu: false })
+    this.props.onShowSettings()
+  }
+
+  addAccount () {
+    this.setState({ showEllipseMenu: false })
+    this.props.onAddAccount()
+  }
+
   render() {
     return (
       <div ref={ref => this.wrapperRef = ref} className='bg-darkblue'>
@@ -56,7 +68,7 @@ export default class Navbar extends Component {
           {
             this.props.showBtnSettings 
               ? <div className='col-2'>
-                  <button onClick={() => this.props.onClickSettings()} className='btn btn-icon'><i className='fa fa-bars'></i></button>
+                  <button onClick={() => this.props.onClickMenu()} className='btn btn-icon'><i className='fa fa-bars'></i></button>
                 </div>
               : ''
           }
@@ -84,6 +96,10 @@ export default class Navbar extends Component {
         {
           this.state.showEllipseMenu 
           ? <div className="container-ellipse-menu container">
+              <div className="row mt-1 cursor-pointer" onClick={this.addAccount}>
+                <div className="col-2 text-white text-center text-xs"><span className='fa fa-plus'></span></div>
+                <div className="col-10 text-white text-xs">Add account</div>
+              </div>
               <div className="row mt-1 cursor-pointer" onClick={this.deleteAccount}>
                 <div className="col-2 text-white text-center text-xs"><span className='fa fa-trash-o'></span></div>
                 <div className="col-10 text-white text-xs">Delete account</div>
@@ -96,6 +112,7 @@ export default class Navbar extends Component {
                     target="_blank">View on explorer</a>
                 </div>
               </div>
+              <hr className="bg-white mt-1 mb-1" /> 
               <div className="row mt-1 cursor-pointer" onClick={this.exportSeed}>
                 <div className="col-2 text-white text-center text-xs"><span className='fa fa-share'></span></div>
                 <div className="col-10 text-white text-xs">Export seed</div>
@@ -117,6 +134,11 @@ export default class Navbar extends Component {
                     </div> 
                   : ''
               }
+              <hr className="bg-white mt-1 mb-1" /> 
+              <div className="row mt-1 cursor-pointer" onClick={this.showSettings}>
+                <div className="col-2 text-white text-center text-xs"><span className='fa fa-cogs'></span></div>
+                <div className="col-10 text-white text-xs">Settings</div>
+              </div>
             </div>
             : ''
           }

@@ -19,6 +19,9 @@ class ShowChannelsList extends Component {
 
   async componentWillMount() {
     const channels = await popupMessanger.getMamChannels()
+
+    if (!channels || Utils.isEmptyObject(channels))
+      return
     
     if (channels.owner) {
       const ownerChannels = Object.values(channels.owner).map(state => {

@@ -1,6 +1,5 @@
 import IOTA from '@pegasus/utils/iota'
 import { backgroundMessanger } from '@pegasus/utils/messangers'
-import Duplex from '@pegasus/utils/duplex'
 
 class AccountDataController {
 
@@ -15,9 +14,6 @@ class AccountDataController {
     this.networkController = networkController
     this.walletController = walletController
     this.notificationsController = notificationsController
-    
-    const duplex = new Duplex.Host()
-    backgroundMessanger.init(duplex)
   }
 
   async retrieveAccountData (seed, network, currentAccount) {

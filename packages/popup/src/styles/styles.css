@@ -934,6 +934,12 @@ header{
     max-height: 490px;
 }
 
+.overflow-auto-475h{
+    overflow: auto;
+    height: 475px;
+    max-height: 475px;
+}
+
 .overflow-auto-600h{
     overflow: auto;
     height: 600px;

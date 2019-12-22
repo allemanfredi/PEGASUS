@@ -1,33 +1,30 @@
 import React, { Component } from 'react'
-
 import Send from '../send/Send'
 import Receive from '../receive/Receive'
-import Settings from '../settings/Settings'
+import Menu from '../menu/Menu'
 import Transactions from '../transactions/Transactions'
 import Add from '../add/Add'
 import Network from '../network/Network'
-import MamExplorer from '../mamExplorer/MamExplorer'
 import ExportSeed from '../exportSeed/ExportSeed'
 import ImportSeed from '../importSeed/ImportSeed'
-import MamChannels from '../mam/MamChannels'
+import Mam from '../mam/Mam'
 import Loader from '../../components/loader/Loader'
 import Navbar from '../../components/navbar/Navbar'
 import Alert from '../../components/alert/Alert'
 import { popupMessanger } from '@pegasus/utils/messangers'
 import Utils from '@pegasus/utils/utils'
-import Duplex from '@pegasus/utils/duplex'
 import ReactTooltip from 'react-tooltip'
 
 class Home extends Component {
   constructor(props, context) {
     super(props, context)
 
-    this.mamChannels = React.createRef()
+    this.mam = React.createRef()
     this.exportSeed = React.createRef()
     
     this.onClickSend = this.onClickSend.bind(this)
-    this.onClickSettings = this.onClickSettings.bind(this)
-    this.onCloseSettings = this.onCloseSettings.bind(this)
+    this.onClickMenu = this.onClickMenu.bind(this)
+    this.onCloseMenu = this.onCloseMenu.bind(this)
     this.onClickReceive = this.onClickReceive.bind(this)
     this.onBack = this.onBack.bind(this)
     this.onSwitchAccount = this.onSwitchAccount.bind(this)
@@ -40,24 +37,23 @@ class Home extends Component {
     this.onImportSeed = this.onImportSeed.bind(this)
     this.onAddNetwork = this.onAddNetwork.bind(this)
     this.onDeleteCurrentNetwork = this.onDeleteCurrentNetwork.bind(this)
-    this.onMamExplorer = this.onMamExplorer.bind(this)
-    this.onMamChannels = this.onMamChannels.bind(this)
+    this.onMam = this.onMam.bind(this)
+    this.onShowSettings = this.onShowSettings.bind(this)
     this.copyToClipboard = this.copyToClipboard.bind(this)
 
     this.state = {
       error: '',
       account: {},
       network: {},
-      details: {}, //transaction selected from the table
+      details: {},
       decryptedSeed: '',
       showSend: false,
       showHome: true,
       showReceive: false,
-      showSettings: false,
+      showMenu: false,
       showNetwork: false,
       showAdd: false,
       showAlert: false,
-      showMam: false,
       showExportSeed: false,
       showImportSeed: false,
       showMamChannels: false,
@@ -68,9 +64,7 @@ class Home extends Component {
       isLoading: false,
       canGoBack: true
     }
-
-    this.duplex = new Duplex.Popup()
-  }
+}
 
   async componentWillMount() {
     this.duplex.on('setAccount', () => this.setState({
@@ -173,8 +167,8 @@ class Home extends Component {
   onBack() {
 
     if (!this.state.canGoBack){
-      if (this.mamChannels.current)
-        this.mamChannels.current.goBack()
+      if (this.mam.current)
+        this.mam.current.goBack()
       if (this.exportSeed.current)
         this.exportSeed.current.goBack()
       return
@@ -188,7 +182,7 @@ class Home extends Component {
         showAlert: false,
         showAdd: false,
         showNetwork: false,
-        showMam: false,
+        showMamExplorer: false,
         showExportSeed: false,
         showImportSeed: false,
         showMamChannels: false,
@@ -197,12 +191,12 @@ class Home extends Component {
     })
   }
 
-  onClickSettings() { 
-    this.setState({ showSettings: true }) 
+  onClickMenu() { 
+    this.setState({ showMenu: true }) 
   }
 
-  onCloseSettings() { 
-    this.setState({ showSettings: false }) 
+  onCloseMenu() { 
+    this.setState({ showMenu: false }) 
   }
 
   onAddAccount() {
@@ -210,7 +204,7 @@ class Home extends Component {
       return {
         showAdd: true,
         showHome: false,
-        showSettings: false
+        showMenu: false
       }
     })
   }
@@ -241,22 +235,12 @@ class Home extends Component {
     await popupMessanger.getCurrentAccount()
   }
 
-  onMamExplorer() {
-    this.setState(() => {
-      return {
-        showMam: true,
-        showHome: false,
-        showSettings: false
-      }
-    })
-  }
-
-  onMamChannels () {
+  onMam () {
     this.setState(() => {
       return {
         showMamChannels: true,
         showHome: false,
-        showSettings: false
+        showMenu: false
       }
     })
   }
@@ -270,7 +254,12 @@ class Home extends Component {
     textField.remove()
   }
 
+  onShowSettings() {
+
+  }
+
   render() {
+
     return (
       <div>
         {
@@ -280,15 +269,17 @@ class Home extends Component {
                 showBtnSettings={this.state.showHome}
                 showBtnEllipse={this.state.showHome}
                 showBtnBack={!this.state.showHome}
-                text={this.state.showHome && this.props.account ? this.props.account.name : (this.state.showSend ? 'Send' : (this.state.showReceive ? 'Receive' : this.state.showAdd ? 'Add account' : (this.state.showNetwork ? 'Add custom node' : (this.state.showMam ? 'MAM Explorer' : (this.state.showExportSeed ? 'Export Seed ' : (this.state.showImportSeed ? 'Import Seed' : (this.state.showMamChannels ? 'MAM Channels' : '')))))))}
-                onClickSettings={this.onClickSettings}
+                text={this.state.showHome ? this.props.account.name : ''}
+                onClickMenu={this.onClickMenu}
                 onClickMap={this.onClickMap}
                 onBack={this.onBack}
                 onDeleteAccount={this.onDeleteAccount}
+                onAddAccount={this.onAddAccount}
                 onViewAccountOnExplorer={this.onViewAccountOnExplorer}
                 onExportSeed={this.onExportSeed}
                 onImportSeed={this.onImportSeed}
-                onDeleteCurrentNetwork={this.onDeleteCurrentNetwork}>
+                onDeleteCurrentNetwork={this.onDeleteCurrentNetwork}
+                onShowSettings={this.onShowSettings}>
               </Navbar>
             : null
         }
@@ -296,17 +287,15 @@ class Home extends Component {
           !(Object.keys(this.props.account).length === 0 && this.props.account.constructor === Object)
             ? <React.Fragment>
                 {
-                  this.state.showSettings 
-                    ? <Settings network={this.props.network}
-                        show={this.state.showSettings}
+                  this.state.showMenu 
+                    ? <Menu network={this.props.network}
+                        show={this.state.showMenu}
                         account={this.props.account}
-                        onAddAccount={this.onAddAccount}
                         onSwitchAccount={this.onSwitchAccount}
                         onShowMap={this.onClickMap}
                         onLogout={this.onLogout}
-                        onClose={this.onCloseSettings}
-                        onMamExplorer={this.onMamExplorer}
-                        onMamChannels={this.onMamChannels} />
+                        onClose={this.onCloseMenu}
+                        onMam={this.onMam} />
                     : ''
                 }
                 {
@@ -339,14 +328,6 @@ class Home extends Component {
                     : ''
                 }
                 {
-                  this.state.showMam
-                    ? <MamExplorer account={this.props.account}
-                        duplex={this.props.duplex}
-                        network={this.props.network}
-                        onBack={this.onBack} /> 
-                    : ''
-                }
-                {
                   this.state.showExportSeed
                     ? <ExportSeed ref={this.exportSeed}
                         account={this.props.account}
@@ -364,8 +345,9 @@ class Home extends Component {
                 }
                 {
                   this.state.showMamChannels
-                    ? <MamChannels ref={this.mamChannels}
+                    ? <Mam ref={this.mam}
                         account={this.props.account}
+                        duplex={this.props.duplex}
                         onBack={this.onBack}
                         onChangeCanGoBack={value => this.setState({canGoBack: value})} /> 
                     : ''

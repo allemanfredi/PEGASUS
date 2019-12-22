@@ -147,35 +147,15 @@ class Settings extends Component {
               <hr />
               <li className='sidebar-brand mt-1 mb-1 cursor-pointer'>
                 <div className='row'>
-                  <div className='col-2 text-center'><i className='fa fa-wpexplorer'></i></div>
-                  <div className='col-10 text-left'>
-                    <span onClick={() => { this.props.onMamExplorer() }}>
-                      <div className='text-black'>MAM explorer</div>
-                    </span>
-                  </div>
-                </div>
-              </li>
-              <li className='sidebar-brand mt-1 mb-1 cursor-pointer'>
-                <div className='row'>
                   <div className='col-2 text-center'><i className='fa fa-steam'></i></div>
                   <div className='col-10 text-left'>
-                    <span onClick={() => { this.props.onMamChannels() }}>
-                      <div className='text-black'>MAM Channels</div>
+                    <span onClick={() => { this.props.onMam() }}>
+                      <div className='text-black'>MAM</div>
                     </span>
                   </div>
                 </div>
               </li>
               <hr />
-              <li className='sidebar-brand mt-1 cursor-pointer'>
-                <div className='row'>
-                  <div className='col-2 text-center'><i className='fa fa-plus'></i></div>
-                  <div className='col-10 text-left'>
-                    <span onClick={() => { this.props.onAddAccount() }}>
-                      <div className='text-black'>add account</div>
-                    </span>
-                  </div>
-                </div>
-              </li>
               <li className='sidebar-brand cursor-pointer'>
                 <div className='row'>
                   <div className='col-2 text-center'><i className='fa fa-sign-out'></i></div>

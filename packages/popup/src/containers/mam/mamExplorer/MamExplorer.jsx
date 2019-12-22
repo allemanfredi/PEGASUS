@@ -2,8 +2,8 @@ import React, { Component } from 'react'
 import ReactJson from 'react-json-view'
 import { popupMessanger } from '@pegasus/utils/messangers'
 import Utils from '@pegasus/utils/utils'
-import Alert from '../../components/alert/Alert'
-import Picklist from '../../components/picklist/Picklist'
+import Alert from '../../../components/alert/Alert'
+import Picklist from '../../../components/picklist/Picklist'
 
 class MamExplorer extends Component {
 
@@ -50,7 +50,7 @@ class MamExplorer extends Component {
     this.setState({ data: [] })
     //check if root is a valid address
     if (!Utils.isValidAddress(this.state.root)) {
-      this.setState(prevState => {
+      this.setState(() => {
         const alertType = 'error'
         const alertText = 'Invalid root'
         const showAlert = true
@@ -72,10 +72,8 @@ class MamExplorer extends Component {
   }
 
   render() {
-    console.log(this.state.data)
-
     return (
-      <div className="container overflow-auto-490h">
+      <React.Fragment>
         <React.Fragment>
           <div className='row mt-3'>
             <div className='col-12'>
@@ -169,7 +167,7 @@ class MamExplorer extends Component {
                 onClose={() => this.setState({ showAlert: false })} />
             : ''
         }
-      </div>
+      </React.Fragment>
     )
   }
 }

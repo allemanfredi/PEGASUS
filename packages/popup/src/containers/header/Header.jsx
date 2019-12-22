@@ -39,6 +39,9 @@ class Header extends Component {
   }
 
   render() {
+
+    const isLogged = this.props.account && !Utils.isEmptyObject(this.props.account)
+
     return (
       <header>
         <div className='row pt-2 pb-2 pl-1 pr-1'>
@@ -64,7 +67,7 @@ class Header extends Component {
             </div>
           </div>
           {
-            this.props.account && !Utils.isEmptyObject(this.props.account)
+            isLogged
               ? <div className='col-3 my-auto text-right'>
                 <img className="border-radius-50 border-darkblue"
                   src={`./material/profiles/${this.props.account.avatar ? this.props.account.avatar : 1}.svg`}
