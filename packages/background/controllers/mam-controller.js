@@ -432,7 +432,7 @@ class MamController {
   registerMamChannel(channel) {
     const mamChannels = this.storageController.getMamChannels()
     const currentAccount = this.walletController.getCurrentAccount()
-
+    const encryptionKey = this.walletController.getKey()
 
     if (!mamChannels[currentAccount.id]) {
       mamChannels[currentAccount.id] = {
@@ -445,10 +445,16 @@ class MamController {
       mamChannels[currentAccount.id]['subscriber'] = {}
     }
 
+
+    let eSidekey = null
+    if (channel.mode === 'restricted') {
+      eSidekey = Utils.aes256encrypt(channel.sidekey, encryptionKey) 
+    }
+
     const id = Utils.sha256(channel.root)
     mamChannels[currentAccount.id]['subscriber'][id] = {
       channel: {
-        side_key: channel.sidekey,
+        side_key: eSidekey,
         mode: channel.mode
       },
       root: channel.root
