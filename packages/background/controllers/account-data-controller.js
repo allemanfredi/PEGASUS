@@ -1,5 +1,6 @@
 import IOTA from '@pegasus/utils/iota'
 import { backgroundMessanger } from '@pegasus/utils/messangers'
+import { APP_STATE } from '@pegasus/utils/states'
 
 class AccountDataController {
 
@@ -123,6 +124,12 @@ class AccountDataController {
   }
 
   async loadAccountData () {
+
+    const state = this.walletController.getState()
+    if (state < APP_STATE.WALLET_UNLOCKED) {
+      return
+    }
+
     const seed = this.walletController.getCurrentSeed()
     const network = this.networkController.getCurrentNetwork()
     let account = this.walletController.getCurrentAccount()

@@ -13,6 +13,7 @@ import SessionsController from './controllers/session-controller'
 import PopupController from './controllers/popup-controller'
 import TransferController from './controllers/transfer-controller'
 import SeedVaultController from './controllers/seed-vault-controller'
+import { APP_STATE } from '@pegasus/utils/states'
 
 const SESSION_TIME = 30000
 const ACCOUNT_RELOAD_TIME = 100000
@@ -311,6 +312,10 @@ class PegasusEngine {
     this.connectorController.updateConnection(connection)
   }
 
+  updateConnectionsAccountId ({ currentAccountId, newAccountId }) {
+    return this.connectorController.updateConnectionsAccountId(currentAccountId, newAccountId)
+  }
+
   completeConnection() { 
     let requests = this.customizatorController.getRequests()
     requests = this.connectorController.completeConnection(requests)
@@ -346,6 +351,12 @@ class PegasusEngine {
     }
 
     this.accountDataHandler = setInterval(() => {
+      const state = this.walletController.getState()
+      if (state < APP_STATE.WALLET_UNLOCKED) {
+        clearInterval(this.accountDataHandler)
+        return
+      }
+
       this.accountDataController.loadAccountData()
     }, ACCOUNT_RELOAD_TIME)
   }
@@ -356,8 +367,15 @@ class PegasusEngine {
 
   async reloadAccountData () {
     clearInterval(this.accountDataHandler)
+
     this.accountDataController.loadAccountData()
     this.accountDataHandler = setInterval(() => {
+      const state = this.walletController.getState()
+      if (state < APP_STATE.WALLET_UNLOCKED) {
+        clearInterval(this.accountDataHandler)
+        return
+      }
+      
       this.accountDataController.loadAccountData()
     }, ACCOUNT_RELOAD_TIME)
   }
