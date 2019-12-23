@@ -20,8 +20,9 @@ class ShowChannelsList extends Component {
   async componentWillMount() {
     const channels = await popupMessanger.getMamChannels()
 
-    if (!channels || Utils.isEmptyObject(channels))
+    if (!channels || Utils.isEmptyObject(channels)){
       return
+    }
     
     if (channels.owner) {
       const ownerChannels = Object.values(channels.owner).map(state => {
@@ -30,13 +31,13 @@ class ShowChannelsList extends Component {
       })
       this.setState({ channels: [...ownerChannels] })
     }
-    
+
     if (channels.subscriber) {
       const subscriberChannels = Object.values(channels.subscriber).map(state => {
         state.ownership = 'subscriber'
         return state
       })
-      this.setState({ channels: [...subscriberChannels] })
+      this.setState({ channels: [...this.state.channels, ...subscriberChannels] })
     }
   }
 
