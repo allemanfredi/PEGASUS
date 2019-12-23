@@ -102,8 +102,12 @@ class MamExplorer extends Component {
                 <div className='row mt-3'>
                   <div className='col-12'>
                     <label htmlFor='inp-address' className='inp'>
-                      <input value={this.state.sideKey} onChange={e => this.setState({ sideKey: e.target.value })} type='text' id='inp-sideKey' placeholder='&nbsp;' />
-                      <span className='label'>Side Key</span>
+                      <input value={this.state.sideKey}
+                        onChange={e => this.setState({ sideKey: e.target.value })}
+                        type='text'
+                        id='inp-sideKey'
+                        placeholder='&nbsp;'/>
+                      <span className='label'>sidekey</span>
                       <span className='border'></span>
                     </label>
                   </div>

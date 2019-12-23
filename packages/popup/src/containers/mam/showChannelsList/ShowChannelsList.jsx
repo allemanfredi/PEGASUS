@@ -11,10 +11,8 @@ class ShowChannelsList extends Component {
 
     this.state = {
       channels: [],
-      copyToClipboardText: 'copy to clipboard',
-    }
-    
-    this.tooltipRefs = []
+      isCopiedToClipboard: false
+    }    
   }
 
   async componentWillMount() {
@@ -41,7 +39,7 @@ class ShowChannelsList extends Component {
     }
   }
 
-  copyToClipboard(text, index) {
+  copyToClipboard(text) {
     const textField = document.createElement('textarea')
     textField.innerText = text
     document.body.appendChild(textField)
@@ -50,10 +48,10 @@ class ShowChannelsList extends Component {
     textField.remove()
 
 
+    this.setState({ isCopiedToClipboard: true })
     setTimeout(() => {
-      ReactTooltip.hide(this.tooltipRefs[index])
-      this.setState({copyToClipboardText : 'copy to clipboard'})
-    },1500)
+      this.setState({ isCopiedToClipboard: false })
+    }, 1000)
   }
 
   render() {
@@ -78,19 +76,18 @@ class ShowChannelsList extends Component {
           {
             this.state.channels.map((state, index) => {
               return <React.Fragment>
-                <ReactTooltip/>
                 <div className="row">
                   <div className="col-3 text-left text-xxs text-gray my-auto">
                     {state.ownership}
                   </div>
                   <div className="col-4 text-left text-black text-xxs font-weight-bold my-auto cursor-pointer"
                     onClick={() => {
-                      this.setState({copyToClipboardText : 'copied'})
-                      this.copyToClipboard(state.root, index)
+                      this.copyToClipboard(state.root)
                     }}
-                    data-tip={this.state.copyToClipboardText}
-                    ref={ref => this.tooltipRefs[index] = ref}
+                    key={this.state.isCopiedToClipboard ? 'copied' : 'copy-to-clipboard'}
+                    data-tip={this.state.isCopiedToClipboard ? 'copied!' : 'copy to clipboard'}
                   >
+                    <ReactTooltip/>
                     {Utils.showAddress(state.root, 4, 6)}
                   </div>
                   <div className="col-3 text-left text-blue my-auto">
