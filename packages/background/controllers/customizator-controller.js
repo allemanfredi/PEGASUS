@@ -130,6 +130,8 @@ class CustomizatorController {
           needUserInteraction: true
         })
         this.popupController.openPopup()
+
+        backgroundMessanger.setRequests(this.requests)
       } else {
         
         const res = await this.execute({ method, uuid, resolve, data })
@@ -216,7 +218,7 @@ class CustomizatorController {
     const requestToReject= this.requests.find(
       req => req.uuid === request.uuid
     )
-
+    
     requestToReject.resolve({
       data: 'Request has been rejected by the user',
       success: false,

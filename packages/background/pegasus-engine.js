@@ -55,7 +55,8 @@ class PegasusEngine {
 
     this.walletController = new walletController({
       storageController: this.storageController,
-      networkController: this.networkController
+      networkController: this.networkController,
+      connectorController: this.connectorController
     })
 
     this.accountDataController = new AccountDataController({
@@ -310,10 +311,6 @@ class PegasusEngine {
 
   updateConnection(connection) {
     this.connectorController.updateConnection(connection)
-  }
-
-  updateConnectionsAccountId ({ currentAccountId, newAccountId }) {
-    return this.connectorController.updateConnectionsAccountId(currentAccountId, newAccountId)
   }
 
   completeConnection() { 

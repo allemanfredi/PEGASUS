@@ -56,10 +56,12 @@ class Settings extends Component {
     }
   }
 
-  onChangeName(e) {
-    this.setState({ editedName: e.target.value })
-    //this.props.onChangeName(e.target.value)
-    popupMessanger.updateNameAccount(this.props.account, e.target.value)
+  async onChangeName(e) {
+    e.preventDefault()
+    const newName = e.target.value
+    this.setState({ editedName: newName })
+
+    await popupMessanger.updateNameAccount(this.props.account, newName)
   }
 
   render() {

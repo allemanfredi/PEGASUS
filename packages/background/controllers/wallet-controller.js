@@ -10,13 +10,15 @@ class WalletController {
 
     const {
       storageController,
-      networkController
+      networkController,
+      connectorController
     } = options
 
     this.password = null
 
     this.storageController = storageController
     this.networkController = networkController
+    this.connectorController = connectorController
 
     const duplex = new Duplex.Host()
     backgroundMessanger.init(duplex)
@@ -308,11 +310,15 @@ class WalletController {
         account.name = newName
         account.id = Utils.sha256(newName)
         updatedAccount = account
+
+        this.connectorController.updateConnectionsAccountId(current.id, Utils.sha256(newName))
       }
     })
 
     this.storageController.setData(data)
     backgroundMessanger.setAccount(updatedAccount)
+
+    return true
   }
 
   updateAvatarAccount (current, avatar) {

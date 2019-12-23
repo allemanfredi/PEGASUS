@@ -69,6 +69,19 @@ class ConnectorController {
     this.storageController.setConnections(updatedConnections, true)
   }
 
+  //usefull when user change name since accountid = hash(accountName)
+  updateConnectionsAccountId(currentAccountId, newAccountId) {
+    const connections = this.storageController.getConnections()
+    const updatedConnections = connections.map(connection => {
+      if (connection.accountId === currentAccountId ){
+        connection.accountId = newAccountId
+      }
+      
+      return connection
+    })
+    this.storageController.setConnections(updatedConnections, true)
+  }
+
   connect(uuid, resolve, website)  {
 
     const account = this.walletController.getCurrentAccount()
