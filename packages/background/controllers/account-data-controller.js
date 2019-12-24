@@ -40,41 +40,68 @@ class AccountDataController {
 
 
   mapTransactions (data, network) {
-    const transactions = []
-    const doubleBundle = []
+    let transactions = []
     data.transfers.forEach(transfer => {
       if (transfer.length === 0)
         return
 
-      let value
-      //if sent tx
-      if (transfer[0].value >= 0) {
-        value = transfer[0].value
-        if (!data.addresses.includes(transfer[0].address)){
-          value = -value
+      let value = 0
+      let values = []
+
+      for (let t of transfer) {
+        if (data.addresses.includes(t.address)){
+          value = value + t.value
+          values.push(t.value)
         }
-      } else {
-        value = (-transfer[0].value - transfer[3].value)
       }
-      
-      const obj = {
+
+      if (value < 0) {
+        value = 0
+        values = values.map(value => -value)
+        values.forEach(v => value = value + v)
+        value = -1 * value
+      }
+
+      const transaction = {
         timestamp: transfer[0].attachmentTimestamp,
         value,
         status: transfer[0].persistence,
         bundle: transfer[0].bundle,
-        index: transfer[0].currentIndex,
         transfer,
         network
       }
 
-      // remove double bundle
-      const app = doubleBundle.filter(bundle => bundle === obj.bundle)
-      if (app.length === 0) {
-        transactions.push(obj)
-        doubleBundle.push(obj.bundle)
-      }
+      
+      transactions.push(transaction)
+      transactions = this.removeInvalidTransactions(transactions)
     })
     return transactions
+  }
+
+  removeInvalidTransactions(transactions) {
+    const validated = transactions.filter(transaction => transaction.status)
+    const notValidated = transactions.filter(transaction => !transaction.status)
+
+    let notValidatedCorrect = []
+    let isInvalid = false
+
+    for (let txnv of notValidated) {
+
+      isInvalid = false
+
+      for (let txv of validated) {
+        if (txv.bundle === txnv.bundle) {
+          isInvalid = true
+          break
+        }
+      }
+
+      if (!isInvalid) {
+        notValidatedCorrect.push(txnv)
+      }
+    }
+
+    return [...validated, ...notValidatedCorrect]
   }
 
   updateAccountTransactionsPersistence(account, transactions) {

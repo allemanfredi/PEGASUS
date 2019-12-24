@@ -68,7 +68,7 @@ class Home extends Component {
   }
 
   async componentWillMount() {
-    this.duplex.on('setAccount', () => this.setState({
+    this.props.duplex.on('setAccount', () => this.setState({
       isLoading: false
     }))
   }
