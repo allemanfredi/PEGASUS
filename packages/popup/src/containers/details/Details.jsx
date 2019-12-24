@@ -29,7 +29,11 @@ class Details extends Component {
                         {detail.hash}
                       </div>
                       <div className="col-4 text-blue text-xxs text-bold text-right">
-                        {Utils.iotaReducer(detail.value)}
+                        {
+                          detail.value > 0
+                            ? Utils.iotaReducer(detail.value)
+                            : '-' + Utils.iotaReducer(-detail.value)
+                        }
                       </div>
                     </div>
                   </li>
