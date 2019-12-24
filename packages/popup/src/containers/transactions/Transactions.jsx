@@ -85,7 +85,7 @@ class Transactions extends Component {
         {
           this.props.account.transactions.length > 0 
             ? this.props.account.transactions
-                .filter(transaction=> transaction.network.name === this.props.network.name)
+                .filter(transaction=> transaction.network.type === this.props.network.type)
                 .sort((t1, t2) => t1.timestamp < t2.timestamp ? 1 : -1)
                 .map((transaction, index) => {
                   return (

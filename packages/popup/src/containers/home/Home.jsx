@@ -35,7 +35,6 @@ class Home extends Component {
     this.onConfirm = this.onConfirm.bind(this)
     this.onExportSeed = this.onExportSeed.bind(this)
     this.onImportSeed = this.onImportSeed.bind(this)
-    this.onAddNetwork = this.onAddNetwork.bind(this)
     this.onDeleteCurrentNetwork = this.onDeleteCurrentNetwork.bind(this)
     this.onMam = this.onMam.bind(this)
     this.onShowSettings = this.onShowSettings.bind(this)
@@ -192,6 +191,15 @@ class Home extends Component {
     })
   }
 
+  addCustomNetwork() {
+    this.setState(() => {
+      return {
+        showHome: false,
+        showNetwork: true
+      }
+    })
+  }
+
   onClickMenu() {
     this.setState({ showMenu: true })
   }
@@ -213,27 +221,6 @@ class Home extends Component {
   onLogout() {
     this.props.onLogout()
     popupMessanger.logout()
-  }
-
-  addCustomNetwork() {
-    this.setState(() => {
-      return {
-        showHome: false,
-        showNetwork: true
-      }
-    })
-  }
-
-  async onAddNetwork(network) {
-    this.setState(() => {
-      return {
-        showNetwork: false,
-        showHome: true
-      }
-    })
-    await popupMessanger.addNetwork(network)
-    await popupMessanger.setCurrentNetwork(network)
-    await popupMessanger.getCurrentAccount()
   }
 
   onMam() {
@@ -261,7 +248,7 @@ class Home extends Component {
   }
 
   onShowSettings() {
-
+    //TODO
   }
 
   render() {
@@ -330,7 +317,7 @@ class Home extends Component {
               }
               {
                 this.state.showNetwork
-                  ? <Network onAddNetwork={this.onAddNetwork} />
+                  ? <Network onBack={this.onBack} />
                   : ''
               }
               {
