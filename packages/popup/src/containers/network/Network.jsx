@@ -34,7 +34,7 @@ class Network extends Component {
     }
 
     const iota = composeAPI({
-      provider: this.state.url
+      provider: `${this.state.url}:${this.state.port}`
     })
 
     try {
@@ -48,7 +48,7 @@ class Network extends Component {
 
     const network = {
       name: this.state.name,
-      provider: this.state.url + ':' + this.state.port,
+      provider: `${this.state.url}:${this.state.port}`,
       link: this.state.type === 'mainnet' ? 'https://thetangle.org/' : 'https://devnet.thetangle.org/',
       type: this.state.type,
       difficulty: this.state.type === 'mainnet' ? 14 : 9,
