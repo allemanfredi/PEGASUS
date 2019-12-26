@@ -114,7 +114,17 @@ The functions __`subscribe`__ and __`listen`__ within __`mam.client.js`__ are no
 
 &nbsp;
 
+## How mam.client.js injection works
+
+The idea is to generate and store the seed encrypted with the login password (which defines the ownership of a channel) inside Pegasus without ever exposing it outside of it. This mechanism is based on a small modification to the state object: instead of returning it containing the seed, a state object containing the hash of this seed is returned, in order to maintain a correspondence with the channel for future actions. Same principle for the sidekey (in case a channel is of restricted type).
+The value corresponding to the sidekey of the channel inside the state object no longer contains the value of the sidekey, but contains the value of the hash of that key and this key is stored within Pegasus encrypted with the login password.
+
 ## :hammer: Work In Progress
+
 * __`pegasus-ledger-trampoline`__: Since it is not possible to access Ledger Nano S from a Google Chrome extension, i implemented a workaround: injecting an iframe to the background page of the extension, (which is hosted thanks to __gh-pages__ [here](https://github.com/allemanfredi/pegasus-ledger-trampoline/tree/master)). In order to work correctly, the iframe must run under https (since U2F requires SSL). [30%]
 
+&nbsp;
 
+***
+
+&nbsp;
