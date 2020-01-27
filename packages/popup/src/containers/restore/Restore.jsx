@@ -38,9 +38,6 @@ class Restore extends Component {
 
     this.setState({ isLoading: true })
 
-    //start encryption storage service
-    popupMessanger.initStorageDataService(this.state.psw)
-
     await popupMessanger.resetData()
     const data = await IOTA.getAccountData(this.state.seed)
     const account = {

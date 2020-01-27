@@ -24,6 +24,10 @@ class WalletController {
     backgroundMessanger.init(duplex)
   }
 
+  setAccountDataController (accountDataController) {
+    this.accountDataController = accountDataController
+  }
+
   isWalletSetup () {
     const state = this.getState()
     if (state >= APP_STATE.WALLET_INITIALIZED) {
@@ -83,7 +87,7 @@ class WalletController {
   }
 
   restoreWallet (account, network, key) {
-    const transactions = AccountDataController.mapTransactions(account.data, network)
+    const transactions = this.accountDataController.mapTransactions(account.data, network)
 
     account.data.balance = network.type === 'mainnet'
       ? {
@@ -106,6 +110,8 @@ class WalletController {
     }
 
     try {
+      this.storageController.setEncryptionKey(key)
+
       const restoredData = []
       restoredData.push(obj)
       this.storageController.setData(restoredData)

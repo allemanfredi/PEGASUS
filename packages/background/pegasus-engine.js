@@ -100,6 +100,9 @@ class PegasusEngine {
     this.connectorController.setWalletController(
       this.walletController
     )
+    this.walletController.setAccountDataController(
+      this.accountDataController
+    )
     /* E N D   C O N T R O L L E R S */
 
     if (!this.walletController.isWalletSetup()) {
