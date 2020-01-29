@@ -2,7 +2,6 @@
  * This Controller is not implemented yet
  */
 class LedgerController {
-
   constructor() {
     this.bridgeUrl = 'https://allemanfredi.github.io/pegasus-ledger-trampoline/'
     this.origin = 'https://allemanfredi.github.io'
@@ -10,7 +9,7 @@ class LedgerController {
     this._setupIframe()
   }
 
-  _sendMessage (msg, cb) {
+  _sendMessage(msg, cb) {
     msg.target = 'ledger-iframe'
     this.iframe.contentWindow.postMessage(msg, '*')
     window.addEventListener('message', ({ origin, data }) => {
@@ -21,7 +20,7 @@ class LedgerController {
     })
   }
 
-  _setupIframe () {
+  _setupIframe() {
     this.iframe = document.createElement('iframe')
     this.iframe.src = this.bridgeUrl
     document.head.appendChild(this.iframe)

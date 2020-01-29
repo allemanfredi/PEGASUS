@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { popupMessanger } from '@pegasus/utils/messangers'
 
-
 class Login extends Component {
   constructor(props, context) {
     super(props, context)
@@ -35,11 +34,17 @@ class Login extends Component {
   render() {
     return (
       <div className={this.state.shake ? 'container shake' : 'container'}>
-        <div className='container-logo-login mt-5'>
-          <img className="border-radius-50" src='./material/logo/pegasus-256.png' height='130' width='130' alt='pegasus logo'/>
+        <div className="container-logo-login mt-5">
+          <img
+            className="border-radius-50"
+            src="./material/logo/pegasus-256.png"
+            height="130"
+            width="130"
+            alt="pegasus logo"
+          />
         </div>
-        <div className='row mt-1'>
-          <div className='col-12 text-center text-xl text-blue text-bold'>
+        <div className="row mt-1">
+          <div className="col-12 text-center text-xl text-blue text-bold">
             Pegasus
           </div>
         </div>
@@ -48,25 +53,45 @@ class Login extends Component {
             Meet 'the Tangle' from your browser!
           </div>
         </div>
-        <div className='row mt-7'>
-          <div className='col-12'>
+        <div className="row mt-7">
+          <div className="col-12">
             <form onSubmit={this.clickLogin}>
-              <label htmlFor='inp-psw ' className='inp'>
-                <input onChange={e => this.setState({ psw: e.target.value })} type='password' id='inp-psw' placeholder='&nbsp;' />
-                <span className='label'>password</span>
-                <span className='border'></span>
+              <label htmlFor="inp-psw " className="inp">
+                <input
+                  onChange={e => this.setState({ psw: e.target.value })}
+                  type="password"
+                  id="inp-psw"
+                  placeholder="&nbsp;"
+                />
+                <span className="label">password</span>
+                <span className="border"></span>
               </label>
             </form>
           </div>
         </div>
-        <div className='row mt-3'>
-          <div className='col-12 text-center'>
-            <button disabled={!this.state.psw.length > 0} onClick={this.clickLogin} type='submit' className='btn btn-blue text-bold btn-big'>Login</button>
+        <div className="row mt-3">
+          <div className="col-12 text-center">
+            <button
+              disabled={!this.state.psw.length > 0}
+              onClick={this.clickLogin}
+              type="submit"
+              className="btn btn-blue text-bold btn-big"
+            >
+              Login
+            </button>
           </div>
         </div>
-        <div className='row mt-1'>
-          <div className='col-12 text-center'>
-            <button onClick={e => { this.props.onRestore() }} type='submit' className='btn btn-white '>Restore from seed</button>
+        <div className="row mt-1">
+          <div className="col-12 text-center">
+            <button
+              onClick={e => {
+                this.props.onRestore()
+              }}
+              type="submit"
+              className="btn btn-white "
+            >
+              Restore from seed
+            </button>
           </div>
         </div>
       </div>

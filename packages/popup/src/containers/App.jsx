@@ -24,7 +24,7 @@ class App extends Component {
       network: {},
       networks: [],
       account: {},
-      showHeader: false,
+      showHeader: false
     }
 
     this.duplex = new Duplex.Popup()
@@ -70,12 +70,13 @@ class App extends Component {
 
   async onAddCustomNetwork() {
     const state = await popupMessanger.getState()
-    if (state >= APP_STATE.WALLET_UNLOCKED)
-      this.main.current.addCustomNetwork()
+    if (state >= APP_STATE.WALLET_UNLOCKED) this.main.current.addCustomNetwork()
   }
 
   bindDuplexRequests() {
-    this.duplex.on('setTransfers', transfers => this.main.current.changeTransfers(transfers))
+    this.duplex.on('setTransfers', transfers =>
+      this.main.current.changeTransfers(transfers)
+    )
     this.duplex.on('setAccount', account => this.setState({ account }))
     this.duplex.on('setNetworks', networks => this.setState({ networks }))
     this.duplex.on('setNetwork', network => this.setState({ network }))
@@ -85,22 +86,26 @@ class App extends Component {
     return (
       <div className="app-wrapper">
         <div className="app chrome">
-          {
-            this.state.showHeader ? 
-              <Header ref={this.header}
-                account={this.state.account}
-                network={this.state.network}
-                networks={this.state.networks}
-                isLogged={this.state.isLogged}
-                changeNetwork={this.onHandleNetworkChanging}
-                addCustomNetwork={this.onAddCustomNetwork} /> 
-            : ''
-          }
-          <Main showHeader={this.onShowHeader}
+          {this.state.showHeader ? (
+            <Header
+              ref={this.header}
+              account={this.state.account}
+              network={this.state.network}
+              networks={this.state.networks}
+              isLogged={this.state.isLogged}
+              changeNetwork={this.onHandleNetworkChanging}
+              addCustomNetwork={this.onAddCustomNetwork}
+            />
+          ) : (
+            ''
+          )}
+          <Main
+            showHeader={this.onShowHeader}
             ref={this.main}
             network={this.state.network}
             account={this.state.account}
-            duplex={this.duplex}/>
+            duplex={this.duplex}
+          />
         </div>
       </div>
     )

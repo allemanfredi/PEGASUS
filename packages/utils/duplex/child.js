@@ -3,11 +3,13 @@ import randomUUID from 'uuid/v4'
 import extensionizer from 'extensionizer'
 
 class DuplexChild extends EventEmitter {
-  constructor (type = false) {
+  constructor(type = false) {
     super()
 
     if (!['tab', 'popup'].includes(type))
-      throw new Error(`DuplexChild expects a source type of either tab or popup, instead "${type}" was provided`)
+      throw new Error(
+        `DuplexChild expects a source type of either tab or popup, instead "${type}" was provided`
+      )
 
     this.type = type
     this.incoming = new Map() // Incoming message replies
@@ -21,7 +23,7 @@ class DuplexChild extends EventEmitter {
     this.connectionGovernor()
   }
 
-  connectToHost () {
+  connectToHost() {
     this.channel = extensionizer.runtime.connect({
       name: this.type
     })
@@ -34,9 +36,7 @@ class DuplexChild extends EventEmitter {
 
     this.disconnectListener = this.channel.onDisconnect.addListener(() => {
       const error =
-        this.channel.error ||
-        extensionizer.lastError ||
-        'Unknown disconnect'
+        this.channel.error || extensionizer.lastError || 'Unknown disconnect'
 
       console.log('Lost connection to DuplexHost:', error)
 
@@ -45,7 +45,7 @@ class DuplexChild extends EventEmitter {
     })
   }
 
-  resetGovernor () {
+  resetGovernor() {
     if (this.governor && this.governor.connectionEstablisher.func)
       clearInterval(this.connectionGovernor.connectionEstablisher.func)
 
@@ -63,17 +63,15 @@ class DuplexChild extends EventEmitter {
     }
   }
 
-  connectionGovernor () {
+  connectionGovernor() {
     if (this.isHost)
       throw new Error('Host port cannot establish governor status')
   }
 
-  handleMessage ({ action, data, messageID, noAck = false }) {
-    if (action === 'messageReply')
-      return this.handleReply(data)
+  handleMessage({ action, data, messageID, noAck = false }) {
+    if (action === 'messageReply') return this.handleReply(data)
 
-    if (noAck)
-      return this.emit(action, data)
+    if (noAck) return this.emit(action, data)
 
     this.incoming.set(messageID, res =>
       this.send('messageReply', { messageID, ...res }, false)
@@ -98,27 +96,27 @@ class DuplexChild extends EventEmitter {
     })
   }
 
-  handleReply ({ messageID, error, res }) {
-    if (!this.outgoing.has(messageID))
-      return
+  handleReply({ messageID, error, res }) {
+    if (!this.outgoing.has(messageID)) return
 
-    if (error)
-      this.outgoing.get(messageID)(Promise.reject(res))
+    if (error) this.outgoing.get(messageID)(Promise.reject(res))
     else this.outgoing.get(messageID)(res)
 
     this.outgoing.delete(messageID)
   }
 
-  send (action, data, requiresAck = true) {
+  send(action, data, requiresAck = true) {
     const { governor } = this
 
     if (!governor.isConnected && !governor.hasTimedOut) {
-      return new Promise((resolve, reject) => governor.queue.push({
-        action,
-        data,
-        resolve,
-        reject
-      }))
+      return new Promise((resolve, reject) =>
+        governor.queue.push({
+          action,
+          data,
+          resolve,
+          reject
+        })
+      )
     }
 
     if (!governor.isConnected && governor.hasTimedOut)

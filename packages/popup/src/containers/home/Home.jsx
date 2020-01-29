@@ -67,9 +67,11 @@ class Home extends Component {
   }
 
   async componentWillMount() {
-    this.props.duplex.on('setAccount', () => this.setState({
-      isLoading: false
-    }))
+    this.props.duplex.on('setAccount', () =>
+      this.setState({
+        isLoading: false
+      })
+    )
   }
 
   async onReload() {
@@ -103,7 +105,6 @@ class Home extends Component {
         actionToConfirm: 'deleteNetwork'
       }
     })
-
   }
 
   onExportSeed() {
@@ -141,9 +142,9 @@ class Home extends Component {
         this.setState({ showAlert: false })
         break
       }
-      default: break;
+      default:
+        break
     }
-
   }
 
   onClickSend() {
@@ -165,12 +166,9 @@ class Home extends Component {
   }
 
   onBack() {
-
     if (!this.state.canGoBack) {
-      if (this.mam.current)
-        this.mam.current.goBack()
-      if (this.exportSeed.current)
-        this.exportSeed.current.goBack()
+      if (this.mam.current) this.mam.current.goBack()
+      if (this.exportSeed.current) this.exportSeed.current.goBack()
       return
     }
 
@@ -252,158 +250,194 @@ class Home extends Component {
   }
 
   render() {
-
     return (
       <div>
-        {
-          this.state.showNavbar
-            ? <Navbar account={this.props.account}
-              network={this.props.network}
-              showBtnSettings={this.state.showHome}
-              showBtnEllipse={this.state.showHome}
-              showBtnBack={!this.state.showHome}
-              text={this.state.showHome ? this.props.account.name : ''}
-              onClickMenu={this.onClickMenu}
-              onClickMap={this.onClickMap}
-              onBack={this.onBack}
-              onDeleteAccount={this.onDeleteAccount}
-              onAddAccount={this.onAddAccount}
-              onViewAccountOnExplorer={this.onViewAccountOnExplorer}
-              onExportSeed={this.onExportSeed}
-              onImportSeed={this.onImportSeed}
-              onDeleteCurrentNetwork={this.onDeleteCurrentNetwork}
-              onShowSettings={this.onShowSettings}>
-            </Navbar>
-            : null
-        }
-        {
-          !(Object.keys(this.props.account).length === 0 && this.props.account.constructor === Object)
-            ? <React.Fragment>
-              {
-                this.state.showMenu
-                  ? <Menu network={this.props.network}
-                    show={this.state.showMenu}
-                    account={this.props.account}
-                    onSwitchAccount={this.onSwitchAccount}
-                    onShowMap={this.onClickMap}
-                    onLogout={this.onLogout}
-                    onClose={this.onCloseMenu}
-                    onMam={this.onMam} />
-                  : ''
-              }
-              {
-                this.state.showSend
-                  ? <Send account={this.props.account}
-                    duplex={this.props.duplex}
-                    network={this.props.network}
-                    onBack={this.onBack}
-                    onHideTop={show => {
-                      this.props.onShowHeader(!show)
-                      this.setState({ showNavbar: !show })
-                    }} />
-                  : ''
-              }
-              {
-                this.state.showReceive
-                  ? <Receive account={this.props.account}
-                    network={this.state.network} />
-                  : ''
-              }
-              {
-                this.state.showAdd
-                  ? <Add network={this.props.network}
-                    onBack={this.onBack} />
-                  : ''
-              }
-              {
-                this.state.showNetwork
-                  ? <Network onBack={this.onBack} />
-                  : ''
-              }
-              {
-                this.state.showExportSeed
-                  ? <ExportSeed ref={this.exportSeed}
-                    account={this.props.account}
-                    network={this.props.network}
-                    onChangeCanGoBack={value => this.setState({ canGoBack: value })}
-                    onBack={this.onBack} />
-                  : ''
-              }
-              {
-                this.state.showImportSeed
-                  ? <ImportSeed account={this.props.account}
-                    network={this.props.network}
-                    onBack={this.onBack} />
-                  : ''
-              }
-              {
-                this.state.showMamChannels
-                  ? <Mam ref={this.mam}
-                    account={this.props.account}
-                    duplex={this.props.duplex}
-                    onBack={this.onBack}
-                    onChangeCanGoBack={value => this.setState({ canGoBack: value })} />
-                  : ''
-              }
-              {
-                this.state.showAlert
-                  ? <Alert type={this.state.alertType}
-                    text={this.state.alertText}
-                    onClose={this.onBack}
-                    onConfirm={this.onConfirm} />
-                  : ''
-              }
-              {
-                this.state.showHome
-                  ? <div className="container">
-                    <div className='row mt-3 mb-2'>
-                      <div className='col-4 text-left'>
-                        <img src='./material/logo/iota-logo.png' height='40' width='40' alt='iota logo' />
-                      </div>
-                      <div onClick={() => {
-                        this.copyToClipboard(Utils.checksummed(this.props.account.data.latestAddress))
-                      }}
-                        className='col-4 my-auto text-center text-xs font-weight-bold cursor-pointer pt-3 pb-3 gray-on-hover-with-border-radius'
-                        data-tip={this.state.isCopiedToClipboard ? 'copied!' : 'copy to clipboard'}
-                        key={this.state.isCopiedToClipboard ? 'copied' : 'copy-to-clipboard'}>
-                        <ReactTooltip />
-                        {
-                          Utils.showAddress(
-                            Utils.checksummed(this.props.account.data.latestAddress),
-                            4,
-                            6
-                          )
-                        }
-                      </div>
-                      <div className='col-4 text-right text-black text-lg my-auto'>
-                        {
-                          Utils.iotaReducer(
-                            this.props.account.data.balance[this.props.network.type]
-                              ? this.props.account.data.balance[this.props.network.type]
-                              : 0
-                          )
-                        }
-                      </div>
-                    </div>
-                    <Transactions account={this.props.account}
-                      network={this.props.network}
-                      isLoading={this.state.isLoading}
-                      onReload={this.onReload}
+        {this.state.showNavbar ? (
+          <Navbar
+            account={this.props.account}
+            network={this.props.network}
+            showBtnSettings={this.state.showHome}
+            showBtnEllipse={this.state.showHome}
+            showBtnBack={!this.state.showHome}
+            text={this.state.showHome ? this.props.account.name : ''}
+            onClickMenu={this.onClickMenu}
+            onClickMap={this.onClickMap}
+            onBack={this.onBack}
+            onDeleteAccount={this.onDeleteAccount}
+            onAddAccount={this.onAddAccount}
+            onViewAccountOnExplorer={this.onViewAccountOnExplorer}
+            onExportSeed={this.onExportSeed}
+            onImportSeed={this.onImportSeed}
+            onDeleteCurrentNetwork={this.onDeleteCurrentNetwork}
+            onShowSettings={this.onShowSettings}
+          ></Navbar>
+        ) : null}
+        {!(
+          Object.keys(this.props.account).length === 0 &&
+          this.props.account.constructor === Object
+        ) ? (
+          <React.Fragment>
+            {this.state.showMenu ? (
+              <Menu
+                network={this.props.network}
+                show={this.state.showMenu}
+                account={this.props.account}
+                onSwitchAccount={this.onSwitchAccount}
+                onShowMap={this.onClickMap}
+                onLogout={this.onLogout}
+                onClose={this.onCloseMenu}
+                onMam={this.onMam}
+              />
+            ) : (
+              ''
+            )}
+            {this.state.showSend ? (
+              <Send
+                account={this.props.account}
+                duplex={this.props.duplex}
+                network={this.props.network}
+                onBack={this.onBack}
+                onHideTop={show => {
+                  this.props.onShowHeader(!show)
+                  this.setState({ showNavbar: !show })
+                }}
+              />
+            ) : (
+              ''
+            )}
+            {this.state.showReceive ? (
+              <Receive
+                account={this.props.account}
+                network={this.state.network}
+              />
+            ) : (
+              ''
+            )}
+            {this.state.showAdd ? (
+              <Add network={this.props.network} onBack={this.onBack} />
+            ) : (
+              ''
+            )}
+            {this.state.showNetwork ? <Network onBack={this.onBack} /> : ''}
+            {this.state.showExportSeed ? (
+              <ExportSeed
+                ref={this.exportSeed}
+                account={this.props.account}
+                network={this.props.network}
+                onChangeCanGoBack={value => this.setState({ canGoBack: value })}
+                onBack={this.onBack}
+              />
+            ) : (
+              ''
+            )}
+            {this.state.showImportSeed ? (
+              <ImportSeed
+                account={this.props.account}
+                network={this.props.network}
+                onBack={this.onBack}
+              />
+            ) : (
+              ''
+            )}
+            {this.state.showMamChannels ? (
+              <Mam
+                ref={this.mam}
+                account={this.props.account}
+                duplex={this.props.duplex}
+                onBack={this.onBack}
+                onChangeCanGoBack={value => this.setState({ canGoBack: value })}
+              />
+            ) : (
+              ''
+            )}
+            {this.state.showAlert ? (
+              <Alert
+                type={this.state.alertType}
+                text={this.state.alertText}
+                onClose={this.onBack}
+                onConfirm={this.onConfirm}
+              />
+            ) : (
+              ''
+            )}
+            {this.state.showHome ? (
+              <div className="container">
+                <div className="row mt-3 mb-2">
+                  <div className="col-4 text-left">
+                    <img
+                      src="./material/logo/iota-logo.png"
+                      height="40"
+                      width="40"
+                      alt="iota logo"
                     />
-                    <div className='row mt-3'>
-                      <div className='col-6 text-center'>
-                        <button onClick={this.onClickReceive} className='btn btn-border-blue btn-big'>Receive</button>
-                      </div>
-                      <div className='col-6 text-center'>
-                        <button onClick={this.onClickSend} className='btn btn-border-blue btn-big'>Send</button>
-                      </div>
-                    </div>
                   </div>
-                  : ''
-              }
-            </React.Fragment>
-            : <Loader />
-        }
+                  <div
+                    onClick={() => {
+                      this.copyToClipboard(
+                        Utils.checksummed(this.props.account.data.latestAddress)
+                      )
+                    }}
+                    className="col-4 my-auto text-center text-xs font-weight-bold cursor-pointer pt-3 pb-3 gray-on-hover-with-border-radius"
+                    data-tip={
+                      this.state.isCopiedToClipboard
+                        ? 'copied!'
+                        : 'copy to clipboard'
+                    }
+                    key={
+                      this.state.isCopiedToClipboard
+                        ? 'copied'
+                        : 'copy-to-clipboard'
+                    }
+                  >
+                    <ReactTooltip />
+                    {Utils.showAddress(
+                      Utils.checksummed(this.props.account.data.latestAddress),
+                      4,
+                      6
+                    )}
+                  </div>
+                  <div className="col-4 text-right text-black text-lg my-auto">
+                    {Utils.iotaReducer(
+                      this.props.account.data.balance[this.props.network.type]
+                        ? this.props.account.data.balance[
+                            this.props.network.type
+                          ]
+                        : 0
+                    )}
+                  </div>
+                </div>
+                <Transactions
+                  account={this.props.account}
+                  network={this.props.network}
+                  isLoading={this.state.isLoading}
+                  onReload={this.onReload}
+                />
+                <div className="row mt-3">
+                  <div className="col-6 text-center">
+                    <button
+                      onClick={this.onClickReceive}
+                      className="btn btn-border-blue btn-big"
+                    >
+                      Receive
+                    </button>
+                  </div>
+                  <div className="col-6 text-center">
+                    <button
+                      onClick={this.onClickSend}
+                      className="btn btn-border-blue btn-big"
+                    >
+                      Send
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              ''
+            )}
+          </React.Fragment>
+        ) : (
+          <Loader />
+        )}
       </div>
     )
   }

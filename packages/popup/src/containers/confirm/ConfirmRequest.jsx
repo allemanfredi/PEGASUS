@@ -7,7 +7,6 @@ import ConfirmChangeModeMamChannel from './confirmChangeModeMamChannel/ConfirmCh
 import Loader from '../../components/loader/Loader'
 
 class ConfirmRequest extends Component {
-
   constructor(props, context) {
     super(props, context)
 
@@ -17,7 +16,7 @@ class ConfirmRequest extends Component {
     this.confirm = this.confirm.bind(this)
 
     this.state = {
-      requests: [],
+      requests: []
     }
   }
 
@@ -34,7 +33,7 @@ class ConfirmRequest extends Component {
     await popupMessanger.rejectRequest(request)
   }
 
-  rejectAll () {
+  rejectAll() {
     popupMessanger.rejectRequests()
   }
 
@@ -45,35 +44,44 @@ class ConfirmRequest extends Component {
   }
 
   render() {
-
     const request = this.state.requests[0]
 
     if (request) {
-      switch(request.method) {
+      switch (request.method) {
         case 'prepareTransfers':
-          return <ConfirmTransfers 
-            transfer={request}
-            duplex={this.props.duplex}
-            onConfirm={this.confirm}
-            onReject={this.reject}/>
+          return (
+            <ConfirmTransfers
+              transfer={request}
+              duplex={this.props.duplex}
+              onConfirm={this.confirm}
+              onReject={this.reject}
+            />
+          )
 
         case 'mam_init':
-          return <ConfirmCreateMamChannel 
-            request={request}
-            onConfirm={this.confirm}
-            onReject={this.reject}/>
+          return (
+            <ConfirmCreateMamChannel
+              request={request}
+              onConfirm={this.confirm}
+              onReject={this.reject}
+            />
+          )
         case 'mam_changeMode':
-          return <ConfirmChangeModeMamChannel 
-            from={request.data.args[0].channel.mode} 
-            to={request.data.args[1]}
-            sidekey={request.data.args[2] ? request.data.args[2] : null}
-            request={request}
-            onConfirm={this.confirm}
-            onReject={this.reject}/>
-        default: return null
+          return (
+            <ConfirmChangeModeMamChannel
+              from={request.data.args[0].channel.mode}
+              to={request.data.args[1]}
+              sidekey={request.data.args[2] ? request.data.args[2] : null}
+              request={request}
+              onConfirm={this.confirm}
+              onReject={this.reject}
+            />
+          )
+        default:
+          return null
       }
-    } else return <Loader/>
-  } 
+    } else return <Loader />
+  }
 }
 
 export default ConfirmRequest

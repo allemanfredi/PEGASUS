@@ -12,16 +12,16 @@ class ShowChannelsList extends Component {
     this.state = {
       channels: [],
       isCopiedToClipboard: false
-    }    
+    }
   }
 
   async componentWillMount() {
     const channels = await popupMessanger.getMamChannels()
 
-    if (!channels || Utils.isEmptyObject(channels)){
+    if (!channels || Utils.isEmptyObject(channels)) {
       return
     }
-    
+
     if (channels.owner) {
       const ownerChannels = Object.values(channels.owner).map(state => {
         state.ownership = 'owner'
@@ -31,11 +31,15 @@ class ShowChannelsList extends Component {
     }
 
     if (channels.subscriber) {
-      const subscriberChannels = Object.values(channels.subscriber).map(state => {
-        state.ownership = 'subscriber'
-        return state
+      const subscriberChannels = Object.values(channels.subscriber).map(
+        state => {
+          state.ownership = 'subscriber'
+          return state
+        }
+      )
+      this.setState({
+        channels: [...this.state.channels, ...subscriberChannels]
       })
-      this.setState({ channels: [...this.state.channels, ...subscriberChannels] })
     }
   }
 
@@ -46,7 +50,6 @@ class ShowChannelsList extends Component {
     textField.select()
     document.execCommand('copy')
     textField.remove()
-
 
     this.setState({ isCopiedToClipboard: true })
     setTimeout(() => {
@@ -73,21 +76,30 @@ class ShowChannelsList extends Component {
         </div>
         <hr className="mt-1 mb-1" />
         <div className="container-mam-channels">
-          {
-            this.state.channels.map((state, index) => {
-              return <React.Fragment>
+          {this.state.channels.map((state, index) => {
+            return (
+              <React.Fragment>
                 <div className="row">
                   <div className="col-3 text-left text-xxs text-gray my-auto">
                     {state.ownership}
                   </div>
-                  <div className="col-4 text-left text-black text-xxs font-weight-bold my-auto cursor-pointer"
+                  <div
+                    className="col-4 text-left text-black text-xxs font-weight-bold my-auto cursor-pointer"
                     onClick={() => {
                       this.copyToClipboard(state.root)
                     }}
-                    key={this.state.isCopiedToClipboard ? 'copied' : 'copy-to-clipboard'}
-                    data-tip={this.state.isCopiedToClipboard ? 'copied!' : 'copy to clipboard'}
+                    key={
+                      this.state.isCopiedToClipboard
+                        ? 'copied'
+                        : 'copy-to-clipboard'
+                    }
+                    data-tip={
+                      this.state.isCopiedToClipboard
+                        ? 'copied!'
+                        : 'copy to clipboard'
+                    }
                   >
-                    <ReactTooltip/>
+                    <ReactTooltip />
                     {Utils.showAddress(state.root, 4, 6)}
                   </div>
                   <div className="col-3 text-left text-blue my-auto">
@@ -97,14 +109,12 @@ class ShowChannelsList extends Component {
                     {state.subscribed ? state.subscribed.length : '-'}
                   </div>
                 </div>
-                {
-                  index !== this.state.channels.length - 1
-                    ? <hr className="mt-1 mb-1" />
-                    : null
-                }
+                {index !== this.state.channels.length - 1 ? (
+                  <hr className="mt-1 mb-1" />
+                ) : null}
               </React.Fragment>
-            })
-          }
+            )
+          })}
         </div>
       </React.Fragment>
     )

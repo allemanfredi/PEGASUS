@@ -3,8 +3,7 @@ import { APP_STATE } from '@pegasus/utils/states'
 import { backgroundMessanger } from '@pegasus/utils/messangers'
 
 class CustomizatorController {
-  constructor (options, provider) {
-
+  constructor(options, provider) {
     const {
       connectorController,
       walletController,
@@ -21,49 +20,41 @@ class CustomizatorController {
 
     this.requests = []
 
-    if (provider)
-      this.iota = composeAPI({ provider })
+    if (provider) this.iota = composeAPI({ provider })
   }
 
-  setRequests (requests) {
+  setRequests(requests) {
     this.requests = requests
   }
 
-  getRequests () {
+  getRequests() {
     return this.requests
   }
 
-  getRequestsWithUserInteraction () {
+  getRequestsWithUserInteraction() {
     return this.requests.filter(request => request.needUserInteraction === true)
   }
 
-  setProvider (provider) {
+  setProvider(provider) {
     this.iota = composeAPI({ provider })
   }
 
-  setWalletController (walletController) {
+  setWalletController(walletController) {
     this.walletController = walletController
   }
 
-  setNetworkController (networkController) {
+  setNetworkController(networkController) {
     this.networkController = networkController
   }
 
-  setTransferController (transferController) {
+  setTransferController(transferController) {
     this.transferController = transferController
   }
 
-  async pushRequest (request) {
-
+  async pushRequest(request) {
     const account = this.walletController.getCurrentAccount()
 
-    const {
-      method,
-      uuid,
-      resolve,
-      data,
-      website
-    } = request
+    const { method, uuid, resolve, data, website } = request
 
     const connection = this.connectorController.getConnection(
       website.origin,
@@ -81,7 +72,9 @@ class CustomizatorController {
     const popup = this.popupController.getPopup()
 
     if (!connection) {
-      this.walletController.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
+      this.walletController.setState(
+        APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
+      )
       this.popupController.openPopup()
       mockConnection = {
         website,
@@ -93,7 +86,9 @@ class CustomizatorController {
       this.connectorController.setConnectionToStore(connection)
       isPopupAlreadyOpened = true
     } else if (!connection.enabled) {
-      this.walletController.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
+      this.walletController.setState(
+        APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
+      )
 
       if (!popup) {
         this.popupController.openPopup()
@@ -104,11 +99,15 @@ class CustomizatorController {
 
     const state = this.walletController.getState()
 
-    if (state <= APP_STATE.WALLET_LOCKED || !connection  || !connection.enabled) {
-      if (!popup && isPopupAlreadyOpened === false){
+    if (
+      state <= APP_STATE.WALLET_LOCKED ||
+      !connection ||
+      !connection.enabled
+    ) {
+      if (!popup && isPopupAlreadyOpened === false) {
         this.popupController.openPopup()
       }
-      
+
       this.requests.push({
         connection: mockConnection,
         method,
@@ -117,9 +116,7 @@ class CustomizatorController {
         data,
         needUserInteraction: requestsWithUserInteraction.includes(method)
       })
-
     } else if (connection.enabled && state >= APP_STATE.WALLET_UNLOCKED) {
-
       if (requestsWithUserInteraction.includes(method)) {
         this.requests.push({
           connection,
@@ -133,92 +130,83 @@ class CustomizatorController {
 
         backgroundMessanger.setRequests(this.requests)
       } else {
-        
         const res = await this.execute({ method, uuid, resolve, data })
         this._removeRequest({ method, uuid, resolve, data })
 
         resolve({
           data: res.success ? res.data : res.error,
           success: res.success,
-          uuid 
+          uuid
         })
       }
-    } 
+    }
   }
 
-  async executeRequestFromPopup (request) {
+  async executeRequestFromPopup(request) {
     return this.execute(request)
   }
 
   //request that does not need of popup interaction (ex: getCurrentAccount)
-  executeRequests () {
+  executeRequests() {
     const account = this.walletController.getCurrentAccount()
-    
-    this.requests.filter(req => req.needUserInteraction !== true).forEach(async request => {
-      if (
-        request.connection.enabled &&
-        request.connection.accountId === account.id) {
 
-        const {
-          resolve,
-          uuid
-        } = request
+    this.requests
+      .filter(req => req.needUserInteraction !== true)
+      .forEach(async request => {
+        if (
+          request.connection.enabled &&
+          request.connection.accountId === account.id
+        ) {
+          const { resolve, uuid } = request
 
-        const res = await this.execute(request)
-        this._removeRequest(request)
+          const res = await this.execute(request)
+          this._removeRequest(request)
 
-        resolve({
-          data: res.success ? res.data : res.error,
-          success: res.success,
-          uuid 
-        })
-      } else {
-        request.resolve({ 
-          data: 'No granted permissions',
-          success: false,
-          uuid: request.uuid
-        })
-      }
-    })
+          resolve({
+            data: res.success ? res.data : res.error,
+            success: res.success,
+            uuid
+          })
+        } else {
+          request.resolve({
+            data: 'No granted permissions',
+            success: false,
+            uuid: request.uuid
+          })
+        }
+      })
   }
 
-  async confirmRequest (request) {
-    const requestToExecute= this.requests.find(
+  async confirmRequest(request) {
+    const requestToExecute = this.requests.find(
       req => req.uuid === request.uuid
     )
 
-    const {
-      uuid,
-      resolve
-    } = requestToExecute
+    const { uuid, resolve } = requestToExecute
 
     const res = await this.execute(requestToExecute)
 
-    if (res.tryAgain)
-      return
-    
+    if (res.tryAgain) return
+
     this._removeRequest(request)
-    
-    if (this.requests.length === 0){
+
+    if (this.requests.length === 0) {
       this.popupController.closePopup()
       backgroundMessanger.setAppState(APP_STATE.WALLET_UNLOCKED)
-    }
-    else {
+    } else {
       backgroundMessanger.setRequests(this.requests)
     }
 
     resolve({
       data: res.success ? res.data : res.error,
       success: res.success,
-      uuid 
+      uuid
     })
   }
 
-  rejectRequest (request) {
-    const requestToReject= this.requests.find(
-      req => req.uuid === request.uuid
-    )
-    
+  rejectRequest(request) {
+    const requestToReject = this.requests.find(req => req.uuid === request.uuid)
+
     requestToReject.resolve({
       data: 'Request has been rejected by the user',
       success: false,
@@ -227,11 +215,10 @@ class CustomizatorController {
 
     this._removeRequest(request)
 
-    if (this.requests.length === 0){
+    if (this.requests.length === 0) {
       this.popupController.closePopup()
       backgroundMessanger.setAppState(APP_STATE.WALLET_UNLOCKED)
-    }
-    else {
+    } else {
       backgroundMessanger.setRequests(this.requests)
     }
   }
@@ -249,12 +236,8 @@ class CustomizatorController {
     backgroundMessanger.setAppState(APP_STATE.WALLET_UNLOCKED)
   }
 
-  execute (request) {
-
-    const {
-      method,
-      data
-    } = request
+  execute(request) {
+    const { method, data } = request
 
     switch (method) {
       case 'prepareTransfers': {
@@ -262,17 +245,21 @@ class CustomizatorController {
       }
       case 'getCurrentAccount': {
         const account = this.walletController.getCurrentAccount()
-        return new Promise(resolve => resolve({
-          data: account.data.latestAddress,
-          success: true
-        }))
+        return new Promise(resolve =>
+          resolve({
+            data: account.data.latestAddress,
+            success: true
+          })
+        )
       }
       case 'getCurrentProvider': {
         const network = this.networkController.getCurrentNetwork()
-        return new Promise(resolve => resolve({
-          data: network.provider,
-          success: true
-        }))
+        return new Promise(resolve =>
+          resolve({
+            data: network.provider,
+            success: true
+          })
+        )
       }
       case 'mam_init': {
         const res = this.mamController.init(...data.args)
@@ -312,10 +299,8 @@ class CustomizatorController {
     }
   }
 
-  _removeRequest (request) {
-    this.requests = this.requests.filter(
-      req => req.uuid !== request.uuid
-    )
+  _removeRequest(request) {
+    this.requests = this.requests.filter(req => req.uuid !== request.uuid)
   }
 }
 

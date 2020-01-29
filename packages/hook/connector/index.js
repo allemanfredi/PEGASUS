@@ -1,7 +1,7 @@
 import randomUUID from 'uuid/v4'
 
 const connector = {
-  init (eventChannel) {
+  init(eventChannel) {
     this.eventChannel = eventChannel
     this.calls = {}
 
@@ -9,17 +9,16 @@ const connector = {
     return this.handler.bind(this)
   },
 
-  bindListener () {
+  bindListener() {
     this.eventChannel.on('tabReply', ({ success, data, uuid }) => {
-      if (success)
-        this.calls[uuid].resolve(data)
+      if (success) this.calls[uuid].resolve(data)
       else this.calls[uuid].reject(data)
 
       delete this.calls[uuid]
     })
   },
 
-  handler (action, data = {}) {
+  handler(action, data = {}) {
     const uuid = randomUUID()
     const origin = this.getOrigin()
     const favicon = this.getFavicon()
@@ -57,7 +56,10 @@ const connector = {
     let favicon = null
     const nodeList = document.getElementsByTagName('link')
     for (let i = 0; i < nodeList.length; i++) {
-      if ((nodeList[i].getAttribute('rel') == 'icon') || (nodeList[i].getAttribute('rel') == 'shortcut icon')) {
+      if (
+        nodeList[i].getAttribute('rel') == 'icon' ||
+        nodeList[i].getAttribute('rel') == 'shortcut icon'
+      ) {
         favicon = nodeList[i].getAttribute('href')
       }
     }

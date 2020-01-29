@@ -3,18 +3,18 @@ import { asciiToTrytes } from '@iota/converter'
 import { extractJson } from '@iota/extract-json'
 
 export default {
-
-  init (provider) {
+  init(provider) {
     this.iota = composeAPI({ provider })
   },
 
-  setProvider (provider) {
+  setProvider(provider) {
     this.iota = composeAPI({ provider })
   },
 
-  async getNodeInfo () {
+  async getNodeInfo() {
     return new Promise((resolve, reject) => {
-      this.iota.getNodeInfo()
+      this.iota
+        .getNodeInfo()
         .then(info => resolve(info))
         .catch(err => {
           reject(err)
@@ -22,9 +22,10 @@ export default {
     })
   },
 
-  async getNewAddress (seed) {
+  async getNewAddress(seed) {
     return new Promise((resolve, reject) => {
-      this.iota.getNewAddress(seed)
+      this.iota
+        .getNewAddress(seed)
         .then(address => resolve(address))
         .catch(err => {
           reject(err)
@@ -32,9 +33,10 @@ export default {
     })
   },
 
-  async getBalance (address) {
+  async getBalance(address) {
     return new Promise((resolve, reject) => {
-      this.iota.getBalances([address], 100)
+      this.iota
+        .getBalances([address], 100)
         .then(res => resolve(res.balances[0]))
         .catch(err => {
           reject(err)
@@ -42,9 +44,10 @@ export default {
     })
   },
 
-  async getAllTransactions (addresses) {
+  async getAllTransactions(addresses) {
     return new Promise((resolve, reject) => {
-      this.iota.findTransactionObjects({ addresses })
+      this.iota
+        .findTransactionObjects({ addresses })
         .then(transactions => resolve(transactions))
         .catch(err => {
           reject(err)
@@ -52,13 +55,15 @@ export default {
     })
   },
 
-  async prepareTransfer (transfer, ret) {
-    const transfers = [{
-      address: transfer.to,
-      value: parseInt(transfer.value),
-      tag: asciiToTrytes(JSON.stringify(transfer.tag)), // optional tag of `0-27` trytes
-      message: asciiToTrytes(JSON.stringify(transfer.message)) // optional message in trytes
-    }]
+  async prepareTransfer(transfer, ret) {
+    const transfers = [
+      {
+        address: transfer.to,
+        value: parseInt(transfer.value),
+        tag: asciiToTrytes(JSON.stringify(transfer.tag)), // optional tag of `0-27` trytes
+        message: asciiToTrytes(JSON.stringify(transfer.message)) // optional message in trytes
+      }
+    ]
 
     const depth = 3
 
@@ -67,7 +72,8 @@ export default {
     const minWeightMagnitude = transfer.difficulty
 
     try {
-      this.iota.prepareTransfers(transfer.seed, transfers)
+      this.iota
+        .prepareTransfers(transfer.seed, transfers)
         .then(trytes => {
           return this.iota.sendTrytes(trytes, depth, minWeightMagnitude)
         })
@@ -82,9 +88,10 @@ export default {
     }
   },
 
-  async getLatestInclusion (hashes) {
+  async getLatestInclusion(hashes) {
     return new Promise(async (resolve, reject) => {
-      this.iota.getLatestInclusion(hashes)
+      this.iota
+        .getLatestInclusion(hashes)
         .then(states => resolve(states))
         .catch(err => {
           // reject(err);
@@ -93,9 +100,10 @@ export default {
     })
   },
 
-  async getAccountData (seed) {
+  async getAccountData(seed) {
     return new Promise((resolve, reject) => {
-      this.iota.getAccountData(seed, { start: 0, security: 2 })
+      this.iota
+        .getAccountData(seed, { start: 0, security: 2 })
         .then(accountData => {
           resolve(accountData)
         })
@@ -105,10 +113,10 @@ export default {
     })
   },
 
-
-  async getBundle (transaction) {
+  async getBundle(transaction) {
     return new Promise((resolve, reject) => {
-      this.iota.getBundle(transaction)
+      this.iota
+        .getBundle(transaction)
         .then(bundle => {
           resolve(bundle)
         })
@@ -118,20 +126,23 @@ export default {
     })
   },
 
-  async isPromotable (tail) {
+  async isPromotable(tail) {
     return new Promise((resolve, reject) => {
-      this.iota.isPromotable(tail, { rejectWithReason: true })
+      this.iota
+        .isPromotable(tail, { rejectWithReason: true })
         .then(isPromotable => {
           resolve(isPromotable)
-        }).catch(err => {
+        })
+        .catch(err => {
           reject(err)
         })
     })
   },
 
-  async promoteTransaction (tail) {
+  async promoteTransaction(tail) {
     return new Promise((resolve, reject) => {
-      this.iota.promoteTransaction(tail, 3, 14)
+      this.iota
+        .promoteTransaction(tail, 3, 14)
         .then(() => {
           resolve()
         })
@@ -141,9 +152,10 @@ export default {
     })
   },
 
-  async replayBundle (tail) {
+  async replayBundle(tail) {
     return new Promise((resolve, reject) => {
-      this.iota.replayBundle(tail, 3, 14)
+      this.iota
+        .replayBundle(tail, 3, 14)
         .then(transactions => {
           resolve(transactions)
         })
@@ -153,9 +165,10 @@ export default {
     })
   },
 
-  async findTransactionObject (options) {
+  async findTransactionObject(options) {
     return new Promise((resolve, reject) => {
-      this.iota.findTransactionObjects(options)
+      this.iota
+        .findTransactionObjects(options)
         .then(transactions => {
           resolve(transactions)
         })
@@ -165,7 +178,7 @@ export default {
     })
   },
 
-  async getMessage (tail) {
+  async getMessage(tail) {
     return new Promise(async (resolve, reject) => {
       const bundle = await getBundle(tail)
       try {

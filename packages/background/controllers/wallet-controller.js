@@ -5,9 +5,7 @@ import Utils from '@pegasus/utils/utils'
 import { composeAPI } from '@iota/core'
 
 class WalletController {
-
-  constructor(options){
-
+  constructor(options) {
     const {
       storageController,
       networkController,
@@ -24,11 +22,11 @@ class WalletController {
     backgroundMessanger.init(duplex)
   }
 
-  setAccountDataController (accountDataController) {
+  setAccountDataController(accountDataController) {
     this.accountDataController = accountDataController
   }
 
-  isWalletSetup () {
+  isWalletSetup() {
     const state = this.getState()
     if (state >= APP_STATE.WALLET_INITIALIZED) {
       return true
@@ -37,25 +35,24 @@ class WalletController {
     return false
   }
 
-  setupWallet () {
+  setupWallet() {
     this.setState(APP_STATE.WALLET_NOT_INITIALIZED)
   }
 
-  storePassword (psw) {
+  storePassword(psw) {
     const hash = Utils.sha256(psw)
     this.password = psw
     this.storageController.setPasswordHash(hash)
   }
 
-  comparePassword (psw) {
+  comparePassword(psw) {
     let pswToCompare
     if ((pswToCompare = this.storageController.getPasswordHash()) === null)
       return false
-    if (pswToCompare === Utils.sha256(psw))
-      return true
+    if (pswToCompare === Utils.sha256(psw)) return true
   }
 
-  setPassword (password) {
+  setPassword(password) {
     this.password = password
   }
 
@@ -63,7 +60,7 @@ class WalletController {
     return this.password
   }
 
-  unlockWallet (psw) {
+  unlockWallet(psw) {
     const hash = Utils.sha256(psw)
     let pswToCompare
 
@@ -86,18 +83,22 @@ class WalletController {
     return false
   }
 
-  restoreWallet (account, network, key) {
-    const transactions = this.accountDataController.mapTransactions(account.data, network)
+  restoreWallet(account, network, key) {
+    const transactions = this.accountDataController.mapTransactions(
+      account.data,
+      network
+    )
 
-    account.data.balance = network.type === 'mainnet'
-      ? {
-          mainnet: account.data.balance,
-          testnet: 0,
-        }
-      : {
-          mainnet: account.data.balance,
-          testnet: 0
-        }
+    account.data.balance =
+      network.type === 'mainnet'
+        ? {
+            mainnet: account.data.balance,
+            testnet: 0
+          }
+        : {
+            mainnet: account.data.balance,
+            testnet: 0
+          }
 
     const eseed = Utils.aes256encrypt(account.seed, key)
     const obj = {
@@ -129,16 +130,16 @@ class WalletController {
     }
   }
 
-  setState (state) {
+  setState(state) {
     localStorage.setItem('state', state)
   }
 
-  getState () {
+  getState() {
     const state = parseInt(localStorage.getItem('state'))
     return state
   }
 
-  unlockSeed (psw) {
+  unlockSeed(psw) {
     const hash = Utils.sha256(psw)
     let pswToCompare
     if ((pswToCompare = this.storageController.getPasswordHash()) === null)
@@ -150,21 +151,20 @@ class WalletController {
     return null
   }
 
-  getKey () {
+  getKey() {
     return this.password
   }
 
-  getCurrentSeed () {
+  getCurrentSeed() {
     const account = this.getCurrentAccount()
-    if (!account)
-      return null
-      
+    if (!account) return null
+
     const key = this.getKey()
     const seed = Utils.aes256decrypt(account.seed, key)
     return seed
   }
 
-  isAccountNameAlreadyExists (name) {
+  isAccountNameAlreadyExists(name) {
     const data = this.storageController.getData()
     const alreadyExists = data.filter(account => account.name === name)
     if (alreadyExists.length > 0) {
@@ -174,20 +174,22 @@ class WalletController {
     }
   }
 
-  async addAccount (account, isCurrent) {
-
+  async addAccount(account, isCurrent) {
     if (isCurrent) {
       const data = this.storageController.getData()
-      data.forEach(acc => { acc.current = false })
+      data.forEach(acc => {
+        acc.current = false
+      })
       this.storageController.setData(data)
     }
 
     const network = this.networkController.getCurrentNetwork()
     const iota = composeAPI({ provider: network.provider })
     const seed = account.seed.toString().replace(/,/g, '')
-    const accountData = await iota.getAccountData(seed,
-       { start: 0, security: 2 }
-    )
+    const accountData = await iota.getAccountData(seed, {
+      start: 0,
+      security: 2
+    })
 
     accountData.balance = {
       testnet: 0,
@@ -224,27 +226,26 @@ class WalletController {
     return
   }
 
-  getCurrentAccount () {
+  getCurrentAccount() {
     const state = this.getState()
-    if (state < APP_STATE.WALLET_UNLOCKED)
-      return null
-    
-    if (!this.storageController)
-      return null
+    if (state < APP_STATE.WALLET_UNLOCKED) return null
+
+    if (!this.storageController) return null
 
     const accounts = this.storageController.getData()
     if (accounts.length === 0 && state === APP_STATE.WALLET_NOT_INITIALIZED)
       return null
 
     for (let account of accounts) {
-      if (account.current)
-        return account
+      if (account.current) return account
     }
   }
 
-  setCurrentAccount (currentAccount) {
+  setCurrentAccount(currentAccount) {
     let currentData = this.storageController.getData()
-    currentData.forEach(account => { account.current = false })
+    currentData.forEach(account => {
+      account.current = false
+    })
     this.storageController.setData(currentData)
 
     const data = this.storageController.getData()
@@ -257,11 +258,11 @@ class WalletController {
     this.storageController.setData(data)
   }
 
-  resetData () {
+  resetData() {
     this.storageController.setData([])
   }
 
-  updateDataAccount (updatedData) {
+  updateDataAccount(updatedData) {
     const data = this.storageController.getData()
     let updatedAccount = {}
     data.forEach(account => {
@@ -274,7 +275,7 @@ class WalletController {
     return updatedAccount
   }
 
-  updateNetworkAccount (network) {
+  updateNetworkAccount(network) {
     const data = this.storageController.getData()
     let updatedAccount = {}
     data.forEach(account => {
@@ -287,7 +288,7 @@ class WalletController {
     return updatedAccount
   }
 
-  updateTransactionsAccount (transactions) {
+  updateTransactionsAccount(transactions) {
     const data = this.storageController.getData()
 
     let updatedAccount = {}
@@ -302,7 +303,7 @@ class WalletController {
     return updatedAccount
   }
 
-  updateNameAccount (current, newName) {
+  updateNameAccount(current, newName) {
     const data = this.storageController.getData()
     for (let account of data) {
       if (account.name === newName) {
@@ -317,7 +318,10 @@ class WalletController {
         account.id = Utils.sha256(newName)
         updatedAccount = account
 
-        this.connectorController.updateConnectionsAccountId(current.id, Utils.sha256(newName))
+        this.connectorController.updateConnectionsAccountId(
+          current.id,
+          Utils.sha256(newName)
+        )
       }
     })
 
@@ -327,7 +331,7 @@ class WalletController {
     return true
   }
 
-  updateAvatarAccount (current, avatar) {
+  updateAvatarAccount(current, avatar) {
     const data = this.storageController.getData()
     let updatedAccount = {}
     data.forEach(account => {
@@ -341,12 +345,16 @@ class WalletController {
     backgroundMessanger.setAccount(updatedAccount)
   }
 
-  deleteAccount (account) {
+  deleteAccount(account) {
     const data = this.storageController.getData()
-    if (data.length === 1) { return null } else {
+    if (data.length === 1) {
+      return null
+    } else {
       const app = data.filter(acc => acc.id !== account.id)
 
-      app.forEach(account => { account.current = false })
+      app.forEach(account => {
+        account.current = false
+      })
 
       app[0].current = true
       this.storageController.setData(app)
@@ -355,7 +363,7 @@ class WalletController {
     }
   }
 
-  getAllAccounts () {
+  getAllAccounts() {
     const accounts = []
 
     this.storageController.getData().forEach(account => {
@@ -364,21 +372,47 @@ class WalletController {
     return accounts
   }
 
-  generateSeed (length = 81) {
+  generateSeed(length = 81) {
     const bytes = Utils.randomBytes(length, 27)
     const seed = bytes.map(byte => Utils.byteToChar(byte))
     return seed
   }
 
-  isSeedValid (seed) {
-    const values = ['9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
-    if (seed.length !== 81)
-      return false;
-    [...seed].forEach(c => {
-      if (values.indexOf(c) === -1)
-        return false
+  isSeedValid(seed) {
+    const values = [
+      '9',
+      'A',
+      'B',
+      'C',
+      'D',
+      'E',
+      'F',
+      'G',
+      'H',
+      'I',
+      'J',
+      'K',
+      'L',
+      'M',
+      'N',
+      'O',
+      'P',
+      'Q',
+      'R',
+      'S',
+      'T',
+      'U',
+      'V',
+      'W',
+      'X',
+      'Y',
+      'Z'
+    ]
+    if (seed.length !== 81) return false
+    ;[...seed].forEach(c => {
+      if (values.indexOf(c) === -1) return false
     })
-    return true 
+    return true
   }
 
   logout() {

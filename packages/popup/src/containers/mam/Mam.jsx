@@ -35,7 +35,8 @@ class Mam extends Component {
       {
         image: './material/img/channel-list.svg',
         title: 'Show Channels List',
-        text: 'Before you can export the seed you will need to enter the login password'
+        text:
+          'Before you can export the seed you will need to enter the login password'
       },
       {
         image: './material/img/telescope.svg',
@@ -45,65 +46,64 @@ class Mam extends Component {
     ]
     return (
       <div className="container overflow-auto-475h">
-        {
-          !this.state.show.includes(true)
-            ? <React.Fragment>
-              {
-                items.map((item, index) => {
-                  return (
-                    <React.Fragment>
-                      <div className="row cursor-pointer"
-                        onClick={() => {
-                          if (!this.state.showRegisterChannel)
-                            this.props.onChangeCanGoBack(null)
-                          this.setState(() => {
-                            const show = [false, false, false]
-                            show[index] = true
-                            return {
-                              show
-                            }
-                          })
-                        }}>
-                        <div className="col-12">
-                          <div className="row mt-3">
-                            <div className="col-3">
-                              <img src={item.image} height="50" width="50" alt="documentary logo" />
-                            </div>
-                            <div className="col-9 text-blue text-left text-md font-weight-bold my-auto">
-                              {item.title}
-                            </div>
-                          </div>
-                          <div className="row mt-3 justify-content-center">
-                            <div className="col-10 text-center text-xs text-gray">
-                              {item.text}
-                            </div>
-                          </div>
+        {!this.state.show.includes(true) ? (
+          <React.Fragment>
+            {items.map((item, index) => {
+              return (
+                <React.Fragment>
+                  <div
+                    className="row cursor-pointer"
+                    onClick={() => {
+                      if (!this.state.showRegisterChannel)
+                        this.props.onChangeCanGoBack(null)
+                      this.setState(() => {
+                        const show = [false, false, false]
+                        show[index] = true
+                        return {
+                          show
+                        }
+                      })
+                    }}
+                  >
+                    <div className="col-12">
+                      <div className="row mt-3">
+                        <div className="col-3">
+                          <img
+                            src={item.image}
+                            height="50"
+                            width="50"
+                            alt="documentary logo"
+                          />
+                        </div>
+                        <div className="col-9 text-blue text-left text-md font-weight-bold my-auto">
+                          {item.title}
                         </div>
                       </div>
-                      <hr className="mt-2" />
-                    </React.Fragment>
-                  )
-                })
-              }
-            </React.Fragment>
-            : null
-        }
-        {
-          this.state.show[0]
-            ? <RegisterMamChannel onBack={() => this.props.onBack()} />
-            : null
-        }
-        {
-          this.state.show[1]
-            ? <ShowChannelsList onBack={() => this.props.onBack()} />
-            : null
-        }
-        {
-          this.state.show[2]
-            ? <MamExplorer duplex={this.props.duplex}
-              onBack={() => this.props.onBack()} />
-            : null
-        }
+                      <div className="row mt-3 justify-content-center">
+                        <div className="col-10 text-center text-xs text-gray">
+                          {item.text}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <hr className="mt-2" />
+                </React.Fragment>
+              )
+            })}
+          </React.Fragment>
+        ) : null}
+        {this.state.show[0] ? (
+          <RegisterMamChannel onBack={() => this.props.onBack()} />
+        ) : null}
+        {this.state.show[1] ? (
+          <ShowChannelsList onBack={() => this.props.onBack()} />
+        ) : null}
+        {this.state.show[2] ? (
+          <MamExplorer
+            duplex={this.props.duplex}
+            onBack={() => this.props.onBack()}
+          />
+        ) : null}
       </div>
     )
   }

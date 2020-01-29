@@ -1,4 +1,3 @@
-
 const options = {
   networks: [
     {
@@ -25,7 +24,6 @@ const options = {
       difficulty: 14,
       default: true
     }
-
   ]
 }
 

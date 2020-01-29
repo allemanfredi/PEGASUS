@@ -6,12 +6,12 @@ const injection = {
   eventChannel: new EventChannel('content-script'),
   duplex: new Duplex.Tab(),
 
-  init () {
+  init() {
     this.registerListeners()
     this.inject()
   },
 
-  registerListeners () {
+  registerListeners() {
     this.eventChannel.on('tunnel', async data => {
       try {
         this.eventChannel.send(
@@ -28,19 +28,16 @@ const injection = {
     })
   },
 
-  inject () {
+  inject() {
     const injectionSite = document.head || document.documentElement
     const container = document.createElement('script')
 
     container.src = extensionizer.extension.getURL('dist/hook.js')
-    container.onload = function () {
+    container.onload = function() {
       this.parentNode.removeChild(this)
     }
 
-    injectionSite.insertBefore(
-      container,
-      injectionSite.children[0]
-    )
+    injectionSite.insertBefore(container, injectionSite.children[0])
   }
 }
 

@@ -3,9 +3,7 @@ import { backgroundMessanger } from '@pegasus/utils/messangers'
 import { APP_STATE } from '@pegasus/utils/states'
 
 class AccountDataController {
-
-  constructor (options) {
-
+  constructor(options) {
     const {
       networkController,
       walletController,
@@ -17,7 +15,7 @@ class AccountDataController {
     this.notificationsController = notificationsController
   }
 
-  async retrieveAccountData (seed, network, currentAccount) {
+  async retrieveAccountData(seed, network, currentAccount) {
     IOTA.setProvider(network.provider)
     const data = await IOTA.getAccountData(seed)
     const transactions = this.mapTransactions(data, network)
@@ -26,30 +24,29 @@ class AccountDataController {
   }
 
   mapBalance(data, network, currentAccount) {
-    data.balance = network.type === 'mainnet'
-      ? {
-          mainnet: data.balance,
-          testnet: currentAccount.data.balance.testnet,
-        }
-      : {
-          mainnet: currentAccount.data.balance.testnet,
-          testnet: data.balance
-        }
+    data.balance =
+      network.type === 'mainnet'
+        ? {
+            mainnet: data.balance,
+            testnet: currentAccount.data.balance.testnet
+          }
+        : {
+            mainnet: currentAccount.data.balance.testnet,
+            testnet: data.balance
+          }
     return data
   }
 
-
-  mapTransactions (data, network) {
+  mapTransactions(data, network) {
     let transactions = []
     data.transfers.forEach(transfer => {
-      if (transfer.length === 0)
-        return
+      if (transfer.length === 0) return
 
       let value = 0
       let values = []
 
       for (let t of transfer) {
-        if (data.addresses.includes(t.address)){
+        if (data.addresses.includes(t.address)) {
           value = value + t.value
           values.push(t.value)
         }
@@ -58,7 +55,7 @@ class AccountDataController {
       if (value < 0) {
         value = 0
         values = values.map(value => -value)
-        values.forEach(v => value = value + v)
+        values.forEach(v => (value = value + v))
         value = -1 * value
       }
 
@@ -71,7 +68,6 @@ class AccountDataController {
         network
       }
 
-      
       transactions.push(transaction)
       transactions = this.removeInvalidTransactions(transactions)
     })
@@ -86,7 +82,6 @@ class AccountDataController {
     let isInvalid = false
 
     for (let txnv of notValidated) {
-
       isInvalid = false
 
       for (let txv of validated) {
@@ -107,10 +102,7 @@ class AccountDataController {
   updateAccountTransactionsPersistence(account, transactions) {
     for (let tx of transactions) {
       for (let tx2 of account.transactions) {
-        if (
-          tx.bundle === tx2.bundle &&
-          tx.status !== tx2.status
-        ) {
+        if (tx.bundle === tx2.bundle && tx.status !== tx2.status) {
           tx2.status = tx.status
         }
       }
@@ -134,11 +126,11 @@ class AccountDataController {
     return transactionsJustConfirmed
   }
 
-  getNewTransactionsFromAll (account, transactions) {
+  getNewTransactionsFromAll(account, transactions) {
     const newTxs = []
     for (let txToCheck of transactions) {
       let isNew = true
-      for (let tx of account.transactions ) {
+      for (let tx of account.transactions) {
         if (tx.bundle === txToCheck.bundle) {
           isNew = false
         }
@@ -150,8 +142,7 @@ class AccountDataController {
     return newTxs
   }
 
-  async loadAccountData () {
-
+  async loadAccountData() {
     const state = this.walletController.getState()
     if (state < APP_STATE.WALLET_UNLOCKED) {
       return
@@ -160,10 +151,17 @@ class AccountDataController {
     const seed = this.walletController.getCurrentSeed()
     const network = this.networkController.getCurrentNetwork()
     let account = this.walletController.getCurrentAccount()
-    const { transactions, newData } = await this.retrieveAccountData(seed, network, account)
+    const { transactions, newData } = await this.retrieveAccountData(
+      seed,
+      network,
+      account
+    )
 
     //show notification
-    const transactionsJustConfirmed = this.getTransactionsJustConfirmed(account, transactions)
+    const transactionsJustConfirmed = this.getTransactionsJustConfirmed(
+      account,
+      transactions
+    )
     transactionsJustConfirmed.forEach(transaction => {
       this.notificationsController.showNotification(
         'Transaction Confirmed',
@@ -171,11 +169,14 @@ class AccountDataController {
         network.link + 'bundle/' + transaction.bundle
       )
     })
-    
-    account = this.updateAccountTransactionsPersistence(account, transactions)
-    const newTransactions = this.getNewTransactionsFromAll(account, transactions)
 
-    const totalTransactions =  [...newTransactions, ...account.transactions]
+    account = this.updateAccountTransactionsPersistence(account, transactions)
+    const newTransactions = this.getNewTransactionsFromAll(
+      account,
+      transactions
+    )
+
+    const totalTransactions = [...newTransactions, ...account.transactions]
 
     const updatedData = Object.assign({}, newData, {
       transactions: totalTransactions
@@ -183,7 +184,10 @@ class AccountDataController {
 
     this.walletController.updateTransactionsAccount(totalTransactions)
 
-    const updatedAccount = this.walletController.updateDataAccount(updatedData, network)
+    const updatedAccount = this.walletController.updateDataAccount(
+      updatedData,
+      network
+    )
     backgroundMessanger.setAccount(updatedAccount)
   }
 }

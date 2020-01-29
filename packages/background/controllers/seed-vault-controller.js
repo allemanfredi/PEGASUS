@@ -4,25 +4,20 @@ import Utils from '@pegasus/utils/utils'
 import * as FileSaver from 'file-saver'
 
 class SeedVaultController {
-
-  constructor (configs) {
-    
-    const {
-      walletController
-    } = configs
+  constructor(configs) {
+    const { walletController } = configs
 
     this.walletController = walletController
   }
 
-  async createSeedVault (password) {
-
+  async createSeedVault(password) {
     const key = this.walletController.getKey()
     const account = this.walletController.getCurrentAccount()
     const seed = Utils.aes256decrypt(account.seed, key)
 
     kdbxweb.CryptoEngine.argon2 = async (
       password,
-      salt, 
+      salt,
       memory,
       iterations,
       length,
@@ -30,16 +25,16 @@ class SeedVaultController {
       type,
       version
     ) => {
-        const hash = await argon2.hash({
-            pass: new Uint8Array(password),
-            salt: new Uint8Array(salt),
-            mem: memory,
-            time: iterations,
-            hashLen: length,
-            parallelism
-        })
+      const hash = await argon2.hash({
+        pass: new Uint8Array(password),
+        salt: new Uint8Array(salt),
+        mem: memory,
+        time: iterations,
+        hashLen: length,
+        parallelism
+      })
 
-        return hash.hash
+      return hash.hash
     }
 
     const credentials = new kdbxweb.Credentials(

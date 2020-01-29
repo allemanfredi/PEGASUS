@@ -1,18 +1,14 @@
 class ConnectorController {
-
   constructor(options) {
+    const { storageController } = options
 
-    const {
-      storageController
-    } = options
-    
     this.storageController = storageController
-    this.connectionToStore = null      //local storage connection data
-    this.connectionRequest = null      //callback for user response
+    this.connectionToStore = null //local storage connection data
+    this.connectionRequest = null //callback for user response
     this.website = null
   }
 
-  setWalletController (walletController) {
+  setWalletController(walletController) {
     this.walletController = walletController
   }
 
@@ -23,8 +19,8 @@ class ConnectorController {
 
     //not check on accountId because the wallet is still locked and it is not possible to retrieve the current account
     if (
-      this.connectionToStore && 
-      this.connectionToStore.website.origin === origin 
+      this.connectionToStore &&
+      this.connectionToStore.website.origin === origin
     ) {
       const connection = this.connectionToStore
       this.pushConnection(connection)
@@ -32,8 +28,8 @@ class ConnectorController {
       return connection
     }
     const connections = this.storageController.getConnections()
-    const connection = connections.find(conn => 
-      conn.website.origin === origin && conn.accountId === accountId
+    const connection = connections.find(
+      conn => conn.website.origin === origin && conn.accountId === accountId
     )
 
     return connection
@@ -41,9 +37,10 @@ class ConnectorController {
 
   pushConnection(connection) {
     const connections = this.storageController.getConnections()
-    const existingConnection = connections.find(conn =>
-       conn.website.origin === connection.website.origin && 
-       conn.accountId === connection.accountId
+    const existingConnection = connections.find(
+      conn =>
+        conn.website.origin === connection.website.origin &&
+        conn.accountId === connection.accountId
     )
 
     if (existingConnection) {
@@ -51,7 +48,7 @@ class ConnectorController {
     } else {
       connections.push(connection)
       this.storageController.setConnections(connections)
-    }    
+    }
   }
 
   updateConnection(connection) {
@@ -73,22 +70,21 @@ class ConnectorController {
   updateConnectionsAccountId(currentAccountId, newAccountId) {
     const connections = this.storageController.getConnections()
     const updatedConnections = connections.map(connection => {
-      if (connection.accountId === currentAccountId ){
+      if (connection.accountId === currentAccountId) {
         connection.accountId = newAccountId
       }
-      
+
       return connection
     })
     this.storageController.setConnections(updatedConnections, true)
   }
 
-  connect(uuid, resolve, website)  {
-
+  connect(uuid, resolve, website) {
     const account = this.walletController.getCurrentAccount()
 
     const connection = {
       website,
-      requestToConnect : true,
+      requestToConnect: true,
       connected: false,
       enabled: false,
       accountId: account ? account.id : null
@@ -106,8 +102,7 @@ class ConnectorController {
     const isStorageControllerReady = this.storageController.isReady()
     if (!isStorageControllerReady) {
       this.setConnectionToStore(connection)
-    }
-    else {
+    } else {
       this.pushConnection(connection)
     }
   }
@@ -131,7 +126,8 @@ class ConnectorController {
     requests.forEach(request => {
       if (
         request.connection.website.origin === website.origin &&
-        (request.connection.accountId === account.id || !request.connection.accountId)
+        (request.connection.accountId === account.id ||
+          !request.connection.accountId)
       ) {
         request.connection.accountId = account.id
         request.connection.requestToConnect = false

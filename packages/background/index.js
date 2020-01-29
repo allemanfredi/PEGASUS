@@ -5,18 +5,14 @@ import Utils from '@pegasus/utils/utils'
 const duplex = new Duplex.Host()
 
 const backgroundScript = {
+  engine: Utils.requestHandler(new PegasusEngine()),
 
-  engine: Utils.requestHandler(
-    new PegasusEngine()
-  ),
-
-  run () {
-
+  run() {
     this.bindPopupDuplex()
     this.bindTabDuplex()
   },
 
-  bindPopupDuplex () {
+  bindPopupDuplex() {
     // Wallet Service
     duplex.on('isWalletSetup', this.engine.isWalletSetup)
     duplex.on('setupWallet', this.engine.setupWallet)
@@ -36,7 +32,10 @@ const backgroundScript = {
     duplex.on('deleteCurrentNetwork', this.engine.deleteCurrentNetwork)
 
     duplex.on('addAccount', this.engine.addAccount)
-    duplex.on('isAccountNameAlreadyExists', this.engine.isAccountNameAlreadyExists)
+    duplex.on(
+      'isAccountNameAlreadyExists',
+      this.engine.isAccountNameAlreadyExists
+    )
     duplex.on('getCurrentAccount', this.engine.getCurrentAccount)
     duplex.on('getAllAccounts', this.engine.getAllAccounts)
     duplex.on('setCurrentAccount', this.engine.setCurrentAccount)
@@ -58,7 +57,10 @@ const backgroundScript = {
 
     duplex.on('getRequests', this.engine.getRequests)
     duplex.on('rejectRequests', this.engine.rejectRequests)
-    duplex.on('getRequestsWithUserInteraction', this.engine.getRequestsWithUserInteraction)
+    duplex.on(
+      'getRequestsWithUserInteraction',
+      this.engine.getRequestsWithUserInteraction
+    )
     duplex.on('confirmRequest', this.engine.confirmRequest)
     duplex.on('rejectRequest', this.engine.rejectRequest)
     duplex.on('executeRequestFromPopup', this.engine.executeRequestFromPopup)
@@ -88,73 +90,129 @@ const backgroundScript = {
     duplex.on('logout', this.engine.logout)
   },
 
-  bindTabDuplex () {
-    duplex.on('tabRequest', async ({ resolve, data: { action, data, uuid, website } }) => {
-      switch (action) {
-        case 'init': {    
-          const currentNetwork = this.engine.getCurrentNetwork()
-          this.engine.setWebsite(website)
-          const response = {
-            selectedProvider: currentNetwork
-          }
+  bindTabDuplex() {
+    duplex.on(
+      'tabRequest',
+      async ({ resolve, data: { action, data, uuid, website } }) => {
+        switch (action) {
+          case 'init': {
+            const currentNetwork = this.engine.getCurrentNetwork()
+            this.engine.setWebsite(website)
+            const response = {
+              selectedProvider: currentNetwork
+            }
 
-          resolve({
-            success: true,
-            data: response,
-            uuid
-          })
-          break
-        }
-        case 'connect' : {
-          this.engine.connect(uuid, resolve, website)
-          break
-        }
-        case 'getCurrentAccount': {
-          this.engine.pushRequest('getCurrentAccount', { uuid, resolve, website })
-          break
-        }
-        case 'getCurrentProvider': {
-          this.engine.pushRequest('getCurrentProvider', { uuid, resolve, website })
-          break
-        }
-        case 'prepareTransfers': {
-          this.engine.pushRequest('prepareTransfers', { data, uuid, resolve, website })
-          break
-        }
-        case 'mam_init' : {
-          this.engine.pushRequest('mam_init', { uuid, resolve, data, website })
-          break
-        }
-        case 'mam_changeMode' : {
-          this.engine.pushRequest('mam_changeMode', { uuid, resolve, data, website })
-          break
-        }
-        case 'mam_getRoot' : {
-          this.engine.pushRequest('mam_getRoot', { uuid, resolve, data, website })
-          break
-        }
-        case 'mam_create' : {
-          this.engine.pushRequest('mam_create', { uuid, resolve, data, website })
-          break
-        }
-        case 'mam_decode' : {
-          this.engine.pushRequest('mam_decode', { uuid, resolve, data, website })
-          break
-        }
-        case 'mam_attach' : {
-          this.engine.pushRequest('mam_attach', { uuid, resolve, data, website })
-          break
-        }
-        case 'mam_fetch' : {
-          this.engine.pushRequest('mam_fetch', { uuid, resolve, data, website })
-          break
-        }
-        case 'mam_fetchSingle' : {
-          this.engine.pushRequest('mam_fetchSingle', { uuid, resolve, data, website })
-          break
+            resolve({
+              success: true,
+              data: response,
+              uuid
+            })
+            break
+          }
+          case 'connect': {
+            this.engine.connect(uuid, resolve, website)
+            break
+          }
+          case 'getCurrentAccount': {
+            this.engine.pushRequest('getCurrentAccount', {
+              uuid,
+              resolve,
+              website
+            })
+            break
+          }
+          case 'getCurrentProvider': {
+            this.engine.pushRequest('getCurrentProvider', {
+              uuid,
+              resolve,
+              website
+            })
+            break
+          }
+          case 'prepareTransfers': {
+            this.engine.pushRequest('prepareTransfers', {
+              data,
+              uuid,
+              resolve,
+              website
+            })
+            break
+          }
+          case 'mam_init': {
+            this.engine.pushRequest('mam_init', {
+              uuid,
+              resolve,
+              data,
+              website
+            })
+            break
+          }
+          case 'mam_changeMode': {
+            this.engine.pushRequest('mam_changeMode', {
+              uuid,
+              resolve,
+              data,
+              website
+            })
+            break
+          }
+          case 'mam_getRoot': {
+            this.engine.pushRequest('mam_getRoot', {
+              uuid,
+              resolve,
+              data,
+              website
+            })
+            break
+          }
+          case 'mam_create': {
+            this.engine.pushRequest('mam_create', {
+              uuid,
+              resolve,
+              data,
+              website
+            })
+            break
+          }
+          case 'mam_decode': {
+            this.engine.pushRequest('mam_decode', {
+              uuid,
+              resolve,
+              data,
+              website
+            })
+            break
+          }
+          case 'mam_attach': {
+            this.engine.pushRequest('mam_attach', {
+              uuid,
+              resolve,
+              data,
+              website
+            })
+            break
+          }
+          case 'mam_fetch': {
+            this.engine.pushRequest('mam_fetch', {
+              uuid,
+              resolve,
+              data,
+              website
+            })
+            break
+          }
+          case 'mam_fetchSingle': {
+            this.engine.pushRequest('mam_fetchSingle', {
+              uuid,
+              resolve,
+              data,
+              website
+            })
+            break
+          }
         }
       }
-    })
+    )
   }
 }
 

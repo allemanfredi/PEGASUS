@@ -2,7 +2,6 @@ import crypto from 'crypto'
 import { addChecksum, isValidChecksum } from '@iota/checksum'
 
 const Utils = {
-
   requestHandler(target) {
     return new Proxy(target, {
       get(target, prop) {
@@ -13,14 +12,12 @@ const Utils = {
           return Reflect.get(target, prop)
 
         return (...args) => {
+          if (!args.length) args[0] = {}
 
-          if (!args.length)
-            args[0] = {}
-          
           const [firstArg] = args
 
           const {
-            resolve = () => { },
+            resolve = () => {},
             reject = ex => console.error(ex),
             data
           } = firstArg
@@ -49,17 +46,19 @@ const Utils = {
   },
 
   sha256(text) {
-    return crypto.createHash('sha256').update(text).digest('hex')
+    return crypto
+      .createHash('sha256')
+      .update(text)
+      .digest('hex')
   },
 
   randomBytes(size, max) {
-    if (size !== parseInt(size, 10) || size < 0)
-      return false
+    if (size !== parseInt(size, 10) || size < 0) return false
 
     const bytes = crypto.randomBytes(size)
 
     for (let i = 0; i < bytes.length; i++) {
-      while (bytes[i] >= 256 - 256 % max)
+      while (bytes[i] >= 256 - (256 % max))
         bytes[i] = this.randomBytes(1, max)[0]
     }
 
@@ -90,7 +89,9 @@ const Utils = {
     const hours = date.getHours()
     const minutes = `0${date.getMinutes()}`
     const seconds = `0${date.getSeconds()}`
-    return `${hours}:${minutes.substr(-2)}:${seconds.substr(-2)} - ${tomonth}/${todate}/${toyear}`
+    return `${hours}:${minutes.substr(-2)}:${seconds.substr(
+      -2
+    )} - ${tomonth}/${todate}/${toyear}`
   },
 
   aes256encrypt(text, key) {
@@ -132,20 +133,44 @@ const Utils = {
   },
 
   isValidAddress(address) {
-    const values = ['9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
-    if (address.length !== 81 && address.length != 90)
-      return false;
-    [...address].forEach(c => {
-      if (values.indexOf(c) === -1)
-        return false
+    const values = [
+      '9',
+      'A',
+      'B',
+      'C',
+      'D',
+      'E',
+      'F',
+      'G',
+      'H',
+      'I',
+      'J',
+      'K',
+      'L',
+      'M',
+      'N',
+      'O',
+      'P',
+      'Q',
+      'R',
+      'S',
+      'T',
+      'U',
+      'V',
+      'W',
+      'X',
+      'Y',
+      'Z'
+    ]
+    if (address.length !== 81 && address.length != 90) return false
+    ;[...address].forEach(c => {
+      if (values.indexOf(c) === -1) return false
     })
     return true
   },
 
   sleep(ms) {
-    return new Promise(resolve =>
-      setTimeout(resolve, ms)
-    )
+    return new Promise(resolve => setTimeout(resolve, ms))
   },
 
   checksummed(address) {
@@ -157,32 +182,38 @@ const Utils = {
   },
 
   showAddress(address, limitStart, limitEnd) {
-    return `${address.slice(0, limitStart)}...${address.slice(address.length - limitEnd, address.length)}`
+    return `${address.slice(0, limitStart)}...${address.slice(
+      address.length - limitEnd,
+      address.length
+    )}`
   },
 
-  copyObject (obj) {
+  copyObject(obj) {
     return JSON.parse(JSON.stringify(obj))
   },
 
-  isEmptyObject (obj) {
+  isEmptyObject(obj) {
     return Object.entries(obj).length === 0 && obj.constructor === Object
   },
 
-  isObject (obj) {
+  isObject(obj) {
     return typeof obj === 'object'
   },
 
-  isError (error) {
+  isError(error) {
     return error && error.stack && error.message
   },
 
   isURL(str) {
-    const pattern = new RegExp('^(https?:\\/\\/)?'+ 
-    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|'+
-    '((\\d{1,3}\\.){3}\\d{1,3}))'+
-    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+
-    '(\\?[;&a-z\\d%_.~+=-]*)?'+
-    '(\\#[-a-z\\d_]*)?$','i')
+    const pattern = new RegExp(
+      '^(https?:\\/\\/)?' +
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|' +
+        '((\\d{1,3}\\.){3}\\d{1,3}))' +
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' +
+        '(\\?[;&a-z\\d%_.~+=-]*)?' +
+        '(\\#[-a-z\\d_]*)?$',
+      'i'
+    )
     return pattern.test(str)
   }
 }

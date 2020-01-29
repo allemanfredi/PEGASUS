@@ -1,19 +1,14 @@
 import { backgroundMessanger } from '@pegasus/utils/messangers'
 
 class NetworkController {
-
-  constructor (options) {
-
-    const {
-      storageController,
-      customizatorController
-    } = options
+  constructor(options) {
+    const { storageController, customizatorController } = options
 
     this.storageController = storageController
     this.customizatorController = customizatorController
   }
 
-  setCurrentNetwork (network) {
+  setCurrentNetwork(network) {
     try {
       const options = this.storageController.getOptions()
       options.selectedNetwork = network
@@ -29,7 +24,7 @@ class NetworkController {
     }
   }
 
-  getCurrentNetwork () {
+  getCurrentNetwork() {
     try {
       const options = this.storageController.getOptions()
       if (!options || !options.selectedNetwork) {
@@ -42,7 +37,7 @@ class NetworkController {
     }
   }
 
-  getAllNetworks () {
+  getAllNetworks() {
     try {
       const options = this.storageController.getOptions()
       if (!options) {
@@ -55,12 +50,11 @@ class NetworkController {
     }
   }
 
-  addNetwork (network) {
+  addNetwork(network) {
     // TODO check that the name does not exists
     try {
       const options = this.storageController.getOptions()
-      if (!options.networks)
-        options.networks = []
+      if (!options.networks) options.networks = []
 
       options.networks.push(network)
       this.storageController.setOptions(options)
@@ -71,12 +65,14 @@ class NetworkController {
     }
   }
 
-  deleteCurrentNetwork () {
+  deleteCurrentNetwork() {
     try {
       const options = this.storageController.getOptions()
       const currentNetwork = options.selectedNetwork
 
-      const networks = options.networks.filter(network => currentNetwork.name !== network.name)
+      const networks = options.networks.filter(
+        network => currentNetwork.name !== network.name
+      )
       options.networks = networks
 
       // set the first network with the same type (mainnet/testnet)
@@ -94,7 +90,6 @@ class NetworkController {
       throw new Error(err)
     }
   }
-
 }
 
 export default NetworkController

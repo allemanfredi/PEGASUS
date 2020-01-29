@@ -4,9 +4,7 @@ import { composeAPI } from '@iota/core'
 import { asciiToTrytes } from '@iota/converter'
 
 class TransferController {
-
-  constructor (options) {
-
+  constructor(options) {
     const {
       connectorController,
       walletController,
@@ -20,20 +18,20 @@ class TransferController {
     this.networkController = networkController
   }
 
-  confirmTransfers (transfers) {
+  confirmTransfers(transfers) {
     return new Promise(resolve => {
       backgroundMessanger.setTransfersConfirmationLoading(true)
-  
+
       const network = this.networkController.getCurrentNetwork()
       const iota = composeAPI({ provider: network.provider })
-  
+
       const key = this.walletController.getKey()
       const account = this.walletController.getCurrentAccount()
       const seed = Utils.aes256decrypt(account.seed, key)
-  
+
       const depth = 3
       const minWeightMagnitude = network.difficulty
-  
+
       // convert message and tag from char to trits
       const transfersCopy = Utils.copyObject(transfers)
 
@@ -42,14 +40,14 @@ class TransferController {
         t.tag = asciiToTrytes(JSON.stringify(t.tag))
         t.message = asciiToTrytes(JSON.stringify(t.message))
       })
-  
+
       try {
-        iota.prepareTransfers(seed, transfersCopy)
+        iota
+          .prepareTransfers(seed, transfersCopy)
           .then(trytes => {
             return iota.sendTrytes(trytes, depth, minWeightMagnitude)
           })
           .then(bundle => {
-    
             backgroundMessanger.setTransfersConfirmationLoading(false)
             resolve({
               success: true,

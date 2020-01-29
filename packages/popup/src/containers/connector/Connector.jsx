@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { popupMessanger } from '@pegasus/utils/messangers'
 
 class Connector extends Component {
-
   constructor(props, context) {
     super(props, context)
 
@@ -16,41 +15,60 @@ class Connector extends Component {
     const website = await popupMessanger.getWebsite()
     this.setState({
       favicon: website.favicon,
-      hostname: website.hostname,
+      hostname: website.hostname
     })
-
   }
 
   render() {
     return (
       <div className="container">
         <div className="row mt-3">
-          <div className='col-2'>
-            <img className="border-radius-50" src="./material/logo/pegasus-64.png" height="50" width="50" alt="pegasus logo"/>
+          <div className="col-2">
+            <img
+              className="border-radius-50"
+              src="./material/logo/pegasus-64.png"
+              height="50"
+              width="50"
+              alt="pegasus logo"
+            />
           </div>
-          <div className="col-10 text-right text-blue text-md my-auto">Confirm Connection</div>
+          <div className="col-10 text-right text-blue text-md my-auto">
+            Confirm Connection
+          </div>
         </div>
         <hr className="mt-2 mb-2" />
         <div className="row">
           <div className="col-4 text-center">
-            <img className="border-radius-50"
-              src={this.state.favicon ? this.state.favicon : './material/img/domain.png'} 
-              height='64'
-              width='64'
-              alt='website logo'/>
-          </div>
-          <div className="col-4 text-center my-auto">
-            <img src="./material/img/broken-link.png"
-              height="30" 
-              width="30"
-              alt="broken-link logo"/>
-          </div>
-          <div className="col-4 text-center">
-            <img className="border-radius-50"
-              src={`./material/profiles/${this.props.account.avatar ? this.props.account.avatar : 1}.svg`}
+            <img
+              className="border-radius-50"
+              src={
+                this.state.favicon
+                  ? this.state.favicon
+                  : './material/img/domain.png'
+              }
               height="64"
               width="64"
-              alt="avatar"/>
+              alt="website logo"
+            />
+          </div>
+          <div className="col-4 text-center my-auto">
+            <img
+              src="./material/img/broken-link.png"
+              height="30"
+              width="30"
+              alt="broken-link logo"
+            />
+          </div>
+          <div className="col-4 text-center">
+            <img
+              className="border-radius-50"
+              src={`./material/profiles/${
+                this.props.account.avatar ? this.props.account.avatar : 1
+              }.svg`}
+              height="64"
+              width="64"
+              alt="avatar"
+            />
           </div>
         </div>
         <div className="row mt-05">
@@ -71,20 +89,25 @@ class Connector extends Component {
         </div>
         <div className="row mt-1">
           <div className="col-12 text-center text-xs text-gray">
-            allowing, the website will be able to safely interact with the Wallet thanks to the Pegasus Connector!
+            allowing, the website will be able to safely interact with the
+            Wallet thanks to the Pegasus Connector!
           </div>
         </div>
         <div className="row mt-12">
           <div className="col-6 pl-5 pr-5">
-            <button onClick={() => this.props.onPermissionNotGranted()} 
-              className="btn btn-border-blue text-sm text-bold btn-big">
-                Reject
+            <button
+              onClick={() => this.props.onPermissionNotGranted()}
+              className="btn btn-border-blue text-sm text-bold btn-big"
+            >
+              Reject
             </button>
           </div>
           <div className="col-6 pl-5 pr-5">
-            <button onClick={() => this.props.onPermissionGranted()} 
-              className="btn btn-blue text-sm text-bold btn-big">
-                Confirm
+            <button
+              onClick={() => this.props.onPermissionGranted()}
+              className="btn btn-blue text-sm text-bold btn-big"
+            >
+              Confirm
             </button>
           </div>
         </div>
