@@ -1,13 +1,14 @@
 import randomUUID from 'uuid/v4'
 
-const connector = {
-  init(eventChannel) {
+class PegasusConnector {
+  constructor(eventChannel) {
     this.eventChannel = eventChannel
     this.calls = {}
 
     this.bindListener()
-    return this.handler.bind(this)
-  },
+
+    this.send = this.send.bind(this)
+  }
 
   bindListener() {
     this.eventChannel.on('tabReply', ({ success, data, uuid }) => {
@@ -16,9 +17,9 @@ const connector = {
 
       delete this.calls[uuid]
     })
-  },
+  }
 
-  handler(action, data = {}) {
+  send(action, data = {}) {
     const uuid = randomUUID()
     const origin = this.getOrigin()
     const favicon = this.getFavicon()
@@ -42,15 +43,15 @@ const connector = {
         reject
       }
     })
-  },
+  }
 
   getOrigin() {
     return location.origin
-  },
+  }
 
   getHostName() {
     return window.location.hostname
-  },
+  }
 
   getFavicon() {
     let favicon = null
@@ -67,4 +68,4 @@ const connector = {
   }
 }
 
-export default connector
+export default PegasusConnector

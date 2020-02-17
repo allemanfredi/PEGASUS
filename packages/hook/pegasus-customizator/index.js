@@ -11,14 +11,16 @@ import Mam from '@iota/mam/lib/mam.web.min.js'
 import Utils from '@pegasus/utils/utils'
 import randomUUID from 'uuid/v4'
 
-export default {
-  init(requestHandler, eventChannel) {
-    this.request = requestHandler
+class PegasusCustomizator {
+  constructor(configs) {
+    const { pegasusConnector, eventChannel } = configs
+
+    this.pegasusConnector = pegasusConnector
     this.eventChannel = eventChannel
     this._handleEvents()
 
     this.callbacks = {}
-  },
+  }
 
   getCustomIota(provider) {
     const core = composeAPI({ provider })
@@ -29,7 +31,9 @@ export default {
     const mam = {}
     Object.keys(Mam).forEach(method => {
       mam[method] = (...args) =>
-        Utils.injectPromise(this.request, 'mam_' + method, { args })
+        Utils.injectPromise(this.pegasusConnector.send, 'mam_' + method, {
+          args
+        })
     })
 
     mam.fetch = (...args) => {
@@ -51,7 +55,9 @@ export default {
         args.push(limit)
       }
 
-      return Utils.injectPromise(this.request, 'mam_fetch', { args })
+      return Utils.injectPromise(this.pegasusConnector.send, 'mam_fetch', {
+        args
+      })
     }
 
     const iota = {
@@ -82,7 +88,7 @@ export default {
     delete iota.core.getNewAddress
 
     return iota
-  },
+  }
 
   //TODO find a new way to handle mam fetch responses from background because
   //in this way the message is sent to all tab and not only to which has made the request
@@ -92,19 +98,24 @@ export default {
 
       if (this.callbacks[uuid]) this.callbacks[uuid](data)
     })
-  },
+  }
 
   _handleInjectedRequest(args, method, prefix = '') {
     const cb = args[args.length - 1] ? args[args.length - 1] : null
 
     if (!Utils.isFunction(cb)) {
-      return Utils.injectPromise(this.request, prefix + method, { args })
+      return Utils.injectPromise(this.pegasusConnector.send, prefix + method, {
+        args
+      })
     } else {
       args = args ? args.slice(0, args.length - 1) : null
 
-      this.request(prefix + method, { args })
+      this.pegasusConnector
+        .send(prefix + method, { args })
         .then(res => cb(res, null))
         .catch(err => cb(null, err))
     }
   }
 }
+
+export default PegasusCustomizator

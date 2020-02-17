@@ -1,36 +1,23 @@
-import connector from './connector'
+import PegasusConnector from './pegasus-connector'
 import EventChannel from '@pegasus/utils/event-channel'
-import customizator from './customizator'
+import PegasusCustomizator from './pegasus-customizator'
 
-const hook = {
-  init() {
-    this._bindEventChannel()
-    this._bindEvents()
+const start = async () => {
+  const eventChannel = new EventChannel('pageHook')
+  const pegasusConnector = new PegasusConnector(eventChannel)
+  const pegasusCustomizator = new PegasusCustomizator({
+    pegasusConnector,
+    eventChannel
+  })
 
-    this.connection('init')
-      .then(({ selectedProvider }) => {
-        customizator.init(this.connection, this.eventChannel)
-        this.injectIotaJs(selectedProvider)
+  eventChannel.on(
+    'setProvider',
+    provider => (window.iota = pegasusCustomizator.getCustomIota(provider))
+  )
 
-        console.log('Pegasus injected iotajs succesfully')
-      })
-      .catch(err => {
-        console.log('Failed to initialise Pegasus', err)
-      })
-  },
-
-  _bindEventChannel() {
-    this.eventChannel = new EventChannel('pageHook')
-    this.connection = connector.init(this.eventChannel)
-  },
-
-  _bindEvents() {
-    this.eventChannel.on('setProvider', provider => this.injectIotaJs(provider))
-  },
-
-  injectIotaJs(provider) {
-    window.iota = customizator.getCustomIota(provider)
-  }
+  const { selectedProvider } = await pegasusConnector.send('init')
+  window.iota = pegasusCustomizator.getCustomIota(selectedProvider)
+  console.log('Pegasus injected iotajs succesfully')
 }
 
-hook.init()
+start()
