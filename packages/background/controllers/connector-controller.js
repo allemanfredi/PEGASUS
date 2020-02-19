@@ -113,9 +113,7 @@ class ConnectorController {
     const account = this.walletController.getCurrentAccount()
     if (connectionRequest) {
       connectionRequest.resolve({
-        data: {
-          connected: true
-        },
+        data: true,
         success: true,
         uuid: connectionRequest.uuid
       })
@@ -148,9 +146,7 @@ class ConnectorController {
 
     if (connectionRequest) {
       connectionRequest.resolve({
-        data: {
-          connected: false
-        },
+        data: false,
         success: true,
         uuid: connectionRequest.uuid
       })
