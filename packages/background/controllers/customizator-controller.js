@@ -140,8 +140,6 @@ class CustomizatorController {
         })
       }
     }
-
-    console.log(this.requests)
   }
 
   async executeRequestFromPopup(request) {
