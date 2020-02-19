@@ -108,24 +108,24 @@ class CustomizatorController {
         this.popupController.openPopup()
       }
 
-      this.requests.push({
+      this.requests = [{
         connection: mockConnection,
         method,
         uuid,
         resolve,
         data,
         needUserInteraction: requestsWithUserInteraction.includes(method)
-      })
+      }, ...this.requests]
     } else if (connection.enabled && state >= APP_STATE.WALLET_UNLOCKED) {
       if (requestsWithUserInteraction.includes(method)) {
-        this.requests.push({
+        this.requests = [{
           connection,
           method,
           uuid,
           resolve,
           data,
           needUserInteraction: true
-        })
+        }, ...this.requests]
         this.popupController.openPopup()
 
         backgroundMessanger.setRequests(this.requests)
@@ -140,6 +140,8 @@ class CustomizatorController {
         })
       }
     }
+
+    console.log(this.requests)
   }
 
   async executeRequestFromPopup(request) {
