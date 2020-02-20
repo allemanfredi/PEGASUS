@@ -31,7 +31,7 @@ class AccountDataController {
             testnet: currentAccount.data.balance.testnet
           }
         : {
-            mainnet: currentAccount.data.balance.testnet,
+            mainnet: currentAccount.data.balance.mainnet,
             testnet: data.balance
           }
     return data
