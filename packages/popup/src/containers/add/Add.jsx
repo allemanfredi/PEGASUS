@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import Alert from '../../components/alert/Alert'
 import { popupMessanger } from '@pegasus/utils/messangers'
 import Spinner from '../../components/spinner/Spinner'
+import Input from '../../components/input/Input'
 
 class Add extends Component {
   constructor(props, context) {
@@ -159,19 +160,12 @@ class Add extends Component {
                 </div>
                 <div className="row mt-11">
                   <div className="col-12">
-                    <label htmlFor="inp-name" className="inp">
-                      <input
-                        value={this.state.name}
-                        onChange={e => {
-                          this.setState({ name: e.target.value })
-                        }}
-                        type="text"
-                        id="inp-name"
-                        placeholder="&nbsp;"
-                      />
-                      <span className="label">name</span>
-                      <span className="border"></span>
-                    </label>
+                    <Input
+                      value={this.state.name}
+                      onChange={e => this.setState({ name: e.target.value })}
+                      label="name"
+                      id="inp-name"
+                    />
                   </div>
                 </div>
               </div>

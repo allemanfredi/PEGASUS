@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { popupMessanger } from '@pegasus/utils/messangers'
 import * as passwordValidator from 'password-validator'
 import Spinner from '../../components/spinner/Spinner'
+import Input from '../../components/input/Input'
 
 class Init extends Component {
   constructor(props, context) {
@@ -162,14 +163,13 @@ class Init extends Component {
       try {
         await popupMessanger.storePassword(this.state.psw)
         await popupMessanger.setStorageKey(this.state.psw)
-
         const account = {
           name: this.state.name,
           avatar: this.state.selectedAvatar,
           seed: this.state.seed
         }
-        await popupMessanger.addAccount(account, true)
 
+        await popupMessanger.addAccount(account, true)
         popupMessanger.writeOnLocalStorage()
         resolve()
       } catch (err) {
@@ -218,19 +218,12 @@ class Init extends Component {
                 </div>
                 <div className="row mt-11">
                   <div className="col-12">
-                    <label htmlFor="inp-name" className="inp">
-                      <input
-                        value={this.state.name}
-                        onChange={e => {
-                          this.setState({ name: e.target.value })
-                        }}
-                        type="text"
-                        id="inp-name"
-                        placeholder="&nbsp;"
-                      />
-                      <span className="label">name</span>
-                      <span className="border"></span>
-                    </label>
+                    <Input
+                      value={this.state.name}
+                      onChange={e => this.setState({ name: e.target.value })}
+                      label="name"
+                      id="inp-name"
+                    />
                   </div>
                 </div>
               </div>
@@ -246,32 +239,24 @@ class Init extends Component {
                 </div>
                 <div className="row mt-5">
                   <div className="col-12">
-                    <label htmlFor="inp-password" className="inp">
-                      <input
-                        value={this.state.psw}
-                        onChange={this.onChangePassword}
-                        type="password"
-                        id="inp-password"
-                        placeholder="&nbsp;"
-                      />
-                      <span className="label">password</span>
-                      <span className="border"></span>
-                    </label>
+                    <Input
+                      value={this.state.psw}
+                      onChange={this.onChangePassword}
+                      label="password"
+                      type="password"
+                      id="inp-psw"
+                    />
                   </div>
                 </div>
                 <div className="row mt-3 mb-3">
                   <div className="col-12">
-                    <label htmlFor="inp-re-password" className="inp">
-                      <input
-                        value={this.state.repsw}
-                        onChange={this.onChangeRePassword}
-                        type="password"
-                        id="inp-re-password"
-                        placeholder="&nbsp;"
-                      />
-                      <span className="label">re-password</span>
-                      <span className="border"></span>
-                    </label>
+                    <Input
+                      value={this.state.repsw}
+                      onChange={this.onChangeRePassword}
+                      label="re password"
+                      id="inp-repsw"
+                      type="password"
+                    />
                   </div>
                 </div>
                 {this.state.pswErrors.map(error => {

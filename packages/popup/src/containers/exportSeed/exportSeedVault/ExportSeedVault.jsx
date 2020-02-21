@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { popupMessanger } from '@pegasus/utils/messangers'
+import Input from '../../../components/input/Input'
 
 class ExportSeedVault extends Component {
   constructor(props, context) {
@@ -41,28 +42,23 @@ class ExportSeedVault extends Component {
         <div className="row mt-9">
           <div className="col-12">
             <form onSubmit={this.exportSeedVault}>
-              <label htmlFor="inp-psw" className="inp">
-                <input
-                  value={this.state.psw}
-                  onChange={e => this.setState({ psw: e.target.value })}
-                  type="password"
-                  id="inp-psw"
-                  placeholder="&nbsp;"
-                />
-                <span className="label">password</span>
-                <span className="border"></span>
-              </label>
-              <label htmlFor="inp-psw" className="inp mt-2">
-                <input
-                  value={this.state.repsw}
-                  onChange={e => this.setState({ repsw: e.target.value })}
-                  type="password"
-                  id="inp-psw"
-                  placeholder="&nbsp;"
-                />
-                <span className="label">re-password</span>
-                <span className="border"></span>
-              </label>
+              <Input
+                value={this.state.psw}
+                onChange={e => this.setState({ psw: e.target.value })}
+                label="password"
+                type="password"
+                id="inp-psw"
+              />
+
+              <div className="mt-2"></div>
+
+              <Input
+                value={this.state.repsw}
+                onChange={e => this.setState({ repsw: e.target.value })}
+                label="re-password"
+                type="password"
+                id="inp-psw"
+              />
             </form>
           </div>
         </div>

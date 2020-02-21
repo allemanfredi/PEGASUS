@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { popupMessanger } from '@pegasus/utils/messangers'
 import Utils from '@pegasus/utils/utils'
 import ConfirmTransfers from '../confirm/confirmTransfers/ConfirmTransfers'
+import Input from '../../components/input/Input'
 
 class Send extends Component {
   constructor(props, context) {
@@ -89,61 +90,42 @@ class Send extends Component {
       <div className="container">
         <div>
           <div className="row mt-4">
-            <div className="col-12">
-              <label htmlFor="inp-address" className="inp">
-                <input
-                  value={this.state.dstAddress}
-                  onChange={e => this.setState({ dstAddress: e.target.value })}
-                  type="text"
-                  id="inp-address"
-                  placeholder="&nbsp;"
-                />
-                <span className="label">address</span>
-                <span className="border"></span>
-              </label>
+            <div className="col-8">
+              <Input
+                value={this.state.dstAddress}
+                onChange={e => this.setState({ dstAddress: e.target.value })}
+                label="address"
+                id="inp-address"
+              />
             </div>
+            <div className="col-4"></div>
           </div>
           <div className="row mt-4">
             <div className="col-12">
-              <label htmlFor="inp-message" className="inp">
-                <input
-                  value={this.state.message}
-                  onChange={e => this.setState({ message: e.target.value })}
-                  type="text"
-                  id="inp-message"
-                  placeholder="&nbsp;"
-                />
-                <span className="label">message</span>
-                <span className="border"></span>
-              </label>
+              <Input
+                value={this.state.message}
+                onChange={e => this.setState({ message: e.target.value })}
+                label="message"
+                id="inp-message"
+              />
             </div>
           </div>
           <div className="row mt-4">
             <div className="col-6">
-              <label htmlFor="inp-tag" className="inp">
-                <input
-                  value={this.state.tag}
-                  onChange={e => this.setState({ tag: e.target.value })}
-                  type="text"
-                  id="inp-message"
-                  placeholder="&nbsp;"
-                />
-                <span className="label">tag</span>
-                <span className="border"></span>
-              </label>
+              <Input
+                value={this.state.tag}
+                onChange={e => this.setState({ tag: e.target.value })}
+                label="tag"
+                id="inp-tag"
+              />
             </div>
             <div className="col-6">
-              <label htmlFor="inp-value" className="inp">
-                <input
-                  value={this.state.value}
-                  onChange={e => this.setState({ value: e.target.value })}
-                  type="text"
-                  id="inp-value"
-                  placeholder="&nbsp;"
-                />
-                <span className="label">value</span>
-                <span className="border"></span>
-              </label>
+              <Input
+                value={this.state.value}
+                onChange={e => this.setState({ value: e.target.value })}
+                label="value"
+                id="inp-value"
+              />
             </div>
           </div>
           {this.state.error ? (

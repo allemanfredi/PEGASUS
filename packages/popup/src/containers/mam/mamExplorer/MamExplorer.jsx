@@ -4,6 +4,7 @@ import { popupMessanger } from '@pegasus/utils/messangers'
 import Utils from '@pegasus/utils/utils'
 import Alert from '../../../components/alert/Alert'
 import Picklist from '../../../components/picklist/Picklist'
+import Input from '../../../components/input/Input'
 
 class MamExplorer extends Component {
   constructor(props, context) {
@@ -75,17 +76,12 @@ class MamExplorer extends Component {
         <React.Fragment>
           <div className="row mt-3">
             <div className="col-12">
-              <label htmlFor="inp-root" className="inp">
-                <input
-                  value={this.state.root}
-                  onChange={e => this.setState({ root: e.target.value })}
-                  type="text"
-                  id="inp-root"
-                  placeholder="&nbsp;"
-                />
-                <span className="label">root</span>
-                <span className="border"></span>
-              </label>
+              <Input
+                value={this.state.root}
+                onChange={e => this.setState({ root: e.target.value })}
+                label="root"
+                id="inp-node-root"
+              />
             </div>
           </div>
           <div className="row mt-3">
@@ -101,17 +97,12 @@ class MamExplorer extends Component {
           {this.state.mode === 'restricted' ? (
             <div className="row mt-3">
               <div className="col-12">
-                <label htmlFor="inp-address" className="inp">
-                  <input
-                    value={this.state.sideKey}
-                    onChange={e => this.setState({ sideKey: e.target.value })}
-                    type="text"
-                    id="inp-sideKey"
-                    placeholder="&nbsp;"
-                  />
-                  <span className="label">sidekey</span>
-                  <span className="border"></span>
-                </label>
+                <Input
+                  value={this.state.sideKey}
+                  onChange={e => this.setState({ sideKey: e.target.value })}
+                  label="sidekey"
+                  id="inp-sidekey"
+                />
               </div>
             </div>
           ) : (

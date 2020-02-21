@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { popupMessanger } from '@pegasus/utils/messangers'
+import Input from '../../../components/input/Input'
 
 class ExportSeedText extends Component {
   constructor(props, context) {
@@ -50,17 +51,13 @@ class ExportSeedText extends Component {
             <div className="row mt-20">
               <div className="col-12">
                 <form onSubmit={this.getSeed}>
-                  <label htmlFor="inp-psw" className="inp">
-                    <input
-                      value={this.state.psw}
-                      onChange={e => this.setState({ psw: e.target.value })}
-                      type="password"
-                      id="inp-psw"
-                      placeholder="&nbsp;"
-                    />
-                    <span className="label">password</span>
-                    <span className="border"></span>
-                  </label>
+                  <Input
+                    value={this.state.psw}
+                    onChange={e => this.setState({ psw: e.target.value })}
+                    label="password"
+                    id="inp-psw"
+                    type="password"
+                  />
                 </form>
               </div>
             </div>

@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import Picklist from '../../../components/picklist/Picklist'
 import { popupMessanger } from '@pegasus/utils/messangers'
 import Utils from '@pegasus/utils/utils'
+import Input from '../../../components/input/Input'
 
 class RegisterMamChannel extends Component {
   constructor(props, context) {
@@ -63,19 +64,14 @@ class RegisterMamChannel extends Component {
       <React.Fragment>
         <div className="row mt-4">
           <div className="col-12">
-            <label htmlFor="inp-root" className="inp">
-              <input
-                value={this.state.registerChannelRoot}
-                onChange={e =>
-                  this.setState({ registerChannelRoot: e.target.value })
-                }
-                type="text"
-                id="inp-root"
-                placeholder="&nbsp;"
-              />
-              <span className="label">root</span>
-              <span className="border"></span>
-            </label>
+            <Input
+              value={this.state.registerChannelRoot}
+              onChange={e =>
+                this.setState({ registerChannelRoot: e.target.value })
+              }
+              label="root"
+              id="inp-node-root"
+            />
           </div>
         </div>
         <div className="row mt-3">
@@ -93,19 +89,14 @@ class RegisterMamChannel extends Component {
         {this.state.registerChannelMode === 'restricted' ? (
           <div className="row mt-3">
             <div className="col-12">
-              <label htmlFor="inp-address" className="inp">
-                <input
-                  value={this.state.registerChannelSidekey}
-                  onChange={e =>
-                    this.setState({ registerChannelSidekey: e.target.value })
-                  }
-                  type="text"
-                  id="inp-sideKey"
-                  placeholder="&nbsp;"
-                />
-                <span className="label">sidekey</span>
-                <span className="border"></span>
-              </label>
+              <Input
+                value={this.state.registerChannelSidekey}
+                onChange={e =>
+                  this.setState({ registerChannelSidekey: e.target.value })
+                }
+                label="sidekey"
+                id="inp-sidekey"
+              />
             </div>
           </div>
         ) : (

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import IOTA from '@pegasus/utils/iota'
 import { popupMessanger } from '@pegasus/utils/messangers'
 import Loader from '../../components/loader/Loader'
+import Input from '../../components/input/Input'
 
 class ImportSeed extends Component {
   constructor(props, context) {
@@ -87,17 +87,12 @@ class ImportSeed extends Component {
             </div>
             <div className="row mt-2">
               <div className="col-12">
-                <label htmlFor="inp-name" className="inp">
-                  <input
-                    value={this.state.name}
-                    onChange={e => this.setState({ name: e.target.value })}
-                    type="text"
-                    id="inp-name"
-                    placeholder="&nbsp;"
-                  />
-                  <span className="label">name</span>
-                  <span className="border"></span>
-                </label>
+                <Input
+                  value={this.state.name}
+                  onChange={e => this.setState({ name: e.target.value })}
+                  label="name"
+                  id="inp-name"
+                />
               </div>
             </div>
             {this.state.error ? (

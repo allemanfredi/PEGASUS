@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import Utils from '@pegasus/utils/utils'
 import { composeAPI } from '@iota/core'
 import { popupMessanger } from '@pegasus/utils/messangers'
+import Input from '../../components/input/Input'
 
 class Network extends Component {
   constructor(props, context) {
@@ -69,47 +70,32 @@ class Network extends Component {
       <div className="container">
         <div className="row mt-4">
           <div className="col-12">
-            <label htmlFor="inp-node-name" className="inp">
-              <input
-                value={this.state.name}
-                onChange={e => this.setState({ name: e.target.value })}
-                type="text"
-                id="inp-node-name"
-                placeholder="&nbsp;"
-              />
-              <span className="label">Name</span>
-              <span className="border"></span>
-            </label>
+            <Input
+              value={this.state.name}
+              onChange={e => this.setState({ name: e.target.value })}
+              label="name"
+              id="inp-node-name"
+            />
           </div>
         </div>
         <div className="row mt-4">
           <div className="col-12">
-            <label htmlFor="inp-node-url" className="inp">
-              <input
-                value={this.state.url}
-                onChange={e => this.setState({ url: e.target.value })}
-                type="text"
-                id="inp-node-url"
-                placeholder="&nbsp;"
-              />
-              <span className="label">URL</span>
-              <span className="border"></span>
-            </label>
+            <Input
+              value={this.state.url}
+              onChange={e => this.setState({ url: e.target.value })}
+              label="URL"
+              id="inp-node-url"
+            />
           </div>
         </div>
         <div className="row mt-4">
           <div className="col-12">
-            <label htmlFor="inp-node-port" className="inp">
-              <input
-                value={this.state.port}
-                onChange={e => this.setState({ port: e.target.value })}
-                type="text"
-                id="inp-node-port"
-                placeholder="&nbsp;"
-              />
-              <span className="label">Port</span>
-              <span className="border"></span>
-            </label>
+            <Input
+              value={this.state.port}
+              onChange={e => this.setState({ port: e.target.value })}
+              label="Port"
+              id="inp-node-port"
+            />
           </div>
         </div>
         <div className="row mt-4">
