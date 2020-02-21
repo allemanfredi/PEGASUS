@@ -56,7 +56,9 @@ class Transactions extends Component {
   clickShowDetails(transaction) {
     this.setState(prevState => {
       const opened = prevState.opened
-      opened[`${transaction.bundle}-${transaction.timestamp}`] = !opened[`${transaction.bundle}-${transaction.timestamp}`]
+      opened[`${transaction.bundle}-${transaction.timestamp}`] = !opened[
+        `${transaction.bundle}-${transaction.timestamp}`
+      ]
       return {
         opened
       }
@@ -109,7 +111,7 @@ class Transactions extends Component {
                               : 'text-xxs text-bold text-gray'
                           }
                         >
-                          {transaction.status ? 'confirmed ' : 'pending'} 
+                          {transaction.status ? 'confirmed ' : 'pending'}
                           <a className="text-green">
                             {transaction.isReattached ? 'reattached ' : ''}
                           </a>
@@ -144,7 +146,9 @@ class Transactions extends Component {
                           View details{' '}
                           <i
                             className={
-                              this.state.opened[`${transaction.bundle}-${transaction.timestamp}`]
+                              this.state.opened[
+                                `${transaction.bundle}-${transaction.timestamp}`
+                              ]
                                 ? 'fa fa-eye'
                                 : 'fa fa-eye-slash'
                             }
@@ -152,7 +156,9 @@ class Transactions extends Component {
                         </a>
                       </div>
                     </div>
-                    {this.state.opened[`${transaction.bundle}-${transaction.timestamp}`] ? (
+                    {this.state.opened[
+                      `${transaction.bundle}-${transaction.timestamp}`
+                    ] ? (
                       <Details
                         details={transaction.transfer}
                         promoteTransaction={this.promoteTransaction}

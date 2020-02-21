@@ -190,7 +190,9 @@ class AccountDataController {
 
     const totalTransactions = [...newTransactions, ...account.transactions]
 
-    const transactionsWithReattachSet = this.setTransactionsReattach(totalTransactions)
+    const transactionsWithReattachSet = this.setTransactionsReattach(
+      totalTransactions
+    )
 
     const updatedData = Object.assign({}, newData, {
       transactions: transactionsWithReattachSet

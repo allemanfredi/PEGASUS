@@ -108,24 +108,30 @@ class CustomizatorController {
         this.popupController.openPopup()
       }
 
-      this.requests = [{
-        connection: mockConnection,
-        method,
-        uuid,
-        resolve,
-        data,
-        needUserInteraction: requestsWithUserInteraction.includes(method)
-      }, ...this.requests]
-    } else if (connection.enabled && state >= APP_STATE.WALLET_UNLOCKED) {
-      if (requestsWithUserInteraction.includes(method)) {
-        this.requests = [{
-          connection,
+      this.requests = [
+        {
+          connection: mockConnection,
           method,
           uuid,
           resolve,
           data,
-          needUserInteraction: true
-        }, ...this.requests]
+          needUserInteraction: requestsWithUserInteraction.includes(method)
+        },
+        ...this.requests
+      ]
+    } else if (connection.enabled && state >= APP_STATE.WALLET_UNLOCKED) {
+      if (requestsWithUserInteraction.includes(method)) {
+        this.requests = [
+          {
+            connection,
+            method,
+            uuid,
+            resolve,
+            data,
+            needUserInteraction: true
+          },
+          ...this.requests
+        ]
         this.popupController.openPopup()
 
         backgroundMessanger.setRequests(this.requests)
