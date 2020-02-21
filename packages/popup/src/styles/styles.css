@@ -410,7 +410,7 @@ input#inp-edit {
 
 /* DECORATION */
 .text-blue{
-    color:darkblue;
+    color:darkblue !important;
 }
 .text-white{
     color: white;
@@ -423,6 +423,9 @@ input#inp-edit {
 }
 .text-red{
     color: red;
+}
+.text-green {
+    color: #82E394 !important;
 }
 
 .text-underline{

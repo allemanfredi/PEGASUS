@@ -142,6 +142,18 @@ class AccountDataController {
     return newTxs
   }
 
+  setTransactionsReattach(transactions) {
+    const doubleBoundles = []
+    for (let transaction of transactions) {
+      if (doubleBoundles.includes(transaction.bundle)) {
+        transaction.isReattached = true
+      } else {
+        doubleBoundles.push(transaction.bundle)
+      }
+    }
+    return transactions
+  }
+
   async loadAccountData() {
     const state = this.walletController.getState()
     if (state < APP_STATE.WALLET_UNLOCKED) {
@@ -178,11 +190,13 @@ class AccountDataController {
 
     const totalTransactions = [...newTransactions, ...account.transactions]
 
+    const transactionsWithReattachSet = this.setTransactionsReattach(totalTransactions)
+
     const updatedData = Object.assign({}, newData, {
-      transactions: totalTransactions
+      transactions: transactionsWithReattachSet
     })
 
-    this.walletController.updateTransactionsAccount(totalTransactions)
+    this.walletController.updateTransactionsAccount(transactionsWithReattachSet)
 
     const updatedAccount = this.walletController.updateDataAccount(
       updatedData,

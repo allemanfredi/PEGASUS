@@ -38,7 +38,7 @@ class Transactions extends Component {
     this.handleShowDetails()
   }
 
-  componentWillReceiveProps(prevProps) {
+  componentWillReceiveProps() {
     this.handleShowDetails()
   }
 
@@ -46,9 +46,9 @@ class Transactions extends Component {
   handleShowDetails() {
     const opened = this.state.opened
     this.props.account.transactions.map(transaction => {
-      if (!opened[transaction.bundle]) {
-        opened[transaction.bundle] = false
-      } else opened[transaction.bundle] = true
+      if (!opened[`${transaction.bundle}-${transaction.timestamp}`]) {
+        opened[`${transaction.bundle}-${transaction.timestamp}`] = false
+      } else opened[`${transaction.bundle}-${transaction.timestamp}`] = true
     })
     this.setState({ opened })
   }
@@ -56,7 +56,7 @@ class Transactions extends Component {
   clickShowDetails(transaction) {
     this.setState(prevState => {
       const opened = prevState.opened
-      opened[transaction.bundle] = !opened[transaction.bundle]
+      opened[`${transaction.bundle}-${transaction.timestamp}`] = !opened[`${transaction.bundle}-${transaction.timestamp}`]
       return {
         opened
       }
@@ -109,7 +109,10 @@ class Transactions extends Component {
                               : 'text-xxs text-bold text-gray'
                           }
                         >
-                          {transaction.status ? 'confirmed ' : 'pending'}
+                          {transaction.status ? 'confirmed ' : 'pending'} 
+                          <a className="text-green">
+                            {transaction.isReattached ? 'reattached ' : ''}
+                          </a>
                         </div>
                       </div>
                       <div className="col-4 text-right">
@@ -141,7 +144,7 @@ class Transactions extends Component {
                           View details{' '}
                           <i
                             className={
-                              this.state.opened[transaction.bundle]
+                              this.state.opened[`${transaction.bundle}-${transaction.timestamp}`]
                                 ? 'fa fa-eye'
                                 : 'fa fa-eye-slash'
                             }
@@ -149,7 +152,7 @@ class Transactions extends Component {
                         </a>
                       </div>
                     </div>
-                    {this.state.opened[transaction.bundle] ? (
+                    {this.state.opened[`${transaction.bundle}-${transaction.timestamp}`] ? (
                       <Details
                         details={transaction.transfer}
                         promoteTransaction={this.promoteTransaction}
