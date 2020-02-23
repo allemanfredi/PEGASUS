@@ -3,6 +3,7 @@ import { popupMessanger } from '@pegasus/utils/messangers'
 import Utils from '@pegasus/utils/utils'
 import ConfirmTransfers from '../confirm/confirmTransfers/ConfirmTransfers'
 import Input from '../../components/input/Input'
+import Picklist from '../../components/picklist/Picklist'
 
 class Send extends Component {
   constructor(props, context) {
@@ -90,7 +91,7 @@ class Send extends Component {
       <div className="container">
         <div>
           <div className="row mt-4">
-            <div className="col-8">
+            <div className="col-12">
               <Input
                 value={this.state.dstAddress}
                 onChange={e => this.setState({ dstAddress: e.target.value })}
@@ -98,7 +99,17 @@ class Send extends Component {
                 id="inp-address"
               />
             </div>
-            <div className="col-4"></div>
+            {/*<div className="col-4 mt-07">
+              <Picklist
+                placeholder="account1"
+                text={""}
+                options={[
+                  'ciao',
+                  'ciao2'
+                ]}
+                onSelect={mode => console.log(mode)}
+              />
+              </div>*/}
           </div>
           <div className="row mt-4">
             <div className="col-12">

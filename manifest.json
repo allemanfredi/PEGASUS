@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Pegasus",
   "description": "Meet 'the Tangle' from your browser",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "content_security_policy": "script-src 'self' 'unsafe-eval' 'sha256-GgRxrVOKNdB4LrRsVPDSbzvfdV4UqglmviH9GoBJ5jk=' 'sha256-IThiKMnsg0UHaLmP7sJxZpd/ohvINImwjxFJyxGFSlk='; object-src 'self'",
   "browser_action": {
     "default_popup": "packages/popup/build/index.html",
@@ -11,7 +11,6 @@
   "permissions": [
     "storage",
     "unlimitedStorage",
-    "clipboardWrite",
     "notifications",
     "activeTab"
   ],
