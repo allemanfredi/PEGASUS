@@ -2,7 +2,13 @@ import React, { Component } from 'react'
 import { popupMessanger } from '@pegasus/utils/messangers'
 import * as passwordValidator from 'password-validator'
 import Spinner from '../../components/spinner/Spinner'
-import Input from '../../components/input/Input'
+import Welcome from './welcome/Welcome'
+import Name from './name/Name'
+import Password from './password/Password'
+import GenerateSeed from './generateSeed/GenerateSeed'
+import Avatar from './avatar/Avatar'
+import Export from './export/Export'
+import ImportSeed from './importSeed/ImportSeed'
 
 class Init extends Component {
   constructor(props, context) {
@@ -18,6 +24,7 @@ class Init extends Component {
     this.onChangeRePassword = this.onChangeRePassword.bind(this)
     this.checkPassword = this.checkPassword.bind(this)
     this.getPasswordErrors = this.getPasswordErrors.bind(this)
+    this.onChangeSeedFromImport = this.onChangeSeedFromImport.bind(this)
 
     this.passwordValidator = new passwordValidator()
     this.passwordValidator
@@ -39,19 +46,16 @@ class Init extends Component {
       repsw: '',
       name: '',
       seed: [],
+      seedError: null,
       randomLetters: 10,
       randomizedLetter: [],
       isCreatingWallet: false,
       initialization: [true, false, false, false],
       indexInitialization: 0,
       isCopiedToClipboard: false,
-      selectedAvatar: 0
+      selectedAvatar: 0,
+      mode: 'new'
     }
-  }
-
-  async componentDidMount() {
-    const seed = await popupMessanger.generateSeed()
-    this.setState({ seed })
   }
 
   onChangePassword(e) {
@@ -96,6 +100,24 @@ class Init extends Component {
 
   //action = true -> goOn, action = false = goBack
   goBack() {
+    if (this.state.indexInitialization === 1) {
+      this.setState({
+        psw: '',
+        pswErrors: [],
+        pswAcceptable: false,
+        repsw: '',
+        name: '',
+        seed: [],
+        seedError: null,
+        randomLetters: 10,
+        randomizedLetter: [],
+        isCreatingWallet: false,
+        isCopiedToClipboard: false,
+        selectedAvatar: 0,
+        mode: 'new'
+      })
+    }
+
     this.updateStatusInitialization(this.state.indexInitialization, false)
     this.setState({ indexInitialization: this.state.indexInitialization - 1 })
   }
@@ -104,7 +126,15 @@ class Init extends Component {
     this.updateStatusInitialization(this.state.indexInitialization, true)
     this.setState({ indexInitialization: this.state.indexInitialization + 1 })
 
-    if (this.state.indexInitialization === 4) {
+    if (this.state.indexInitialization === 2 && this.state.mode === 'new') {
+      const seed = await popupMessanger.generateSeed()
+      this.setState({ seed })
+    }
+
+    if (
+      (this.state.indexInitialization === 5 && this.state.mode === 'new') ||
+      (this.state.indexInitialization === 4 && this.state.mode === 'import')
+    ) {
       //create wallet
       this.setState({ isCreatingWallet: true })
       await this.createWallet()
@@ -163,10 +193,14 @@ class Init extends Component {
       try {
         await popupMessanger.storePassword(this.state.psw)
         await popupMessanger.setStorageKey(this.state.psw)
+
+        let seed = this.state.seed
+        if (!Array.isArray(seed)) seed = seed.split()
+
         const account = {
           name: this.state.name,
           avatar: this.state.selectedAvatar,
-          seed: this.state.seed
+          seed
         }
 
         await popupMessanger.addAccount(account, true)
@@ -178,20 +212,43 @@ class Init extends Component {
     })
   }
 
+  async onChangeSeedFromImport(seed) {
+    this.setState({ seed })
+
+    const isValidSeed = await popupMessanger.isSeedValid(seed)
+    if (!isValidSeed) {
+      this.setState({
+        seedError: 'Invalid seed'
+      })
+      return
+    }
+
+    //enable go on
+    else
+      this.setState({
+        randomLetters: 0,
+        seedError: null
+      })
+  }
+
   render() {
     return (
-      <div>
-        <div className="row mt-5">
-          <div className="col-12 text-center">
-            <img
-              className="border-radius-50"
-              src="./material/logo/pegasus-128.png"
-              height="80"
-              width="80"
-              alt="pegasus logo"
-            />
+      <React.Fragment>
+        {this.state.indexInitialization > 0 ? (
+          <div className="row mt-5">
+            <div className="col-12 text-center">
+              <img
+                className="border-radius-50"
+                src="./material/logo/pegasus-128.png"
+                height="80"
+                width="80"
+                alt="pegasus logo"
+              />
+            </div>
           </div>
-        </div>
+        ) : (
+          ''
+        )}
         {this.state.isCreatingWallet ? (
           <React.Fragment>
             <div className="container">
@@ -210,186 +267,111 @@ class Init extends Component {
         ) : (
           <React.Fragment>
             {this.state.initialization[0] ? (
-              <div className="container">
-                <div className="row mt-3 mb-3">
-                  <div className="col-12 text-center text-lg text-blue">
-                    Let's add a name
-                  </div>
-                </div>
-                <div className="row mt-11">
-                  <div className="col-12">
-                    <Input
-                      value={this.state.name}
-                      onChange={e => this.setState({ name: e.target.value })}
-                      label="name"
-                      id="inp-name"
-                    />
-                  </div>
-                </div>
-              </div>
+              <Welcome
+                onModeSelected={mode => {
+                  this.setState({ mode })
+                  this.goOn()
+                }}
+              />
             ) : (
               ''
             )}
             {this.state.initialization[1] ? (
-              <div className="container">
-                <div className="row mt-3">
-                  <div className="col-12 text-center text-lg text-blue">
-                    Let's add a password
-                  </div>
-                </div>
-                <div className="row mt-5">
-                  <div className="col-12">
-                    <Input
-                      value={this.state.psw}
-                      onChange={this.onChangePassword}
-                      label="password"
-                      type="password"
-                      id="inp-psw"
-                    />
-                  </div>
-                </div>
-                <div className="row mt-3 mb-3">
-                  <div className="col-12">
-                    <Input
-                      value={this.state.repsw}
-                      onChange={this.onChangeRePassword}
-                      label="re password"
-                      id="inp-repsw"
-                      type="password"
-                    />
-                  </div>
-                </div>
-                {this.state.pswErrors.map(error => {
-                  return (
-                    <div className="row mt-1">
-                      <div className="col-12 text-center text-red text-xxs">
-                        {error}
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
+              <Name
+                value={this.state.name}
+                onChange={e => {
+                  this.setState({ name: e.target.value })
+                }}
+              />
             ) : (
               ''
             )}
             {this.state.initialization[2] ? (
-              <div className="container">
-                <div className="row mt-2">
-                  <div className="col-12 text-center text-lg text-blue">
-                    Let's generate a seed
-                  </div>
-                </div>
-                <div className="row mb-2 mt-1">
-                  <div className="col-12 text-center">
-                    Press{' '}
-                    <i className="text-blue text-bold">
-                      {this.state.randomLetters >= 0
-                        ? this.state.randomLetters
-                        : 0}
-                    </i>{' '}
-                    more letters to randomise them
-                  </div>
-                </div>
-                {[0, 9, 18, 27, 36, 45, 54, 63, 72].map(item => {
-                  return (
-                    <div className="row pl-3">
-                      <div className="col-1"></div>
-                      {Array.from(new Array(9), (x, i) => i + item).map(
-                        index => {
-                          return (
-                            <div className="col-1">
-                              <div
-                                onClick={() => this.randomiseSeedLetter(index)}
-                                className="container-letter"
-                              >
-                                {this.state.seed[index]}
-                              </div>
-                            </div>
-                          )
-                        }
-                      )}
-                      <div className="col-1"></div>
-                    </div>
-                  )
-                })}
-              </div>
+              <Password
+                password={this.state.psw}
+                repassword={this.state.repsw}
+                onChangePassword={this.onChangePassword}
+                onChangeRePassword={this.onChangeRePassword}
+                errors={this.state.pswErrors}
+              />
             ) : (
               ''
             )}
-            {this.state.initialization[3] ? (
-              <div className="container">
-                <div className="row mt-3">
-                  <div className="col-12 text-center text-lg text-blue">
-                    Choose your avatar!
-                  </div>
-                </div>
-                <div className="row mt-1">
-                  <div className="col-12 text-center text-sm text-gray">
-                    (click on the image you want to select)
-                  </div>
-                </div>
-                <div className="overflow-auto-250h mt-6">
-                  <div className="row">
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(
-                      number => {
-                        return (
-                          <div
-                            className={
-                              (number > 3 ? 'mt-4' : '') +
-                              ' col-4 text-center cursor-pointer'
-                            }
-                            onClick={() =>
-                              this.setState({ selectedAvatar: number })
-                            }
-                          >
-                            <img
-                              className={
-                                this.state.selectedAvatar === number
-                                  ? 'border-darkblue border-radius-50'
-                                  : ''
-                              }
-                              src={`./material/profiles/${number}.svg`}
-                              height="60"
-                              width="60"
-                            />
-                          </div>
-                        )
-                      }
-                    )}
-                  </div>
-                </div>
-              </div>
+            {this.state.initialization[3] && this.state.mode === 'new' ? (
+              <GenerateSeed
+                randomLetters={this.state.randomLetters}
+                onLetterClick={index => this.randomiseSeedLetter(index)}
+                seed={this.state.seed}
+              />
+            ) : (
+              ''
+            )}
+            {this.state.initialization[3] && this.state.mode === 'import' ? (
+              <ImportSeed
+                seed={this.state.seed}
+                error={this.state.seedError}
+                onChangeSeed={this.onChangeSeedFromImport}
+              />
             ) : (
               ''
             )}
             {this.state.initialization[4] ? (
-              <div className="container">
-                <div className="row mt-3 mb-3">
-                  <div className="col-12 text-center text-lg text-blue">
-                    Let's export the seed
-                  </div>
-                </div>
-                <div className="row mt-4">
-                  <div className="col-12 text-center text-bold">
-                    Take care to copy the seed in order to correctly
-                    reinitialize the wallet{' '}
-                  </div>
-                </div>
-                <div className="row mt-5">
-                  <div className="col-1"></div>
-                  <div className="col-10 text-center text-xs break-text border-light-gray pt-1 pb-1">
-                    {this.state.seed.toString().replace(/,/g, '')}
-                  </div>
-                  <div className="col-1"></div>
-                </div>
-                <div className="row mt-5">
-                  <div className="col-12 text-center">
+              <Avatar
+                selectedAvatar={this.state.selectedAvatar}
+                onAvatarClick={number =>
+                  this.setState({ selectedAvatar: number })
+                }
+              />
+            ) : (
+              ''
+            )}
+            {this.state.initialization[5] && this.state.mode === 'new' ? (
+              <Export
+                seed={this.state.seed}
+                onCopyToClipboard={this.copyToClipboard}
+              />
+            ) : (
+              ''
+            )}
+            {this.state.indexInitialization > 0 ? (
+              <div className="container-menu-init">
+                <div className="row">
+                  <div className="col-6 text-center pl-0 pr-0">
                     <button
-                      onClick={this.copyToClipboard}
-                      className="btn btn-blue text-bold btn-big"
+                      disabled={this.state.initialization[0] ? true : false}
+                      onClick={this.goBack}
+                      type="submit"
+                      className="btn btn-light-blue text-bold no-border"
                     >
-                      <span className="fa fa-clipboard"></span> Copy to
-                      clipboard
+                      <span className="fa fa-arrow-left"></span>
+                    </button>
+                  </div>
+                  <div className="col-6 text-center pl-0 pr-0">
+                    <button
+                      disabled={
+                        this.state.initialization[1]
+                          ? this.state.name.length > 0
+                            ? false
+                            : true
+                          : this.state.initialization[2]
+                          ? this.state.pswAcceptable
+                            ? false
+                            : true
+                          : this.state.initialization[3]
+                          ? this.state.randomLetters === 0
+                            ? false
+                            : true
+                          : this.state.initialization[4]
+                          ? this.state.selectedAvatar === 0
+                            ? true
+                            : false
+                          : ''
+                      }
+                      onClick={this.goOn}
+                      type="submit"
+                      className="btn btn-blue text-bold no-border"
+                    >
+                      <span className="fa fa-arrow-right"></span>
                     </button>
                   </div>
                 </div>
@@ -397,51 +379,9 @@ class Init extends Component {
             ) : (
               ''
             )}
-            <div className="container-menu-init">
-              <div className="row">
-                <div className="col-6 text-center pl-0 pr-0">
-                  <button
-                    disabled={this.state.initialization[0] ? true : false}
-                    onClick={this.goBack}
-                    type="submit"
-                    className="btn btn-light-blue text-bold no-border   "
-                  >
-                    <span className="fa fa-arrow-left"></span>
-                  </button>
-                </div>
-                <div className="col-6 text-center pl-0 pr-0">
-                  <button
-                    disabled={
-                      this.state.initialization[0]
-                        ? this.state.name.length > 0
-                          ? false
-                          : true
-                        : this.state.initialization[1]
-                        ? this.state.pswAcceptable
-                          ? false
-                          : true
-                        : this.state.initialization[2]
-                        ? this.state.randomLetters === 0
-                          ? false
-                          : true
-                        : this.state.initialization[3]
-                        ? this.state.selectedAvatar === 0
-                          ? true
-                          : false
-                        : ''
-                    }
-                    onClick={this.goOn}
-                    type="submit"
-                    className="btn btn-blue text-bold no-border"
-                  >
-                    <span className="fa fa-arrow-right"></span>
-                  </button>
-                </div>
-              </div>
-            </div>
           </React.Fragment>
         )}
-      </div>
+      </React.Fragment>
     )
   }
 }

@@ -17,7 +17,7 @@ class AccountDataController {
   }
 
   async retrieveAccountData(seed, network, currentAccount) {
-    const iota = composeAPI({provider: network.provider})
+    const iota = composeAPI({ provider: network.provider })
     const data = await iota.getAccountData(seed, { start: 0, security: 2 })
     const transactions = this.mapTransactions(data, network)
     const newData = this.mapBalance(data, network, currentAccount)

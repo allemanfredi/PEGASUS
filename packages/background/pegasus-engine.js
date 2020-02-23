@@ -406,6 +406,6 @@ class PegasusEngine {
   getPopupSettings() {
     return this.storageController.getPopupSettings()
   }
- }
+}
 
 export default PegasusEngine

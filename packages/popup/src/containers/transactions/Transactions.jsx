@@ -44,8 +44,7 @@ class Transactions extends Component {
     this.handleShowDetails()
 
     const settings = await popupMessanger.getPopupSettings()
-    if (!settings)
-      return
+    if (!settings) return
 
     this.setState({ settings })
   }
@@ -78,7 +77,6 @@ class Transactions extends Component {
   }
 
   handleClickHide0ValueTxs() {
-
     const settings = this.state.settings
     settings.hide0Txs = !settings.hide0Txs
 
@@ -94,12 +92,14 @@ class Transactions extends Component {
             <div className="col-3 text-left text-black text-gray text-xs pl-0">
               History
             </div>
-            <div className="col-6">
-              <CheckBox value={this.state.settings.hide0Txs}
+            <div className="col-6 text-center">
+              <CheckBox
+                value={this.state.settings.hide0Txs}
                 checked={this.state.settings.hide0Txs}
                 id="hide-zero-tx"
                 text="Hide 0 value txs"
-                onChange={this.handleClickHide0ValueTxs}/>
+                onChange={this.handleClickHide0ValueTxs}
+              />
             </div>
             <div className="col-3 text-right pr-0">
               {this.props.isLoading ? (
