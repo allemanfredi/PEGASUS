@@ -88,6 +88,9 @@ const backgroundScript = {
     duplex.on('registerMamChannel', this.engine.registerMamChannel)
 
     duplex.on('logout', this.engine.logout)
+
+    duplex.on('setPopupSettings', this.engine.setPopupSettings)
+    duplex.on('getPopupSettings', this.engine.getPopupSettings)
   },
 
   bindTabDuplex() {

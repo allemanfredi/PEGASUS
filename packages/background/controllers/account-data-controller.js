@@ -1,13 +1,14 @@
-import IOTA from '@pegasus/utils/iota'
 import { backgroundMessanger } from '@pegasus/utils/messangers'
 import { APP_STATE } from '@pegasus/utils/states'
+import { composeAPI } from '@iota/core'
 
 class AccountDataController {
   constructor(options) {
     const {
       networkController,
       walletController,
-      notificationsController
+      notificationsController,
+      storageController
     } = options
 
     this.networkController = networkController
@@ -16,8 +17,8 @@ class AccountDataController {
   }
 
   async retrieveAccountData(seed, network, currentAccount) {
-    IOTA.setProvider(network.provider)
-    const data = await IOTA.getAccountData(seed)
+    const iota = composeAPI({provider: network.provider})
+    const data = await iota.getAccountData(seed, { start: 0, security: 2 })
     const transactions = this.mapTransactions(data, network)
     const newData = this.mapBalance(data, network, currentAccount)
     return { transactions, newData }
