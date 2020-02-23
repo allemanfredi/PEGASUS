@@ -99,17 +99,6 @@ class Send extends Component {
                 id="inp-address"
               />
             </div>
-            {/*<div className="col-4 mt-07">
-              <Picklist
-                placeholder="account1"
-                text={""}
-                options={[
-                  'ciao',
-                  'ciao2'
-                ]}
-                onSelect={mode => console.log(mode)}
-              />
-              </div>*/}
           </div>
           <div className="row mt-4">
             <div className="col-12">
