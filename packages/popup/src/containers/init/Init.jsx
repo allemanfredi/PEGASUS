@@ -328,6 +328,7 @@ class Init extends Component {
             {this.state.initialization[5] && this.state.mode === 'new' ? (
               <Export
                 seed={this.state.seed}
+                isCopiedToClipboard={this.state.isCopiedToClipboard}
                 onCopyToClipboard={this.copyToClipboard}
               />
             ) : (

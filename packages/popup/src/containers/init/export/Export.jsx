@@ -8,20 +8,31 @@ const Export = props => {
           Let's export the seed
         </div>
       </div>
-      <div className="row mt-4">
+      <div className="row mt-3">
         <div className="col-12 text-center text-bold">
           Take care to copy the seed in order to correctly reinitialize the
           wallet{' '}
         </div>
       </div>
-      <div className="row mt-5">
+      <div className="row mt-4">
         <div className="col-1"></div>
         <div className="col-10 text-center text-xs break-text border-light-gray pt-1 pb-1">
           {props.seed.toString().replace(/,/g, '')}
         </div>
         <div className="col-1"></div>
       </div>
-      <div className="row mt-5">
+
+      {props.isCopiedToClipboard ? (
+        <div className="row mt-1">
+          <div className="col-10 mx-auto text-center text-xs">
+            <div class="alert alert-success" role="alert">
+              Copied!
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      <div className={'row ' + (props.isCopiedToClipboard ? 'mt-1' : 'mt-5')}>
         <div className="col-12 text-center">
           <button
             onClick={e => props.onCopyToClipboard(e)}
