@@ -3,6 +3,7 @@ import { popupMessanger } from '@pegasus/utils/messangers'
 import Utils from '@pegasus/utils/utils'
 import ConfirmTransfers from '../confirm/confirmTransfers/ConfirmTransfers'
 import Input from '../../components/input/Input'
+import Picklist from '../../components/picklist/Picklist'
 
 class Send extends Component {
   constructor(props, context) {
@@ -21,8 +22,17 @@ class Send extends Component {
       message: '',
       isLoading: false,
       error: null,
-      needConfirmation: false
+      needConfirmation: false,
+      isTransferingBetweenWalletAccounts: false,
+      accounts: {}
     }
+  }
+
+  async componentDidMount() {
+    let accounts = await popupMessanger.getAllAccounts()
+    accounts = accounts.filter(account => account.id !== this.props.account.id)
+    console.log(accounts)
+    this.setState({ accounts })
   }
 
   clickTransfer() {
@@ -87,28 +97,65 @@ class Send extends Component {
         duplex={this.props.duplex}
       />
     ) : (
-      <div className="container">
+      <div className="container overflow-auto-475h">
         <div>
-          <div className="row mt-4">
+          <div className="row mt-2">
             <div className="col-12">
-              <Input
-                value={this.state.dstAddress}
-                onChange={e => this.setState({ dstAddress: e.target.value })}
-                label="address"
-                id="inp-address"
-              />
+              {this.state.isTransferingBetweenWalletAccounts ? (
+                <div className="mt-07">
+                  <Picklist
+                    placeholder="Select account"
+                    text={this.state.dstAddress}
+                    options={this.state.accounts.map(account => {
+                      return (
+                        <React.Fragment>
+                          <div className="row">
+                            <div className="col-12 text-xs">{account.name}</div>
+                            <div className="col-12 text-xxxs">
+                              {Utils.showAddress(
+                                Utils.checksummed(account.data.latestAddress),
+                                10,
+                                15
+                              )}
+                            </div>
+                          </div>
+                        </React.Fragment>
+                      )
+                    })}
+                    onSelect={index =>
+                      this.setState({
+                        dstAddress: Utils.checksummed(
+                          this.state.accounts[index].data.latestAddress
+                        )
+                      })
+                    }
+                  />
+                </div>
+              ) : (
+                <Input
+                  value={this.state.dstAddress}
+                  onChange={e => this.setState({ dstAddress: e.target.value })}
+                  label="address"
+                  id="inp-address"
+                />
+              )}
             </div>
-            {/*<div className="col-4 mt-07">
-              <Picklist
-                placeholder="account1"
-                text={""}
-                options={[
-                  'ciao',
-                  'ciao2'
-                ]}
-                onSelect={mode => console.log(mode)}
-              />
-              </div>*/}
+          </div>
+          <div className="row mt-1">
+            <div
+              className="col-12 text-blue text-xxs text-underline cursor-pointer"
+              onClick={() =>
+                this.setState({
+                  isTransferingBetweenWalletAccounts: !this.state
+                    .isTransferingBetweenWalletAccounts,
+                  dstAddress: ''
+                })
+              }
+            >
+              {this.state.isTransferingBetweenWalletAccounts
+                ? 'Normal Transfer'
+                : 'Transfer between my accounts'}
+            </div>
           </div>
           <div className="row mt-4">
             <div className="col-12">
@@ -120,7 +167,7 @@ class Send extends Component {
               />
             </div>
           </div>
-          <div className="row mt-4">
+          <div className="row mt-3">
             <div className="col-6">
               <Input
                 value={this.state.tag}

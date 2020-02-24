@@ -122,7 +122,9 @@ class Transactions extends Component {
               .filter(
                 transaction =>
                   transaction.network.type === this.props.network.type &&
-                  (this.state.settings.hide0Txs ? transaction.value !== 0 : true)
+                  (this.state.settings.hide0Txs
+                    ? transaction.value !== 0
+                    : true)
               )
               .sort((t1, t2) => (t1.timestamp < t2.timestamp ? 1 : -1))
               .map((transaction, index) => {

@@ -90,7 +90,9 @@ class MamExplorer extends Component {
                 placeholder="mode"
                 text={this.state.mode}
                 options={this.state.options}
-                onSelect={mode => this.setState({ mode })}
+                onSelect={index =>
+                  this.setState({ mode: this.state.options[index] })
+                }
               />
             </div>
           </div>

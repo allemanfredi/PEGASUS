@@ -80,8 +80,10 @@ class RegisterMamChannel extends Component {
               placeholder="mode"
               text={this.state.registerChannelMode}
               options={this.state.channelModes}
-              onSelect={registerChannelMode =>
-                this.setState({ registerChannelMode })
+              onSelect={index =>
+                this.setState({
+                  registerChannelMode: this.state.channelModes[index]
+                })
               }
             />
           </div>
