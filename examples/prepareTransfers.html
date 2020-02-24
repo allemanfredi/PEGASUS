@@ -15,18 +15,6 @@
   <button onClick="start()">send</button>
   <button onClick="connect()">connect</button>
   <script>
-    const TRYTE_ALPHABET = '9ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-
-    const asciiToTrytes = (input) => {
-      let trytes = ''
-      for (let i = 0; i < input.length; i++) {
-        var dec = input[i].charCodeAt(0)
-        trytes += TRYTE_ALPHABET[dec % 27]
-        trytes += TRYTE_ALPHABET[(dec - dec % 27) / 27]
-      }
-      return trytes
-    }
-
     const connect = async () => {
       const outputHtml = document.querySelector("#output")
 

@@ -102,10 +102,7 @@ class PegasusEngine {
       settings.networks.forEach(network =>
         this.networkController.addNetwork(network)
       )
-      this.customizatorController.setProvider(settings.networks[0].provider)
       this.networkController.setCurrentNetwork(settings.networks[0])
-    } else {
-      this.customizatorController.setProvider(currentNetwork.provider)
     }
 
     this.sessionController.checkSession()

@@ -1,6 +1,7 @@
 import { composeAPI } from '@iota/core'
 import { APP_STATE } from '@pegasus/utils/states'
 import { backgroundMessanger } from '@pegasus/utils/messangers'
+import extensionizer from 'extensionizer'
 
 class CustomizatorController {
   constructor(options, provider) {
@@ -19,8 +20,6 @@ class CustomizatorController {
     this.mamController = mamController
 
     this.requests = []
-
-    if (provider) this.iota = composeAPI({ provider })
   }
 
   setRequests(requests) {
@@ -33,10 +32,6 @@ class CustomizatorController {
 
   getRequestsWithUserInteraction() {
     return this.requests.filter(request => request.needUserInteraction === true)
-  }
-
-  setProvider(provider) {
-    this.iota = composeAPI({ provider })
   }
 
   setWalletController(walletController) {
@@ -113,6 +108,10 @@ class CustomizatorController {
         },
         ...this.requests
       ]
+
+      extensionizer.browserAction.setBadgeText({
+        text: this.requests.length.toString()
+      })
     } else if (connection.enabled && state >= APP_STATE.WALLET_UNLOCKED) {
       if (requestsWithUserInteraction.includes(method)) {
         this.requests = [
@@ -127,6 +126,10 @@ class CustomizatorController {
           ...this.requests
         ]
         this.popupController.openPopup()
+
+        extensionizer.browserAction.setBadgeText({
+          text: this.requests.length.toString()
+        })
 
         backgroundMessanger.setRequests(this.requests)
       } else {
@@ -322,6 +325,10 @@ class CustomizatorController {
 
   _removeRequest(request) {
     this.requests = this.requests.filter(req => req.uuid !== request.uuid)
+
+    extensionizer.browserAction.setBadgeText({
+      text: this.requests.length !== 0 ? this.requests.length.toString() : ''
+    })
   }
 }
 

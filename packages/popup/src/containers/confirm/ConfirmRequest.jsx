@@ -23,6 +23,10 @@ class ConfirmRequest extends Component {
   async componentWillMount() {
     const requests = await popupMessanger.getRequestsWithUserInteraction()
     this.setState({ requests })
+
+    this.props.duplex.on('setRequests', requests => {
+      this.setState({ requests })
+    })
   }
 
   async confirm(request) {

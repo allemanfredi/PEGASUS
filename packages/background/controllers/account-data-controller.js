@@ -7,8 +7,7 @@ class AccountDataController {
     const {
       networkController,
       walletController,
-      notificationsController,
-      storageController
+      notificationsController
     } = options
 
     this.networkController = networkController
