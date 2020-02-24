@@ -17,6 +17,13 @@ class StorageController {
 
     const eMamChannels = localStorage.getItem('mamChannels')
     if (!eMamChannels) this.setMamChannels({}, false)
+
+    //automatic writing (if wallet is unlocked) in storage each minute
+    setTimeout(() => {
+      if (this.encryptionkey) {
+        this.writeToStorage()
+      }
+    }, 600000)
   }
 
   isReady() {

@@ -4,6 +4,7 @@ import Utils from '@pegasus/utils/utils'
 import ConfirmTransfers from '../confirm/confirmTransfers/ConfirmTransfers'
 import Input from '../../components/input/Input'
 import Picklist from '../../components/picklist/Picklist'
+import { Cameras, Scanner } from 'react-instascan'
 
 class Send extends Component {
   constructor(props, context) {
@@ -31,7 +32,6 @@ class Send extends Component {
   async componentDidMount() {
     let accounts = await popupMessanger.getAllAccounts()
     accounts = accounts.filter(account => account.id !== this.props.account.id)
-    console.log(accounts)
     this.setState({ accounts })
   }
 
@@ -110,13 +110,32 @@ class Send extends Component {
                       return (
                         <React.Fragment>
                           <div className="row">
-                            <div className="col-12 text-xs">{account.name}</div>
-                            <div className="col-12 text-xxxs">
-                              {Utils.showAddress(
-                                Utils.checksummed(account.data.latestAddress),
-                                10,
-                                15
-                              )}
+                            <div className="col-2 my-auto">
+                              <img
+                                className="border-radius-50 cursor-pointer"
+                                src={`./material/profiles/${
+                                  account.avatar ? account.avatar : 1
+                                }.svg`}
+                                height="30"
+                                width="30"
+                                alt={`avater logo ${account.name}`}
+                              />
+                            </div>
+                            <div className="col-10 pl-0">
+                              <div className="row">
+                                <div className="col-12 text-xs">
+                                  {account.name}
+                                </div>
+                                <div className="col-12 text-xxxs">
+                                  {Utils.showAddress(
+                                    Utils.checksummed(
+                                      account.data.latestAddress
+                                    ),
+                                    18,
+                                    23
+                                  )}
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </React.Fragment>
