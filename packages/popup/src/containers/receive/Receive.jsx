@@ -49,7 +49,11 @@ class Receive extends Component {
             </div>
           </div>
         ) : null}
-        <div className={'row ' + (this.state.isCopiedToClipboard ? 'mt-3' : 'mt-10')}>
+        <div
+          className={
+            'row ' + (this.state.isCopiedToClipboard ? 'mt-3' : 'mt-10')
+          }
+        >
           <div className="col-12">
             <button
               onClick={this.copyToClipboard}
