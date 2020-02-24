@@ -71,11 +71,15 @@ class CustomizatorController {
 
     const popup = this.popupController.getPopup()
 
-    if (!connection) {
+    if (!connection || !connection.enabled) {
       this.walletController.setState(
         APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
       )
-      this.popupController.openPopup()
+      
+      if (!popup) {
+        this.popupController.openPopup()
+      }
+
       mockConnection = {
         website,
         requestToConnect: true,
@@ -83,17 +87,7 @@ class CustomizatorController {
         enabled: false,
         accountId: account ? account.id : null
       }
-      this.connectorController.setConnectionToStore(connection)
-      isPopupAlreadyOpened = true
-    } else if (!connection.enabled) {
-      this.walletController.setState(
-        APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
-      )
-
-      if (!popup) {
-        this.popupController.openPopup()
-      }
-
+      this.connectorController.setConnectionToStore(mockConnection)
       isPopupAlreadyOpened = true
     }
 
