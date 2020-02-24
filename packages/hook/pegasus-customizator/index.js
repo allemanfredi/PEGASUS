@@ -105,8 +105,6 @@ class PegasusCustomizator extends EventEmitter {
     delete iota.core.getAccountData
     delete iota.core.getInputs
     delete iota.core.getNewAddress
-
-    window.iota = this
   }
 
   //TODO find a new way to handle mam fetch responses from background because
