@@ -243,7 +243,9 @@ class WalletController {
       return null
 
     for (let account of accounts) {
-      if (account.current) return account
+      if (account.current) {
+        return account
+      }
     }
   }
 

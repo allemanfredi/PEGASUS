@@ -23,6 +23,7 @@ export default {
     this.duplex.send('popup', 'setTransfersConfirmationError', error, false)
   },
 
+  //send account object
   setAccount(account) {
     this.duplex.send('popup', 'setAccount', account, false)
   },
@@ -47,6 +48,7 @@ export default {
     )
   },
 
+  //send account address
   setSelectedAccount(account) {
     this.duplex.send(
       'tab',

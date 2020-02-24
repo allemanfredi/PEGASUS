@@ -9,4 +9,8 @@ const pegasusCustomizator = new PegasusCustomizator({
   eventChannel
 })
 
-window.iota = pegasusCustomizator
+const proxiedPegasusCustomizator = new Proxy(pegasusCustomizator, {
+  deleteProperty: () => true
+})
+
+window.iota = proxiedPegasusCustomizator

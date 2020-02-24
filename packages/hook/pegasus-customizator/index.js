@@ -20,20 +20,9 @@ class PegasusCustomizator extends EventEmitter {
 
     this.pegasusConnector = pegasusConnector
     this.eventChannel = eventChannel
-    this._handleEvents()
 
     this._callbacks = {}
 
-    this._handleEvents()
-
-    this.pegasusConnector
-      .send('init')
-      .then(({ selectedAccount, selectedProvider }) => {
-        this._set(selectedProvider, selectedAccount)
-      })
-  }
-
-  _handleEvents() {
     this.eventChannel.on('setSelectedProvider', provider => {
       this.selectedProvider = provider
       this.emit('onProviderChanged', provider)
@@ -43,6 +32,12 @@ class PegasusCustomizator extends EventEmitter {
       this.selectedAccount = account
       this.emit('onAccountChanged', account)
     })
+
+    this.pegasusConnector
+      .send('init')
+      .then(({ selectedAccount, selectedProvider }) => {
+        this._set(selectedProvider, selectedAccount)
+      })
   }
 
   _set(provider, account) {
