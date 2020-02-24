@@ -3,19 +3,25 @@ import Utils from '@pegasus/utils/utils'
 import IOTA from '@pegasus/utils/iota'
 import Details from '../details/Details'
 import Spinner from '../../components/spinner/Spinner'
+import CheckBox from '../../components/checkbox/Checkbox'
+import { popupMessanger } from '@pegasus/utils/messangers'
 
 class Transactions extends Component {
   constructor(props, context) {
     super(props, context)
 
     this.state = {
-      opened: {}
+      opened: {},
+      settings: {
+        hide0Txs: false
+      }
     }
 
     this.promoteTransaction = this.promoteTransaction.bind(this)
     this.replayBundle = this.replayBundle.bind(this)
     this.handleShowDetails = this.handleShowDetails.bind(this)
     this.clickShowDetails = this.clickShowDetails.bind(this)
+    this.handleClickHide0ValueTxs = this.handleClickHide0ValueTxs.bind(this)
   }
 
   async promoteTransaction(hash) {
@@ -34,8 +40,13 @@ class Transactions extends Component {
     }
   }
 
-  componentWillMount() {
+  async componentWillMount() {
     this.handleShowDetails()
+
+    const settings = await popupMessanger.getPopupSettings()
+    if (!settings) return
+
+    this.setState({ settings })
   }
 
   componentWillReceiveProps() {
@@ -65,15 +76,32 @@ class Transactions extends Component {
     })
   }
 
+  handleClickHide0ValueTxs() {
+    const settings = this.state.settings
+    settings.hide0Txs = !settings.hide0Txs
+
+    this.setState({ settings })
+    popupMessanger.setPopupSettings(settings)
+  }
+
   render() {
     return (
       <React.Fragment>
         <div className="container">
           <div className="row">
-            <div className="col-6 text-left text-black text-gray text-xs pl-0">
+            <div className="col-3 text-left text-black text-gray text-xs pl-0">
               History
             </div>
-            <div className="col-6 text-right pr-0">
+            <div className="col-6 text-center">
+              <CheckBox
+                value={this.state.settings.hide0Txs}
+                checked={this.state.settings.hide0Txs}
+                id="hide-zero-tx"
+                text="Hide 0 value txs"
+                onChange={this.handleClickHide0ValueTxs}
+              />
+            </div>
+            <div className="col-3 text-right pr-0">
               {this.props.isLoading ? (
                 <Spinner />
               ) : (
@@ -93,7 +121,10 @@ class Transactions extends Component {
             this.props.account.transactions
               .filter(
                 transaction =>
-                  transaction.network.type === this.props.network.type
+                  transaction.network.type === this.props.network.type &&
+                  (this.state.settings.hide0Txs
+                    ? transaction.value !== 0
+                    : true)
               )
               .sort((t1, t2) => (t1.timestamp < t2.timestamp ? 1 : -1))
               .map((transaction, index) => {

@@ -229,5 +229,13 @@ export default {
 
   logout() {
     return this.duplex.send('logout')
+  },
+
+  setPopupSettings(settings) {
+    return this.duplex.send('setPopupSettings', settings)
+  },
+
+  getPopupSettings() {
+    return this.duplex.send('getPopupSettings')
   }
 }

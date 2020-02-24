@@ -49,8 +49,8 @@ class Picklist extends React.Component {
             {this.props.options.map((option, index) => {
               return (
                 <div
-                  key={option + index.toString()}
-                  onClick={() => this.onClickItem(option)}
+                  key={index.toString()}
+                  onClick={() => this.onClickItem(index)}
                   className="picklist-item"
                 >
                   {option}

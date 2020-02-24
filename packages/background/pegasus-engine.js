@@ -398,6 +398,14 @@ class PegasusEngine {
   logout() {
     return this.walletController.logout()
   }
+
+  setPopupSettings(settings) {
+    this.storageController.setPopupSettings(settings)
+  }
+
+  getPopupSettings() {
+    return this.storageController.getPopupSettings()
+  }
 }
 
 export default PegasusEngine

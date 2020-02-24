@@ -2,7 +2,10 @@ import React, { Component } from 'react'
 import Alert from '../../components/alert/Alert'
 import { popupMessanger } from '@pegasus/utils/messangers'
 import Spinner from '../../components/spinner/Spinner'
-import Input from '../../components/input/Input'
+import Name from '../init/name/Name'
+import GenerateSeed from '../init/generateSeed/GenerateSeed'
+import Avatar from '../init/avatar/Avatar'
+import Export from '../init/export/Export'
 
 class Add extends Component {
   constructor(props, context) {
@@ -152,152 +155,43 @@ class Add extends Component {
         ) : (
           <React.Fragment>
             {this.state.initialization[0] ? (
-              <div className="container">
-                <div className="row mt-5 mb-3">
-                  <div className="col-12 text-center text-lg text-blue">
-                    Let's add a name
-                  </div>
-                </div>
-                <div className="row mt-11">
-                  <div className="col-12">
-                    <Input
-                      value={this.state.name}
-                      onChange={e => this.setState({ name: e.target.value })}
-                      label="name"
-                      id="inp-name"
-                    />
-                  </div>
-                </div>
-              </div>
+              <Name
+                value={this.state.name}
+                onChange={e => {
+                  this.setState({ name: e.target.value })
+                }}
+              />
             ) : (
               ''
             )}
             {this.state.initialization[1] ? (
-              <div className="container">
-                <div className="row mt-2">
-                  <div className="col-12 text-center text-lg text-blue">
-                    Let's generate a seed
-                  </div>
-                </div>
-                <div className="row mb-2 mt-1">
-                  <div className="col-12 text-center">
-                    Press{' '}
-                    <i className="text-blue text-bold">
-                      {this.state.randomLetters >= 0
-                        ? this.state.randomLetters
-                        : 0}
-                    </i>{' '}
-                    more letters to randomise them
-                  </div>
-                </div>
-                {[0, 9, 18, 27, 36, 45, 54, 63, 72].map(item => {
-                  return (
-                    <div className="row pl-3">
-                      <div className="col-1"></div>
-                      {Array.from(new Array(9), (x, i) => i + item).map(
-                        index => {
-                          return (
-                            <div className="col-1">
-                              <div
-                                onClick={() => this.randomiseSeedLetter(index)}
-                                className="container-letter"
-                              >
-                                {this.state.seed[index]}
-                              </div>
-                            </div>
-                          )
-                        }
-                      )}
-                      <div className="col-1"></div>
-                    </div>
-                  )
-                })}
-              </div>
+              <GenerateSeed
+                randomLetters={this.state.randomLetters}
+                onLetterClick={index => this.randomiseSeedLetter(index)}
+                seed={this.state.seed}
+              />
             ) : (
               ''
             )}
             {this.state.initialization[2] ? (
-              <div className="container">
-                <div className="row mt-3">
-                  <div className="col-12 text-center text-lg text-blue">
-                    Choose your avatar!
-                  </div>
-                </div>
-                <div className="row mt-1">
-                  <div className="col-12 text-center text-sm text-gray">
-                    (click on the image you want to select)
-                  </div>
-                </div>
-                <div className="overflow-auto-250h mt-6">
-                  <div className="row">
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(
-                      number => {
-                        return (
-                          <div
-                            className={
-                              (number > 3 ? 'mt-4' : '') +
-                              ' col-4 text-center cursor-pointer'
-                            }
-                            onClick={() =>
-                              this.setState({ selectedAvatar: number })
-                            }
-                          >
-                            <img
-                              className={
-                                this.state.selectedAvatar === number
-                                  ? 'border-darkblue border-radius-50'
-                                  : ''
-                              }
-                              src={`./material/profiles/${number}.svg`}
-                              height="60"
-                              width="60"
-                            />
-                          </div>
-                        )
-                      }
-                    )}
-                  </div>
-                </div>
-              </div>
+              <Avatar
+                selectedAvatar={this.state.selectedAvatar}
+                onAvatarClick={number =>
+                  this.setState({ selectedAvatar: number })
+                }
+              />
             ) : (
               ''
             )}
             {this.state.initialization[3] ? (
-              <div className="container">
-                <div className="row mt-3 mb-3">
-                  <div className="col-12 text-center text-lg text-blue">
-                    Let's export the seed
-                  </div>
-                </div>
-                <div className="row mt-4">
-                  <div className="col-12 text-center text-bold">
-                    Take care to copy the seed in order to correctly
-                    reinitialize the wallet{' '}
-                  </div>
-                </div>
-                <div className="row mt-5">
-                  <div className="col-1"></div>
-                  <div className="col-10 text-center text-no-overflow text-xxs">
-                    {this.state.seed.toString().replace(/,/g, '')}
-                  </div>
-                  <div className="col-1"></div>
-                </div>
-                <div className="row mt-6">
-                  <div className="col-12 text-center">
-                    <button
-                      onClick={this.copyToClipboard}
-                      className="btn btn-blue text-bold btn-big"
-                    >
-                      <span className="fa fa-clipboard"></span> Copy to
-                      clipboard
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <Export
+                seed={this.state.seed}
+                isCopiedToClipboard={this.state.isCopiedToClipboard}
+                onCopyToClipboard={this.copyToClipboard}
+              />
             ) : (
               ''
             )}
-
             <div className="container-menu-init">
               <div className="row">
                 <div className="col-6 text-center pl-0 pr-0">

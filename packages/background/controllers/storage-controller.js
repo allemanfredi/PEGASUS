@@ -133,6 +133,15 @@ class StorageController {
     const options = JSON.parse(localStorage.getItem('options'))
     return options
   }
+
+  setPopupSettings(settings) {
+    localStorage.setItem('popupSettings', JSON.stringify(settings))
+  }
+
+  getPopupSettings() {
+    const settings = JSON.parse(localStorage.getItem('popupSettings'))
+    return settings
+  }
 }
 
 export default StorageController

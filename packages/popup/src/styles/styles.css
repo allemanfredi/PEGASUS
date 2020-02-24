@@ -159,7 +159,7 @@
     position: absolute;
     top: 16px;
     left: 0;
-    font-size: 16px;
+    font-size: 12px;
     color: #9098a9;
     font-weight: 500;
     transform-origin: 0 0;
@@ -1000,4 +1000,68 @@ textarea {
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;
+}
+
+/* CHECKBOX */
+.checkbox {
+    position: absolute;
+    opacity: 0;
+}
+  
+.checkbox + label {
+    position: relative;
+    cursor: pointer;
+    padding: 0;
+    font-size: 13px;
+}
+  
+.checkbox + label:before {
+    content: '';
+    margin-right: 8px;
+    display: inline-block;
+    vertical-align: text-top;
+    width: 16px;
+    height: 16px;
+    background: white;
+    border: 1px solid #ddd;
+}
+  
+.checkbox:hover + label:before {
+    background: darkblue;
+}
+    
+.checkbox:focus + label:before {
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.12);
+}
+  
+.checkbox:checked + label:before {
+    background: darkblue;
+}
+    
+.checkbox:disabled + label {
+    color: #b8b8b8;
+    cursor: auto;
+}
+  
+.checkbox:disabled + label:before {
+    box-shadow: none;
+    background: #ddd;
+}
+  
+.checkbox:checked + label:after {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 9px;
+    background: white;
+    width: 2px;
+    height: 2px;
+    box-shadow: 
+    2px 0 0 white,
+    4px 0 0 white,
+    4px -2px 0 white,
+    4px -4px 0 white,
+    4px -6px 0 white,
+    4px -8px 0 white;
+    transform: rotate(45deg);
 }

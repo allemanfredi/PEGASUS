@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { popupMessanger } from '@pegasus/utils/messangers'
-import Input from '../../../components/input/Input'
+import Unlock from '../../unlock/Unlock'
 
 class ExportSeedText extends Component {
   constructor(props, context) {
@@ -10,20 +10,15 @@ class ExportSeedText extends Component {
     this.copyToClipboard = this.copyToClipboard.bind(this)
 
     this.state = {
-      psw: '',
       seed: null,
-      shake: false
+      isCopied: null
     }
   }
 
-  async getSeed(e) {
-    e.preventDefault()
-    this.setState({ shake: false })
-    const seed = await popupMessanger.unlockSeed(this.state.psw)
+  async getSeed(password) {
+    const seed = await popupMessanger.unlockSeed(password)
     this.setState({
-      seed,
-      psw: '',
-      shake: !seed ? true : false
+      seed
     })
   }
 
@@ -34,68 +29,47 @@ class ExportSeedText extends Component {
     textField.select()
     document.execCommand('copy')
     textField.remove()
+
+    this.setState({
+      isCopied: true
+    })
   }
 
   render() {
-    return (
-      <div className={this.state.shake ? 'container shake' : 'container'}>
+    return !this.state.seed ? (
+      <Unlock onUnlock={this.getSeed} />
+    ) : (
+      <div className="container">
         <div className="row mt-3 mb-3">
           <div className="col-12 text-center text-lg text-blue text-bold">
-            {!this.state.seed
-              ? 'Insert your password to export the seed'
-              : 'Please keep it as safely as possible!'}
+            Please keep it as safely as possible!
           </div>
         </div>
-        {!this.state.seed ? (
-          <React.Fragment>
-            <div className="row mt-20">
-              <div className="col-12">
-                <form onSubmit={this.getSeed}>
-                  <Input
-                    value={this.state.psw}
-                    onChange={e => this.setState({ psw: e.target.value })}
-                    label="password"
-                    id="inp-psw"
-                    type="password"
-                  />
-                </form>
+        <div className="row mt-10">
+          <div className="col-10 mx-auto text-center text-xs break-text border-light-gray pt-1 pb-1">
+            {this.state.seed}
+          </div>
+        </div>
+        {this.state.isCopied ? (
+          <div className="row mt-1">
+            <div className="col-10 mx-auto text-center text-xs">
+              <div class="alert alert-success" role="alert">
+                Copied!
               </div>
             </div>
-            <div className="row mt-3">
-              <div className="col-12">
-                <button
-                  disabled={!this.state.psw.length > 0}
-                  onClick={this.getSeed}
-                  type="submit"
-                  className="btn btn-blue text-bold btn-big"
-                >
-                  Unlock
-                </button>
-              </div>
-            </div>
-          </React.Fragment>
-        ) : (
-          <React.Fragment>
-            <div className="row mt-10">
-              <div className="col-1"></div>
-              <div className="col-10 text-center text-xs break-text border-light-gray pt-1 pb-1">
-                {this.state.seed}
-              </div>
-              <div className="col-1"></div>
-            </div>
-            <div className="row mt-10">
-              <div className="col-12">
-                <button
-                  onClick={this.copyToClipboard}
-                  type="button"
-                  className="btn btn-blue text-bold btn-big"
-                >
-                  Copy To Clipboard
-                </button>
-              </div>
-            </div>
-          </React.Fragment>
-        )}
+          </div>
+        ) : null}
+        <div className={'row ' + (this.state.isCopied ? 'mt-3' : 'mt-10')}>
+          <div className="col-12">
+            <button
+              onClick={this.copyToClipboard}
+              type="button"
+              className="btn btn-blue text-bold btn-big"
+            >
+              Copy To Clipboard
+            </button>
+          </div>
+        </div>
       </div>
     )
   }

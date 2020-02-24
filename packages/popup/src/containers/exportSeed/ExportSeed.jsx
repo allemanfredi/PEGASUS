@@ -98,7 +98,9 @@ class ExportSeed extends Component {
             <hr className="mt-2 mb-2" />
           </div>
         ) : null}
-        {this.state.showExportSeedText ? <ExportSeedText /> : null}
+        {this.state.showExportSeedText ? (
+          <ExportSeedText account={this.props.account} />
+        ) : null}
         {this.state.showExportSeedVault ? <ExportSeedVault /> : null}
       </React.Fragment>
     )
