@@ -1,6 +1,7 @@
 import Duplex from '@pegasus/utils/duplex'
 import PegasusEngine from './pegasus-engine'
 import Utils from '@pegasus/utils/utils'
+import { composeAPI } from '@iota/core'
 
 const duplex = new Duplex.Host()
 
@@ -97,12 +98,27 @@ const backgroundScript = {
     duplex.on(
       'tabRequest',
       async ({ resolve, data: { action, data, uuid, website } }) => {
+        const iota = composeAPI()
+        if (action !== 'prepareTransfers' && iota[action]) {
+          this.engine.pushRequest(action, {
+            data,
+            uuid,
+            resolve,
+            website
+          })
+          return
+        }
+
         switch (action) {
           case 'init': {
             const currentNetwork = this.engine.getCurrentNetwork()
+            const currentAccount = this.engine.getCurrentAccount()
             this.engine.setWebsite(website)
             const response = {
-              selectedProvider: currentNetwork
+              selectedProvider: currentNetwork.provider,
+              selectedAccount: currentAccount
+                ? currentAccount.data.latestAddress
+                : null
             }
 
             resolve({

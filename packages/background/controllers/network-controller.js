@@ -15,7 +15,7 @@ class NetworkController {
       this.storageController.setOptions(options)
 
       // change pagehook
-      backgroundMessanger.setProvider(network.provider)
+      backgroundMessanger.setSelectedProvider(network.provider)
       backgroundMessanger.setNetwork(network)
 
       this.customizatorController.setProvider(network.provider)
@@ -83,7 +83,7 @@ class NetworkController {
 
       backgroundMessanger.setNetworks(options.networks)
       backgroundMessanger.setNetwork(selectedNetwork)
-      backgroundMessanger.setProvider(selectedNetwork.provider)
+      backgroundMessanger.setSelectedProvider(selectedNetwork.provider)
 
       return currentNetwork
     } catch (err) {

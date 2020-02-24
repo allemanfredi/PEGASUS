@@ -3,7 +3,6 @@ import { popupMessanger } from '@pegasus/utils/messangers'
 import Utils from '@pegasus/utils/utils'
 import ConfirmTransfers from '../confirm/confirmTransfers/ConfirmTransfers'
 import Input from '../../components/input/Input'
-import Picklist from '../../components/picklist/Picklist'
 
 class Send extends Component {
   constructor(props, context) {

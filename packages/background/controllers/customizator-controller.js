@@ -242,8 +242,29 @@ class CustomizatorController {
     backgroundMessanger.setAppState(APP_STATE.WALLET_UNLOCKED)
   }
 
-  execute(request) {
+  async execute(request) {
     const { method, data } = request
+
+    const network = this.networkController.getCurrentNetwork()
+    const iota = composeAPI({ provider: network.provider })
+
+    if (method !== 'prepareTransfers' && iota[method]) {
+      return new Promise(resolve => {
+        iota[method](...data.args)
+          .then(data =>
+            resolve({
+              data,
+              success: true
+            })
+          )
+          .catch(err =>
+            resolve({
+              data: err,
+              success: false
+            })
+          )
+      })
+    }
 
     switch (method) {
       case 'prepareTransfers': {

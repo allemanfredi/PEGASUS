@@ -5,9 +5,9 @@ class PegasusConnector {
     this.eventChannel = eventChannel
     this.calls = {}
 
-    this.bindListener()
-
     this.send = this.send.bind(this)
+
+    this.bindListener()
   }
 
   bindListener() {

@@ -10,23 +10,46 @@ import * as unitConverter from '@iota/unit-converter'
 import Mam from '@iota/mam/lib/mam.web.min.js'
 import Utils from '@pegasus/utils/utils'
 import randomUUID from 'uuid/v4'
+import EventEmitter from 'eventemitter3'
 
-class PegasusCustomizator {
+class PegasusCustomizator extends EventEmitter {
   constructor(configs) {
+    super()
+
     const { pegasusConnector, eventChannel } = configs
 
     this.pegasusConnector = pegasusConnector
     this.eventChannel = eventChannel
     this._handleEvents()
 
-    this.callbacks = {}
+    this._callbacks = {}
+
+    this._handleEvents()
+
+    this.pegasusConnector
+      .send('init')
+      .then(({ selectedAccount, selectedProvider }) => {
+        this._set(selectedProvider, selectedAccount)
+      })
   }
 
-  getCustomIota(provider) {
-    const core = composeAPI({ provider })
+  _handleEvents() {
+    this.eventChannel.on('setSelectedProvider', provider => {
+      this.selectedProvider = provider
+      this.emit('onProviderChanged', provider)
+    })
 
-    core.prepareTransfers = (...args) =>
-      this._handleInjectedRequest(args, 'prepareTransfers')
+    this.eventChannel.on('setSelectedAccount', account => {
+      this.selectedAccount = account
+      this.emit('onAccountChanged', account)
+    })
+  }
+
+  _set(provider, account) {
+    const core = composeAPI()
+    Object.keys(core).forEach(method => {
+      core[method] = (...args) => this._handleInjectedRequest(args, method)
+    })
 
     const mam = {}
     Object.keys(Mam).forEach(method => {
@@ -41,7 +64,7 @@ class PegasusCustomizator {
 
       const isFunction = Utils.isFunction(args[2])
       if (isFunction) {
-        this.callbacks[uuid] = args[2]
+        this._callbacks[uuid] = args[2]
         args[2] = {
           uuid,
           reply: true
@@ -60,18 +83,19 @@ class PegasusCustomizator {
       })
     }
 
-    const iota = {
-      bundle,
-      bundleValidator,
-      checksum,
-      core,
-      converter,
-      extractJson,
-      transaction,
-      unitConverter,
-      validators,
-      mam
-    }
+    this.bundle = bundle
+    this.bundleValidator = bundleValidator
+    this.checksum = checksum
+    this.core = core
+    this.converter = converter
+    this.extractJson = extractJson
+    this.transaction = transaction
+    this.unitConverter = unitConverter
+    this.validators = validators
+    this.mam = mam
+
+    this.selectedProvider = provider
+    this.selectedAccount = account
 
     const additionalMethods = [
       'connect',
@@ -87,7 +111,7 @@ class PegasusCustomizator {
     delete iota.core.getInputs
     delete iota.core.getNewAddress
 
-    return iota
+    window.iota = this
   }
 
   //TODO find a new way to handle mam fetch responses from background because
@@ -96,7 +120,7 @@ class PegasusCustomizator {
     this.eventChannel.on('mam_onFetch', e => {
       const { data, uuid } = e
 
-      if (this.callbacks[uuid]) this.callbacks[uuid](data)
+      if (this._callbacks[uuid]) this._callbacks[uuid](data)
     })
   }
 
