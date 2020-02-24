@@ -75,7 +75,7 @@ class CustomizatorController {
       this.walletController.setState(
         APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
       )
-      
+
       if (!popup) {
         this.popupController.openPopup()
       }

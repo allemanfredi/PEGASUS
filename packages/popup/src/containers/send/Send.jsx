@@ -110,13 +110,32 @@ class Send extends Component {
                       return (
                         <React.Fragment>
                           <div className="row">
-                            <div className="col-12 text-xs">{account.name}</div>
-                            <div className="col-12 text-xxxs">
-                              {Utils.showAddress(
-                                Utils.checksummed(account.data.latestAddress),
-                                10,
-                                15
-                              )}
+                            <div className="col-2 my-auto">
+                              <img
+                                className="border-radius-50 cursor-pointer"
+                                src={`./material/profiles/${
+                                  account.avatar ? account.avatar : 1
+                                }.svg`}
+                                height="30"
+                                width="30"
+                                alt={`avater logo ${account.name}`}
+                              />
+                            </div>
+                            <div className="col-10 pl-0">
+                              <div className="row">
+                                <div className="col-12 text-xs">
+                                  {account.name}
+                                </div>
+                                <div className="col-12 text-xxxs">
+                                  {Utils.showAddress(
+                                    Utils.checksummed(
+                                      account.data.latestAddress
+                                    ),
+                                    18,
+                                    23
+                                  )}
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </React.Fragment>
