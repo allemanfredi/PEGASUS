@@ -75,10 +75,8 @@ class WalletController {
 
       //injection
       backgroundMessanger.setSelectedProvider(network.provider)
-      backgroundMessanger.setSelectedAccount(account.data.latestAddress)
 
       backgroundMessanger.setAccount(account)
-
       return true
     }
 
@@ -123,8 +121,13 @@ class WalletController {
       this.password = key
       this.networkController.setCurrentNetwork(network)
 
-      backgroundMessanger.setSelectedProvider(network.provider)
-      backgroundMessanger.setSelectedAccount(account.data.latestAddress)
+      //injection
+      const website = this.connectorController.getCurrentWebsite()
+      const connection = this.connectorController.getConnection(website.origin)
+      if (connection && connection.enabled) {
+        backgroundMessanger.setSelectedProvider(network.provider)
+        backgroundMessanger.setSelectedAccount(account.data.latestAddress)
+      }
 
       backgroundMessanger.setAccount(obj)
 
@@ -225,8 +228,13 @@ class WalletController {
 
     this.setState(APP_STATE.WALLET_UNLOCKED)
 
-    backgroundMessanger.setSelectedProvider(network.provider)
-    backgroundMessanger.setSelectedAccount(accountToAdd.data.latestAddress)
+    //injection
+    const website = this.connectorController.getCurrentWebsite()
+    const connection = this.connectorController.getConnection(website.origin)
+    if (connection && connection.enabled) {
+      backgroundMessanger.setSelectedProvider(network.provider)
+      backgroundMessanger.setSelectedAccount(accountToAdd.data.latestAddress)
+    }
 
     backgroundMessanger.setAccount(accountToAdd)
     return
@@ -262,7 +270,14 @@ class WalletController {
         account.current = true
         backgroundMessanger.setAccount(account)
 
-        backgroundMessanger.setSelectedAccount(account.data.latestAddress)
+        //injection
+        const website = this.connectorController.getCurrentWebsite()
+        const connection = this.connectorController.getConnection(
+          website.origin
+        )
+        if (connection && connection.enabled) {
+          backgroundMessanger.setSelectedAccount(account.data.latestAddress)
+        }
       }
     })
     this.storageController.setData(data)
@@ -369,7 +384,14 @@ class WalletController {
       app[0].current = true
       this.storageController.setData(app)
       backgroundMessanger.setAccount(app[0])
-      backgroundMessanger.setSelectedAccount(app[0].data.latestAddress)
+
+      //injection
+      const website = this.connectorController.getCurrentWebsite()
+      const connection = this.connectorController.getConnection(website.origin)
+      if (connection && connection.enabled) {
+        backgroundMessanger.setSelectedAccount(app[0].data.latestAddress)
+      }
+
       return app[0]
     }
   }

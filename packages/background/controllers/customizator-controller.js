@@ -176,6 +176,8 @@ class CustomizatorController {
             success: false,
             uuid: request.uuid
           })
+
+          this._removeRequest(request)
         }
       })
   }
@@ -227,12 +229,15 @@ class CustomizatorController {
   }
 
   rejectRequests() {
+    console.log(this.requests)
     this.requests.forEach(request => {
       request.resolve({
         data: 'Request has been rejected by the user',
         success: false,
         uuid: request.uuid
       })
+
+      this._removeRequest(request)
     })
     this.requests = []
     this.popupController.closePopup()

@@ -1,3 +1,6 @@
+import { backgroundMessanger } from '@pegasus/utils/messangers'
+import { APP_STATE } from '@pegasus/utils/states'
+
 class ConnectorController {
   constructor(options) {
     const { storageController } = options
@@ -12,7 +15,11 @@ class ConnectorController {
     this.walletController = walletController
   }
 
-  getConnection(origin, accountId) {
+  setNetworkController(networkController) {
+    this.networkController = networkController
+  }
+
+  getConnection(origin) {
     if (!this.storageController) {
       return null
     }
@@ -28,23 +35,24 @@ class ConnectorController {
       return connection
     }
     const connections = this.storageController.getConnections()
-    const connection = connections.find(
-      conn => conn.website.origin === origin && conn.accountId === accountId
-    )
+    const connection = connections.find(conn => conn.website.origin === origin)
 
     return connection
   }
 
   pushConnection(connection) {
+    const account = this.walletController.getCurrentAccount()
     const connections = this.storageController.getConnections()
     const existingConnection = connections.find(
-      conn =>
-        conn.website.origin === connection.website.origin &&
-        conn.accountId === connection.accountId
+      conn => conn.website.origin === connection.website.origin
     )
 
     if (existingConnection) {
-      this.updateConnection(connection)
+      this.updateConnection(
+        Object.assign({}, connection, {
+          accountId: account.id
+        })
+      )
     } else {
       connections.push(connection)
       this.storageController.setConnections(connections)
@@ -54,10 +62,7 @@ class ConnectorController {
   updateConnection(connection) {
     const connections = this.storageController.getConnections()
     const updatedConnections = connections.map(conn => {
-      if (
-        conn.website.origin === connection.website.origin &&
-        conn.accountId === connection.accountId
-      ) {
+      if (conn.website.origin === connection.website.origin) {
         return connection
       } else {
         return conn
@@ -136,6 +141,8 @@ class ConnectorController {
       }
     })
 
+    backgroundMessanger.setSelectedAccount(account.data.latestAddress)
+
     return requests
   }
 
@@ -153,6 +160,14 @@ class ConnectorController {
       this.setConnectionRequest(null)
     }
 
+    this.updateConnection({
+      website,
+      requestToConnect: false,
+      connected: false,
+      enabled: false,
+      accountId: account.id
+    })
+
     requests.forEach(request => {
       if (
         request.connection.website.origin === website.origin &&
@@ -163,6 +178,8 @@ class ConnectorController {
         request.connection.connected = false
       }
     })
+
+    this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
 
     return requests
   }

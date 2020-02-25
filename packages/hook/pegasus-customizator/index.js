@@ -33,14 +33,12 @@ class PegasusCustomizator extends EventEmitter {
       this.emit('onAccountChanged', account)
     })
 
-    this.pegasusConnector
-      .send('init')
-      .then(({ selectedAccount, selectedProvider }) => {
-        this._set(selectedProvider, selectedAccount)
-      })
+    this.pegasusConnector.send('init').then(({ selectedProvider }) => {
+      this._set(selectedProvider)
+    })
   }
 
-  _set(provider, account) {
+  _set(provider) {
     const core = composeAPI()
     Object.keys(core).forEach(method => {
       core[method] = (...args) => this._handleInjectedRequest(args, method)
@@ -90,7 +88,6 @@ class PegasusCustomizator extends EventEmitter {
     this.mam = mam
 
     this.selectedProvider = provider
-    this.selectedAccount = account
 
     const additionalMethods = [
       'connect',

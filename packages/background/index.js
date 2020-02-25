@@ -112,13 +112,9 @@ const backgroundScript = {
         switch (action) {
           case 'init': {
             const currentNetwork = this.engine.getCurrentNetwork()
-            const currentAccount = this.engine.getCurrentAccount()
             this.engine.setWebsite(website)
             const response = {
-              selectedProvider: currentNetwork.provider,
-              selectedAccount: currentAccount
-                ? currentAccount.data.latestAddress
-                : null
+              selectedProvider: currentNetwork.provider
             }
 
             resolve({

@@ -2,10 +2,18 @@ import { backgroundMessanger } from '@pegasus/utils/messangers'
 
 class NetworkController {
   constructor(options) {
-    const { storageController, customizatorController } = options
+    const {
+      storageController,
+      customizatorController,
+      connectorController
+    } = options
 
     this.storageController = storageController
     this.customizatorController = customizatorController
+  }
+
+  setWalletController(walletController) {
+    this.walletController = walletController
   }
 
   setCurrentNetwork(network) {
@@ -80,6 +88,7 @@ class NetworkController {
 
       backgroundMessanger.setNetworks(options.networks)
       backgroundMessanger.setNetwork(selectedNetwork)
+
       backgroundMessanger.setSelectedProvider(selectedNetwork.provider)
 
       return currentNetwork

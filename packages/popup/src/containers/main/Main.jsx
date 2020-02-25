@@ -159,18 +159,16 @@ class Main extends Component {
   }
 
   async onPermissionGranted() {
-    const account = await popupMessanger.getCurrentAccount()
     const requestsWithUserInteraction = await popupMessanger.getRequestsWithUserInteraction()
     const website = await popupMessanger.getWebsite()
     popupMessanger.pushConnection({
       website,
       requestToConnect: false,
       connected: true,
-      enabled: true,
-      accountId: account.id
+      enabled: true
     })
 
-    await popupMessanger.completeConnection()
+    await popupMessanger.completeConnection(requestsWithUserInteraction)
 
     if (requestsWithUserInteraction.length > 0) {
       this.props.showHeader(false)
@@ -190,13 +188,6 @@ class Main extends Component {
   }
 
   async onPermissionNotGranted() {
-    const website = await popupMessanger.getWebsite()
-    popupMessanger.updateConnection({
-      website,
-      requestToConnect: true,
-      connected: false,
-      enabled: false
-    })
     popupMessanger.rejectConnection()
     popupMessanger.rejectRequests()
     this.props.showHeader(true)
