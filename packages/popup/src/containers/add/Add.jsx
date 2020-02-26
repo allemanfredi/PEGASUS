@@ -67,7 +67,7 @@ class Add extends Component {
       if (!isCreated) {
         this.props.setNotification({
           type: 'danger',
-          text: 'Error during creating the wallet! Try Again!',
+          text: 'Error during creating the account! Try Again!',
           position: 'under-bar'
         })
         this.goBack()

@@ -121,19 +121,11 @@ class WalletController {
       this.password = key
       this.networkController.setCurrentNetwork(network)
 
-      //injection
-      const website = this.connectorController.getCurrentWebsite()
-      const connection = this.connectorController.getConnection(website.origin)
-      if (connection && connection.enabled) {
-        backgroundMessanger.setSelectedProvider(network.provider)
-        backgroundMessanger.setSelectedAccount(account.data.latestAddress)
-      }
-
       backgroundMessanger.setAccount(obj)
 
-      return obj
+      return true
     } catch (err) {
-      throw new Error(err)
+      return false
     }
   }
 

@@ -355,6 +355,7 @@ class Home extends Component {
             )}
             {this.state.showImportSeed ? (
               <ImportSeed
+                setNotification={this.props.setNotification}
                 account={this.props.account}
                 network={this.props.network}
                 onBack={this.onBack}

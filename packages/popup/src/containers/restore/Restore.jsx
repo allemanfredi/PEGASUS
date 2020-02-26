@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import IOTA from '@pegasus/utils/iota'
 import { popupMessanger } from '@pegasus/utils/messangers'
 import Loader from '../../components/loader/Loader'
+import { composeAPI } from '@iota/core'
 
 class Restore extends Component {
   constructor(props, context) {
@@ -28,13 +29,18 @@ class Restore extends Component {
 
     const isSeedValid = await popupMessanger.isSeedValid(this.state.seed)
     if (!isSeedValid) {
-      this.props.setError('Invalid Seed')
+      this.props.setNotification({
+        type: 'danger',
+        text: 'Invalid Seed',
+        position: 'under-bar'
+      })
       return
     }
 
     this.setState({ isLoading: true })
 
     await popupMessanger.resetData()
+
     const data = await IOTA.getAccountData(this.state.seed)
     const account = {
       name: this.state.accountName,
@@ -42,12 +48,21 @@ class Restore extends Component {
       data,
       network: this.props.network
     }
-    await popupMessanger.restoreWallet(
+    const isRestored = await popupMessanger.restoreWallet(
       account,
       this.props.network,
       this.state.psw
     )
-    this.setState({ isLoading: false })
+
+    if (!isRestored) {
+      this.setState({ isLoading: false })
+      this.props.setNotification({
+        type: 'danger',
+        text: 'Error during restoring the wallet! Try Again!'
+      })
+      return
+    }
+    
     this.props.onSuccess()
   }
 

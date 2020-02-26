@@ -14,7 +14,6 @@ class ImportSeed extends Component {
       isValidSeed: false,
       seed: '',
       name: '',
-      error: null,
       isLoading: false
     }
   }
@@ -24,15 +23,19 @@ class ImportSeed extends Component {
       this.state.name
     )
     if (nameAlreadyExixts) {
-      this.setState({
-        error: 'Account name already exists'
+      this.props.setNotification({
+        type: 'danger',
+        text: 'Account Name Already Exists',
+        position: 'under-bar'
       })
       return
     }
     const isValidSeed = await popupMessanger.isSeedValid(this.state.seed)
     if (!isValidSeed) {
-      this.setState({
-        error: 'Invalid seed'
+      this.props.setNotification({
+        type: 'danger',
+        text: 'Invalid Seed',
+        position: 'under-bar'
       })
       return
     }
@@ -42,8 +45,19 @@ class ImportSeed extends Component {
         seed: this.state.seed,
         name: this.state.name
       }
-      await popupMessanger.addAccount(account, this.props.network, true)
+      const isAdded = await popupMessanger.addAccount(account, this.props.network, true)
+
       this.setState({ isLoading: false })
+
+      if (!isAdded) {
+        this.props.setNotification({
+          type: 'danger',
+          text: 'Error during importing the Seed! Try Again!',
+          position: 'under-bar'
+        })
+        return
+      }
+
       this.props.onBack()
     } catch (e) {
       this.setState({
@@ -68,12 +82,12 @@ class ImportSeed extends Component {
           <Loader />
         ) : (
           <div className="container">
-            <div className={'row mt-2 ' + (this.state.error ? 'mb-0' : 'mb-3')}>
+            <div className="row mt-2 mb-3">
               <div className="col-12 text-center text-lg text-blue text-bold">
                 Paste your seed here and choose a name!
               </div>
             </div>
-            <div className={'row ' + (this.state.error ? 'mt-3' : 'mt-8')}>
+            <div className="row mt-8">
               <div className="col-12 text-xs text-gray">seed</div>
             </div>
             <div className="row mt-05">
@@ -95,18 +109,7 @@ class ImportSeed extends Component {
                 />
               </div>
             </div>
-            {this.state.error ? (
-              <div className="row mt-2">
-                <div className="col-12 text-xs">
-                  <div class="alert alert-danger" role="alert">
-                    {this.state.error}
-                  </div>
-                </div>
-              </div>
-            ) : (
-              ''
-            )}
-            <div className={'row ' + (this.state.error ? 'mt-1' : ' mt-4')}>
+            <div className="row mt-1">
               <div className="col-12">
                 <button
                   disabled={
