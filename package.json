@@ -43,6 +43,8 @@
     "webpack-cli": "^3.1.2"
   },
   "dependencies": {
-    "base64-loader": "^1.0.0"
+    "animate.css": "^3.7.2",
+    "base64-loader": "^1.0.0",
+    "react-notifications-component": "^2.3.0"
   }
 }

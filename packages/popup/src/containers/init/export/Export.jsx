@@ -21,18 +21,7 @@ const Export = props => {
         </div>
         <div className="col-1"></div>
       </div>
-
-      {props.isCopiedToClipboard ? (
-        <div className="row mt-1">
-          <div className="col-10 mx-auto text-center text-xs">
-            <div class="alert alert-success" role="alert">
-              Copied!
-            </div>
-          </div>
-        </div>
-      ) : null}
-
-      <div className={'row ' + (props.isCopiedToClipboard ? 'mt-1' : 'mt-5')}>
+      <div className="row mt-7">
         <div className="col-12 text-center">
           <button
             onClick={e => props.onCopyToClipboard(e)}

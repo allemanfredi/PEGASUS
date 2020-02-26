@@ -4,7 +4,6 @@ import Utils from '@pegasus/utils/utils'
 import ConfirmTransfers from '../confirm/confirmTransfers/ConfirmTransfers'
 import Input from '../../components/input/Input'
 import Picklist from '../../components/picklist/Picklist'
-import { Cameras, Scanner } from 'react-instascan'
 
 class Send extends Component {
   constructor(props, context) {

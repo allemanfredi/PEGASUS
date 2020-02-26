@@ -1065,3 +1065,16 @@ textarea {
     4px -8px 0 white;
     transform: rotate(45deg);
 }
+
+/* NOTIFICATION */
+.notification {
+    position: absolute;
+    top: 20px;
+    margin-right: 10px;
+    margin-left: 10px;
+    width: 95%;
+}
+
+.notification.under-bar {
+    top: 125px;
+}

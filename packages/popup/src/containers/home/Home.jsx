@@ -122,24 +122,33 @@ class Home extends Component {
   }
 
   async onConfirm() {
+    this.setState({ showAlert: false })
+
     switch (this.state.actionToConfirm) {
       case 'deleteAccount': {
         const account = await popupMessanger.deleteAccount(this.props.account)
         if (!account) {
-          this.setState(() => {
-            return {
-              showAlert: true,
-              alertText: 'Impossible to delete this account',
-              alertType: 'error'
-            }
+          this.props.setNotification({
+            type: 'danger',
+            text: 'Impossible to delete the account!',
+            position: 'under-bar'
           })
-        } else this.setState({ showAlert: false })
-
+        } else {
+          this.props.setNotification({
+            type: 'success',
+            text: 'Account Delete succesfully!',
+            position: 'under-bar'
+          })
+        }
         break
       }
       case 'deleteNetwork': {
         popupMessanger.deleteCurrentNetwork()
-        this.setState({ showAlert: false })
+        this.props.setNotification({
+          type: 'success',
+          text: 'Network Deleted succesfully!',
+          position: 'under-bar'
+        })
         break
       }
       default:
@@ -309,21 +318,34 @@ class Home extends Component {
               <Receive
                 account={this.props.account}
                 network={this.state.network}
+                setNotification={this.props.setNotification}
               />
             ) : (
               ''
             )}
             {this.state.showAdd ? (
-              <Add network={this.props.network} onBack={this.onBack} />
+              <Add
+                network={this.props.network}
+                setNotification={this.props.setNotification}
+                onBack={this.onBack}
+              />
             ) : (
               ''
             )}
-            {this.state.showNetwork ? <Network onBack={this.onBack} /> : ''}
+            {this.state.showNetwork ? (
+              <Network
+                setNotification={this.props.setNotification}
+                onBack={this.onBack}
+              />
+            ) : (
+              ''
+            )}
             {this.state.showExportSeed ? (
               <ExportSeed
                 ref={this.exportSeed}
                 account={this.props.account}
                 network={this.props.network}
+                setNotification={this.props.setNotification}
                 onChangeCanGoBack={value => this.setState({ canGoBack: value })}
                 onBack={this.onBack}
               />

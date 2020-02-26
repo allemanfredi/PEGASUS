@@ -182,62 +182,69 @@ class WalletController {
   }
 
   async addAccount(account, isCurrent) {
-    if (isCurrent) {
-      const data = this.storageController.getData()
-      data.forEach(acc => {
-        acc.current = false
+    try {
+      if (isCurrent) {
+        const data = this.storageController.getData()
+        data.forEach(acc => {
+          acc.current = false
+        })
+        this.storageController.setData(data)
+      }
+
+      const network = this.networkController.getCurrentNetwork()
+      const iota = composeAPI({ provider: network.provider })
+      const seed = account.seed.toString().replace(/,/g, '')
+      const accountData = await iota.getAccountData(seed, {
+        start: 0,
+        security: 2
       })
+
+      accountData.balance = {
+        testnet: 0,
+        mainnet: 0
+      }
+
+      const key = this.getKey()
+      const eseed = Utils.aes256encrypt(seed, key)
+
+      const accountToAdd = {
+        name: account.name,
+        avatar: account.avatar,
+        seed: eseed,
+        transactions: [],
+        data: accountData,
+        current: Boolean(isCurrent),
+        id: Utils.sha256(account.name)
+      }
+
+      const data = this.storageController.getData()
+
+      const alreadyExists = data.filter(a => a.id === accountToAdd.id)
+      if (alreadyExists.length > 0) {
+        return null
+      }
+
+      data.push(accountToAdd)
       this.storageController.setData(data)
+
+      this.setState(APP_STATE.WALLET_UNLOCKED)
+
+      //injection
+      const website = this.connectorController.getCurrentWebsite()
+      const connection = this.connectorController.getConnection(website.origin)
+      if (connection && connection.enabled) {
+        backgroundMessanger.setSelectedProvider(network.provider)
+        backgroundMessanger.setSelectedAccount(accountToAdd.data.latestAddress)
+      }
+
+      backgroundMessanger.setAccount(accountToAdd)
+      return
+    } catch (err) {
+      backgroundMessanger.setNotification({
+        type: 'danger',
+        text: err.message
+      })
     }
-
-    const network = this.networkController.getCurrentNetwork()
-    const iota = composeAPI({ provider: network.provider })
-    const seed = account.seed.toString().replace(/,/g, '')
-    const accountData = await iota.getAccountData(seed, {
-      start: 0,
-      security: 2
-    })
-
-    accountData.balance = {
-      testnet: 0,
-      mainnet: 0
-    }
-
-    const key = this.getKey()
-    const eseed = Utils.aes256encrypt(seed, key)
-
-    const accountToAdd = {
-      name: account.name,
-      avatar: account.avatar,
-      seed: eseed,
-      transactions: [],
-      data: accountData,
-      current: Boolean(isCurrent),
-      id: Utils.sha256(account.name)
-    }
-
-    const data = this.storageController.getData()
-
-    const alreadyExists = data.filter(a => a.id === accountToAdd.id)
-    if (alreadyExists.length > 0) {
-      return null
-    }
-
-    data.push(accountToAdd)
-    this.storageController.setData(data)
-
-    this.setState(APP_STATE.WALLET_UNLOCKED)
-
-    //injection
-    const website = this.connectorController.getCurrentWebsite()
-    const connection = this.connectorController.getConnection(website.origin)
-    if (connection && connection.enabled) {
-      backgroundMessanger.setSelectedProvider(network.provider)
-      backgroundMessanger.setSelectedAccount(accountToAdd.data.latestAddress)
-    }
-
-    backgroundMessanger.setAccount(accountToAdd)
-    return
   }
 
   getCurrentAccount() {

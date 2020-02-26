@@ -5,6 +5,7 @@ import IOTA from '@pegasus/utils/iota'
 import Header from './header/Header'
 import Main from './main/Main'
 import { APP_STATE } from '@pegasus/utils/states'
+import Notifications from './notifications/Notifications'
 
 class App extends Component {
   constructor(props, context) {
@@ -99,13 +100,15 @@ class App extends Component {
           ) : (
             ''
           )}
-          <Main
-            showHeader={this.onShowHeader}
-            ref={this.main}
-            network={this.state.network}
-            account={this.state.account}
-            duplex={this.duplex}
-          />
+          <Notifications duplex={this.duplex}>
+            <Main
+              showHeader={this.onShowHeader}
+              ref={this.main}
+              network={this.state.network}
+              account={this.state.account}
+              duplex={this.duplex}
+            />
+          </Notifications>
         </div>
       </div>
     )

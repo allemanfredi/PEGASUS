@@ -19,8 +19,7 @@ class Restore extends Component {
       isLoading: false,
       seedIsValid: false,
       passwordIsValid: false,
-      shake: false,
-      error: null
+      shake: false
     }
   }
 
@@ -29,10 +28,7 @@ class Restore extends Component {
 
     const isSeedValid = await popupMessanger.isSeedValid(this.state.seed)
     if (!isSeedValid) {
-      this.setState({
-        isSeedValid,
-        error: 'Invalid Seed'
-      })
+      this.props.setError('Invalid Seed')
       return
     }
 
@@ -66,18 +62,11 @@ class Restore extends Component {
   }
 
   onChangeSeed(e) {
-    if (this.state.error) {
-      this.setState({
-        error: null
-      })
-    }
     this.setState({ seed: e.target.value })
   }
 
   closeAlert() {
-    this.setState({
-      error: null
-    })
+    this.props.setError(null)
   }
 
   render() {
@@ -94,7 +83,7 @@ class Restore extends Component {
         </div>
         {this.state.passwordIsValid ? (
           <React.Fragment>
-            <div className={'row ' + (this.state.error ? 'mt-3' : 'mt-8')}>
+            <div className="row mt-8">
               <div className="col-12 text-xs text-gray">seed</div>
             </div>
             <div className="row mt-05">
@@ -125,16 +114,7 @@ class Restore extends Component {
                 </form>
               </div>
             </div>
-            {this.state.error ? (
-              <div className="row mt-2">
-                <div className="col-12 text-xs">
-                  <div class="alert alert-danger" role="alert">
-                    {this.state.error}
-                  </div>
-                </div>
-              </div>
-            ) : null}
-            <div className={'row ' + (this.state.error ? 'mt-1' : ' mt-4')}>
+            <div className="row mt-4">
               <div className="col-12 text-center">
                 <button
                   disabled={

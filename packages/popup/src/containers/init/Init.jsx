@@ -52,7 +52,6 @@ class Init extends Component {
       isCreatingWallet: false,
       initialization: [true, false, false, false],
       indexInitialization: 0,
-      isCopiedToClipboard: false,
       selectedAvatar: 0,
       mode: 'new'
     }
@@ -112,7 +111,6 @@ class Init extends Component {
         randomLetters: 10,
         randomizedLetter: [],
         isCreatingWallet: false,
-        isCopiedToClipboard: false,
         selectedAvatar: 0,
         mode: 'new'
       })
@@ -185,7 +183,11 @@ class Init extends Component {
     textField.select()
     document.execCommand('copy')
     textField.remove()
-    this.setState({ isCopiedToClipboard: true })
+
+    this.props.setNotification({
+      type: 'success',
+      text: 'Copied!'
+    })
   }
 
   async createWallet() {
@@ -327,8 +329,8 @@ class Init extends Component {
             )}
             {this.state.initialization[5] && this.state.mode === 'new' ? (
               <Export
+                setNotification={this.props.setNotification}
                 seed={this.state.seed}
-                isCopiedToClipboard={this.state.isCopiedToClipboard}
                 onCopyToClipboard={this.copyToClipboard}
               />
             ) : (

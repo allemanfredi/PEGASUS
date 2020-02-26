@@ -23,6 +23,10 @@ export default {
     this.duplex.send('popup', 'setTransfersConfirmationError', error, false)
   },
 
+  setNotification(notification) {
+    this.duplex.send('popup', 'setNotification', notification, false)
+  },
+
   //send account object
   setAccount(account) {
     this.duplex.send('popup', 'setAccount', account, false)

@@ -243,7 +243,12 @@ class Main extends Component {
   render() {
     switch (this.state.appState) {
       case APP_STATE.WALLET_NOT_INITIALIZED:
-        return <Init onSuccess={this.onSuccessFromInit} />
+        return (
+          <Init
+            setNotification={this.props.setNotification}
+            onSuccess={this.onSuccessFromInit}
+          />
+        )
       case APP_STATE.WALLET_LOCKED:
         return (
           <Login
@@ -255,6 +260,7 @@ class Main extends Component {
         return (
           <Restore
             network={this.props.network}
+            setNotification={this.props.setNotification}
             onSuccess={this.onSuccessFromRestore}
             onBack={this.onBack}
           />
@@ -266,6 +272,7 @@ class Main extends Component {
             duplex={this.props.duplex}
             account={this.props.account}
             network={this.props.network}
+            setNotification={this.props.setNotification}
             onLogout={this.onLogout}
             onShowHeader={show => this.props.showHeader(show)}
           />

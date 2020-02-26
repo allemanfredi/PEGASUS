@@ -10,8 +10,7 @@ class ExportSeedText extends Component {
     this.copyToClipboard = this.copyToClipboard.bind(this)
 
     this.state = {
-      seed: null,
-      isCopied: null
+      seed: null
     }
   }
 
@@ -30,8 +29,9 @@ class ExportSeedText extends Component {
     document.execCommand('copy')
     textField.remove()
 
-    this.setState({
-      isCopied: true
+    this.props.setNotification({
+      type: 'success',
+      text: 'Copied!'
     })
   }
 
@@ -50,16 +50,7 @@ class ExportSeedText extends Component {
             {this.state.seed}
           </div>
         </div>
-        {this.state.isCopied ? (
-          <div className="row mt-1">
-            <div className="col-10 mx-auto text-center text-xs">
-              <div class="alert alert-success" role="alert">
-                Copied!
-              </div>
-            </div>
-          </div>
-        ) : null}
-        <div className={'row ' + (this.state.isCopied ? 'mt-3' : 'mt-10')}>
+        <div className="row mt-10">
           <div className="col-12">
             <button
               onClick={this.copyToClipboard}

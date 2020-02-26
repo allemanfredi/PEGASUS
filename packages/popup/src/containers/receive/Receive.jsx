@@ -8,9 +8,7 @@ class Receive extends Component {
 
     this.copyToClipboard = this.copyToClipboard.bind(this)
 
-    this.state = {
-      isCopiedToClipboard: false
-    }
+    this.state = {}
   }
 
   copyToClipboard(e) {
@@ -22,7 +20,11 @@ class Receive extends Component {
     textField.select()
     document.execCommand('copy')
     textField.remove()
-    this.setState({ isCopiedToClipboard: true })
+    this.props.setNotification({
+      type: 'success',
+      text: 'Copied!',
+      position: 'under-bar'
+    })
   }
 
   render() {
@@ -40,20 +42,7 @@ class Receive extends Component {
             {Utils.checksummed(this.props.account.data.latestAddress)}
           </div>
         </div>
-        {this.state.isCopiedToClipboard ? (
-          <div className="row mt-1">
-            <div className="col-10 mx-auto text-center text-xs">
-              <div class="alert alert-success" role="alert">
-                Copied!
-              </div>
-            </div>
-          </div>
-        ) : null}
-        <div
-          className={
-            'row ' + (this.state.isCopiedToClipboard ? 'mt-3' : 'mt-10')
-          }
-        >
+        <div className="row mt-10">
           <div className="col-12">
             <button
               onClick={this.copyToClipboard}

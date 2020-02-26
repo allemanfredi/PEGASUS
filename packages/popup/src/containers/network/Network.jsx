@@ -14,22 +14,25 @@ class Network extends Component {
       name: '',
       url: '',
       port: '',
-      type: '',
-      error: null
+      type: ''
     }
   }
 
   async addNetwork() {
     if (!Utils.isURL(this.state.url)) {
-      this.setState({
-        error: 'Invalid URL'
+      this.props.setNotification({
+        type: 'danger',
+        text: 'Invalid URL',
+        position: 'under-bar'
       })
       return
     }
 
     if (isNaN(this.state.port)) {
-      this.setState({
-        error: 'Invalid Port Number'
+      this.props.setNotification({
+        type: 'danger',
+        text: 'Invalid Port Number',
+        position: 'under-bar'
       })
       return
     }
@@ -41,8 +44,10 @@ class Network extends Component {
     try {
       await iota.getNodeInfo()
     } catch (err) {
-      this.setState({
-        error: 'Unreachable Node'
+      this.props.setNotification({
+        type: 'danger',
+        text: 'Node Unreachable',
+        position: 'under-bar'
       })
       return
     }
@@ -124,18 +129,7 @@ class Network extends Component {
             </label>
           </div>
         </div>
-        {this.state.error ? (
-          <div className="row mt-3">
-            <div className="col-12 text-xs">
-              <div class="alert alert-danger" role="alert">
-                {this.state.error}
-              </div>
-            </div>
-          </div>
-        ) : (
-          ''
-        )}
-        <div className={'row ' + (!this.state.error ? 'mt-9' : '')}>
+        <div className="row mt-9">
           <div className="col-12 text-center">
             <button
               disabled={

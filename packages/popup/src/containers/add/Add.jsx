@@ -16,7 +16,6 @@ class Add extends Component {
     this.updateStatusInitialization = this.updateStatusInitialization.bind(this)
     this.randomiseSeedLetter = this.randomiseSeedLetter.bind(this)
     this.copyToClipboard = this.copyToClipboard.bind(this)
-    this.onCloseAlert = this.onCloseAlert.bind(this)
 
     this.state = {
       name: '',
@@ -26,9 +25,6 @@ class Add extends Component {
       isLoading: false,
       initialization: [true, false, false],
       indexInitialization: 0,
-      showAlert: false,
-      alertType: '',
-      alertText: '',
       selectedAvatar: 0
     }
   }
@@ -49,10 +45,10 @@ class Add extends Component {
         this.state.name
       )
       if (nameAlreadyExixts) {
-        this.setState({
-          showAlert: true,
-          alertText: 'Account name already exists',
-          alertType: 'error'
+        this.props.setNotification({
+          type: 'danger',
+          text: 'Account Name Already Exists',
+          position: 'under-bar'
         })
         return
       }
@@ -116,27 +112,16 @@ class Add extends Component {
     textField.select()
     document.execCommand('copy')
     textField.remove()
-    this.setState({ isCopiedToClipboard: true })
-  }
-
-  onCloseAlert() {
-    this.setState({
-      showAlert: false
+    this.props.setNotification({
+      type: 'success',
+      text: 'Copied!',
+      position: 'under-bar'
     })
   }
 
   render() {
     return (
       <React.Fragment>
-        {this.state.showAlert ? (
-          <Alert
-            type={this.state.alertType}
-            text={this.state.alertText}
-            onClose={this.onCloseAlert}
-          />
-        ) : (
-          ''
-        )}
         {this.state.isLoading ? (
           <React.Fragment>
             <div className="container">
@@ -186,7 +171,6 @@ class Add extends Component {
             {this.state.initialization[3] ? (
               <Export
                 seed={this.state.seed}
-                isCopiedToClipboard={this.state.isCopiedToClipboard}
                 onCopyToClipboard={this.copyToClipboard}
               />
             ) : (
