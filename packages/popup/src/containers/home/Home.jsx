@@ -126,8 +126,8 @@ class Home extends Component {
 
     switch (this.state.actionToConfirm) {
       case 'deleteAccount': {
-        const account = await popupMessanger.deleteAccount(this.props.account)
-        if (!account) {
+        const isDeleted = await popupMessanger.deleteAccount(this.props.account)
+        if (!isDeleted) {
           this.props.setNotification({
             type: 'danger',
             text: 'Impossible to delete the account!',

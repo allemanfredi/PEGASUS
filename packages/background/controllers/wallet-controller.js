@@ -269,6 +269,12 @@ class WalletController {
 
         //injection
         const website = this.connectorController.getCurrentWebsite()
+
+        if (!website) {
+          this.storageController.setData(data)
+          return
+        }
+
         const connection = this.connectorController.getConnection(
           website.origin
         )
@@ -367,30 +373,35 @@ class WalletController {
     backgroundMessanger.setAccount(updatedAccount)
   }
 
-  deleteAccount(account) {
+  async deleteAccount(account) {
     const data = this.storageController.getData()
+
     if (data.length === 1) {
-      return null
-    } else {
-      const app = data.filter(acc => acc.id !== account.id)
-
-      app.forEach(account => {
-        account.current = false
-      })
-
-      app[0].current = true
-      this.storageController.setData(app)
-      backgroundMessanger.setAccount(app[0])
-
-      //injection
-      const website = this.connectorController.getCurrentWebsite()
-      const connection = this.connectorController.getConnection(website.origin)
-      if (connection && connection.enabled) {
-        backgroundMessanger.setSelectedAccount(app[0].data.latestAddress)
-      }
-
-      return app[0]
+      return false
     }
+
+    const accounts = data.filter(acc => acc.id !== account.id)
+
+    accounts.forEach(account => {
+      account.current = false
+    })
+
+    accounts[0].current = true
+    this.storageController.setData(accounts)
+    backgroundMessanger.setAccount(accounts[0])
+
+    //injection
+    const website = this.connectorController.getCurrentWebsite()
+    if (!website) {
+      return true
+    }
+
+    const connection = this.connectorController.getConnection(website.origin)
+    if (connection && connection.enabled) {
+      backgroundMessanger.setSelectedAccount(accounts[0].data.latestAddress)
+    }
+
+    return true
   }
 
   getAllAccounts() {

@@ -63,7 +63,16 @@ class Add extends Component {
         avatar: this.state.selectedAvatar,
         seed: this.state.seed
       }
-      await popupMessanger.addAccount(account, true)
+      const isCreated = await popupMessanger.addAccount(account, true)
+      if (!isCreated) {
+        this.props.setNotification({
+          type: 'danger',
+          text: 'Error during creating the wallet! Try Again!',
+          position: 'under-bar'
+        })
+        this.goBack()
+        return
+      }
       await popupMessanger.writeOnLocalStorage()
       this.setState({ isLoading: false })
       this.props.onBack()
