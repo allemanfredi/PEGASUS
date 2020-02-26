@@ -135,9 +135,21 @@ class Init extends Component {
     ) {
       //create wallet
       this.setState({ isCreatingWallet: true })
-      await this.createWallet()
+
+      const isCreated = await this.createWallet()
+
+      if (isCreated) {
+        this.props.onSuccess()
+      } else {
+        this.goBack()
+
+        this.props.setNotification({
+          type: 'danger',
+          text: 'Error during creating the wallet! Try Again!'
+        })
+      }
+
       this.setState({ isCreatingWallet: false })
-      this.props.onSuccess()
     }
   }
 
@@ -191,27 +203,28 @@ class Init extends Component {
   }
 
   async createWallet() {
-    return new Promise(async (resolve, reject) => {
-      try {
-        await popupMessanger.storePassword(this.state.psw)
-        await popupMessanger.setStorageKey(this.state.psw)
+    try {
+      await popupMessanger.storePassword(this.state.psw)
+      await popupMessanger.setStorageKey(this.state.psw)
 
-        let seed = this.state.seed
-        if (!Array.isArray(seed)) seed = seed.split()
+      let seed = this.state.seed
+      if (!Array.isArray(seed)) seed = seed.split()
 
-        const account = {
-          name: this.state.name,
-          avatar: this.state.selectedAvatar,
-          seed
-        }
-
-        await popupMessanger.addAccount(account, true)
-        popupMessanger.writeOnLocalStorage()
-        resolve()
-      } catch (err) {
-        reject('Impossible to create the wallet')
+      const account = {
+        name: this.state.name,
+        avatar: this.state.selectedAvatar,
+        seed
       }
-    })
+
+      const isAdded = await popupMessanger.addAccount(account, true)
+      if (!isAdded) return false
+
+      popupMessanger.writeOnLocalStorage()
+
+      return true
+    } catch (err) {
+      return false
+    }
   }
 
   async onChangeSeedFromImport(seed) {

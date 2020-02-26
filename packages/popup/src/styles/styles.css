@@ -1071,7 +1071,8 @@ textarea {
     position: absolute;
     top: 20px;
     margin-right: 5px;
-    width: 230px;
+    margin-left: 5px;
+    min-width: 230px;
     right: 0;
 }
 

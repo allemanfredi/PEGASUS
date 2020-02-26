@@ -221,7 +221,7 @@ class WalletController {
 
       const alreadyExists = data.filter(a => a.id === accountToAdd.id)
       if (alreadyExists.length > 0) {
-        return null
+        return false
       }
 
       data.push(accountToAdd)
@@ -229,21 +229,11 @@ class WalletController {
 
       this.setState(APP_STATE.WALLET_UNLOCKED)
 
-      //injection
-      const website = this.connectorController.getCurrentWebsite()
-      const connection = this.connectorController.getConnection(website.origin)
-      if (connection && connection.enabled) {
-        backgroundMessanger.setSelectedProvider(network.provider)
-        backgroundMessanger.setSelectedAccount(accountToAdd.data.latestAddress)
-      }
-
       backgroundMessanger.setAccount(accountToAdd)
-      return
+
+      return true
     } catch (err) {
-      backgroundMessanger.setNotification({
-        type: 'danger',
-        text: err.message
-      })
+      return false
     }
   }
 
