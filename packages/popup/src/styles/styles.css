@@ -1078,7 +1078,7 @@ textarea {
 
 .notification.under-bar {
     animation-name: under-bar;
-    animation-duration: 0.5s;
+    animation-duration: 0.3s;
     top: 100px;
 }
 

@@ -136,7 +136,7 @@ class Home extends Component {
         } else {
           this.props.setNotification({
             type: 'success',
-            text: 'Account Delete succesfully!',
+            text: 'Account Deleted Succesfully!',
             position: 'under-bar'
           })
         }
@@ -146,7 +146,7 @@ class Home extends Component {
         popupMessanger.deleteCurrentNetwork()
         this.props.setNotification({
           type: 'success',
-          text: 'Network Deleted succesfully!',
+          text: 'Network Deleted Succesfully!',
           position: 'under-bar'
         })
         break
