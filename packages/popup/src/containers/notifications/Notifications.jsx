@@ -22,7 +22,7 @@ class Notifications extends React.Component {
 
     setTimeout(() => {
       this.setState({ notification: null })
-    }, 5000)
+    }, 3000)
   }
 
   render() {

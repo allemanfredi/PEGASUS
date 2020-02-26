@@ -1070,11 +1070,22 @@ textarea {
 .notification {
     position: absolute;
     top: 20px;
-    margin-right: 10px;
-    margin-left: 10px;
-    width: 95%;
+    margin-right: 5px;
+    width: 230px;
+    right: 0;
 }
 
 .notification.under-bar {
-    top: 125px;
+    animation-name: under-bar;
+    animation-duration: 0.5s;
+    top: 100px;
+}
+
+@keyframes under-bar {
+    from {
+       top: 0;
+    }
+    to {
+        top: 125px;
+    }
 }

@@ -21,7 +21,6 @@ class Send extends Component {
       value: '',
       message: '',
       isLoading: false,
-      error: null,
       needConfirmation: false,
       isTransferingBetweenWalletAccounts: false,
       accounts: {}
@@ -35,13 +34,11 @@ class Send extends Component {
   }
 
   clickTransfer() {
-    this.setState({
-      error: null
-    })
-
     if (!Utils.isValidAddress(this.state.dstAddress)) {
-      this.setState({
-        error: 'Invalid Address'
+      this.props.setNotification({
+        type: 'danger',
+        text: 'Invalid Address',
+        position: 'under-bar'
       })
       return
     }
@@ -203,18 +200,7 @@ class Send extends Component {
               />
             </div>
           </div>
-          {this.state.error ? (
-            <div className="row mt-3">
-              <div className="col-12 text-xs">
-                <div class="alert alert-danger" role="alert">
-                  {this.state.error}
-                </div>
-              </div>
-            </div>
-          ) : (
-            ''
-          )}
-          <div className={'row ' + (this.state.error ? 'mt-1' : 'mt-11')}>
+          <div className="row mt-11">
             <div className="col-12 text-center">
               <button
                 disabled={this.state.dstAddress === '' ? true : false}
