@@ -53,7 +53,7 @@ class AccountSelection extends React.Component {
   }
 
   render() {
-    return (
+    return this.state.accounts.length > 0 ? (
       <div
         ref={ref => (this.ref = ref)}
         className={
@@ -103,7 +103,7 @@ class AccountSelection extends React.Component {
           )
         })}
       </div>
-    )
+    ) : null
   }
 }
 

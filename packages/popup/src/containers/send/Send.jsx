@@ -35,7 +35,7 @@ class Send extends Component {
   }
 
   componentDidMount() {
-    this.loadAccounts()  
+    this.loadAccounts()
   }
 
   async loadAccounts() {
