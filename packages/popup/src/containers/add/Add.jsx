@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import Alert from '../../components/alert/Alert'
 import { popupMessanger } from '@pegasus/utils/messangers'
 import Spinner from '../../components/spinner/Spinner'
 import Name from '../init/name/Name'

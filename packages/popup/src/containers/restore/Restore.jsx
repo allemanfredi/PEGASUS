@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import IOTA from '@pegasus/utils/iota'
 import { popupMessanger } from '@pegasus/utils/messangers'
 import Loader from '../../components/loader/Loader'
-import { composeAPI } from '@iota/core'
 
 class Restore extends Component {
   constructor(props, context) {

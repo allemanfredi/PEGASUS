@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { popupMessanger } from '@pegasus/utils/messangers'
-import Utils from '@pegasus/utils/utils'
 import ConfirmTransfers from './confirmTransfers/ConfirmTransfers'
 import ConfirmCreateMamChannel from './confirmCreateMamChannel/ConfirmCreateMamChannel'
 import ConfirmChangeModeMamChannel from './confirmChangeModeMamChannel/ConfirmChangeModeMamChannel'

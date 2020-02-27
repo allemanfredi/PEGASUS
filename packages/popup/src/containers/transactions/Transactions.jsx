@@ -56,7 +56,7 @@ class Transactions extends Component {
   //keep open the opened cards
   handleShowDetails() {
     const opened = this.state.opened
-    this.props.account.transactions.map(transaction => {
+    this.props.account.transactions.forEach(transaction => {
       if (!opened[`${transaction.bundle}-${transaction.timestamp}`]) {
         opened[`${transaction.bundle}-${transaction.timestamp}`] = false
       } else opened[`${transaction.bundle}-${transaction.timestamp}`] = true
