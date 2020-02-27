@@ -12,6 +12,7 @@ class Send extends Component {
     this.clickTransfer = this.clickTransfer.bind(this)
     this.confirmTransfer = this.confirmTransfer.bind(this)
     this.rejectTransfer = this.rejectTransfer.bind(this)
+    this.loadAccounts = this.loadAccounts.bind(this)
 
     this.state = {
       address: '',
@@ -27,7 +28,17 @@ class Send extends Component {
     }
   }
 
-  async componentDidMount() {
+  componentDidUpdate(prevProps) {
+    if (prevProps.account.id !== this.props.account.id) {
+      this.loadAccounts()
+    }
+  }
+
+  componentDidMount() {
+    this.loadAccounts()  
+  }
+
+  async loadAccounts() {
     let accounts = await popupMessanger.getAllAccounts()
     accounts = accounts.filter(account => account.id !== this.props.account.id)
     this.setState({ accounts })
