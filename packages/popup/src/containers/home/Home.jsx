@@ -27,7 +27,6 @@ class Home extends Component {
     this.onCloseMenu = this.onCloseMenu.bind(this)
     this.onClickReceive = this.onClickReceive.bind(this)
     this.onBack = this.onBack.bind(this)
-    this.onSwitchAccount = this.onSwitchAccount.bind(this)
     this.onAddAccount = this.onAddAccount.bind(this)
     this.onLogout = this.onLogout.bind(this)
     this.onDeleteAccount = this.onDeleteAccount.bind(this)
@@ -79,10 +78,6 @@ class Home extends Component {
       isLoading: true
     })
     popupMessanger.reloadAccountData()
-  }
-
-  async onSwitchAccount(account) {
-    popupMessanger.setCurrentAccount(account)
   }
 
   async onDeleteAccount() {

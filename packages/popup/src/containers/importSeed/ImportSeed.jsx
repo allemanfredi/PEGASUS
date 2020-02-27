@@ -45,7 +45,11 @@ class ImportSeed extends Component {
         seed: this.state.seed,
         name: this.state.name
       }
-      const isAdded = await popupMessanger.addAccount(account, this.props.network, true)
+      const isAdded = await popupMessanger.addAccount(
+        account,
+        this.props.network,
+        true
+      )
 
       this.setState({ isLoading: false })
 

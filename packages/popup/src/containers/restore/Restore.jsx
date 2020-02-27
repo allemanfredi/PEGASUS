@@ -61,7 +61,7 @@ class Restore extends Component {
       })
       return
     }
-    
+
     this.props.onSuccess()
   }
 

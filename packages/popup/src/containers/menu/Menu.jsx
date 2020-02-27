@@ -8,7 +8,6 @@ class Settings extends Component {
   constructor(props, context) {
     super(props, context)
 
-    this.switchAccount = this.switchAccount.bind(this)
     this.updateData = this.updateData.bind(this)
     this.onClose = this.onClose.bind(this)
     this.handleClick = this.handleClick.bind(this)
@@ -26,13 +25,6 @@ class Settings extends Component {
 
   async componentWillMount() {
     this.updateData()
-  }
-
-  async switchAccount(newAccount) {
-    let accounts = await popupMessanger.getAllAccounts()
-    accounts = accounts.filter(account => account.id !== newAccount.id)
-    this.setState({ accounts })
-    this.props.onSwitchAccount(newAccount)
   }
 
   async updateData() {
@@ -193,30 +185,6 @@ class Settings extends Component {
                   </div>
                 </div>
               </li>
-              {this.state.accounts.map(account => {
-                return (
-                  <li className="sidebar-brand cursor-pointer">
-                    <div className="row">
-                      <div className="col-2">
-                        <img
-                          src={`./material/profiles/${
-                            account.avatar ? account.avatar : 1
-                          }.svg`}
-                          height="25"
-                          width="25"
-                        />
-                      </div>
-                      <div className="col-8">
-                        <span onClick={() => this.switchAccount(account)}>
-                          <div className="text-gray text-xs text-xxs">
-                            {account.name}
-                          </div>
-                        </span>
-                      </div>
-                    </div>
-                  </li>
-                )
-              })}
               <hr className="mt-1 mb-1" />
               <li className="sidebar-brand mt-1 mb-1 cursor-pointer">
                 <div className="row">

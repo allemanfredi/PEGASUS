@@ -137,6 +137,48 @@
     box-sizing: border-box;
 }
 
+.container-accounts-selection {
+    position: absolute;
+    bottom: 0;
+    height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 1000;
+    width: 370px;
+    padding-left: 10px;
+    padding-top: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    background: rgba(0,0,0,.8);
+    border-radius: 10px 10px 0px 0px;
+    margin-left: 5px;
+    margin-right: 5px;
+    animation-name: accounts-selection-appear;
+    animation-duration: 0.3s;
+}
+
+@keyframes accounts-selection-appear {
+    from {
+        height: 0;
+    }
+    to {
+        height: 200px;
+    }
+}
+
+.container-accounts-selection.disappear {
+    animation-name: accounts-selection-disappear;
+    animation-duration: 0.3s;
+}
+
+@keyframes accounts-selection-disappear {
+    from {
+        height: 200px;
+    }
+    to {
+        height: 0;
+    }
+}
 
 .modal {
     position: fixed;
