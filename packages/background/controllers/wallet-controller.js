@@ -186,24 +186,37 @@ class WalletController {
       const network = this.networkController.getCurrentNetwork()
       const iota = composeAPI({ provider: network.provider })
       const seed = account.seed.toString().replace(/,/g, '')
-      const accountData = await iota.getAccountData(seed, {
+
+      let accountData = await iota.getAccountData(seed, {
         start: 0,
         security: 2
       })
 
-      accountData.balance = {
-        testnet: 0,
-        mainnet: 0
-      }
+      const balance = accountData.balance
+      accountData.balance =
+        network.type === 'mainnet'
+          ? {
+              mainnet: balance,
+              testnet: 0
+            }
+          : {
+              mainnet: 0,
+              testnet: balance
+            }
 
       const key = this.getKey()
       const eseed = Utils.aes256encrypt(seed, key)
+
+      const transactions = this.accountDataController.mapTransactions(
+        accountData,
+        network
+      )
 
       const accountToAdd = {
         name: account.name,
         avatar: account.avatar,
         seed: eseed,
-        transactions: [],
+        transactions,
         data: accountData,
         current: Boolean(isCurrent),
         id: Utils.sha256(account.name)
@@ -225,6 +238,7 @@ class WalletController {
 
       return true
     } catch (err) {
+      console.log(err)
       return false
     }
   }
