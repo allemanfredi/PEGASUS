@@ -117,6 +117,12 @@ export default class Navbar extends Component {
               </div>
               <div className="col-10 text-white text-xs">Add account</div>
             </div>
+            <div className="row mt-1 cursor-pointer" onClick={this.importSeed}>
+              <div className="col-2 text-white text-center text-xs">
+                <span className="fa fa-plus"></span>
+              </div>
+              <div className="col-10 text-white text-xs">Import Account</div>
+            </div>
             <div
               className="row mt-1 cursor-pointer"
               onClick={this.deleteAccount}
@@ -150,12 +156,6 @@ export default class Navbar extends Component {
                 <span className="fa fa-share"></span>
               </div>
               <div className="col-10 text-white text-xs">Export seed</div>
-            </div>
-            <div className="row mt-1 cursor-pointer" onClick={this.importSeed}>
-              <div className="col-2 text-white text-center text-xs">
-                <span className="fa fa-plus"></span>
-              </div>
-              <div className="col-10 text-white text-xs">Import seed</div>
             </div>
             {!this.props.network.default ? (
               <hr className="bg-white mt-1 mb-1" />
