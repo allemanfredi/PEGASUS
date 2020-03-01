@@ -2,7 +2,6 @@ import Mam from '@iota/mam/lib/mam.web.min.js'
 import { trytesToAscii } from '@iota/converter'
 import Utils from '@pegasus/utils/utils'
 import { backgroundMessanger } from '@pegasus/utils/messangers'
-import { APP_STATE } from '@pegasus/utils/states'
 
 class MamController {
   constructor(options) {

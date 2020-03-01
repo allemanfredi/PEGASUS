@@ -33,6 +33,11 @@ class PegasusCustomizator extends EventEmitter {
       this.emit('onAccountChanged', account)
     })
 
+    this.eventChannel.on('mam_onFetch', e => {
+      const { data, uuid } = e
+      if (this._callbacks[uuid]) this._callbacks[uuid](data)
+    })
+
     this.pegasusConnector.send('init').then(({ selectedProvider }) => {
       this._set(selectedProvider)
     })
@@ -102,16 +107,6 @@ class PegasusCustomizator extends EventEmitter {
     delete iota.core.getAccountData
     delete iota.core.getInputs
     delete iota.core.getNewAddress
-  }
-
-  //TODO find a new way to handle mam fetch responses from background because
-  //in this way the message is sent to all tab and not only to which has made the request
-  _handleEvents() {
-    this.eventChannel.on('mam_onFetch', e => {
-      const { data, uuid } = e
-
-      if (this._callbacks[uuid]) this._callbacks[uuid](data)
-    })
   }
 
   _handleInjectedRequest(args, method, prefix = '') {
