@@ -229,7 +229,6 @@ class CustomizatorController {
   }
 
   rejectRequests() {
-    console.log(this.requests)
     this.requests.forEach(request => {
       request.resolve({
         data: 'Request has been rejected by the user',
