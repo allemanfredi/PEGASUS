@@ -1,6 +1,7 @@
 import { backgroundMessanger } from '@pegasus/utils/messangers'
 import { APP_STATE } from '@pegasus/utils/states'
 import { composeAPI } from '@iota/core'
+import { extractJson } from '@iota/extract-json'
 
 class AccountDataController {
   constructor(options) {
@@ -15,38 +16,38 @@ class AccountDataController {
     this.notificationsController = notificationsController
   }
 
-  async retrieveAccountData(seed, network, currentAccount) {
-    const iota = composeAPI({ provider: network.provider })
-    const data = await iota.getAccountData(seed, { start: 0, security: 2 })
-    const transactions = this.mapTransactions(data, network)
-    const newData = this.mapBalance(data, network, currentAccount)
+  async retrieveAccountData(_seed, _network, _currentAccount) {
+    const iota = composeAPI({ provider: _network.provider })
+    const data = await iota.getAccountData(_seed, { start: 0, security: 2 })
+    const transactions = await this.mapTransactions(data, _network)
+    const newData = this.mapBalance(data, _network, _currentAccount)
     return { transactions, newData }
   }
 
-  mapBalance(data, network, currentAccount) {
-    data.balance =
-      network.type === 'mainnet'
+  mapBalance(_data, _network, _currentAccount) {
+    _data.balance =
+      _network.type === 'mainnet'
         ? {
-            mainnet: data.balance,
-            testnet: currentAccount.data.balance.testnet
+            mainnet: _data.balance,
+            testnet: _currentAccount.data.balance.testnet
           }
         : {
-            mainnet: currentAccount.data.balance.mainnet,
-            testnet: data.balance
+            mainnet: _currentAccount.data.balance.mainnet,
+            testnet: _data.balance
           }
-    return data
+    return _data
   }
 
-  mapTransactions(data, network) {
+  async mapTransactions(_data, _network) {
     let transactions = []
-    data.transfers.forEach(transfer => {
+    for (let transfer of _data.transfers) {
       if (transfer.length === 0) return
 
       let value = 0
       let values = []
 
       for (let t of transfer) {
-        if (data.addresses.includes(t.address)) {
+        if (_data.addresses.includes(t.address)) {
           value = value + t.value
           values.push(t.value)
         }
@@ -59,24 +60,29 @@ class AccountDataController {
         value = -1 * value
       }
 
+      const message = this.getMessage(transfer)
+
       const transaction = {
         timestamp: transfer[0].attachmentTimestamp,
         value,
         status: transfer[0].persistence,
         bundle: transfer[0].bundle,
         transfer,
-        network
+        network: _network,
+        message
       }
 
       transactions.push(transaction)
       transactions = this.removeInvalidTransactions(transactions)
-    })
+    }
     return transactions
   }
 
-  removeInvalidTransactions(transactions) {
-    const validated = transactions.filter(transaction => transaction.status)
-    const notValidated = transactions.filter(transaction => !transaction.status)
+  removeInvalidTransactions(_transactions) {
+    const validated = _transactions.filter(transaction => transaction.status)
+    const notValidated = _transactions.filter(
+      transaction => !transaction.status
+    )
 
     let notValidatedCorrect = []
     let isInvalid = false
@@ -99,20 +105,20 @@ class AccountDataController {
     return [...validated, ...notValidatedCorrect]
   }
 
-  updateAccountTransactionsPersistence(account, transactions) {
-    for (let tx of transactions) {
-      for (let tx2 of account.transactions) {
+  updateAccountTransactionsPersistence(_account, _transactions) {
+    for (let tx of _transactions) {
+      for (let tx2 of _account.transactions) {
         if (tx.bundle === tx2.bundle && tx.status !== tx2.status) {
           tx2.status = tx.status
         }
       }
     }
-    return account
+    return _account
   }
 
-  getTransactionsJustConfirmed(account, transactions) {
+  getTransactionsJustConfirmed(account, _transactions) {
     const transactionsJustConfirmed = []
-    for (let tx of transactions) {
+    for (let tx of _transactions) {
       for (let tx2 of account.transactions) {
         if (
           tx.bundle === tx2.bundle &&
@@ -126,9 +132,9 @@ class AccountDataController {
     return transactionsJustConfirmed
   }
 
-  getNewTransactionsFromAll(account, transactions) {
+  getNewTransactionsFromAll(account, _transactions) {
     const newTxs = []
-    for (let txToCheck of transactions) {
+    for (let txToCheck of _transactions) {
       let isNew = true
       for (let tx of account.transactions) {
         if (tx.bundle === txToCheck.bundle) {
@@ -142,16 +148,16 @@ class AccountDataController {
     return newTxs
   }
 
-  setTransactionsReattach(transactions) {
+  setTransactionsReattach(_transactions) {
     const doubleBoundles = []
-    for (let transaction of transactions) {
+    for (let transaction of _transactions) {
       if (doubleBoundles.includes(transaction.bundle)) {
         transaction.isReattached = true
       } else {
         doubleBoundles.push(transaction.bundle)
       }
     }
-    return transactions
+    return _transactions
   }
 
   async loadAccountData() {
@@ -205,6 +211,14 @@ class AccountDataController {
       network
     )
     backgroundMessanger.setAccount(updatedAccount)
+  }
+
+  getMessage(_bundle) {
+    try {
+      return JSON.parse(extractJson(_bundle))
+    } catch (err) {
+      return null
+    }
   }
 }
 

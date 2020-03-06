@@ -20,12 +20,12 @@ class PegasusGlobalState {
     this.hpsw = null
     this.configs = configs
     this.popupSettings = {}
-    this.state = 0,
-    this.data = {
-      accounts: [],
-      connections: [],
-      mamChannels: {}
-    }
+    ;(this.state = 0),
+      (this.data = {
+        accounts: [],
+        connections: [],
+        mamChannels: {}
+      })
   }
 }
 

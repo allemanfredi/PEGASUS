@@ -82,8 +82,8 @@ class WalletController {
     return false
   }
 
-  restoreWallet(account, network, key) {
-    const transactions = this.accountDataController.mapTransactions(
+  async restoreWallet(account, network, key) {
+    const transactions = await this.accountDataController.mapTransactions(
       account.data,
       network
     )
@@ -202,7 +202,7 @@ class WalletController {
       const key = this.getKey()
       const eseed = Utils.aes256encrypt(seed, key)
 
-      const transactions = this.accountDataController.mapTransactions(
+      const transactions = await this.accountDataController.mapTransactions(
         accountData,
         network
       )

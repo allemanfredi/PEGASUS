@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import Utils from '@pegasus/utils/utils'
 import IOTA from '@pegasus/utils/iota'
-import Details from '../details/Details'
+import Details from './details/Details'
 import Spinner from '../../components/spinner/Spinner'
 import CheckBox from '../../components/checkbox/Checkbox'
 import { popupMessanger } from '@pegasus/utils/messangers'
@@ -191,7 +191,7 @@ class Transactions extends Component {
                       `${transaction.bundle}-${transaction.timestamp}`
                     ] ? (
                       <Details
-                        details={transaction.transfer}
+                        details={transaction}
                         promoteTransaction={this.promoteTransaction}
                         onReplayBundle={this.replayBundle}
                       />
