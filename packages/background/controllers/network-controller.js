@@ -28,36 +28,19 @@ class NetworkController {
   }
 
   getCurrentNetwork() {
-    try {
-      const configs = this.storageController.get('configs')
-      if (!configs || !configs.selectedNetwork) {
-        this.storageController.set('configs', {})
-        return {}
-      }
-      return configs.selectedNetwork
-    } catch (err) {
-      return {}
-    }
+    const configs = this.storageController.get('configs')
+    return configs.selectedNetwork
   }
 
   getAllNetworks() {
-    try {
-      const configs = this.storageController.get('configs')
-      if (!configs) {
-        this.storageController.setOptions('configs', {})
-        return {}
-      }
-      return configs.networks
-    } catch (err) {
-      throw new Error(err)
-    }
+    const configs = this.storageController.get('configs')
+    return configs.networks
   }
 
   addNetwork(network) {
     // TODO check that the name does not exists
     try {
       const configs = this.storageController.get('configs')
-      if (!configs.networks) configs.networks = []
 
       configs.networks.push(network)
       this.storageController.set('configs', configs)

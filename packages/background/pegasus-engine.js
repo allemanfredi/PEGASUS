@@ -97,13 +97,7 @@ class PegasusEngine {
     }
 
     const currentNetwork = this.networkController.getCurrentNetwork()
-    if (
-      Object.entries(currentNetwork).length === 0 &&
-      currentNetwork.constructor === Object
-    ) {
-      settings.networks.forEach(network =>
-        this.networkController.addNetwork(network)
-      )
+    if (!currentNetwork) {
       this.networkController.setCurrentNetwork(settings.networks[0])
     }
 
