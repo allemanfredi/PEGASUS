@@ -319,8 +319,20 @@ class PegasusEngine {
   getWebsite() {
     return this.connectorController.getCurrentWebsite()
   }
-  //END API
 
+  getConnections() {
+    return this.connectorController.getConnections()
+  }
+
+  removeConnection() {
+    return this.connectorController.removeConnection()
+  }
+
+  addConnection() {
+    return this.connectorController.addConnection()
+  }
+
+  //END API
   loadAccountData() {
     this.accountDataController.loadAccountData()
   }

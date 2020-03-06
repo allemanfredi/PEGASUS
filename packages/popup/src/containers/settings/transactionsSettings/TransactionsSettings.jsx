@@ -63,7 +63,9 @@ class TransactionsSettings extends React.Component {
                     ...this.state.settings,
                     autoPromotion: {
                       enabled: !this.state.settings.autoPromotion.enabled,
-                      time: this.state.settings.autoPromotion.time
+                      time: this.state.settings.autoPromotion.enabled
+                        ? 0
+                        : this.state.settings.autoPromotion.time
                     }
                   },
                   'promote'

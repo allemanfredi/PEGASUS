@@ -1,5 +1,6 @@
 import React from 'react'
 import TransactionsSettings from './transactionsSettings/TransactionsSettings'
+import ConnectionsSettings from './connectionsSettings/ConnectionsSettings'
 
 const settings = [
   {
@@ -11,6 +12,11 @@ const settings = [
     description: 'Manage transactions settings'
   }
 ]
+
+const options = {
+  0: 'Connections',
+  1: 'Transactions'
+}
 
 class Settings extends React.Component {
   constructor(props, context) {
@@ -28,6 +34,7 @@ class Settings extends React.Component {
       show: [false, false]
     })
     this.props.onChangeCanGoBack(true)
+    this.props.changeNavbarText('Settings')
   }
 
   render() {
@@ -40,6 +47,7 @@ class Settings extends React.Component {
                   <div
                     className="row cursor-pointer"
                     onClick={() => {
+                      this.props.changeNavbarText(options[index])
                       this.props.onChangeCanGoBack(null)
                       this.setState(() => {
                         const show = [false, false]
@@ -71,7 +79,9 @@ class Settings extends React.Component {
               )
             })
           : null}
-        {this.state.show[0] ? <TransactionsSettings /> : null}
+        {this.state.show[0] ? (
+          <ConnectionsSettings setNotification={this.props.setNotification} />
+        ) : null}
         {this.state.show[1] ? <TransactionsSettings /> : null}
       </div>
     )

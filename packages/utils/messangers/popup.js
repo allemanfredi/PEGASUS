@@ -237,5 +237,17 @@ export default {
 
   getPopupSettings() {
     return this.duplex.send('getPopupSettings')
+  },
+
+  getConnections() {
+    return this.duplex.send('getConnections')
+  },
+
+  addConnection() {
+    return this.duplex.send('addConnection')
+  },
+
+  removeConnection() {
+    return this.duplex.send('removeConnection')
   }
 }

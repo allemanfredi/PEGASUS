@@ -3,6 +3,12 @@ import RegisterMamChannel from './registerMamChannel/RegisterMamChannel'
 import ShowChannelsList from './showChannelsList/ShowChannelsList'
 import MamExplorer from './mamExplorer/MamExplorer'
 
+const options = {
+  0: 'Register Channel',
+  1: 'Channels List',
+  2: 'MAM Explorer'
+}
+
 class Mam extends Component {
   constructor(props, context) {
     super(props, context)
@@ -21,6 +27,7 @@ class Mam extends Component {
       show: [false, false, false]
     })
     this.props.onChangeCanGoBack(true)
+    this.props.changeNavbarText('Settings')
   }
 
   render() {
@@ -54,6 +61,8 @@ class Mam extends Component {
                     onClick={() => {
                       if (!this.state.showRegisterChannel)
                         this.props.onChangeCanGoBack(null)
+
+                      this.props.changeNavbarText(options[index])
                       this.setState(() => {
                         const show = [false, false, false]
                         show[index] = true

@@ -208,6 +208,18 @@ class ConnectorController {
   getConnectionRequest() {
     return this.connectionRequest
   }
+
+  getConnections() {
+    return this.stateStorageController.get('connections')
+  }
+
+  removeConnection() {
+    //TODO
+  }
+
+  addConnection() {
+    //TODO
+  }
 }
 
 export default ConnectorController

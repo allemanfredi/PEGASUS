@@ -39,7 +39,6 @@ class Home extends Component {
     this.onDeleteCurrentNetwork = this.onDeleteCurrentNetwork.bind(this)
     this.onMam = this.onMam.bind(this)
     this.onSettings = this.onSettings.bind(this)
-    this.onShowSettings = this.onShowSettings.bind(this)
     this.copyToClipboard = this.copyToClipboard.bind(this)
 
     this.state = {
@@ -65,7 +64,8 @@ class Home extends Component {
       actionToConfirm: '',
       isLoading: false,
       canGoBack: true,
-      isCopiedToClipboard: false
+      isCopiedToClipboard: false,
+      navbarText: ''
     }
   }
 
@@ -109,14 +109,16 @@ class Home extends Component {
   onExportSeed() {
     this.setState({
       showExportSeed: true,
-      showHome: false
+      showHome: false,
+      navbarText: 'Export Seed'
     })
   }
 
   onImportSeed() {
     this.setState({
       showImportSeed: true,
-      showHome: false
+      showHome: false,
+      navbarText: 'Import Account'
     })
   }
 
@@ -159,7 +161,8 @@ class Home extends Component {
     this.setState(() => {
       return {
         showSend: true,
-        showHome: false
+        showHome: false,
+        navbarText: 'Send'
       }
     })
   }
@@ -168,7 +171,8 @@ class Home extends Component {
     this.setState(() => {
       return {
         showReceive: true,
-        showHome: false
+        showHome: false,
+        navbarText: 'Receive'
       }
     })
   }
@@ -197,6 +201,8 @@ class Home extends Component {
         showHome: true
       }
     })
+
+    this.setState({ navbarText: '' })
   }
 
   addCustomNetwork() {
@@ -221,7 +227,8 @@ class Home extends Component {
       return {
         showAdd: true,
         showHome: false,
-        showMenu: false
+        showMenu: false,
+        navbarText: 'Add Account'
       }
     })
   }
@@ -236,7 +243,8 @@ class Home extends Component {
       return {
         showMamChannels: true,
         showHome: false,
-        showMenu: false
+        showMenu: false,
+        navbarText: 'MAM'
       }
     })
   }
@@ -246,7 +254,8 @@ class Home extends Component {
       return {
         showSettings: true,
         showHome: false,
-        showMenu: false
+        showMenu: false,
+        navbarText: 'Settings'
       }
     })
   }
@@ -265,10 +274,6 @@ class Home extends Component {
     }, 1000)
   }
 
-  onShowSettings() {
-    //TODO
-  }
-
   render() {
     return (
       <div>
@@ -279,7 +284,11 @@ class Home extends Component {
             showBtnSettings={this.state.showHome}
             showBtnEllipse={this.state.showHome}
             showBtnBack={!this.state.showHome}
-            text={this.state.showHome ? this.props.account.name : ''}
+            text={
+              this.state.showHome
+                ? this.props.account.name
+                : this.state.navbarText
+            }
             onClickMenu={this.onClickMenu}
             onClickMap={this.onClickMap}
             onBack={this.onBack}
@@ -380,6 +389,7 @@ class Home extends Component {
                 ref={this.mam}
                 account={this.props.account}
                 duplex={this.props.duplex}
+                changeNavbarText={navbarText => this.setState({ navbarText })}
                 onBack={this.onBack}
                 onChangeCanGoBack={value => this.setState({ canGoBack: value })}
               />
@@ -389,6 +399,8 @@ class Home extends Component {
             {this.state.showSettings ? (
               <Settings
                 ref={this.settings}
+                setNotification={this.props.setNotification}
+                changeNavbarText={navbarText => this.setState({ navbarText })}
                 onBack={this.onBack}
                 onChangeCanGoBack={value => this.setState({ canGoBack: value })}
               />

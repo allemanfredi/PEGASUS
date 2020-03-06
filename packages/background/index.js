@@ -83,6 +83,9 @@ const backgroundScript = {
     duplex.on('completeConnection', this.engine.completeConnection)
     duplex.on('rejectConnection', this.engine.rejectConnection)
     duplex.on('getWebsite', this.engine.getWebsite)
+    duplex.on('getConnections', this.engine.getConnections)
+    duplex.on('addConnection', this.engine.addConnection)
+    duplex.on('removeConnection', this.engine.removeConnection)
 
     duplex.on('startFetchMam', this.engine.startFetchMam)
     duplex.on('getMamChannels', this.engine.getMamChannels)
