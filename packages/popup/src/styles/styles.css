@@ -473,6 +473,10 @@ input#inp-edit {
     color: #82E394 !important;
 }
 
+.text-dark-gray {
+    color: #475965;
+}
+
 .text-underline{
     text-decoration: underline;
 }

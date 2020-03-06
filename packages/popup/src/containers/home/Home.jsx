@@ -11,6 +11,7 @@ import Mam from '../mam/Mam'
 import Loader from '../../components/loader/Loader'
 import Navbar from '../../components/navbar/Navbar'
 import Alert from '../../components/alert/Alert'
+import Settings from '../settings/Settings'
 import { popupMessanger } from '@pegasus/utils/messangers'
 import Utils from '@pegasus/utils/utils'
 import ReactTooltip from 'react-tooltip'
@@ -21,6 +22,7 @@ class Home extends Component {
 
     this.mam = React.createRef()
     this.exportSeed = React.createRef()
+    this.settings = React.createRef()
 
     this.onClickSend = this.onClickSend.bind(this)
     this.onClickMenu = this.onClickMenu.bind(this)
@@ -36,6 +38,7 @@ class Home extends Component {
     this.onImportSeed = this.onImportSeed.bind(this)
     this.onDeleteCurrentNetwork = this.onDeleteCurrentNetwork.bind(this)
     this.onMam = this.onMam.bind(this)
+    this.onSettings = this.onSettings.bind(this)
     this.onShowSettings = this.onShowSettings.bind(this)
     this.copyToClipboard = this.copyToClipboard.bind(this)
 
@@ -55,6 +58,7 @@ class Home extends Component {
       showExportSeed: false,
       showImportSeed: false,
       showMamChannels: false,
+      showSettings: false,
       showNavbar: true,
       alertType: '',
       alertText: '',
@@ -173,6 +177,7 @@ class Home extends Component {
     if (!this.state.canGoBack) {
       if (this.mam.current) this.mam.current.goBack()
       if (this.exportSeed.current) this.exportSeed.current.goBack()
+      if (this.settings.current) this.settings.current.goBack()
       return
     }
 
@@ -188,6 +193,7 @@ class Home extends Component {
         showExportSeed: false,
         showImportSeed: false,
         showMamChannels: false,
+        showSettings: false,
         showHome: true
       }
     })
@@ -229,6 +235,16 @@ class Home extends Component {
     this.setState(() => {
       return {
         showMamChannels: true,
+        showHome: false,
+        showMenu: false
+      }
+    })
+  }
+
+  onSettings() {
+    this.setState(() => {
+      return {
+        showSettings: true,
         showHome: false,
         showMenu: false
       }
@@ -291,6 +307,7 @@ class Home extends Component {
                 onLogout={this.onLogout}
                 onClose={this.onCloseMenu}
                 onMam={this.onMam}
+                onSettings={this.onSettings}
               />
             ) : (
               ''
@@ -363,6 +380,15 @@ class Home extends Component {
                 ref={this.mam}
                 account={this.props.account}
                 duplex={this.props.duplex}
+                onBack={this.onBack}
+                onChangeCanGoBack={value => this.setState({ canGoBack: value })}
+              />
+            ) : (
+              ''
+            )}
+            {this.state.showSettings ? (
+              <Settings
+                ref={this.settings}
                 onBack={this.onBack}
                 onChangeCanGoBack={value => this.setState({ canGoBack: value })}
               />

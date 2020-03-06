@@ -203,6 +203,25 @@ class Settings extends Component {
                 </div>
               </li>
               <hr className="mt-1 mb-1" />
+
+              <li className="sidebar-brand mt-1 mb-1 cursor-pointer">
+                <div className="row">
+                  <div className="col-2 text-center">
+                    <i className="fa fa-cog"></i>
+                  </div>
+                  <div className="col-10 text-left">
+                    <span
+                      onClick={() => {
+                        this.props.onSettings()
+                      }}
+                    >
+                      <div className="text-black">Settings</div>
+                    </span>
+                  </div>
+                </div>
+              </li>
+              <hr className="mt-1 mb-1" />
+
               <li className="sidebar-brand cursor-pointer">
                 <div className="row">
                   <div className="col-2 text-center">

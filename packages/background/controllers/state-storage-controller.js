@@ -19,7 +19,13 @@ class PegasusGlobalState {
   constructor() {
     this.hpsw = null
     this.configs = configs
-    this.popupSettings = {}
+    this.popupSettings = {
+      hide0Txs: false,
+      autoPromotion: {
+        emabled: false,
+        time: 0
+      }
+    }
     ;(this.state = 0),
       (this.data = {
         accounts: [],

@@ -11,8 +11,6 @@ class Mam extends Component {
 
     this.state = {
       showRegisterChannel: false,
-      showChannelsList: false,
-      showMamExplorer: false,
       show: [false, false, false],
       error: null
     }
