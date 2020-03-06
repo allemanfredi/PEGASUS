@@ -38,15 +38,15 @@ class StateStorageController extends Store {
       if (this.encryptionkey) {
         this.writeToStorage()
       }
-    }, 300000)
+    }, 60000)
 
     const data = this._loadFromStorage()
     if (data) {
       this.setState(data)
-      this.loadedFromStorage = true
-    } else this.loadedFromStorage = false
+      this.toLoadFromStorage = true
+    } else this.toLoadFromStorage = false
 
-    //NOTE: in order to keep a global state for the popup
+    //NOTE: in order to keep a global state for the popup (for the future)
     this.state$.subscribe(_state => {
       //backgroundMessanger.changeGlobalState(_state)
       console.log(_state)
@@ -83,7 +83,7 @@ class StateStorageController extends Store {
   }
 
   get(_key) {
-    if (this.encryptionkey && !this.unlocked && this.loadedFromStorage) {
+    if (this.encryptionkey && !this.unlocked && this.toLoadFromStorage) {
       this.setState({
         ...this.state,
         data: JSON.parse(
@@ -92,6 +92,7 @@ class StateStorageController extends Store {
       })
 
       this.unlocked = true
+      this.toLoadFromStorage = false
     }
 
     return withinData.includes(_key) ? this.state.data[_key] : this.state[_key]

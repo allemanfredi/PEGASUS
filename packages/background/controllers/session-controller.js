@@ -58,7 +58,6 @@ class SessionController {
       const date = new Date()
       const currentTime = date.getTime()
       if (currentTime - this.session > 300000) {
-        //this.stateStorageController.writeToStorage()
         this.stateStorageController.lock()
         this.walletController.setState(APP_STATE.WALLET_LOCKED)
         return

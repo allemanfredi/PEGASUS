@@ -70,6 +70,8 @@ class WalletController {
       const account = this.getCurrentAccount()
       const network = this.networkController.getCurrentNetwork()
 
+      this.stateStorageController.setEncryptionKey(psw)
+
       //injection
       backgroundMessanger.setSelectedProvider(network.provider)
 
