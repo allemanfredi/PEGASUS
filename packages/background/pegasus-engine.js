@@ -65,9 +65,9 @@ class PegasusEngine {
     })
 
     this.sessionController = new SessionsController({
-      storageController: this.storageController,
       walletController: this.walletController,
-      engine: this
+      storageController: this.storageController,
+      customizatorController: this.customizatorController
     })
 
     this.transferController = new TransferController({
@@ -399,11 +399,11 @@ class PegasusEngine {
   }
 
   setPopupSettings(settings) {
-    this.storageController.setPopupSettings(settings)
+    this.storageController.set('popupSettings', settings, true)
   }
 
   getPopupSettings() {
-    return this.storageController.getPopupSettings()
+    return this.storageController.get('popupSettings')
   }
 }
 

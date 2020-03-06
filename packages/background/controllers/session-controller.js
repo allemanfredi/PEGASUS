@@ -2,16 +2,22 @@ import { APP_STATE } from '@pegasus/utils/states'
 
 class SessionController {
   constructor(options) {
-    const { storageController, walletController, engine } = options
+    const {
+      walletController,
+      customizatorController,
+      storageController
+    } = options
 
-    this.storageController = storageController
     this.walletController = walletController
-    this.engine = engine
+    this.storageController = storageController
+    this.customizatorController = customizatorController
+
+    this.session = null
   }
 
   startSession() {
     const date = new Date()
-    this.storageController.setSession(date.getTime())
+    this.session = date.getTime()
     this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
   }
 
@@ -23,7 +29,7 @@ class SessionController {
     if (
       currentState ===
         APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION &&
-      this.engine.getRequests().length === 0 &&
+      this.customizatorController.getRequests().length === 0 &&
       !this.password
     ) {
       this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
@@ -39,6 +45,7 @@ class SessionController {
 
     if (!password && !this.walletController.isWalletSetup()) {
       this.walletController.setState(APP_STATE.WALLET_NOT_INITIALIZED)
+      this.storageController.lock()
       return
     }
 
@@ -47,12 +54,12 @@ class SessionController {
       return
     }
 
-    const time = this.storageController.getSession()
-    if (time) {
+    if (this.session) {
       const date = new Date()
       const currentTime = date.getTime()
-      if (currentTime - time > 300000) {
-        this.storageController.writeToStorage()
+      if (currentTime - this.session > 300000) {
+        //this.storageController.writeToStorage()
+        this.storageController.lock()
         this.walletController.setState(APP_STATE.WALLET_LOCKED)
         return
       }
@@ -65,14 +72,16 @@ class SessionController {
     if (currentState <= APP_STATE.WALLET_INITIALIZED) {
       return
     } else {
+      this.storageController.lock()
       this.walletController.setState(APP_STATE.WALLET_LOCKED)
       return
     }
   }
 
   deleteSession() {
-    this.storageController.writeToStorage()
-    this.storageController.deleteSession()
+    //this.storageController.writeToStorage()
+
+    this.session = null
     this.walletController.setState(APP_STATE.WALLET_LOCKED)
     this.walletController.setPassword(false)
   }

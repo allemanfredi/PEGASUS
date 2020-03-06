@@ -11955,6 +11955,13 @@ run-queue@^1.0.0, run-queue@^1.0.3:
   dependencies:
     aproba "^1.1.1"
 
+rxjs-observable-store@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/rxjs-observable-store/-/rxjs-observable-store-2.0.4.tgz#1b60b6dc5f2727d508e60033f38352c789fb3fb5"
+  integrity sha512-jHAsPWHQkOJwTbFtXpnW5dghiDULWmhN2K0rbSvMjXk9/QcRDiGbZs8fNRkoYm41Klasa/Ne3JAwlaj9DjtUvQ==
+  dependencies:
+    ts-toolbelt "4.12.13"
+
 rxjs@^6.1.0, rxjs@^6.4.0:
   version "6.5.3"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.5.3.tgz#510e26317f4db91a7eb1de77d9dd9ba0a4899a3a"
@@ -13058,6 +13065,11 @@ tryer@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/tryer/-/tryer-1.0.1.tgz#f2c85406800b9b0f74c9f7465b81eaad241252f8"
   integrity sha512-c3zayb8/kWWpycWYg87P71E1S1ZL6b6IJxfb5fvsUgsf0S2MVGaDhDXXjDMpdCpfWXqptc+4mXwmiy1ypXqRAA==
+
+ts-toolbelt@4.12.13:
+  version "4.12.13"
+  resolved "https://registry.yarnpkg.com/ts-toolbelt/-/ts-toolbelt-4.12.13.tgz#a2fb92f16ef6e5828c16a8f403e1eaf87703160b"
+  integrity sha512-tnMgohN582PAv9u5xX8tsbdTzawRwyhvrg2r1qOgiAUOXB8ABGwYQeOh0qfE43wKF0ygvbBrM/CTZMED6ow5ZQ==
 
 tslib@^1.9.0:
   version "1.10.0"

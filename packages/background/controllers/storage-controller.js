@@ -1,153 +1,144 @@
 // class used to encrypt the content of wallet data in order to make more difficult the decryption of the seed since is encrypted togheter with other data (ex name, address ecc)
 // options, state, password hash and session(timestamp for checking the last login) are not encrypted
 import Utils from '@pegasus/utils/utils'
+import { Store } from 'rxjs-observable-store'
 
-class StorageController {
+class PegasusGlobalState {
   constructor() {
-    this.encryptionkey = null
-    this.data = null
-    this.connections = []
-    this.mamChannels = {}
+    this.hpsw = null
+    this.configs = {}
+    this.popupSettings = {}
+    ;(this.state = 0),
+      (this.data = {
+        accounts: [],
+        connections: [],
+        mamChannels: {}
+      })
+  }
+}
 
-    const edata = localStorage.getItem('data')
-    if (!edata) this.setData([])
+const withinData = ['accounts', 'mamChannels', 'connections']
 
-    const econnections = localStorage.getItem('connections')
-    if (!econnections) this.setConnections([], false)
+const storageKeys = {
+  data: 'PEGASUS_DATA',
+  hpsw: 'PEGASUS_HPSW',
+  configs: 'PEGASUS_CONFIGS',
+  popupSettings: 'PEGASUS_POPUP_SETTINGS',
+  state: 'PEGASUS_STATE'
+}
 
-    const eMamChannels = localStorage.getItem('mamChannels')
-    if (!eMamChannels) this.setMamChannels({}, false)
+class StorageController extends Store {
+  constructor() {
+    super(new PegasusGlobalState())
 
     //automatic writing (if wallet is unlocked) in storage each minute
     setTimeout(() => {
       if (this.encryptionkey) {
         this.writeToStorage()
       }
-    }, 600000)
+    }, 300000)
+
+    const data = this._loadFromStorage()
+    if (data) {
+      this.setState(data)
+      this.loadedFromStorage = true
+    } else this.loadedFromStorage = false
+
+    //NOTE: in order to keep a global state for the popup
+    this.state$.subscribe(_state => {
+      //backgroundMessanger.changeGlobalState(_state)
+      console.log(_state)
+    })
+
+    this.unlocked = false
+  }
+
+  _loadFromStorage() {
+    const data = localStorage.getItem('PEGASUS_DATA')
+    const hpsw = localStorage.getItem('PEGASUS_HPSW')
+    const configs = localStorage.getItem('PEGASUS_CONFIGS')
+    const popupSettings = localStorage.getItem('PEGASUS_POPUP_SETTINGS')
+    const state = localStorage.getItem('PEGASUS_STATE')
+
+    const savedState = {
+      data,
+      hpsw: JSON.parse(hpsw),
+      configs: JSON.parse(configs),
+      popupSettings: JSON.parse(popupSettings),
+      state: parseInt(JSON.parse(state))
+    }
+
+    return data && hpsw && configs && popupSettings && state ? savedState : null
+  }
+
+  _writeToStorage(_key, _value, _encrypt = false) {
+    localStorage.setItem(
+      _key,
+      _encrypt
+        ? Utils.aes256encrypt(JSON.stringify(_value), this.encryptionkey)
+        : JSON.stringify(_value)
+    )
+  }
+
+  get(_key) {
+    if (this.encryptionkey && !this.unlocked && this.loadedFromStorage) {
+      this.setState({
+        ...this.state,
+        data: JSON.parse(
+          Utils.aes256decrypt(this.state.data, this.encryptionkey)
+        )
+      })
+
+      this.unlocked = true
+    }
+
+    return withinData.includes(_key) ? this.state.data[_key] : this.state[_key]
+  }
+
+  set(_key, _data, _writeToStorage) {
+    const state = this.state
+
+    withinData.includes(_key)
+      ? (state.data[_key] = _data)
+      : (state[_key] = _data)
+
+    if (_writeToStorage) {
+      if (withinData.includes(_key)) {
+        this._writeToStorage(storageKeys[_key], _data, true)
+      } else {
+        this._writeToStorage(storageKeys[_key], state[_key], false)
+      }
+    }
+
+    this.setState(state)
   }
 
   isReady() {
-    return this.encryptionkey ? true : false
+    return this.encryptionkey && this.unlocked ? true : false
   }
 
   setEncryptionKey(key) {
     this.encryptionkey = key
   }
 
-  getData() {
-    if (!this.data) {
-      const edata = localStorage.getItem('data')
-      this.data = Utils.aes256decrypt(edata, this.encryptionkey)
-      this.data = JSON.parse(this.data)
-    }
-    return this.data
-  }
+  lock() {
+    if (!this.unlocked) return
 
-  setData(data) {
-    this.data = data
-    return
-  }
-
-  getConnections() {
-    if (!this.connections) {
-      const econnections = localStorage.getItem('connections')
-      this.connections = Utils.aes256decrypt(econnections, this.encryptionkey)
-      this.connections = JSON.parse(this.connections)
-    }
-    return this.connections
-  }
-
-  setConnections(connections, writeToStorage = true) {
-    this.connections = connections
-
-    if (writeToStorage) {
-      const econnections = Utils.aes256encrypt(
-        JSON.stringify(connections),
-        this.encryptionkey
-      )
-      localStorage.setItem('connections', econnections)
-    }
-    return
-  }
-
-  getMamChannels() {
-    if (Utils.isEmptyObject(this.mamChannels)) {
-      const eMamChannels = localStorage.getItem('mamChannels')
-      this.mamChannels = Utils.aes256decrypt(eMamChannels, this.encryptionkey)
-      this.mamChannels = JSON.parse(this.mamChannels)
-    }
-    return this.mamChannels
-  }
-
-  setMamChannels(mamChannels, writeToStorage = true) {
-    this.mamChannels = mamChannels
-
-    if (writeToStorage) {
-      const eMamChannels = Utils.aes256encrypt(
-        JSON.stringify(mamChannels),
-        this.encryptionkey
-      )
-      localStorage.setItem('mamChannels', eMamChannels)
-    }
-    return
+    this.writeToStorage()
+    this.unlocked = false
+    this.encryptionkey = null
   }
 
   writeToStorage() {
-    const edata = Utils.aes256encrypt(
-      JSON.stringify(this.data),
-      this.encryptionkey
+    this._writeToStorage('PEGASUS_DATA', this.state.data, true)
+    this._writeToStorage('PEGASUS_HPSW', this.state.hpsw, false)
+    this._writeToStorage('PEGASUS_CONFIGS', this.state.configs, false)
+    this._writeToStorage(
+      'PEGASUS_POPUP_SETTINGS',
+      this.state.popupSettings,
+      false
     )
-    localStorage.setItem('data', edata)
-    const econnections = Utils.aes256encrypt(
-      JSON.stringify(this.connections),
-      this.encryptionkey
-    )
-    localStorage.setItem('connections', econnections)
-    const eMamChannels = Utils.aes256encrypt(
-      JSON.stringify(this.mamChannels),
-      this.encryptionkey
-    )
-    localStorage.setItem('mamChannels', eMamChannels)
-  }
-
-  getSession() {
-    const session = localStorage.getItem('session')
-    return session
-  }
-
-  setSession(session) {
-    localStorage.setItem('session', session)
-  }
-
-  deleteSession() {
-    localStorage.removeItem('session')
-  }
-
-  getPasswordHash() {
-    const hpsw = localStorage.getItem('hpsw')
-    return hpsw
-  }
-
-  setPasswordHash(hash) {
-    localStorage.setItem('hpsw', hash)
-  }
-
-  setOptions(options) {
-    localStorage.setItem('options', JSON.stringify(options))
-  }
-
-  getOptions() {
-    const options = JSON.parse(localStorage.getItem('options'))
-    return options
-  }
-
-  setPopupSettings(settings) {
-    localStorage.setItem('popupSettings', JSON.stringify(settings))
-  }
-
-  getPopupSettings() {
-    const settings = JSON.parse(localStorage.getItem('popupSettings'))
-    return settings
+    this._writeToStorage('PEGASUS_STATE', this.state.state, false)
   }
 }
 

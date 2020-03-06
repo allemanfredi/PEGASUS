@@ -1,15 +1,13 @@
 import { backgroundMessanger } from '@pegasus/utils/messangers'
 
 class NetworkController {
-  constructor(options) {
-    const {
-      storageController,
-      customizatorController,
-      connectorController
-    } = options
+  constructor(configs) {
+    const { storageController, customizatorController } = configs
 
     this.storageController = storageController
     this.customizatorController = customizatorController
+
+    this.selectedNetwork
   }
 
   setWalletController(walletController) {
@@ -18,9 +16,9 @@ class NetworkController {
 
   setCurrentNetwork(network) {
     try {
-      const options = this.storageController.getOptions()
-      options.selectedNetwork = network
-      this.storageController.setOptions(options)
+      const configs = this.storageController.get('configs')
+      configs.selectedNetwork = network
+      this.storageController.set('configs', configs)
 
       backgroundMessanger.setSelectedProvider(network.provider)
       backgroundMessanger.setNetwork(network)
@@ -31,12 +29,12 @@ class NetworkController {
 
   getCurrentNetwork() {
     try {
-      const options = this.storageController.getOptions()
-      if (!options || !options.selectedNetwork) {
-        this.storageController.setOptions({})
+      const configs = this.storageController.get('configs')
+      if (!configs || !configs.selectedNetwork) {
+        this.storageController.set('configs', {})
         return {}
       }
-      return options.selectedNetwork
+      return configs.selectedNetwork
     } catch (err) {
       return {}
     }
@@ -44,12 +42,12 @@ class NetworkController {
 
   getAllNetworks() {
     try {
-      const options = this.storageController.getOptions()
-      if (!options) {
-        this.storageController.setOptions({})
+      const configs = this.storageController.get('configs')
+      if (!configs) {
+        this.storageController.setOptions('configs', {})
         return {}
       }
-      return options.networks
+      return configs.networks
     } catch (err) {
       throw new Error(err)
     }
@@ -58,13 +56,13 @@ class NetworkController {
   addNetwork(network) {
     // TODO check that the name does not exists
     try {
-      const options = this.storageController.getOptions()
-      if (!options.networks) options.networks = []
+      const configs = this.storageController.get('configs')
+      if (!configs.networks) configs.networks = []
 
-      options.networks.push(network)
-      this.storageController.setOptions(options)
+      configs.networks.push(network)
+      this.storageController.set('configs', configs)
 
-      backgroundMessanger.setNetworks(options.networks)
+      backgroundMessanger.setNetworks(configs.networks)
     } catch (err) {
       throw new Error(err)
     }
@@ -72,21 +70,21 @@ class NetworkController {
 
   deleteCurrentNetwork() {
     try {
-      const options = this.storageController.getOptions()
-      const currentNetwork = options.selectedNetwork
+      const configs = this.storageController.get('configs')
+      const currentNetwork = configs.selectedNetwork
 
-      const networks = options.networks.filter(
+      const networks = configs.networks.filter(
         network => currentNetwork.name !== network.name
       )
-      options.networks = networks
+      configs.networks = networks
 
       // set the first network with the same type (mainnet/testnet)
-      const selectedNetwork = options.networks[0]
-      options.selectedNetwork = selectedNetwork
+      const selectedNetwork = configs.networks[0]
+      configs.selectedNetwork = selectedNetwork
 
-      this.storageController.setOptions(options)
+      this.storageController.set('configs', configs)
 
-      backgroundMessanger.setNetworks(options.networks)
+      backgroundMessanger.setNetworks(configs.networks)
       backgroundMessanger.setNetwork(selectedNetwork)
 
       backgroundMessanger.setSelectedProvider(selectedNetwork.provider)

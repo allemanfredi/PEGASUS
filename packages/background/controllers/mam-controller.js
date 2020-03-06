@@ -28,7 +28,7 @@ class MamController {
     const id = Utils.sha256(state.seed)
 
     const encryptionKey = this.walletController.getKey()
-    const mamChannels = this.storageController.getMamChannels()
+    const mamChannels = this.storageController.get('mamChannels')
     const currentAccount = this.walletController.getCurrentAccount()
 
     //encrypt the channel seed in order to not store it in plain text
@@ -42,7 +42,7 @@ class MamController {
     }
 
     mamChannels[currentAccount.id]['owner'][id] = { ...stateToStore, root }
-    this.storageController.setMamChannels(mamChannels)
+    this.storageController.set('mamChannels', mamChannels)
 
     state.seed = Utils.sha256(state.seed)
     delete state.channel.side_key
@@ -57,7 +57,7 @@ class MamController {
     const id = state.seed
 
     const encryptionKey = this.walletController.getKey()
-    const mamChannels = this.storageController.getMamChannels()
+    const mamChannels = this.storageController.get('mamChannels')
     const currentAccount = this.walletController.getCurrentAccount()
 
     if (!mamChannels[currentAccount.id]['owner'][id]) {
@@ -95,7 +95,7 @@ class MamController {
 
     mamChannels[currentAccount.id]['owner'][id] = { ...stateToStore, root }
 
-    this.storageController.setMamChannels(mamChannels)
+    this.storageController.set('mamChannels', mamChannels)
 
     const stateToReturn = Utils.copyObject(stateToStore)
     stateToReturn.seed = id
@@ -111,7 +111,7 @@ class MamController {
     const id = state.seed
 
     const encryptionKey = this.walletController.getKey()
-    const mamChannels = this.storageController.getMamChannels()
+    const mamChannels = this.storageController.get('mamChannels')
     const currentAccount = this.walletController.getCurrentAccount()
 
     if (!mamChannels[currentAccount.id]['owner'][id]) {
@@ -142,7 +142,7 @@ class MamController {
     const id = state.seed
 
     const encryptionKey = this.walletController.getKey()
-    const mamChannels = this.storageController.getMamChannels()
+    const mamChannels = this.storageController.get('mamChannels')
     const currentAccount = this.walletController.getCurrentAccount()
 
     if (!mamChannels[currentAccount.id]) {
@@ -184,7 +184,7 @@ class MamController {
 
   decode(payload, root) {
     const encryptionKey = this.walletController.getKey()
-    const mamChannels = this.storageController.getMamChannels()
+    const mamChannels = this.storageController.get('mamChannels')
     const currentAccount = this.walletController.getCurrentAccount()
 
     if (!mamChannels[currentAccount.id]) {
@@ -192,7 +192,7 @@ class MamController {
         subscriber: {},
         owner: {}
       }
-      this.storageController.setMamChannels(mamChannels)
+      this.storageController.set('mamChannels', mamChannels)
       return {
         success: false,
         error: 'Channel Not Found'
@@ -269,7 +269,7 @@ class MamController {
 
       if (mode === 'restricted') {
         const encryptionKey = this.walletController.getKey()
-        const mamChannels = this.storageController.getMamChannels()
+        const mamChannels = this.storageController.get('mamChannels')
         const currentAccount = this.walletController.getCurrentAccount()
 
         if (!mamChannels[currentAccount.id].subscriber) {
@@ -449,7 +449,7 @@ class MamController {
     }
   */
   registerMamChannel(channel) {
-    const mamChannels = this.storageController.getMamChannels()
+    const mamChannels = this.storageController.get('mamChannels')
     const currentAccount = this.walletController.getCurrentAccount()
     const encryptionKey = this.walletController.getKey()
 
@@ -478,12 +478,12 @@ class MamController {
       root: channel.root
     }
 
-    this.storageController.setMamChannels(mamChannels)
+    this.storageController.set('mamChannels', mamChannels)
     return true
   }
 
   getMamChannels() {
-    const mamChannels = this.storageController.getMamChannels()
+    const mamChannels = this.storageController.get('mamChannels')
     const currentAccount = this.walletController.getCurrentAccount()
     return mamChannels[currentAccount.id]
   }
