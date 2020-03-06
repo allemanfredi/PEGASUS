@@ -17,9 +17,6 @@ class WalletController {
     this.stateStorageController = stateStorageController
     this.networkController = networkController
     this.connectorController = connectorController
-
-    const duplex = new Duplex.Host()
-    backgroundMessanger.init(duplex)
   }
 
   setAccountDataController(accountDataController) {
@@ -173,7 +170,6 @@ class WalletController {
     try {
       if (isCurrent) {
         const accounts = this.stateStorageController.get('accounts')
-        console.log('cididid', accounts)
         accounts.forEach(user => {
           user.current = false
         })
