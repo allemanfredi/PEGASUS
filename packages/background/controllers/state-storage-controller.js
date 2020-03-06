@@ -14,6 +14,7 @@ const storageKeys = {
   state: 'PEGASUS_STATE'
 }
 
+//NOTE: init state
 class PegasusGlobalState {
   constructor() {
     this.hpsw = null
@@ -28,7 +29,7 @@ class PegasusGlobalState {
   }
 }
 
-class StorageController extends Store {
+class StateStorageController extends Store {
   constructor() {
     super(new PegasusGlobalState())
 
@@ -143,4 +144,4 @@ class StorageController extends Store {
   }
 }
 
-export default StorageController
+export default StateStorageController

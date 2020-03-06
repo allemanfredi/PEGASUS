@@ -4,7 +4,7 @@ import settings from '@pegasus/utils/options'
 import AccountDataController from './controllers/account-data-controller'
 import CustomizatorController from './controllers/customizator-controller'
 import MamController from './controllers/mam-controller'
-import StorageController from './controllers/storage-controller'
+import StateStorageController from './controllers/state-storage-controller'
 import NotificationsController from './controllers/notifications-controller'
 import ConnectorController from './controllers/connector-controller'
 import NetworkController from './controllers/network-controller'
@@ -28,15 +28,15 @@ class PegasusEngine {
 
     /* C O N T R O L L E R S */
     this.popupController = new PopupController()
-    this.storageController = new StorageController()
+    this.stateStorageController = new StateStorageController()
     this.notificationsController = new NotificationsController()
 
     this.connectorController = new ConnectorController({
-      storageController: this.storageController
+      stateStorageController: this.stateStorageController
     })
 
     this.mamController = new MamController({
-      storageController: this.storageController
+      stateStorageController: this.stateStorageController
     })
 
     this.customizatorController = new CustomizatorController({
@@ -48,12 +48,12 @@ class PegasusEngine {
     })
 
     this.networkController = new NetworkController({
-      storageController: this.storageController,
+      stateStorageController: this.stateStorageController,
       customizatorController: this.customizatorController
     })
 
     this.walletController = new walletController({
-      storageController: this.storageController,
+      stateStorageController: this.stateStorageController,
       networkController: this.networkController,
       connectorController: this.connectorController
     })
@@ -66,7 +66,7 @@ class PegasusEngine {
 
     this.sessionController = new SessionsController({
       walletController: this.walletController,
-      storageController: this.storageController,
+      stateStorageController: this.stateStorageController,
       customizatorController: this.customizatorController
     })
 
@@ -115,12 +115,12 @@ class PegasusEngine {
   }
 
   setStorageKey(key) {
-    this.storageController.setEncryptionKey(key)
+    this.stateStorageController.setEncryptionKey(key)
   }
 
   writeOnLocalStorage() {
-    if (this.storageController) {
-      this.storageController.writeToStorage()
+    if (this.stateStorageController) {
+      this.stateStorageController.writeToStorage()
     }
   }
 
@@ -393,11 +393,11 @@ class PegasusEngine {
   }
 
   setPopupSettings(settings) {
-    this.storageController.set('popupSettings', settings, true)
+    this.stateStorageController.set('popupSettings', settings, true)
   }
 
   getPopupSettings() {
-    return this.storageController.get('popupSettings')
+    return this.stateStorageController.get('popupSettings')
   }
 }
 

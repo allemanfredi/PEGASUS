@@ -5,11 +5,11 @@ class SessionController {
     const {
       walletController,
       customizatorController,
-      storageController
+      stateStorageController
     } = options
 
     this.walletController = walletController
-    this.storageController = storageController
+    this.stateStorageController = stateStorageController
     this.customizatorController = customizatorController
 
     this.session = null
@@ -45,7 +45,7 @@ class SessionController {
 
     if (!password && !this.walletController.isWalletSetup()) {
       this.walletController.setState(APP_STATE.WALLET_NOT_INITIALIZED)
-      this.storageController.lock()
+      this.stateStorageController.lock()
       return
     }
 
@@ -58,8 +58,8 @@ class SessionController {
       const date = new Date()
       const currentTime = date.getTime()
       if (currentTime - this.session > 300000) {
-        //this.storageController.writeToStorage()
-        this.storageController.lock()
+        //this.stateStorageController.writeToStorage()
+        this.stateStorageController.lock()
         this.walletController.setState(APP_STATE.WALLET_LOCKED)
         return
       }
@@ -72,14 +72,14 @@ class SessionController {
     if (currentState <= APP_STATE.WALLET_INITIALIZED) {
       return
     } else {
-      this.storageController.lock()
+      this.stateStorageController.lock()
       this.walletController.setState(APP_STATE.WALLET_LOCKED)
       return
     }
   }
 
   deleteSession() {
-    //this.storageController.writeToStorage()
+    //this.stateStorageController.writeToStorage()
 
     this.session = null
     this.walletController.setState(APP_STATE.WALLET_LOCKED)

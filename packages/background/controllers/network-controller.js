@@ -2,12 +2,10 @@ import { backgroundMessanger } from '@pegasus/utils/messangers'
 
 class NetworkController {
   constructor(configs) {
-    const { storageController, customizatorController } = configs
+    const { stateStorageController, customizatorController } = configs
 
-    this.storageController = storageController
+    this.stateStorageController = stateStorageController
     this.customizatorController = customizatorController
-
-    this.selectedNetwork
   }
 
   setWalletController(walletController) {
@@ -16,9 +14,9 @@ class NetworkController {
 
   setCurrentNetwork(network) {
     try {
-      const configs = this.storageController.get('configs')
+      const configs = this.stateStorageController.get('configs')
       configs.selectedNetwork = network
-      this.storageController.set('configs', configs)
+      this.stateStorageController.set('configs', configs)
 
       backgroundMessanger.setSelectedProvider(network.provider)
       backgroundMessanger.setNetwork(network)
@@ -28,22 +26,22 @@ class NetworkController {
   }
 
   getCurrentNetwork() {
-    const configs = this.storageController.get('configs')
+    const configs = this.stateStorageController.get('configs')
     return configs.selectedNetwork
   }
 
   getAllNetworks() {
-    const configs = this.storageController.get('configs')
+    const configs = this.stateStorageController.get('configs')
     return configs.networks
   }
 
   addNetwork(network) {
     // TODO check that the name does not exists
     try {
-      const configs = this.storageController.get('configs')
+      const configs = this.stateStorageController.get('configs')
 
       configs.networks.push(network)
-      this.storageController.set('configs', configs)
+      this.stateStorageController.set('configs', configs)
 
       backgroundMessanger.setNetworks(configs.networks)
     } catch (err) {
@@ -53,7 +51,7 @@ class NetworkController {
 
   deleteCurrentNetwork() {
     try {
-      const configs = this.storageController.get('configs')
+      const configs = this.stateStorageController.get('configs')
       const currentNetwork = configs.selectedNetwork
 
       const networks = configs.networks.filter(
@@ -65,7 +63,7 @@ class NetworkController {
       const selectedNetwork = configs.networks[0]
       configs.selectedNetwork = selectedNetwork
 
-      this.storageController.set('configs', configs)
+      this.stateStorageController.set('configs', configs)
 
       backgroundMessanger.setNetworks(configs.networks)
       backgroundMessanger.setNetwork(selectedNetwork)

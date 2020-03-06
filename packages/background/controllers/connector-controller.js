@@ -3,9 +3,9 @@ import { APP_STATE } from '@pegasus/utils/states'
 
 class ConnectorController {
   constructor(options) {
-    const { storageController, state } = options
+    const { stateStorageController, state } = options
 
-    this.storageController = storageController
+    this.stateStorageController = stateStorageController
     this.connectionToStore = null //local storage connection data
     this.connectionRequest = null //callback for user response
     this.website = null
@@ -21,7 +21,7 @@ class ConnectorController {
   }
 
   getConnection(origin) {
-    if (!this.storageController) {
+    if (!this.stateStorageController) {
       return null
     }
 
@@ -35,7 +35,7 @@ class ConnectorController {
       this.connectionToStore = null
       return connection
     }
-    const connections = this.storageController.get('connections')
+    const connections = this.stateStorageController.get('connections')
     const connection = connections.find(conn => conn.website.origin === origin)
 
     return connection
@@ -43,7 +43,7 @@ class ConnectorController {
 
   pushConnection(connection) {
     const account = this.walletController.getCurrentAccount()
-    const connections = this.storageController.get('connections')
+    const connections = this.stateStorageController.get('connections')
     const existingConnection = connections.find(
       conn => conn.website.origin === connection.website.origin
     )
@@ -56,12 +56,12 @@ class ConnectorController {
       )
     } else {
       connections.push(connection)
-      this.storageController.set('connections', connections)
+      this.stateStorageController.set('connections', connections)
     }
   }
 
   updateConnection(connection) {
-    const connections = this.storageController.get('connections')
+    const connections = this.stateStorageController.get('connections')
     const updatedConnections = connections.map(conn => {
       if (conn.website.origin === connection.website.origin) {
         return connection
@@ -69,12 +69,12 @@ class ConnectorController {
         return conn
       }
     })
-    this.storageController.set('connections', updatedConnections, true)
+    this.stateStorageController.set('connections', updatedConnections, true)
   }
 
   //usefull when user change name since accountid = hash(accountName)
   updateConnectionsAccountId(currentAccountId, newAccountId) {
-    const connections = this.storageController.get('connections')
+    const connections = this.stateStorageController.get('connections')
     const updatedConnections = connections.map(connection => {
       if (connection.accountId === currentAccountId) {
         connection.accountId = newAccountId
@@ -82,7 +82,7 @@ class ConnectorController {
 
       return connection
     })
-    this.storageController.set('connections', updatedConnections, true)
+    this.stateStorageController.set('connections', updatedConnections, true)
   }
 
   connect(uuid, resolve, website) {
@@ -105,7 +105,7 @@ class ConnectorController {
 
     //if user call connect before log in, storage is not already set up so it is not possible to save/load data
     //workardund -> keep in memory and once he login, store the data into storage and delete the variable
-    const isStorageControllerReady = this.storageController.isReady()
+    const isStorageControllerReady = this.stateStorageController.isReady()
     if (!isStorageControllerReady) {
       this.setConnectionToStore(connection)
     } else {
