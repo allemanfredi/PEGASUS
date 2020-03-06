@@ -3,20 +3,6 @@
 import Utils from '@pegasus/utils/utils'
 import { Store } from 'rxjs-observable-store'
 
-class PegasusGlobalState {
-  constructor() {
-    this.hpsw = null
-    this.configs = {}
-    this.popupSettings = {}
-    ;(this.state = 0),
-      (this.data = {
-        accounts: [],
-        connections: [],
-        mamChannels: {}
-      })
-  }
-}
-
 const withinData = ['accounts', 'mamChannels', 'connections']
 
 const storageKeys = {
@@ -25,6 +11,20 @@ const storageKeys = {
   configs: 'PEGASUS_CONFIGS',
   popupSettings: 'PEGASUS_POPUP_SETTINGS',
   state: 'PEGASUS_STATE'
+}
+
+class PegasusGlobalState {
+  constructor() {
+    this.hpsw = null
+    this.configs = {}
+    this.popupSettings = {}
+    this.state = 0,
+    this.data = {
+      accounts: [],
+      connections: [],
+      mamChannels: {}
+    }
+  }
 }
 
 class StorageController extends Store {
