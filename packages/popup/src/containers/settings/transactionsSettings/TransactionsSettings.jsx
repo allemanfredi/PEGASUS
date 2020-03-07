@@ -48,7 +48,7 @@ class TransactionsSettings extends React.Component {
         <div className="row mt-2">
           <ReactTooltip />
           <div
-            className="col-9 text-xs my-auto"
+            className="col-9 text-xs my-auto text-dark-gray"
             data-tip="Promote all transactions pending from the specified number of seconds"
           >
             <i className="fa fa-info-circle mr-05" />
@@ -84,25 +84,32 @@ class TransactionsSettings extends React.Component {
           </div>
         </div>
         {this.state.settings.autoPromotion.enabled ? (
-          <div className="row mt-05">
-            <div className="col-12">
-              <Input
-                value={this.state.settings.autoPromotion.time}
-                onChange={e =>
-                  this.handleChange({
-                    ...this.state.settings,
-                    autoPromotion: {
-                      enabled: this.state.settings.autoPromotion.enabled,
-                      time: e.target.value
-                    }
-                  })
-                }
-                label="seconds"
-                id="auto-prom-sec"
-                type="number"
-              />
+          <React.Fragment>
+            <div className="row mt-05">
+              <div className="col-12">
+                <Input
+                  value={this.state.settings.autoPromotion.time}
+                  onChange={e =>
+                    this.handleChange({
+                      ...this.state.settings,
+                      autoPromotion: {
+                        enabled: this.state.settings.autoPromotion.enabled,
+                        time: e.target.value
+                      }
+                    })
+                  }
+                  label="minutes"
+                  id="auto-prom-sec"
+                  type="number"
+                />
+              </div>
             </div>
-          </div>
+            <div className="row mt-05">
+              <div className="col-12 text-xxxs text-gray">
+                (Must be greater than 3 minutes)
+              </div>
+            </div>
+          </React.Fragment>
         ) : null}
         <hr className="mt-1 mb-1" />
       </React.Fragment>

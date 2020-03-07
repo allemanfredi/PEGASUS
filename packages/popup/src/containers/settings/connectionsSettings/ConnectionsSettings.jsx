@@ -1,10 +1,15 @@
 import React from 'react'
 import { popupMessanger } from '@pegasus/utils/messangers'
 import Input from '../../../components/input/Input'
+import Utils from '@pegasus/utils/utils'
+import Url from 'url-parse'
 
 class ConnectionsSettings extends React.Component {
   constructor(props, context) {
     super(props, context)
+
+    this.handleAddWebsite = this.handleAddWebsite.bind(this)
+    this.removeConnection = this.removeConnection.bind(this)
 
     this.state = {
       connections: [],
@@ -17,6 +22,65 @@ class ConnectionsSettings extends React.Component {
     if (!connections) return
 
     this.setState({ connections })
+  }
+
+  async handleAddWebsite(e) {
+    e.preventDefault()
+    if (!Utils.isURL(this.state.website)) {
+      this.props.setNotification({
+        type: 'danger',
+        text: 'Invalid Website URL',
+        position: 'under-bar'
+      })
+      return
+    }
+
+    const url = new Url(this.state.website)
+
+    const account = popupMessanger.getCurrentAccount()
+
+    const connection = {
+      requestToConnect: false,
+      connected: true,
+      enabled: true,
+      accountId: account.id,
+      website: {
+        favicon: `${url.origin}/favicon.ico`,
+        hostname: url.hostname,
+        origin: url.origin
+      }
+    }
+
+    const isAdded = await popupMessanger.addConnection(connection)
+    if (!isAdded) {
+      this.props.setNotification({
+        type: 'danger',
+        text: 'Website already present',
+        position: 'under-bar'
+      })
+      return
+    }
+
+    const connections = await popupMessanger.getConnections()
+    this.setState({
+      connections: connections.filter(connection => connection.enabled)
+    })
+  }
+
+  async removeConnection(connection) {
+    const isRemoved = await popupMessanger.removeConnection(connection)
+    if (isRemoved) {
+      this.props.setNotification({
+        type: 'success',
+        text: 'Connection Removed Succesfully',
+        position: 'under-bar'
+      })
+
+      const connections = await popupMessanger.getConnections()
+      this.setState({
+        connections: connections.filter(connection => connection.enabled)
+      })
+    }
   }
 
   render() {
@@ -37,11 +101,15 @@ class ConnectionsSettings extends React.Component {
           </div>
         </div>
 
-        <div className="row mt-2">
-          <div className="col-12">
-            <button className="btn btn-blue">Connect</button>
+        <form onSubmit={this.handleAddWebsite}>
+          <div className="row mt-2">
+            <div className="col-12">
+              <button onClick={this.handleAddWebsite} className="btn btn-blue">
+                Connect
+              </button>
+            </div>
           </div>
-        </div>
+        </form>
 
         <hr className="mb-2 mt-2" />
 
@@ -69,7 +137,10 @@ class ConnectionsSettings extends React.Component {
                 {connection.website.hostname}
               </div>
               <div className="col-3 my-auto text-right">
-                <i className="fa fa-trash" />
+                <i
+                  onClick={() => this.removeConnection(connection)}
+                  className="fa fa-trash cursor-pointer"
+                />
               </div>
             </div>
           )

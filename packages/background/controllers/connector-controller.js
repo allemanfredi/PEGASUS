@@ -213,12 +213,26 @@ class ConnectorController {
     return this.stateStorageController.get('connections')
   }
 
-  removeConnection() {
-    //TODO
+  removeConnection(connectionToRemove) {
+    const connections = this.stateStorageController.get('connections')
+    const filteredConnections = connections.filter(
+      connection =>
+        connection.website.hostname !== connectionToRemove.website.hostname
+    )
+    this.stateStorageController.set('connections', filteredConnections)
+    return true
   }
 
-  addConnection() {
-    //TODO
+  addConnection(connection) {
+    const connections = this.stateStorageController.get('connections')
+    const alreadyPresent = connections.find(
+      con => con.website.hostname === connection.website.hostname
+    )
+    if (alreadyPresent) return false
+
+    connections.push(connection)
+    this.stateStorageController.set('connections', connections)
+    return true
   }
 }
 

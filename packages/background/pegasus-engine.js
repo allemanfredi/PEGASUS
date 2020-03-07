@@ -324,15 +324,14 @@ class PegasusEngine {
     return this.connectorController.getConnections()
   }
 
-  removeConnection() {
-    return this.connectorController.removeConnection()
+  removeConnection(connection) {
+    return this.connectorController.removeConnection(connection)
   }
 
-  addConnection() {
-    return this.connectorController.addConnection()
+  addConnection(connection) {
+    return this.connectorController.addConnection(connection)
   }
 
-  //END API
   loadAccountData() {
     this.accountDataController.loadAccountData()
   }

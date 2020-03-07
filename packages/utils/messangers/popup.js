@@ -243,11 +243,11 @@ export default {
     return this.duplex.send('getConnections')
   },
 
-  addConnection() {
-    return this.duplex.send('addConnection')
+  addConnection(connection) {
+    return this.duplex.send('addConnection', connection)
   },
 
-  removeConnection() {
-    return this.duplex.send('removeConnection')
+  removeConnection(connection) {
+    return this.duplex.send('removeConnection', connection)
   }
 }
