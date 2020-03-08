@@ -54,17 +54,15 @@ class PegasusConnector {
   }
 
   getFavicon() {
-    let favicon = null
-    const nodeList = document.getElementsByTagName('link')
-    for (let i = 0; i < nodeList.length; i++) {
-      if (
-        nodeList[i].getAttribute('rel') == 'icon' ||
-        nodeList[i].getAttribute('rel') == 'shortcut icon'
-      ) {
-        favicon = nodeList[i].getAttribute('href')
-      }
+    let favicon = document.querySelector('head > link[rel="shortcut icon"]')
+    if (favicon) return favicon.href
+
+    favicon = Array.from(
+      document.querySelectorAll('head > link[rel="icon"]')
+    ).find(favicon => Boolean(favicon.href))
+    if (favicon) {
+      return favicon.href
     }
-    return favicon
   }
 }
 
