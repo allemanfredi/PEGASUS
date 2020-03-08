@@ -21,7 +21,7 @@ class ConnectorController {
   }
 
   getConnection(origin) {
-    if (!this.stateStorageController) {
+    if (!this.stateStorageController.isReady()) {
       return null
     }
 
