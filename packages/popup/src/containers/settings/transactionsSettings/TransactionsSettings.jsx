@@ -33,11 +33,11 @@ class TransactionsSettings extends React.Component {
 
     if (action === 'promote') {
       if (settings.autoPromotion.enabled && settings.autoPromotion.time > 0) {
-        //TODO: enable backriug auto promotion
-        console.log('enable')
+        popupMessanger.enableTransactionsAutoPromotion(
+          this.state.settings.autoPromotion.time * 1000 * 60
+        )
       } else if (!settings.autoPromotion.enabled) {
-        //TODO: enable backriug auto promotion
-        console.log('disable')
+        popupMessanger.disableTransactionsAutoPromotion()
       }
     }
   }
@@ -62,10 +62,11 @@ class TransactionsSettings extends React.Component {
                   {
                     ...this.state.settings,
                     autoPromotion: {
-                      enabled: !this.state.settings.autoPromotion.enabled,
-                      time: this.state.settings.autoPromotion.enabled
-                        ? 0
-                        : this.state.settings.autoPromotion.time
+                      enabled:
+                        this.state.settings.autoPromotion.time > 3
+                          ? !this.state.settings.autoPromotion.enabled
+                          : false,
+                      time: this.state.settings.autoPromotion.time
                     }
                   },
                   'promote'
@@ -83,34 +84,33 @@ class TransactionsSettings extends React.Component {
             />
           </div>
         </div>
-        {this.state.settings.autoPromotion.enabled ? (
-          <React.Fragment>
-            <div className="row mt-05">
-              <div className="col-12">
-                <Input
-                  value={this.state.settings.autoPromotion.time}
-                  onChange={e =>
-                    this.handleChange({
-                      ...this.state.settings,
-                      autoPromotion: {
-                        enabled: this.state.settings.autoPromotion.enabled,
-                        time: e.target.value
-                      }
-                    })
+        <div className="row mt-05">
+          <div className="col-12">
+            <Input
+              value={this.state.settings.autoPromotion.time}
+              onChange={e =>
+                this.handleChange({
+                  ...this.state.settings,
+                  autoPromotion: {
+                    enabled:
+                      e.target.value > 3
+                        ? this.state.settings.autoPromotion.enabled
+                        : false,
+                    time: e.target.value
                   }
-                  label="minutes"
-                  id="auto-prom-sec"
-                  type="number"
-                />
-              </div>
-            </div>
-            <div className="row mt-05">
-              <div className="col-12 text-xxxs text-gray">
-                (Must be greater than 3 minutes)
-              </div>
-            </div>
-          </React.Fragment>
-        ) : null}
+                })
+              }
+              label="minutes"
+              id="auto-prom-sec"
+              type="number"
+            />
+          </div>
+        </div>
+        <div className="row mt-05">
+          <div className="col-12 text-xxxs text-gray">
+            (Must be greater than 3 minutes)
+          </div>
+        </div>
         <hr className="mt-1 mb-1" />
       </React.Fragment>
     )

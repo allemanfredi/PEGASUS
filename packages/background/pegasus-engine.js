@@ -22,6 +22,7 @@ class PegasusEngine {
   constructor() {
     this.requests = []
     this.accountDataHandler = false
+    this.transactionsAutoPromotionHandler = false
 
     const duplex = new Duplex.Host()
     backgroundMessanger.init(duplex)
@@ -103,6 +104,12 @@ class PegasusEngine {
 
     this.sessionController.checkSession()
     setInterval(() => this.sessionController.checkSession(), SESSION_TIME)
+
+    const popupSettings = this.getPopupSettings()
+    if (popupSettings.autoPromotion.enabled)
+      this.enableTransactionsAutoPromotion(
+        parseInt(popupSettings.autoPromotion.time * 1000 * 60)
+      )
   }
 
   // WALLET BACKGROUND API
@@ -409,6 +416,20 @@ class PegasusEngine {
 
   getPopupSettings() {
     return this.stateStorageController.get('popupSettings')
+  }
+
+  enableTransactionsAutoPromotion(time) {
+    this.transactionsAutoPromotionHandler = setInterval(
+      () => {
+        if (this.stateStorageController.isReady())
+          this.accountDataController.promoteTransactions()
+      },
+      time > 3 ? time : 3
+    )
+  }
+
+  disableTransactionsAutoPromotion() {
+    clearInterval(this.transactionsAutoPromotionHandler)
   }
 }
 

@@ -9,11 +9,11 @@ const backgroundScript = {
   engine: Utils.requestHandler(new PegasusEngine()),
 
   run() {
-    this.bindPopupDuplex()
-    this.bindTabDuplex()
+    this.bindPopupApi()
+    this.bindTabRequests()
   },
 
-  bindPopupDuplex() {
+  bindPopupApi() {
     // Wallet Service
     duplex.on('isWalletSetup', this.engine.isWalletSetup)
     duplex.on('setupWallet', this.engine.setupWallet)
@@ -95,9 +95,18 @@ const backgroundScript = {
 
     duplex.on('setPopupSettings', this.engine.setPopupSettings)
     duplex.on('getPopupSettings', this.engine.getPopupSettings)
+
+    duplex.on(
+      'enableTransactionsAutoPromotion',
+      this.engine.enableTransactionsAutoPromotion
+    )
+    duplex.on(
+      'disableTransactionsAutoPromotion',
+      this.engine.disableTransactionsAutoPromotion
+    )
   },
 
-  bindTabDuplex() {
+  bindTabRequests() {
     duplex.on(
       'tabRequest',
       async ({ resolve, data: { action, data, uuid, website } }) => {

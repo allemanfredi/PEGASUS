@@ -1092,6 +1092,18 @@
     "@types/warning" "^3.0.0"
     warning "^4.0.3"
 
+"@iota/bundle@^1.0.0-beta.29":
+  version "1.0.0-beta.29"
+  resolved "https://registry.yarnpkg.com/@iota/bundle/-/bundle-1.0.0-beta.29.tgz#1dfe9ce9617e04cc6412524da4eae9b174acbf0d"
+  integrity sha512-KKR/ocMHpErrCxfyujsT3p1RjfE7TxHIsEPBLv7PJv6aHkr8ahaNfIMx07iFixy08+gxFKAnVAOS9mtytSHf3A==
+  dependencies:
+    "@iota/converter" "^1.0.0-beta.23"
+    "@iota/kerl" "^1.0.0-beta.23"
+    "@iota/signing" "^1.0.0-beta.23"
+    "@iota/transaction" "^1.0.0-beta.23"
+    "@types/warning" "^3.0.0"
+    warning "^4.0.3"
+
 "@iota/checksum@^1.0.0-beta.21":
   version "1.0.0-beta.21"
   resolved "https://registry.yarnpkg.com/@iota/checksum/-/checksum-1.0.0-beta.21.tgz#7ba1fba95affa73a3a44ac9455a22b59961762f5"
@@ -1151,6 +1163,24 @@
   integrity sha512-WPRA2VJN4cgp03aglM+IXRq3plIYvPd/Uxbw5tp8uLnsJPGzwVeKRNn7g4h1Pz9Jc6u09/Aymke+C4BORO7Wfg==
   dependencies:
     "@iota/bundle" "^1.0.0-beta.23"
+    "@iota/bundle-validator" "^1.0.0-beta.23"
+    "@iota/checksum" "^1.0.0-beta.23"
+    "@iota/converter" "^1.0.0-beta.23"
+    "@iota/curl" "^1.0.0-beta.19"
+    "@iota/http-client" "^1.0.0-beta.23"
+    "@iota/kerl" "^1.0.0-beta.23"
+    "@iota/pad" "^1.0.0-beta.19"
+    "@iota/signing" "^1.0.0-beta.23"
+    "@iota/transaction" "^1.0.0-beta.23"
+    "@iota/transaction-converter" "^1.0.0-beta.23"
+    bluebird "^3.5.5"
+
+"@iota/core@^1.0.0-beta.29":
+  version "1.0.0-beta.29"
+  resolved "https://registry.yarnpkg.com/@iota/core/-/core-1.0.0-beta.29.tgz#516b9e3484a6e851ee5d3673113652888c8e44ef"
+  integrity sha512-b/cf/ED2+k5gFL4bEMKLVPxbIXWgEf2vcm8/2ebkeT93nW1ZsmakNNQqWfCSj/8C0Hrd3SVgICfxwwgFwSYt5A==
+  dependencies:
+    "@iota/bundle" "^1.0.0-beta.29"
     "@iota/bundle-validator" "^1.0.0-beta.23"
     "@iota/checksum" "^1.0.0-beta.23"
     "@iota/converter" "^1.0.0-beta.23"

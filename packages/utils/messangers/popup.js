@@ -249,5 +249,13 @@ export default {
 
   removeConnection(connection) {
     return this.duplex.send('removeConnection', connection)
+  },
+
+  enableTransactionsAutoPromotion(time) {
+    return this.duplex.send('enableTransactionsAutoPromotion', time)
+  },
+
+  disableTransactionsAutoPromotion() {
+    return this.duplex.send('disableTransactionsAutoPromotion')
   }
 }

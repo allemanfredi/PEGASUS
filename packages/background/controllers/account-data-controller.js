@@ -213,6 +213,27 @@ class AccountDataController {
     backgroundMessanger.setAccount(updatedAccount)
   }
 
+  async promoteTransactions() {
+    const network = this.networkController.getCurrentNetwork()
+    const account = this.walletController.getCurrentAccount()
+
+    const iota = composeAPI({ provider: network.provider })
+
+    const tails = account.transactions
+      .filter(transaction => transaction.network.type === network.type)
+      .map(transaction => transaction.transfer[0].hash)
+
+    const states = await iota.getLatestInclusion(tails)
+
+    for (let [index, tail] of tails.entries()) {
+      if (!states[index] && (await iota.isPromotable(tail))) {
+        await iota.promoteTransaction(tail, 3, 14)
+      } else {
+        console.log('not promotable', tail)
+      }
+    }
+  }
+
   getMessage(_bundle) {
     try {
       return JSON.parse(extractJson(_bundle))
