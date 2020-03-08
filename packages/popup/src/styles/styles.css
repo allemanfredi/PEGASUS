@@ -672,8 +672,8 @@ header{
 
 .container-hidden-network{
     background: rgba(0,0,0,.8);
-    width: 98%;
-    min-height: 355px;
+    min-width: 250px;
+    min-height: 290px;
     overflow-y: hidden;
     position: absolute;
     z-index: 1000;
@@ -682,7 +682,7 @@ header{
 }
 .container-hidden-network-header{
     color: white;
-    font-size: 28px;
+    font-size: 25px;
     text-align: center;
     margin-top: 2%;
 }
@@ -693,8 +693,8 @@ header{
 }
 
 .container-hidden-network-item{
-    margin-top: 4%;
-    font-size: 21px;
+    margin-top: 5px;
+    font-size: 18px;
     display: flex;
 }
 .container-hidden-network-item:hover{
