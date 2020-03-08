@@ -21,7 +21,7 @@ cd PEGASUS
 
 
 ```
-yarn init
+yarn run init
 ```
 
 ```
