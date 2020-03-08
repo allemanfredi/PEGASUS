@@ -22,16 +22,6 @@ class Details extends Component {
             </div>
           </div>
         </div>
-        <div className="row mt-1">
-          <div className="col-8 text-xxs text-blue text-bold text-left">
-            attachment timestamp:
-          </div>
-          <div className="col-4 text-right text-xxs">
-            <div className="text-no-overflow">
-              {Utils.timestampToDate(this.props.details.transfer[0].attachmentTimestamp)}
-            </div>
-          </div>
-        </div>
         <hr className="mt-1 mb-1" />
         <div className="row mt-1">
           <div className="col-2 text-xxs text-blue text-bold text-left">
