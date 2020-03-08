@@ -4,7 +4,7 @@ const Export = props => {
   return (
     <div className="container">
       <div className="row mt-3 mb-3">
-        <div className="col-12 text-center text-lg text-blue text-bold">
+        <div className="col-12 text-center text-lg text-blue text-bold pl-0 pr-0">
           Let's export the seed
         </div>
       </div>
