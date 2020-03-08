@@ -287,8 +287,8 @@ class PegasusEngine {
     this.popupController.openPopup()
   }
 
-  getConnection({ origin, accountId }) {
-    return this.connectorController.getConnection(origin, accountId)
+  getConnection({ origin }) {
+    return this.connectorController.getConnection(origin)
   }
 
   pushConnection(connection) {

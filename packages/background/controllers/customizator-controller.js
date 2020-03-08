@@ -47,13 +47,10 @@ class CustomizatorController {
   }
 
   async pushRequest(request) {
-    const account = this.walletController.getCurrentAccount()
-
     const { method, uuid, resolve, data, website } = request
 
     const connection = this.connectorController.getConnection(
-      website.origin,
-      account ? account.id : null
+      website.origin
     )
     let mockConnection = connection
     let isPopupAlreadyOpened = false
@@ -79,8 +76,7 @@ class CustomizatorController {
         website,
         requestToConnect: true,
         connected: false,
-        enabled: false,
-        accountId: account ? account.id : null
+        enabled: false
       }
       this.connectorController.setConnectionToStore(mockConnection)
       isPopupAlreadyOpened = true

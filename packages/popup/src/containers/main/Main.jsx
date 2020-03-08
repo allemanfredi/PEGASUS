@@ -48,11 +48,9 @@ class Main extends Component {
 
     //impossible to load data from the storage until that a user log in
     if (state >= APP_STATE.WALLET_UNLOCKED) {
-      const account = await popupMessanger.getCurrentAccount()
       const website = await popupMessanger.getWebsite()
       const connection = await popupMessanger.getConnection(
-        website ? website.origin : 'offline',
-        account.id
+        website ? website.origin : 'offline'
       )
 
       if (connection) {
@@ -110,11 +108,9 @@ class Main extends Component {
     popupMessanger.startSession()
     popupMessanger.setState(APP_STATE.WALLET_UNLOCKED)
 
-    const account = await popupMessanger.getCurrentAccount()
     const website = await popupMessanger.getWebsite()
     const connection = await popupMessanger.getConnection(
-      website ? website.origin : 'offline',
-      account.id
+      website ? website.origin : 'offline'
     )
 
     const requests = await popupMessanger.getRequests()
@@ -126,7 +122,6 @@ class Main extends Component {
         requestToConnect: true,
         connected: false,
         enabled: false,
-        accountId: account.id
       })
       this.props.showHeader(false)
       this.setState({

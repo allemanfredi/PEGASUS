@@ -348,11 +348,6 @@ class WalletController {
         account.name = newName
         account.id = Utils.sha256(newName)
         updatedAccount = account
-
-        this.connectorController.updateConnectionsAccountId(
-          current.id,
-          Utils.sha256(newName)
-        )
       }
     })
 

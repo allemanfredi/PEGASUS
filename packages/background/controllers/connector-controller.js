@@ -25,7 +25,6 @@ class ConnectorController {
       return null
     }
 
-    //not check on accountId because the wallet is still locked and it is not possible to retrieve the current account
     if (
       this.connectionToStore &&
       this.connectionToStore.website.origin === origin
@@ -42,19 +41,12 @@ class ConnectorController {
   }
 
   pushConnection(connection) {
-    const account = this.walletController.getCurrentAccount()
     const connections = this.stateStorageController.get('connections')
     const existingConnection = connections.find(
       conn => conn.website.origin === connection.website.origin
     )
 
-    if (existingConnection) {
-      this.updateConnection(
-        Object.assign({}, connection, {
-          accountId: account.id
-        })
-      )
-    } else {
+    if (!existingConnection) {
       connections.push(connection)
       this.stateStorageController.set('connections', connections)
     }
@@ -72,28 +64,12 @@ class ConnectorController {
     this.stateStorageController.set('connections', updatedConnections, true)
   }
 
-  //usefull when user change name since accountid = hash(accountName)
-  updateConnectionsAccountId(currentAccountId, newAccountId) {
-    const connections = this.stateStorageController.get('connections')
-    const updatedConnections = connections.map(connection => {
-      if (connection.accountId === currentAccountId) {
-        connection.accountId = newAccountId
-      }
-
-      return connection
-    })
-    this.stateStorageController.set('connections', updatedConnections, true)
-  }
-
   connect(uuid, resolve, website) {
-    const account = this.walletController.getCurrentAccount()
-
     const connection = {
       website,
       requestToConnect: true,
       connected: false,
       enabled: false,
-      accountId: account ? account.id : null
     }
 
     const connectionRequest = {
@@ -114,9 +90,9 @@ class ConnectorController {
   }
 
   completeConnection(requests) {
+    const account = this.walletController.getCurrentAccount()
     const website = this.getCurrentWebsite()
     const connectionRequest = this.getConnectionRequest()
-    const account = this.walletController.getCurrentAccount()
     if (connectionRequest) {
       connectionRequest.resolve({
         data: true,
@@ -129,11 +105,9 @@ class ConnectorController {
     //in case there was already the connection stored
     requests.forEach(request => {
       if (
-        request.connection.website.origin === website.origin &&
-        (request.connection.accountId === account.id ||
-          !request.connection.accountId)
+        request.connection.website.origin === website.origin
       ) {
-        request.connection.accountId = account.id
+        //request.connection.accountId = account.id
         request.connection.requestToConnect = false
         request.connection.enabled = true
         request.connection.connected = true
@@ -150,7 +124,6 @@ class ConnectorController {
   rejectConnection(requests) {
     const website = this.getCurrentWebsite()
     const connectionRequest = this.getConnectionRequest()
-    const account = this.walletController.getCurrentAccount()
 
     if (connectionRequest) {
       connectionRequest.resolve({
@@ -166,13 +139,11 @@ class ConnectorController {
       requestToConnect: false,
       connected: false,
       enabled: false,
-      accountId: account.id
     })
 
     requests.forEach(request => {
       if (
-        request.connection.website.origin === website.origin &&
-        request.connection.accountId === account.id
+        request.connection.website.origin === website.origin
       ) {
         request.connection.requestToConnect = false
         request.connection.enabled = false
