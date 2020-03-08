@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import Utils from '@pegasus/utils/utils'
-import IOTA from '@pegasus/utils/iota'
 import Details from './details/Details'
 import Spinner from '../../components/spinner/Spinner'
 import CheckBox from '../../components/checkbox/Checkbox'
 import { popupMessanger } from '@pegasus/utils/messangers'
+import { composeAPI } from '@iota/core'
 
 class Transactions extends Component {
   constructor(props, context) {
@@ -26,17 +26,40 @@ class Transactions extends Component {
 
   async promoteTransaction(hash) {
     try {
-      await IOTA.promoteTransaction(hash)
+      const network = await popupMessanger.getCurrentNetwork()
+      const iota = composeAPI({ provider: network.provider })
+      await iota.promoteTransaction(hash, 3, 14)
+
+      this.props.setNotification({
+        type: 'success',
+        text: 'Transaction promoted succesfully!',
+        position: 'under-bar'
+      })
     } catch (err) {
-      console.log(err)
+      this.props.setNotification({
+        type: 'danger',
+        text: err.message,
+        position: 'under-bar'
+      })
     }
   }
 
   async replayBundle(hash) {
     try {
-      await IOTA.replayBundle(hash)
+      const network = await popupMessanger.getCurrentNetwork()
+      const iota = composeAPI({ provider: network.provider })
+      const m = await iota.replayBundle(hash, 3, 14)
+      this.props.setNotification({
+        type: 'success',
+        text: 'Transaction reattached succesfully!',
+        position: 'under-bar'
+      })
     } catch (err) {
-      console.log(err)
+      this.props.setNotification({
+        type: 'danger',
+        text: err.message,
+        position: 'under-bar'
+      })
     }
   }
 
@@ -193,7 +216,7 @@ class Transactions extends Component {
                       <Details
                         details={transaction}
                         promoteTransaction={this.promoteTransaction}
-                        onReplayBundle={this.replayBundle}
+                        replayBundle={this.replayBundle}
                       />
                     ) : (
                       ''

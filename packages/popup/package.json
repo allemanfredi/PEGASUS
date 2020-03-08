@@ -5,7 +5,7 @@
   "author": "allemanfredi <alle.manfredi@gmail.com>",
   "private": true,
   "dependencies": {
-    "@iota/core": "^1.0.0-beta.24",
+    "@iota/core": "^1.0.0-beta.29",
     "animate.css": "^3.7.2",
     "babel-polyfill": "^6.26.0",
     "password-validator": "^4.1.1",

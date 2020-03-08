@@ -467,6 +467,7 @@ class Home extends Component {
                   account={this.props.account}
                   network={this.props.network}
                   isLoading={this.state.isLoading}
+                  setNotification={this.props.setNotification}
                   onReload={this.onReload}
                 />
                 <div className="row mt-3">
