@@ -126,7 +126,7 @@ class ConnectionsSettings extends React.Component {
                   src={
                     connection.website.favicon
                       ? connection.website.favicon
-                      : './material/img/domain.png'
+                      : `${connection.website.hostname}/favicon.ico`
                   }
                   height="25"
                   width="25"

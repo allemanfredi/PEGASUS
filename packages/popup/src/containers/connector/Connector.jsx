@@ -44,7 +44,7 @@ class Connector extends Component {
               src={
                 this.state.favicon
                   ? this.state.favicon
-                  : './material/img/domain.png'
+                  : `${this.state.hostname}/favicon.ico`
               }
               height="64"
               width="64"
