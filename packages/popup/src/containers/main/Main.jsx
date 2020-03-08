@@ -121,7 +121,7 @@ class Main extends Component {
         website,
         requestToConnect: true,
         connected: false,
-        enabled: false,
+        enabled: false
       })
       this.props.showHeader(false)
       this.setState({

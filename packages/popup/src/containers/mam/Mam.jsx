@@ -33,20 +33,18 @@ class Mam extends Component {
   render() {
     const items = [
       {
-        image: './material/img/documentary.svg',
         title: 'Register Channel',
-        text: 'It is possible to manually add a MAM Channel (as subscriber)'
+        description:
+          'It is possible to manually add a MAM Channel (as subscriber)'
       },
       {
-        image: './material/img/channel-list.svg',
         title: 'Show Channels List',
-        text:
+        description:
           'Before you can export the seed you will need to enter the login password'
       },
       {
-        image: './material/img/telescope.svg',
         title: 'MAM Explorer',
-        text: "Monitor what's going on on the MAM channels"
+        description: "Monitor what's going on on the MAM channels"
       }
     ]
     return (
@@ -72,25 +70,20 @@ class Mam extends Component {
                       })
                     }}
                   >
-                    <div className="col-12">
-                      <div className="row mt-3">
-                        <div className="col-3">
-                          <img
-                            src={item.image}
-                            height="50"
-                            width="50"
-                            alt="documentary logo"
-                          />
-                        </div>
-                        <div className="col-9 text-blue text-left text-md font-weight-bold my-auto">
+                    <div className="col-9 mt-2">
+                      <div className="row">
+                        <div className="col-12 text-dark-gray font-weight-bold text-md">
                           {item.title}
                         </div>
                       </div>
-                      <div className="row mt-3 justify-content-center">
-                        <div className="col-10 text-center text-xs text-gray">
-                          {item.text}
+                      <div className="row">
+                        <div className="col-12 text-gray text-xs mb-1">
+                          {item.description}
                         </div>
                       </div>
+                    </div>
+                    <div className="col-3 my-auto text-right">
+                      <img src="./material/img/right.png" height="50" />
                     </div>
                   </div>
                   <hr className="mt-2" />

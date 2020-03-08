@@ -37,30 +37,25 @@ class ExportSeed extends Component {
                 })
               }}
             >
-              <div className="col-12">
-                <div className="row mt-3">
-                  <div className="col-3">
-                    <img
-                      src="./material/img/vault.svg"
-                      height="50"
-                      width="50"
-                      alt="vault logo"
-                    />
-                  </div>
-                  <div className="col-9 text-blue text-left text-md font-weight-bold my-auto">
+              <div className="col-9 mt-2">
+                <div className="row">
+                  <div className="col-12 text-dark-gray font-weight-bold text-md">
                     Export SeedVault
                   </div>
                 </div>
-                <div className="row mt-3 justify-content-center">
-                  <div className="col-10 text-center text-xs text-gray">
+                <div className="row">
+                  <div className="col-12 text-gray text-xs mb-1">
                     Before to export the seed vault you will need to enter the
                     password to encrypt the exported seed
                   </div>
                 </div>
               </div>
+              <div className="col-3 my-auto text-right">
+                <img src="./material/img/right.png" height="50" />
+              </div>
             </div>
 
-            <hr className="mt-2 mb-2" />
+            <hr className="mt-1" />
 
             <div
               className="row cursor-pointer"
@@ -72,26 +67,21 @@ class ExportSeed extends Component {
                 })
               }}
             >
-              <div className="col-12">
-                <div className="row mt-3">
-                  <div className="col-3">
-                    <img
-                      src="./material/img/text.svg"
-                      height="50"
-                      width="50"
-                      alt="text logo"
-                    />
-                  </div>
-                  <div className="col-9 text-blue text-left text-md font-weight-bold my-auto">
+              <div className="col-9 mt-2">
+                <div className="row">
+                  <div className="col-12 text-dark-gray font-weight-bold text-md">
                     Export as Text
                   </div>
                 </div>
-                <div className="row mt-3 justify-content-center">
-                  <div className="col-10 text-center text-xs text-gray">
+                <div className="row">
+                  <div className="col-12 text-gray text-xs mb-1">
                     Before you can export the seed you will need to enter the
                     login password
                   </div>
                 </div>
+              </div>
+              <div className="col-3 my-auto text-right">
+                <img src="./material/img/right.png" height="50" />
               </div>
             </div>
 

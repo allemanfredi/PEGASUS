@@ -49,9 +49,7 @@ class CustomizatorController {
   async pushRequest(request) {
     const { method, uuid, resolve, data, website } = request
 
-    const connection = this.connectorController.getConnection(
-      website.origin
-    )
+    const connection = this.connectorController.getConnection(website.origin)
     let mockConnection = connection
     let isPopupAlreadyOpened = false
 

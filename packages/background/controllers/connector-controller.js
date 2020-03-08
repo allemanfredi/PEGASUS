@@ -69,7 +69,7 @@ class ConnectorController {
       website,
       requestToConnect: true,
       connected: false,
-      enabled: false,
+      enabled: false
     }
 
     const connectionRequest = {
@@ -104,9 +104,7 @@ class ConnectorController {
 
     //in case there was already the connection stored
     requests.forEach(request => {
-      if (
-        request.connection.website.origin === website.origin
-      ) {
+      if (request.connection.website.origin === website.origin) {
         //request.connection.accountId = account.id
         request.connection.requestToConnect = false
         request.connection.enabled = true
@@ -138,13 +136,11 @@ class ConnectorController {
       website,
       requestToConnect: false,
       connected: false,
-      enabled: false,
+      enabled: false
     })
 
     requests.forEach(request => {
-      if (
-        request.connection.website.origin === website.origin
-      ) {
+      if (request.connection.website.origin === website.origin) {
         request.connection.requestToConnect = false
         request.connection.enabled = false
         request.connection.connected = false
