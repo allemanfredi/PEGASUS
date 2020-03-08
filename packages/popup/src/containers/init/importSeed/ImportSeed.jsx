@@ -4,7 +4,7 @@ const ImportSeed = props => {
   return (
     <div className="container">
       <div className={'row mt-2 mb-3'}>
-        <div className="col-12 text-center text-lg text-blue text-bold">
+        <div className="col-12 text-center text-lg text-blue text-bold text-bold">
           Let's import a seed
         </div>
       </div>

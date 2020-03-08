@@ -268,7 +268,7 @@ class Init extends Component {
           <React.Fragment>
             <div className="container">
               <div className="row mt-5 mb-3">
-                <div className="col-12 text-center text-lg text-blue">
+                <div className="col-12 text-center text-lg text-blue text-bold">
                   I'm creating the wallet!
                 </div>
               </div>

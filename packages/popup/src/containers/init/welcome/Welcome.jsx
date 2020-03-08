@@ -13,7 +13,7 @@ const Welcome = props => {
         />
       </div>
       <div className="row mt-1">
-        <div className="col-12 text-center text-xl text-blue text-bold">
+        <div className="col-12 text-center text-xl text-blue text-bold text-bold">
           Welcome to Pegasus!
         </div>
       </div>

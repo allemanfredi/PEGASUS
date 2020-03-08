@@ -167,6 +167,7 @@ class Transactions extends Component {
                         >
                           {transaction.status ? 'confirmed ' : 'pending'}
                           <a className="text-green">
+                            <br/>
                             {transaction.isReattached ? 'reattached ' : ''}
                           </a>
                         </div>

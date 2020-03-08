@@ -113,7 +113,7 @@ class ImportSeed extends Component {
                 />
               </div>
             </div>
-            <div className="row mt-1">
+            <div className="row mt-4">
               <div className="col-12">
                 <button
                   disabled={

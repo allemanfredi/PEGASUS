@@ -4,7 +4,7 @@ const GenerateSeed = props => {
   return (
     <div className="container">
       <div className="row mt-2">
-        <div className="col-12 text-center text-lg text-blue">
+        <div className="col-12 text-center text-lg text-blue text-bold">
           Let's generate a seed
         </div>
       </div>

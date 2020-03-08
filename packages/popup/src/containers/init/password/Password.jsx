@@ -5,7 +5,7 @@ const Password = props => {
   return (
     <div className="container">
       <div className="row mt-3">
-        <div className="col-12 text-center text-lg text-blue">
+        <div className="col-12 text-center text-lg text-blue text-bold">
           Let's add a password
         </div>
       </div>
