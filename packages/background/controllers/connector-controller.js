@@ -60,7 +60,7 @@ class ConnectorController {
       if (connection.website.origin === _connection.website.origin) {
         return _connection
       } else {
-        return conn
+        return connection
       }
     })
     this.stateStorageController.set('connections', updatedConnections)
