@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { popupMessanger } from '@pegasus/utils/messangers'
 import Loader from '../../components/loader/Loader'
 import Input from '../../components/input/Input'
+import Utils from '@pegasus/utils/utils'
 
 class ImportSeed extends Component {
   constructor(props, context) {
@@ -30,7 +31,7 @@ class ImportSeed extends Component {
       })
       return
     }
-    const isValidSeed = await popupMessanger.isSeedValid(this.state.seed)
+    const isValidSeed = Utils.isValidSeed(this.state.seed)
     if (!isValidSeed) {
       this.props.setNotification({
         type: 'danger',

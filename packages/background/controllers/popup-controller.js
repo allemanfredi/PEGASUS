@@ -5,8 +5,8 @@ class PopupController {
     this.popup = false
   }
 
-  setPopup(popup) {
-    this.popup = popup
+  setPopup(_popup) {
+    this.popup = _popup
   }
 
   getPopup() {

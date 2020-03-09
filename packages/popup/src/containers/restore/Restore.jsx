@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import IOTA from '@pegasus/utils/iota'
 import { popupMessanger } from '@pegasus/utils/messangers'
 import Loader from '../../components/loader/Loader'
+import Utils from '@pegasus/utils/utils'
 
 class Restore extends Component {
   constructor(props, context) {
@@ -26,8 +27,8 @@ class Restore extends Component {
   async onClickRestore(e) {
     e.preventDefault()
 
-    const isSeedValid = await popupMessanger.isSeedValid(this.state.seed)
-    if (!isSeedValid) {
+    const isValid = Utils.isValidSeed(this.state.seed)
+    if (!isValid) {
       this.props.setNotification({
         type: 'danger',
         text: 'Invalid Seed',

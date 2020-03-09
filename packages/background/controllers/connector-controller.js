@@ -90,7 +90,7 @@ class ConnectorController {
     }
   }
 
-  completeConnection(requests) {
+  completeConnection(_requests) {
     const account = this.walletController.getCurrentAccount()
     const website = this.getCurrentWebsite()
     const connectionRequest = this.getConnectionRequest()
@@ -104,7 +104,7 @@ class ConnectorController {
     }
 
     //in case there was already the connection stored
-    requests.forEach(request => {
+    _requests.forEach(request => {
       if (request.connection.website.origin === website.origin) {
         request.connection.requestToConnect = false
         request.connection.enabled = true
@@ -116,10 +116,10 @@ class ConnectorController {
 
     backgroundMessanger.setSelectedAccount(account.data.latestAddress)
 
-    return requests
+    return _requests
   }
 
-  rejectConnection(requests) {
+  rejectConnection(_requests) {
     const website = this.getCurrentWebsite()
     const connectionRequest = this.getConnectionRequest()
 
@@ -139,7 +139,7 @@ class ConnectorController {
       enabled: false
     })
 
-    requests.forEach(request => {
+    _requests.forEach(request => {
       if (request.connection.website.origin === website.origin) {
         request.connection.requestToConnect = false
         request.connection.enabled = false
@@ -149,27 +149,27 @@ class ConnectorController {
 
     this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
 
-    return requests
+    return _requests
   }
 
-  setCurrentWebsite(website) {
-    this.website = website
+  setCurrentWebsite(_website) {
+    this.website = _website
   }
 
   getCurrentWebsite() {
     return this.website
   }
 
-  setConnectionToStore(connection) {
-    this.connectionToStore = connection
+  setConnectionToStore(_connection) {
+    this.connectionToStore = _connection
   }
 
   getConnectionToStore() {
     return this.connectionToStore
   }
 
-  setConnectionRequest(connection) {
-    this.connectionRequest = connection
+  setConnectionRequest(_connection) {
+    this.connectionRequest = _connection
   }
 
   getConnectionRequest() {
@@ -180,24 +180,24 @@ class ConnectorController {
     return this.stateStorageController.get('connections')
   }
 
-  removeConnection(connectionToRemove) {
+  removeConnection(_connectionToRemove) {
     const connections = this.stateStorageController.get('connections')
     const filteredConnections = connections.filter(
       connection =>
-        connection.website.hostname !== connectionToRemove.website.hostname
+        connection.website.hostname !== _connectionToRemove.website.hostname
     )
     this.stateStorageController.set('connections', filteredConnections)
     return true
   }
 
-  addConnection(connection) {
+  addConnection(_connection) {
     const connections = this.stateStorageController.get('connections')
     const alreadyPresent = connections.find(
-      con => con.website.hostname === connection.website.hostname
+      connection => connection.website.hostname === _connection.website.hostname
     )
     if (alreadyPresent) return false
 
-    connections.push(connection)
+    connections.push(_connection)
     this.stateStorageController.set('connections', connections)
     return true
   }

@@ -107,10 +107,6 @@ export default {
     return this.duplex.send('generateSeed', length)
   },
 
-  isSeedValid(seed) {
-    return this.duplex.send('isSeedValid', seed)
-  },
-
   startSession() {
     return this.duplex.send('startSession')
   },

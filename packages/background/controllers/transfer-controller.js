@@ -18,7 +18,7 @@ class TransferController {
     this.networkController = networkController
   }
 
-  confirmTransfers(transfers) {
+  confirmTransfers(_transfers) {
     return new Promise(resolve => {
       backgroundMessanger.setTransfersConfirmationLoading(true)
 
@@ -33,7 +33,7 @@ class TransferController {
       const minWeightMagnitude = network.difficulty
 
       // convert message and tag from char to trits
-      const transfersCopy = Utils.copyObject(transfers)
+      const transfersCopy = Utils.copyObject(_transfers)
 
       transfersCopy.forEach(t => {
         t.value = parseInt(t.value)

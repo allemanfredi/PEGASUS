@@ -169,6 +169,43 @@ const Utils = {
     return true
   },
 
+  isValidSeed(seed) {
+    const values = [
+      '9',
+      'A',
+      'B',
+      'C',
+      'D',
+      'E',
+      'F',
+      'G',
+      'H',
+      'I',
+      'J',
+      'K',
+      'L',
+      'M',
+      'N',
+      'O',
+      'P',
+      'Q',
+      'R',
+      'S',
+      'T',
+      'U',
+      'V',
+      'W',
+      'X',
+      'Y',
+      'Z'
+    ]
+    if (seed.length !== 81) return false
+    ;[...seed].forEach(c => {
+      if (values.indexOf(c) === -1) return false
+    })
+    return true
+  },
+
   sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
   },

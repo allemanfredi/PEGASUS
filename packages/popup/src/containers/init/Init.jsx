@@ -9,6 +9,7 @@ import GenerateSeed from './generateSeed/GenerateSeed'
 import Avatar from './avatar/Avatar'
 import Export from './export/Export'
 import ImportSeed from './importSeed/ImportSeed'
+import Utils from '@pegasus/utils/utils'
 
 class Init extends Component {
   constructor(props, context) {
@@ -227,10 +228,10 @@ class Init extends Component {
     }
   }
 
-  async onChangeSeedFromImport(seed) {
+  onChangeSeedFromImport(seed) {
     this.setState({ seed })
 
-    const isValidSeed = await popupMessanger.isSeedValid(seed)
+    const isValidSeed = Utils.isValidSeed(seed)
     if (!isValidSeed) {
       this.setState({
         seedError: 'Invalid seed'

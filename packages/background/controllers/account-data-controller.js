@@ -116,10 +116,10 @@ class AccountDataController {
     return _account
   }
 
-  getTransactionsJustConfirmed(account, _transactions) {
+  getTransactionsJustConfirmed(_account, _transactions) {
     const transactionsJustConfirmed = []
     for (let tx of _transactions) {
-      for (let tx2 of account.transactions) {
+      for (let tx2 of _account.transactions) {
         if (
           tx.bundle === tx2.bundle &&
           tx.status !== tx2.status &&
@@ -132,11 +132,11 @@ class AccountDataController {
     return transactionsJustConfirmed
   }
 
-  getNewTransactionsFromAll(account, _transactions) {
+  getNewTransactionsFromAll(_account, _transactions) {
     const newTxs = []
     for (let txToCheck of _transactions) {
       let isNew = true
-      for (let tx of account.transactions) {
+      for (let tx of _account.transactions) {
         if (tx.bundle === txToCheck.bundle) {
           isNew = false
         }

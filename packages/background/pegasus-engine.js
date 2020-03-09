@@ -219,10 +219,6 @@ class PegasusEngine {
     return this.walletController.generateSeed(length)
   }
 
-  isSeedValid(seed) {
-    return this.walletController.isSeedValid(seed)
-  }
-
   startSession() {
     this.sessionController.startSession()
   }

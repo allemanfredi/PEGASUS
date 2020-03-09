@@ -36,17 +36,17 @@ class WalletController {
     this.setState(APP_STATE.WALLET_NOT_INITIALIZED)
   }
 
-  storePassword(psw) {
-    const hash = Utils.sha256(psw)
-    this.password = psw
+  storePassword(_password) {
+    const hash = Utils.sha256(_password)
+    this.password = _password
     this.stateStorageController.set('hpsw', hash, true)
   }
 
-  comparePassword(psw) {
+  comparePassword(_password) {
     let pswToCompare
     if ((pswToCompare = this.stateStorageController.get('hpsw')) === null)
       return false
-    if (pswToCompare === Utils.sha256(psw)) return true
+    if (pswToCompare === Utils.sha256(_password)) return true
   }
 
   setPassword(password) {
@@ -57,8 +57,8 @@ class WalletController {
     return this.password
   }
 
-  unlockWallet(psw) {
-    const hash = Utils.sha256(psw)
+  unlockWallet(_password) {
+    const hash = Utils.sha256(_password)
     let pswToCompare
 
     if ((pswToCompare = this.stateStorageController.get('hpsw')) === null) {
@@ -70,7 +70,7 @@ class WalletController {
       const account = this.getCurrentAccount()
       const network = this.networkController.getCurrentNetwork()
 
-      this.stateStorageController.setEncryptionKey(psw)
+      this.stateStorageController.setEncryptionKey(_password)
 
       //injection
       backgroundMessanger.setSelectedProvider(network.provider)
@@ -82,43 +82,43 @@ class WalletController {
     return false
   }
 
-  async restoreWallet(account, network, key) {
+  async restoreWallet(_account, _network, _key) {
     const transactions = await this.accountDataController.mapTransactions(
-      account.data,
-      network
+      _account.data,
+      _network
     )
 
-    account.data.balance =
-      network.type === 'mainnet'
+    _account.data.balance =
+      _network.type === 'mainnet'
         ? {
-            mainnet: account.data.balance,
+            mainnet: _account.data.balance,
             testnet: 0
           }
         : {
-            mainnet: account.data.balance,
+            mainnet: _account.data.balance,
             testnet: 0
           }
 
-    const eseed = Utils.aes256encrypt(account.seed, key)
+    const eseed = Utils.aes256encrypt(_account.seed, _key)
     const obj = {
-      name: account.name,
+      name: _account.name,
       seed: eseed,
       transactions,
-      data: account.data,
+      data: _account.data,
       current: true,
-      id: Utils.sha256(account.name)
+      id: Utils.sha256(_account.name)
     }
 
     try {
-      this.stateStorageController.setEncryptionKey(key)
+      this.stateStorageController.setEncryptionKey(_key)
 
       const restoredAccounts = []
       restoredAccounts.push(obj)
       this.stateStorageController.set('accounts', restoredAccounts)
       this.stateStorageController.writeToStorage()
 
-      this.password = key
-      this.networkController.setCurrentNetwork(network)
+      this.password = _key
+      this.networkController.setCurrentNetwork(_network)
 
       backgroundMessanger.setAccount(obj)
 
@@ -128,16 +128,16 @@ class WalletController {
     }
   }
 
-  setState(state) {
-    this.stateStorageController.set('state', state)
+  setState(_state) {
+    this.stateStorageController.set('state', _state)
   }
 
   getState() {
     return parseInt(this.stateStorageController.get('state'))
   }
 
-  unlockSeed(psw) {
-    const hash = Utils.sha256(psw)
+  unlockSeed(_password) {
+    const hash = Utils.sha256(_password)
     let pswToCompare
     if (!(pswToCompare = this.stateStorageController.get('hpsw'))) return false
     if (pswToCompare === hash) {
@@ -158,9 +158,9 @@ class WalletController {
     return Utils.aes256decrypt(account.seed, key)
   }
 
-  isAccountNameAlreadyExists(name) {
+  isAccountNameAlreadyExists(_name) {
     const accounts = this.stateStorageController.get('accounts')
-    const alreadyExists = accounts.filter(account => account.name === name)
+    const alreadyExists = accounts.filter(account => account.name === _name)
     if (alreadyExists.length > 0) {
       return true
     } else {
@@ -168,9 +168,9 @@ class WalletController {
     }
   }
 
-  async addAccount(account, isCurrent) {
+  async addAccount(_account, _isCurrent) {
     try {
-      if (isCurrent) {
+      if (_isCurrent) {
         const accounts = this.stateStorageController.get('accounts')
         accounts.forEach(user => {
           user.current = false
@@ -180,7 +180,7 @@ class WalletController {
 
       const network = this.networkController.getCurrentNetwork()
       const iota = composeAPI({ provider: network.provider })
-      const seed = account.seed.toString().replace(/,/g, '')
+      const seed = _account.seed.toString().replace(/,/g, '')
 
       let accountData = await iota.getAccountData(seed, {
         start: 0,
@@ -208,13 +208,13 @@ class WalletController {
       )
 
       const accountToAdd = {
-        name: account.name,
-        avatar: account.avatar,
+        name: _account.name,
+        avatar: _account.avatar,
         seed: eseed,
         transactions,
         data: accountData,
-        current: Boolean(isCurrent),
-        id: Utils.sha256(account.name)
+        current: Boolean(_isCurrent),
+        id: Utils.sha256(_account.name)
       }
 
       const accounts = this.stateStorageController.get('accounts')
@@ -257,7 +257,7 @@ class WalletController {
     }
   }
 
-  setCurrentAccount(currentAccount) {
+  setCurrentAccount(_currentAccount) {
     let currentsAccount = this.stateStorageController.get('accounts')
     currentsAccount.forEach(account => {
       account.current = false
@@ -266,7 +266,7 @@ class WalletController {
 
     const accounts = this.stateStorageController.get('accounts')
     accounts.forEach(account => {
-      if (account.id === currentAccount.id) {
+      if (account.id === _currentAccount.id) {
         account.current = true
         backgroundMessanger.setAccount(account)
 
@@ -293,12 +293,12 @@ class WalletController {
     this.stateStorageController.set('accounts', [])
   }
 
-  updateDataAccount(updatedData) {
+  updateDataAccount(_updatedData) {
     const accounts = this.stateStorageController.get('accounts')
     let updatedAccount = {}
     accounts.forEach(account => {
       if (account.current) {
-        account.data = updatedData
+        account.data = _updatedData
         updatedAccount = account
       }
     })
@@ -306,26 +306,13 @@ class WalletController {
     return updatedAccount
   }
 
-  updateNetworkAccount(network) {
-    const accounts = this.stateStorageController.get('accounts')
-    let updatedAccount = {}
-    accounts.forEach(account => {
-      if (account.current) {
-        account.network = network
-        updatedAccount = account
-      }
-    })
-    this.stateStorageController.set('accounts', accounts)
-    return updatedAccount
-  }
-
-  updateTransactionsAccount(transactions) {
+  updateTransactionsAccount(_transactions) {
     const accounts = this.stateStorageController.get('accounts')
 
     let updatedAccount = {}
     accounts.forEach(account => {
       if (account.current) {
-        account.transactions = transactions
+        account.transactions = _transactions
         updatedAccount = account
       }
     })
@@ -334,19 +321,19 @@ class WalletController {
     return updatedAccount
   }
 
-  updateNameAccount(current, newName) {
+  updateNameAccount(_current, _newName) {
     const accounts = this.stateStorageController.get('accounts')
     for (let account of accounts) {
-      if (account.name === newName) {
+      if (account.name === _newName) {
         return false
       }
     }
 
     let updatedAccount = {}
     accounts.forEach(account => {
-      if (account.id === current.id) {
-        account.name = newName
-        account.id = Utils.sha256(newName)
+      if (account.id === _current.id) {
+        account.name = _newName
+        account.id = Utils.sha256(_newName)
         updatedAccount = account
       }
     })
@@ -357,12 +344,12 @@ class WalletController {
     return true
   }
 
-  updateAvatarAccount(current, avatar) {
+  updateAvatarAccount(_current, _avatar) {
     const accounts = this.stateStorageController.get('accounts')
     let updatedAccount = {}
     accounts.forEach(account => {
-      if (account.id === current.id) {
-        account['avatar'] = avatar
+      if (account.id === _current.id) {
+        account['avatar'] = _avatar
         updatedAccount = account
       }
     })
@@ -371,14 +358,14 @@ class WalletController {
     backgroundMessanger.setAccount(updatedAccount)
   }
 
-  async deleteAccount(account) {
+  async deleteAccount(_account) {
     let accounts = this.stateStorageController.get('accounts')
 
     if (accounts.length === 1) {
       return false
     }
 
-    accounts = accounts.filter(acc => acc.id !== account.id)
+    accounts = accounts.filter(account => account.id !== _account.id)
 
     accounts.forEach(account => {
       account.current = false
@@ -411,47 +398,10 @@ class WalletController {
     return accounts
   }
 
-  generateSeed(length = 81) {
-    const bytes = Utils.randomBytes(length, 27)
+  generateSeed(_length = 81) {
+    const bytes = Utils.randomBytes(_length, 27)
     const seed = bytes.map(byte => Utils.byteToChar(byte))
     return seed
-  }
-
-  isSeedValid(seed) {
-    const values = [
-      '9',
-      'A',
-      'B',
-      'C',
-      'D',
-      'E',
-      'F',
-      'G',
-      'H',
-      'I',
-      'J',
-      'K',
-      'L',
-      'M',
-      'N',
-      'O',
-      'P',
-      'Q',
-      'R',
-      'S',
-      'T',
-      'U',
-      'V',
-      'W',
-      'X',
-      'Y',
-      'Z'
-    ]
-    if (seed.length !== 81) return false
-    ;[...seed].forEach(c => {
-      if (values.indexOf(c) === -1) return false
-    })
-    return true
   }
 
   logout() {

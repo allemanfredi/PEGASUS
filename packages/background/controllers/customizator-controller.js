@@ -22,8 +22,8 @@ class CustomizatorController {
     this.requests = []
   }
 
-  setRequests(requests) {
-    this.requests = requests
+  setRequests(_requests) {
+    this.requests = _requests
   }
 
   getRequests() {
@@ -34,20 +34,20 @@ class CustomizatorController {
     return this.requests.filter(request => request.needUserInteraction === true)
   }
 
-  setWalletController(walletController) {
-    this.walletController = walletController
+  setWalletController(_walletController) {
+    this.walletController = _walletController
   }
 
-  setNetworkController(networkController) {
-    this.networkController = networkController
+  setNetworkController(_networkController) {
+    this.networkController = _networkController
   }
 
-  setTransferController(transferController) {
-    this.transferController = transferController
+  setTransferController(_networkController) {
+    this.transferController = _networkController
   }
 
-  async pushRequest(request) {
-    const { method, uuid, resolve, data, website } = request
+  async pushRequest(_request) {
+    const { method, uuid, resolve, data, website } = _request
 
     const connection = this.connectorController.getConnection(website.origin)
     let mockConnection = connection
@@ -139,21 +139,16 @@ class CustomizatorController {
     }
   }
 
-  async executeRequestFromPopup(request) {
-    return this.execute(request)
+  async executeRequestFromPopup(_request) {
+    return this.execute(_request)
   }
 
   //request that does not need of popup interaction (ex: getCurrentAccount)
   executeRequests() {
-    const account = this.walletController.getCurrentAccount()
-
     this.requests
       .filter(req => req.needUserInteraction !== true)
       .forEach(async request => {
-        if (
-          request.connection.enabled &&
-          request.connection.accountId === account.id
-        ) {
+        if (request.connection.enabled) {
           const { resolve, uuid } = request
 
           const res = await this.execute(request)
@@ -176,9 +171,9 @@ class CustomizatorController {
       })
   }
 
-  async confirmRequest(request) {
+  async confirmRequest(_request) {
     const requestToExecute = this.requests.find(
-      req => req.uuid === request.uuid
+      req => req.uuid === _request.uuid
     )
 
     const { uuid, resolve } = requestToExecute
@@ -187,7 +182,7 @@ class CustomizatorController {
 
     if (res.tryAgain) return
 
-    this._removeRequest(request)
+    this._removeRequest(_request)
 
     if (this.requests.length === 0) {
       this.popupController.closePopup()
@@ -203,8 +198,10 @@ class CustomizatorController {
     })
   }
 
-  rejectRequest(request) {
-    const requestToReject = this.requests.find(req => req.uuid === request.uuid)
+  rejectRequest(_request) {
+    const requestToReject = this.requests.find(
+      request => request.uuid === _request.uuid
+    )
 
     requestToReject.resolve({
       data: 'Request has been rejected by the user',
@@ -212,7 +209,7 @@ class CustomizatorController {
       uuid: requestToReject.uuid
     })
 
-    this._removeRequest(request)
+    this._removeRequest(_request)
 
     if (this.requests.length === 0) {
       this.popupController.closePopup()
@@ -237,8 +234,8 @@ class CustomizatorController {
     backgroundMessanger.setAppState(APP_STATE.WALLET_UNLOCKED)
   }
 
-  async execute(request) {
-    const { method, data } = request
+  async execute(_request) {
+    const { method, data } = _request
 
     const network = this.networkController.getCurrentNetwork()
     const iota = composeAPI({ provider: network.provider })

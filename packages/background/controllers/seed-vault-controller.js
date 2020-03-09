@@ -10,13 +10,13 @@ class SeedVaultController {
     this.walletController = walletController
   }
 
-  async createSeedVault(password) {
+  async createSeedVault(_password) {
     const key = this.walletController.getKey()
     const account = this.walletController.getCurrentAccount()
     const seed = Utils.aes256decrypt(account.seed, key)
 
     kdbxweb.CryptoEngine.argon2 = async (
-      password,
+      _password,
       salt,
       memory,
       iterations,
@@ -26,7 +26,7 @@ class SeedVaultController {
       version
     ) => {
       const hash = await argon2.hash({
-        pass: new Uint8Array(password),
+        pass: new Uint8Array(_password),
         salt: new Uint8Array(salt),
         mem: memory,
         time: iterations,
@@ -38,7 +38,7 @@ class SeedVaultController {
     }
 
     const credentials = new kdbxweb.Credentials(
-      kdbxweb.ProtectedValue.fromString(password),
+      kdbxweb.ProtectedValue.fromString(_password),
       null
     )
     const db = kdbxweb.Kdbx.create(credentials, 'Trinity')

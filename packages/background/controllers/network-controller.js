@@ -8,18 +8,18 @@ class NetworkController {
     this.customizatorController = customizatorController
   }
 
-  setWalletController(walletController) {
-    this.walletController = walletController
+  setWalletController(_walletController) {
+    this.walletController = _walletController
   }
 
-  setCurrentNetwork(network) {
+  setCurrentNetwork(_network) {
     try {
       const configs = this.stateStorageController.get('configs')
-      configs.selectedNetwork = network
+      configs.selectedNetwork = _network
       this.stateStorageController.set('configs', configs)
 
-      backgroundMessanger.setSelectedProvider(network.provider)
-      backgroundMessanger.setNetwork(network)
+      backgroundMessanger.setSelectedProvider(_network.provider)
+      backgroundMessanger.setNetwork(_network)
     } catch (err) {
       throw new Error(err)
     }
@@ -35,12 +35,12 @@ class NetworkController {
     return configs.networks
   }
 
-  addNetwork(network) {
+  addNetwork(_network) {
     // TODO check that the name does not exists
     try {
       const configs = this.stateStorageController.get('configs')
 
-      configs.networks.push(network)
+      configs.networks.push(_network)
       this.stateStorageController.set('configs', configs)
 
       backgroundMessanger.setNetworks(configs.networks)

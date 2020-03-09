@@ -1,12 +1,12 @@
 import extensionizer from 'extensionizer'
 
 class NotificationsController {
-  showNotification(title, message, url) {
-    extensionizer.notifications.create(url, {
+  showNotification(_title, _message, _url) {
+    extensionizer.notifications.create(_url, {
       type: 'basic',
-      title: title,
+      title: _title,
       iconUrl: '../../../../images/pegasus-64.png',
-      message: message
+      message: _message
     })
   }
 }

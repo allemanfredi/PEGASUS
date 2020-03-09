@@ -47,7 +47,6 @@ const backgroundScript = {
     duplex.on('resetData', this.engine.resetData)
 
     duplex.on('generateSeed', this.engine.generateSeed)
-    duplex.on('isSeedValid', this.engine.isSeedValid)
 
     duplex.on('checkSession', this.engine.checkSession)
     duplex.on('deleteSession', this.engine.deleteSession)
