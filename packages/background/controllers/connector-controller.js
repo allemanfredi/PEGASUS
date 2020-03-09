@@ -63,7 +63,7 @@ class ConnectorController {
         return conn
       }
     })
-    this.stateStorageController.set('connections', updatedConnections, true)
+    this.stateStorageController.set('connections', updatedConnections)
   }
 
   connect(uuid, resolve, website) {
