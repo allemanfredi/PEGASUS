@@ -132,7 +132,7 @@ class ConnectorController {
       this.setConnectionRequest(null)
     }
 
-    this.updateConnection({
+    this.removeConnection({
       website,
       requestToConnect: false,
       connected: false,
