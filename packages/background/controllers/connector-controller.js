@@ -46,9 +46,11 @@ class ConnectorController {
       conn => conn.website.origin === connection.website.origin
     )
 
-    if (!existingConnection) {
+    if (existingConnection) {
+      this.updateConnection(connection)
+    } else {
       connections.push(connection)
-      this.stateStorageController.set('connections', connections)
+      this.storageController.set('connections', connections)
     }
   }
 
@@ -81,8 +83,7 @@ class ConnectorController {
 
     //if user call connect before log in, storage is not already set up so it is not possible to save/load data
     //workardund -> keep in memory and once he login, store the data into storage and delete the variable
-    const isStorageControllerReady = this.stateStorageController.isReady()
-    if (!isStorageControllerReady) {
+    if (!this.stateStorageController.isReady()) {
       this.setConnectionToStore(connection)
     } else {
       this.pushConnection(connection)

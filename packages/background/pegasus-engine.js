@@ -291,6 +291,7 @@ class PegasusEngine {
 
   connect(uuid, resolve, website) {
     this.connectorController.connect(uuid, resolve, website)
+    this.walletController.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
     this.popupController.openPopup()
   }
 

@@ -50,7 +50,7 @@ class Main extends Component {
     if (state >= APP_STATE.WALLET_UNLOCKED) {
       const website = await popupMessanger.getWebsite()
       const connection = await popupMessanger.getConnection(
-        website ? website.origin : 'offline'
+        website ? website.origin : 'file://'
       )
 
       if (connection) {
