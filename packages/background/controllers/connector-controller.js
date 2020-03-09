@@ -12,22 +12,22 @@ class ConnectorController {
     this.state = state
   }
 
-  setWalletController(walletController) {
-    this.walletController = walletController
+  setWalletController(_walletController) {
+    this.walletController = _walletController
   }
 
-  setNetworkController(networkController) {
-    this.networkController = networkController
+  setNetworkController(_networkController) {
+    this.networkController = _networkController
   }
 
-  getConnection(origin) {
+  getConnection(_origin) {
     if (!this.stateStorageController.isReady()) {
       return null
     }
 
     if (
       this.connectionToStore &&
-      this.connectionToStore.website.origin === origin
+      this.connectionToStore.website.origin === _origin
     ) {
       const connection = this.connectionToStore
       this.pushConnection(connection)
@@ -35,30 +35,30 @@ class ConnectorController {
       return connection
     }
     const connections = this.stateStorageController.get('connections')
-    const connection = connections.find(conn => conn.website.origin === origin)
+    const connection = connections.find(conn => conn.website.origin === _origin)
 
     return connection
   }
 
-  pushConnection(connection) {
+  pushConnection(_connection) {
     const connections = this.stateStorageController.get('connections')
     const existingConnection = connections.find(
-      conn => conn.website.origin === connection.website.origin
+      connection => connection.website.origin === _connection.website.origin
     )
 
     if (existingConnection) {
-      this.updateConnection(connection)
+      this.updateConnection(_connection)
     } else {
-      connections.push(connection)
+      connections.push(_connection)
       this.stateStorageController.set('connections', connections)
     }
   }
 
-  updateConnection(connection) {
+  updateConnection(_connection) {
     const connections = this.stateStorageController.get('connections')
-    const updatedConnections = connections.map(conn => {
-      if (conn.website.origin === connection.website.origin) {
-        return connection
+    const updatedConnections = connections.map(connection => {
+      if (connection.website.origin === _connection.website.origin) {
+        return _connection
       } else {
         return conn
       }
@@ -66,17 +66,17 @@ class ConnectorController {
     this.stateStorageController.set('connections', updatedConnections)
   }
 
-  connect(uuid, resolve, website) {
+  connect(_uuid, _resolve, _website) {
     const connection = {
-      website,
+      website: _website,
       requestToConnect: true,
       connected: false,
       enabled: false
     }
 
     const connectionRequest = {
-      uuid,
-      resolve,
+      uuid: _uuid,
+      resolve: _resolve,
       connection
     }
     this.setConnectionRequest(connectionRequest)
