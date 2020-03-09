@@ -20,10 +20,14 @@ class PegasusGlobalState {
     this.hpsw = null
     this.configs = configs
     this.popupSettings = {
-      hide0Txs: false,
       autoPromotion: {
         emabled: false,
         time: 0
+      },
+      filters: {
+        hide0Txs: false,
+        hidePendingTxs: false,
+        hideReattachedTxs: false
       }
     }
     ;(this.state = 0),

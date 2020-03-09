@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import Utils from '@pegasus/utils/utils'
 import Details from './details/Details'
 import Spinner from '../../components/spinner/Spinner'
-import CheckBox from '../../components/checkbox/Checkbox'
+import Filters from './filters/Filters'
 import { popupMessanger } from '@pegasus/utils/messangers'
 import { composeAPI } from '@iota/core'
 
@@ -13,15 +13,20 @@ class Transactions extends Component {
     this.state = {
       opened: {},
       settings: {
-        hide0Txs: false
-      }
+        filters: {
+          hide0Txs: false,
+          hidePendingTxs: false,
+          hideReattachedTxs: false
+        }
+      },
+      showFilters: false
     }
 
     this.promoteTransaction = this.promoteTransaction.bind(this)
     this.replayBundle = this.replayBundle.bind(this)
     this.handleShowDetails = this.handleShowDetails.bind(this)
     this.clickShowDetails = this.clickShowDetails.bind(this)
-    this.handleClickHide0ValueTxs = this.handleClickHide0ValueTxs.bind(this)
+    this.handleFilter = this.handleFilter.bind(this)
   }
 
   async promoteTransaction(hash) {
@@ -48,7 +53,7 @@ class Transactions extends Component {
     try {
       const network = await popupMessanger.getCurrentNetwork()
       const iota = composeAPI({ provider: network.provider })
-      const m = await iota.replayBundle(hash, 3, 14)
+      await iota.replayBundle(hash, 3, 14)
       this.props.setNotification({
         type: 'success',
         text: 'Transaction reattached succesfully!',
@@ -99,10 +104,9 @@ class Transactions extends Component {
     })
   }
 
-  handleClickHide0ValueTxs() {
+  handleFilter(filter) {
     const settings = this.state.settings
-    settings.hide0Txs = !settings.hide0Txs
-
+    settings.filters[filter] = !settings.filters[filter]
     this.setState({ settings })
     popupMessanger.setPopupSettings(settings)
   }
@@ -110,21 +114,19 @@ class Transactions extends Component {
   render() {
     return (
       <React.Fragment>
+        {this.state.showFilters ? (
+          <Filters
+            filters={this.state.settings.filters}
+            onFilter={this.handleFilter}
+            onClose={() => this.setState({ showFilters: false })}
+          />
+        ) : null}
         <div className="container">
           <div className="row">
             <div className="col-3 text-left text-black text-gray text-xs pl-0">
               History
             </div>
             <div className="col-6 text-center">
-              <CheckBox
-                value={this.state.settings.hide0Txs}
-                checked={this.state.settings.hide0Txs}
-                id="hide-zero-tx"
-                text="Hide 0 value txs"
-                onChange={this.handleClickHide0ValueTxs}
-              />
-            </div>
-            <div className="col-3 text-right pr-0">
               {this.props.isLoading ? (
                 <Spinner />
               ) : (
@@ -136,6 +138,16 @@ class Transactions extends Component {
                 </button>
               )}
             </div>
+            <div className="col-3 text-right pr-0">
+              <button
+                className="btn btn-icon-inverted mb-05"
+                onClick={() => {
+                  this.setState({ showFilters: !this.state.showFilters })
+                }}
+              >
+                <i className="fa fa-sliders"></i>
+              </button>
+            </div>
           </div>
         </div>
         <hr />
@@ -144,10 +156,22 @@ class Transactions extends Component {
             this.props.account.transactions
               .filter(
                 transaction =>
-                  transaction.network.type === this.props.network.type &&
-                  (this.state.settings.hide0Txs
-                    ? transaction.value !== 0
-                    : true)
+                  transaction.network.type === this.props.network.type
+              )
+              .filter(transaction =>
+                this.state.settings.filters.hidePendingTxs
+                  ? transaction.status
+                  : true
+              )
+              .filter(transaction =>
+                this.state.settings.filters.hide0Txs
+                  ? transaction.value !== 0
+                  : true
+              )
+              .filter(transaction =>
+                this.state.settings.filters.hideReattachedTxs
+                  ? !transaction.isReattached
+                  : true
               )
               .sort((t1, t2) => (t1.timestamp < t2.timestamp ? 1 : -1))
               .map((transaction, index) => {
@@ -167,7 +191,7 @@ class Transactions extends Component {
                         >
                           {transaction.status ? 'confirmed ' : 'pending'}
                           <a className="text-green">
-                            <br/>
+                            <br />
                             {transaction.isReattached ? 'reattached ' : ''}
                           </a>
                         </div>

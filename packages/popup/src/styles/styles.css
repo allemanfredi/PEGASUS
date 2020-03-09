@@ -477,6 +477,10 @@ input#inp-edit {
     color: #475965;
 }
 
+.text-transparent {
+    color: transparent
+}
+
 .text-underline{
     text-decoration: underline;
 }
@@ -710,6 +714,20 @@ header{
     margin-left: 13%;
 }
 
+.container-filters {
+    position: absolute;
+    background: rgba(0,0,0,.8);
+    min-height: 100px;
+    padding-bottom: 5px;
+    padding-top: 3px;
+    width: 220px;
+    overflow-y: hidden;
+    position: absolute;
+    z-index: 1000;
+    border-radius: 5px;
+    margin-left: 140px;
+    margin-top: 23px;
+}
 
 /*TRANSACTION*/
 .transaction-list {
