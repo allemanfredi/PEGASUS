@@ -33,7 +33,6 @@ class PegasusGlobalState {
     ;(this.state = 0),
       (this.data = {
         accounts: [],
-        connections: [],
         mamChannels: {}
       })
   }

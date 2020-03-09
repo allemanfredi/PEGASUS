@@ -61,6 +61,10 @@ const backgroundScript = {
       'getRequestsWithUserInteraction',
       this.engine.getRequestsWithUserInteraction
     )
+    duplex.on(
+      'getExecutableRequests',
+      this.engine.getExecutableRequests
+    )
     duplex.on('confirmRequest', this.engine.confirmRequest)
     duplex.on('rejectRequest', this.engine.rejectRequest)
     duplex.on('executeRequestFromPopup', this.engine.executeRequestFromPopup)
@@ -81,10 +85,10 @@ const backgroundScript = {
     duplex.on('updateConnection', this.engine.updateConnection)
     duplex.on('completeConnection', this.engine.completeConnection)
     duplex.on('rejectConnection', this.engine.rejectConnection)
-    duplex.on('getWebsite', this.engine.getWebsite)
     duplex.on('getConnections', this.engine.getConnections)
     duplex.on('addConnection', this.engine.addConnection)
     duplex.on('removeConnection', this.engine.removeConnection)
+    duplex.on('getConnectionRequest', this.engine.getConnectionRequest)
 
     duplex.on('startFetchMam', this.engine.startFetchMam)
     duplex.on('getMamChannels', this.engine.getMamChannels)
@@ -123,10 +127,11 @@ const backgroundScript = {
         switch (action) {
           case 'init': {
             const currentNetwork = this.engine.getCurrentNetwork()
-            this.engine.setWebsite(website)
             const response = {
               selectedProvider: currentNetwork.provider
             }
+
+            this.engine.estabilishConnection(website)
 
             resolve({
               success: true,

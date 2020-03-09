@@ -34,6 +34,10 @@ class CustomizatorController {
     return this.requests.filter(request => request.needUserInteraction === true)
   }
 
+  getExecutableRequests() {
+    return this.requests.filter(request => request.connection.enabled)
+  }
+
   setWalletController(_walletController) {
     this.walletController = _walletController
   }
@@ -50,7 +54,6 @@ class CustomizatorController {
     const { method, uuid, resolve, data, website } = _request
 
     const connection = this.connectorController.getConnection(website.origin)
-    let mockConnection = connection
     let isPopupAlreadyOpened = false
 
     const requestsWithUserInteraction = [
@@ -58,33 +61,29 @@ class CustomizatorController {
       'mam_changeMode',
       'prepareTransfers'
     ]
+    console.log("new request", _request)
 
     const popup = this.popupController.getPopup()
 
-    if (!connection || !connection.enabled) {
+    if (!connection.requestToConnect && !connection.enabled) {
+      this.connectorController.setConnectionRequest(Object.assign({}, connection, {
+        requestToConnect: true
+      }))
+
       this.walletController.setState(
         APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
       )
 
       if (!popup) {
         this.popupController.openPopup()
+        isPopupAlreadyOpened = true
       }
-
-      mockConnection = {
-        website,
-        requestToConnect: true,
-        connected: false,
-        enabled: false
-      }
-      this.connectorController.setConnectionToStore(mockConnection)
-      isPopupAlreadyOpened = true
     }
 
     const state = this.walletController.getState()
 
     if (
       state <= APP_STATE.WALLET_LOCKED ||
-      !connection ||
       !connection.enabled
     ) {
       if (!popup && isPopupAlreadyOpened === false) {
@@ -93,7 +92,7 @@ class CustomizatorController {
 
       this.requests = [
         {
-          connection: mockConnection,
+          connection,
           method,
           uuid,
           resolve,

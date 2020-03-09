@@ -6,16 +6,17 @@ class Connector extends Component {
     super(props, context)
 
     this.state = {
-      favicon: null,
-      hostname: ''
+      website: {
+        favicon: null,
+        hostname: ''
+      }
     }
   }
 
   async componentDidMount() {
-    const website = await popupMessanger.getWebsite()
+    const connection = await popupMessanger.getConnectionRequest()
     this.setState({
-      favicon: website.favicon,
-      hostname: website.hostname
+      website: connection.website
     })
   }
 
@@ -42,9 +43,9 @@ class Connector extends Component {
             <img
               className="border-radius-50"
               src={
-                this.state.favicon
-                  ? this.state.favicon
-                  : `${this.state.hostname}/favicon.ico`
+                this.state.website.favicon
+                  ? this.state.website.favicon
+                  : `${this.state.website.hostname}/favicon.ico`
               }
               height="64"
               width="64"
@@ -73,7 +74,7 @@ class Connector extends Component {
         </div>
         <div className="row mt-05">
           <div className="col-4 text-center text-xxs text-bold">
-            {this.state.hostname}
+            {this.state.website.hostname}
           </div>
           <div className="col-4 text-center text-xxxs my-auto pl-0 pr-0 text-gray">
             wants to connect with
@@ -96,7 +97,7 @@ class Connector extends Component {
         <div className="row mt-12">
           <div className="col-6 pl-5 pr-5">
             <button
-              onClick={() => this.props.onPermissionNotGranted()}
+              onClick={() => this.props.onPermissionNotGranted(this.state.website)}
               className="btn btn-border-blue text-sm text-bold btn-big"
             >
               Reject
@@ -104,7 +105,7 @@ class Connector extends Component {
           </div>
           <div className="col-6 pl-5 pr-5">
             <button
-              onClick={() => this.props.onPermissionGranted()}
+              onClick={() => this.props.onPermissionGranted(this.state.website)}
               className="btn btn-blue text-sm text-bold btn-big"
             >
               Confirm

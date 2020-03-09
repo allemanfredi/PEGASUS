@@ -32,9 +32,7 @@ class PegasusEngine {
     this.stateStorageController = new StateStorageController()
     this.notificationsController = new NotificationsController()
 
-    this.connectorController = new ConnectorController({
-      stateStorageController: this.stateStorageController
-    })
+    this.connectorController = new ConnectorController()
 
     this.mamController = new MamController({
       stateStorageController: this.stateStorageController
@@ -269,6 +267,10 @@ class PegasusEngine {
     return this.customizatorController.getRequestsWithUserInteraction()
   }
 
+  getExecutableRequests() {
+    return this.customizatorController.getExecutableRequests()
+  }
+
   executeRequests() {
     this.customizatorController.executeRequests()
   }
@@ -302,25 +304,21 @@ class PegasusEngine {
     this.connectorController.updateConnection(connection)
   }
 
-  completeConnection() {
+  completeConnection(connection) {
     let requests = this.customizatorController.getRequests()
-    requests = this.connectorController.completeConnection(requests)
+    requests = this.connectorController.completeConnection(connection, requests)
     this.customizatorController.setRequests(requests)
   }
 
-  rejectConnection() {
+  rejectConnection(connection) {
     let requests = this.customizatorController.getRequests()
-    requests = this.connectorController.rejectConnection(requests)
+    requests = this.connectorController.rejectConnection(connection, requests)
     this.customizatorController.setRequests(requests)
     this.popupController.closePopup()
   }
 
-  setWebsite(website) {
-    this.connectorController.setCurrentWebsite(website)
-  }
-
-  getWebsite() {
-    return this.connectorController.getCurrentWebsite()
+  estabilishConnection(website) {
+    this.connectorController.estabilishConnection(website)
   }
 
   getConnections() {
@@ -333,6 +331,10 @@ class PegasusEngine {
 
   addConnection(connection) {
     return this.connectorController.addConnection(connection)
+  }
+
+  getConnectionRequest() {
+    return this.connectorController.getConnectionRequest()
   }
 
   loadAccountData() {

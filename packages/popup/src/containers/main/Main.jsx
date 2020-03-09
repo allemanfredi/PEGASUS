@@ -39,131 +39,61 @@ class Main extends Component {
     }
     if (state >= APP_STATE.WALLET_UNLOCKED) {
       popupMessanger.startHandleAccountData()
+      this.props.showHeader(true)
     }
+    
     if (state === APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION)
       this.props.showHeader(false)
 
-    const requests = await popupMessanger.getRequests()
-    const requestsWithUserInteraction = await popupMessanger.getRequestsWithUserInteraction()
+    const connection = await popupMessanger.getConnectionRequest()
+    if (connection && connection.requestToConnect && state > APP_STATE.WALLET_LOCKED) {
+      popupMessanger.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
+      state = APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
+      this.props.showHeader(false)
+    }
 
-    //impossible to load data from the storage until that a user log in
-    if (state >= APP_STATE.WALLET_UNLOCKED) {
-      const website = await popupMessanger.getWebsite()
-      const connection = await popupMessanger.getConnection(
-        website ? website.origin : 'file://'
-      )
+    const executableRequests = await popupMessanger.getExecutableRequests()
 
-      if (connection) {
-        if (
-          connection.requestToConnect === true &&
-          state >= APP_STATE.WALLET_UNLOCKED
-        ) {
-          this.props.showHeader(false)
-          state = APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
-        }
-
-        if (
-          connection.enabled === true &&
-          requestsWithUserInteraction.length > 0
-        ) {
-          this.props.showHeader(false)
-          state = APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION
-          popupMessanger.setState(
-            APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION
-          )
-        }
-      }
-
-      if (
-        !connection &&
-        state === APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION
-      ) {
+    if (!connection && executableRequests.length > 0) {
+      const needUserInteraction= executableRequests.find(request => request.needUserInteraction)
+      if (needUserInteraction) {
         this.props.showHeader(false)
-        state = APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
-      }
-
-      if (
-        !connection &&
-        state >= APP_STATE.WALLET_UNLOCKED &&
-        requests.length > 0
-      ) {
-        this.props.showHeader(false)
-        state = APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
+        popupMessanger.setState(APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION)
+        state = APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION
       }
     }
+
+    console.log(connection, executableRequests)
 
     this.setState({ appState: state })
     this.bindDuplexRequests()
   }
 
-  bindDuplexRequests() {
-    this.props.duplex.on('setAppState', appState => {
-      this.setState({ appState })
-      if (appState > APP_STATE.WALLET_LOCKED) this.props.showHeader(true)
-      else this.props.showHeader(false)
-    })
-  }
-
   async onSuccessFromLogin() {
     popupMessanger.startSession()
     popupMessanger.setState(APP_STATE.WALLET_UNLOCKED)
+    this.setState({ appState: APP_STATE.WALLET_UNLOCKED})
 
-    const website = await popupMessanger.getWebsite()
-    const connection = await popupMessanger.getConnection(
-      website ? website.origin : 'offline'
-    )
-
-    const requests = await popupMessanger.getRequests()
-
-    //no connections but request from injection with wallet locked
-    if (!connection && requests.length > 0) {
-      popupMessanger.updateConnection({
-        website,
-        requestToConnect: true,
-        connected: false,
-        enabled: false
-      })
-      this.props.showHeader(false)
-      this.setState({
-        appState: APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
-      })
+    const connection = await popupMessanger.getConnectionRequest()
+    if (connection && connection.requestToConnect) {
       popupMessanger.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
-      return
-    }
-
-    //unlocked and no injection requests
-    else if ((!connection || connection.enabled) && requests.length === 0) {
-      popupMessanger.startHandleAccountData()
-      this.props.showHeader(true)
-      this.setState({ appState: APP_STATE.WALLET_UNLOCKED })
-      return
-    }
-
-    //.connect() with wallet locked
-    else if (connection.requestToConnect === true) {
+      this.setState({ appState: APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION })
       this.props.showHeader(false)
-      this.setState({
-        appState: APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
-      })
-      popupMessanger.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
-      return
-    } else if (connection.enabled === true) {
-      popupMessanger.closePopup()
-      popupMessanger.executeRequests()
     }
+
+    if (!connection) popupMessanger.closePopup()
+    popupMessanger.executeRequests()
   }
 
-  async onPermissionGranted() {
+  async onPermissionGranted(website) {
     const requestsWithUserInteraction = await popupMessanger.getRequestsWithUserInteraction()
-    const website = await popupMessanger.getWebsite()
-    popupMessanger.pushConnection({
+    const connection = {
       website,
       requestToConnect: false,
-      connected: true,
-      enabled: true
-    })
+      enabled: true,
+    }
 
-    await popupMessanger.completeConnection(requestsWithUserInteraction)
+    await popupMessanger.completeConnection(connection)
 
     if (requestsWithUserInteraction.length > 0) {
       this.props.showHeader(false)
@@ -182,11 +112,22 @@ class Main extends Component {
     this.setState({ appState: APP_STATE.WALLET_UNLOCKED })
   }
 
-  async onPermissionNotGranted() {
-    popupMessanger.rejectConnection()
+  onPermissionNotGranted(website) {
+    popupMessanger.rejectConnection({
+      website,
+      requestToConnect: false,
+      enabled: false,
+    })
     popupMessanger.rejectRequests()
     this.props.showHeader(true)
-    this.setState({ appState: APP_STATE.WALLET_UNLOCKED })
+  }
+
+  bindDuplexRequests() {
+    this.props.duplex.on('setAppState', appState => {
+      this.setState({ appState })
+      if (appState > APP_STATE.WALLET_LOCKED) this.props.showHeader(true)
+      else this.props.showHeader(false)
+    })
   }
 
   onSuccessFromInit() {
