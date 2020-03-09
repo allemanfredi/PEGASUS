@@ -50,7 +50,7 @@ class ConnectorController {
       this.updateConnection(connection)
     } else {
       connections.push(connection)
-      this.storageController.set('connections', connections)
+      this.stateStorageController.set('connections', connections)
     }
   }
 
@@ -106,7 +106,6 @@ class ConnectorController {
     //in case there was already the connection stored
     requests.forEach(request => {
       if (request.connection.website.origin === website.origin) {
-        //request.connection.accountId = account.id
         request.connection.requestToConnect = false
         request.connection.enabled = true
         request.connection.connected = true
