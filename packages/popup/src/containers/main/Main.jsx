@@ -34,6 +34,11 @@ class Main extends Component {
     await popupMessanger.checkSession()
     let state = await popupMessanger.getState()
 
+    //closing popup in restore page
+    if (state === APP_STATE.WALLET_RESTORE) {
+      state = APP_STATE.WALLET_LOCKED
+    }
+
     if (state >= APP_STATE.WALLET_LOCKED) {
       this.props.showHeader(true)
     }
@@ -161,11 +166,16 @@ class Main extends Component {
     this.props.duplex.on('setAppState', appState => {
       if (
         appState !== APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION ||
-        appState !== APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
+        appState !== APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION ||
+        appState !== APP_STATE.WALLET_RESTORE
       )
         this.setState({ appState })
 
-      if (appState >= APP_STATE.WALLET_LOCKED) this.props.showHeader(true)
+      if (
+        appState >= APP_STATE.WALLET_LOCKED ||
+        appState === APP_STATE.WALLET_RESTORE
+      )
+        this.props.showHeader(true)
       else this.props.showHeader(false)
 
       if (

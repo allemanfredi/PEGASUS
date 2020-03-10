@@ -39,6 +39,8 @@ class Restore extends Component {
 
     this.setState({ isLoading: true })
 
+    await popupMessanger.setStorageKey(this.state.psw)
+
     await popupMessanger.resetData()
 
     const data = await IOTA.getAccountData(this.state.seed)

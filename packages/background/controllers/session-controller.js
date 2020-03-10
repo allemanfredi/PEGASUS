@@ -84,7 +84,6 @@ class SessionController {
       return
     } else {
       this.stateStorageController.lock()
-      this.walletController.setState(APP_STATE.WALLET_LOCKED)
       return
     }
   }

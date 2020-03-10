@@ -290,7 +290,7 @@ class WalletController {
   }
 
   resetData() {
-    this.stateStorageController.set('accounts', [])
+    this.stateStorageController.reset()
   }
 
   updateDataAccount(_updatedData) {
