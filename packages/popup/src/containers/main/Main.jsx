@@ -58,7 +58,11 @@ class Main extends Component {
 
     const executableRequests = await popupMessanger.getExecutableRequests()
 
-    if (!connection && executableRequests.length > 0) {
+    if (
+      !connection &&
+      executableRequests.length > 0 &&
+      state >= APP_STATE.WALLET_UNLOCKED
+    ) {
       const needUserInteraction = executableRequests.find(
         request => request.needUserInteraction
       )
@@ -93,13 +97,23 @@ class Main extends Component {
     const requestsWithNoUserInteraction = executableRequests.filter(
       request => !request.needUserInteraction
     )
+
+    const requestsWithUserInteraction = executableRequests.filter(
+      request => request.needUserInteraction
+    )
     if (!connection && requestsWithNoUserInteraction.length > 0) {
       for (let request of requestsWithNoUserInteraction) {
         await popupMessanger.executeRequest(request)
       }
     }
 
-    if (!connection) popupMessanger.closePopup()
+    if (requestsWithUserInteraction.length > 0)
+      popupMessanger.setState(
+        APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION
+      )
+
+    if (!connection && requestsWithUserInteraction.length === 0)
+      popupMessanger.closePopup()
   }
 
   async onPermissionGranted() {

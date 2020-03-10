@@ -20,8 +20,9 @@ class ConfirmRequest extends Component {
   }
 
   async componentWillMount() {
-
-    await popupMessanger.setState(APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION)
+    await popupMessanger.setState(
+      APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION
+    )
 
     const executableRequests = await popupMessanger.getExecutableRequests()
     const requests = executableRequests.filter(

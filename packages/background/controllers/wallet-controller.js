@@ -1,8 +1,8 @@
 import { backgroundMessanger } from '@pegasus/utils/messangers'
-import Duplex from '@pegasus/utils/duplex'
-import { APP_STATE } from '@pegasus/utils/states'
+import { APP_STATE, STATE_NAME } from '@pegasus/utils/states'
 import Utils from '@pegasus/utils/utils'
 import { composeAPI } from '@iota/core'
+import logger from '@pegasus/utils/logger'
 
 class WalletController {
   constructor(options) {
@@ -76,6 +76,8 @@ class WalletController {
       backgroundMessanger.setSelectedProvider(network.provider)
 
       backgroundMessanger.setAccount(account)
+
+      logger.log(`Wallet unlocked with account: ${account.name}`)
       return true
     }
 
@@ -122,6 +124,7 @@ class WalletController {
 
       backgroundMessanger.setAccount(obj)
 
+      logger.log(`Wallet restored with account: ${_account.name}`)
       return true
     } catch (err) {
       return false
@@ -129,6 +132,7 @@ class WalletController {
   }
 
   setState(_state) {
+    logger.log(`State updated: ${STATE_NAME[_state.toString()]}`)
     this.stateStorageController.set('state', _state)
     backgroundMessanger.setAppState(_state)
   }
@@ -233,6 +237,8 @@ class WalletController {
       this.setState(APP_STATE.WALLET_UNLOCKED)
 
       backgroundMessanger.setAccount(accountToAdd)
+
+      logger.log(`Account added : ${accountToAdd.name}`)
 
       return true
     } catch (err) {

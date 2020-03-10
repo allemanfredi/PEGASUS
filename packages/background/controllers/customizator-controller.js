@@ -64,6 +64,7 @@ class CustomizatorController {
     let isPopupAlreadyOpened = false
 
     const popup = this.popupController.getPopup()
+    const state = this.walletController.getState()
 
     if (!connection) {
       connection = {
@@ -89,8 +90,6 @@ class CustomizatorController {
         isPopupAlreadyOpened = true
       }
     }
-
-    const state = this.walletController.getState()
 
     if (state <= APP_STATE.WALLET_LOCKED || !connection.enabled) {
       if (!popup && isPopupAlreadyOpened === false) {

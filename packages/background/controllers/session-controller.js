@@ -1,4 +1,5 @@
 import { APP_STATE } from '@pegasus/utils/states'
+import logger from '@pegasus/utils/logger'
 
 class SessionController {
   constructor(options) {
@@ -25,22 +26,17 @@ class SessionController {
     const currentState = this.walletController.getState()
 
     const password = this.walletController.getPassword()
-    if (
-      !password
-    ) {
+    if (!password) {
+      logger.log(`Locking wallet because no password`)
       this.walletController.setState(APP_STATE.WALLET_LOCKED)
       return
     }
 
-    if (
-      currentState === APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION ||
-      currentState === APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
-    )
-      return
-
     if (!password && !this.walletController.isWalletSetup()) {
       this.walletController.setState(APP_STATE.WALLET_NOT_INITIALIZED)
       this.stateStorageController.lock()
+
+      logger.log(`Locking wallet because no password and wallet is not setup`)
       return
     }
 
@@ -50,9 +46,10 @@ class SessionController {
       if (currentTime - this.session > 300000) {
         this.stateStorageController.lock()
         this.walletController.setState(APP_STATE.WALLET_LOCKED)
+        logger.log(`Session expired... Locking the wallet`)
         return
       }
-      this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
+      logger.log(`Session still valid`)
       return
     } else {
       this.password = false

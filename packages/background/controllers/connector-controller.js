@@ -91,13 +91,11 @@ class ConnectorController {
       }
     })
 
-    if(_requests.length === 0) {
+    if (_requests.length === 0) {
       this.popupController.closePopup()
     }
 
-    this.walletController.setState(
-      APP_STATE.WALLET_UNLOCKED
-    )
+    this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
 
     this.connectionRequest = null
 
@@ -136,9 +134,7 @@ class ConnectorController {
       }
     })
 
-    this.walletController.setState(
-      APP_STATE.WALLET_UNLOCKED
-    )
+    this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
 
     this.connectionRequest = null
 
