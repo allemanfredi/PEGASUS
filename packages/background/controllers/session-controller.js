@@ -24,33 +24,23 @@ class SessionController {
   checkSession() {
     const currentState = this.walletController.getState()
 
-    // requests queue not empty during an extension hard reload cause show confirm view with 0 request
-    // since the requests are deleted during the hard rel
+    const password = this.walletController.getPassword()
     if (
-      currentState ===
-        APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION &&
-      this.customizatorController.getRequests().length === 0 &&
-      !this.password
+      !password
     ) {
-      this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
+      this.walletController.setState(APP_STATE.WALLET_LOCKED)
       return
     }
 
     if (
-      currentState === APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION
+      currentState === APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION ||
+      currentState === APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
     )
       return
-
-    const password = this.walletController.getPassword()
 
     if (!password && !this.walletController.isWalletSetup()) {
       this.walletController.setState(APP_STATE.WALLET_NOT_INITIALIZED)
       this.stateStorageController.lock()
-      return
-    }
-
-    if (!password) {
-      this.walletController.setState(APP_STATE.WALLET_LOCKED)
       return
     }
 
@@ -78,8 +68,6 @@ class SessionController {
   }
 
   deleteSession() {
-    //this.stateStorageController.writeToStorage()
-
     this.session = null
     this.walletController.setState(APP_STATE.WALLET_LOCKED)
     this.walletController.setPassword(false)

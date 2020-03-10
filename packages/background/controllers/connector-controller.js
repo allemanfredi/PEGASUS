@@ -3,7 +3,10 @@ import { APP_STATE } from '@pegasus/utils/states'
 import logger from '@pegasus/utils/logger'
 
 class ConnectorController {
-  constructor() {
+  constructor(configs) {
+    const { popupController } = configs
+
+    this.popupController = popupController
     this.connections = {}
   }
 
@@ -88,6 +91,14 @@ class ConnectorController {
       }
     })
 
+    if(_requests.length === 0) {
+      this.popupController.closePopup()
+    }
+
+    this.walletController.setState(
+      APP_STATE.WALLET_UNLOCKED
+    )
+
     this.connectionRequest = null
 
     backgroundMessanger.setSelectedAccount(account.data.latestAddress)
@@ -113,6 +124,8 @@ class ConnectorController {
       enabled: false
     })
 
+    this.popupController.closePopup()
+
     _requests.forEach(request => {
       if (
         request.connection.website.origin ===
@@ -122,6 +135,10 @@ class ConnectorController {
         request.connection.enabled = false
       }
     })
+
+    this.walletController.setState(
+      APP_STATE.WALLET_UNLOCKED
+    )
 
     this.connectionRequest = null
 

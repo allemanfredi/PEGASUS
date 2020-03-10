@@ -110,7 +110,7 @@ class Main extends Component {
     const requestsWithUserInteraction = executableRequests.filter(
       request => request.needUserInteraction
     )
-    
+
     const requestsWithNoUserInteraction = executableRequests.filter(
       request => !request.needUserInteraction
     )

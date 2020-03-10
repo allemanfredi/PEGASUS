@@ -4,6 +4,7 @@ import ConfirmTransfers from './confirmTransfers/ConfirmTransfers'
 import ConfirmCreateMamChannel from './confirmCreateMamChannel/ConfirmCreateMamChannel'
 import ConfirmChangeModeMamChannel from './confirmChangeModeMamChannel/ConfirmChangeModeMamChannel'
 import Loader from '../../components/loader/Loader'
+import { APP_STATE } from '@pegasus/utils/states'
 
 class ConfirmRequest extends Component {
   constructor(props, context) {
@@ -19,6 +20,9 @@ class ConfirmRequest extends Component {
   }
 
   async componentWillMount() {
+
+    await popupMessanger.setState(APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION)
+
     const executableRequests = await popupMessanger.getExecutableRequests()
     const requests = executableRequests.filter(
       request => request.needUserInteraction
@@ -44,7 +48,6 @@ class ConfirmRequest extends Component {
 
   render() {
     const request = this.state.requests[0]
-    console.log(request)
 
     if (request) {
       switch (request.method) {

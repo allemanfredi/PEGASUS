@@ -32,7 +32,9 @@ class PegasusEngine {
     this.stateStorageController = new StateStorageController()
     this.notificationsController = new NotificationsController()
 
-    this.connectorController = new ConnectorController()
+    this.connectorController = new ConnectorController({
+      popupController: this.popupController
+    })
 
     this.mamController = new MamController({
       stateStorageController: this.stateStorageController

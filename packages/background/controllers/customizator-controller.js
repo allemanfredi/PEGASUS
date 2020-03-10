@@ -57,7 +57,6 @@ class CustomizatorController {
     logger.log(
       `New request ${_request.uuid} - ${_request.method} from tab: ${_request.website.origin}`
     )
-    console.log(_request)
 
     const { method, uuid, resolve, data, website } = _request
 
@@ -227,7 +226,6 @@ class CustomizatorController {
     logger.log(
       `Rejecting (singular) request ${request.uuid} - ${request.method}`
     )
-    console.log(request)
 
     request.resolve({
       data: 'Request has been rejected by the user',
