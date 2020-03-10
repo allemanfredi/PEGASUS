@@ -77,7 +77,9 @@ class WalletController {
 
       backgroundMessanger.setAccount(account)
 
-      logger.log(`(WalletController) Wallet unlocked with account: ${account.name}`)
+      logger.log(
+        `(WalletController) Wallet unlocked with account: ${account.name}`
+      )
       return true
     }
 
@@ -124,7 +126,9 @@ class WalletController {
 
       backgroundMessanger.setAccount(obj)
 
-      logger.log(`(WalletController) Wallet restored with account: ${_account.name}`)
+      logger.log(
+        `(WalletController) Wallet restored with account: ${_account.name}`
+      )
       return true
     } catch (err) {
       return false
@@ -132,7 +136,9 @@ class WalletController {
   }
 
   setState(_state) {
-    logger.log(`(WalletController) State updated: ${STATE_NAME[_state.toString()]}`)
+    logger.log(
+      `(WalletController) State updated: ${STATE_NAME[_state.toString()]}`
+    )
     this.stateStorageController.set('state', _state)
     backgroundMessanger.setAppState(_state)
   }
@@ -242,7 +248,6 @@ class WalletController {
 
       return true
     } catch (err) {
-      console.log(err)
       return false
     }
   }
@@ -332,7 +337,9 @@ class WalletController {
     let updatedAccount = {}
     accounts.forEach(account => {
       if (account.id === _current.id) {
-        logger.log(`(WalletController) Update name for ${account.name} with new one: ${_newName}`)
+        logger.log(
+          `(WalletController) Update name for ${account.name} with new one: ${_newName}`
+        )
 
         account.name = _newName
         account.id = Utils.sha256(_newName)

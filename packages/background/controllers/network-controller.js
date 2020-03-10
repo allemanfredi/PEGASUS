@@ -22,7 +22,9 @@ class NetworkController {
       backgroundMessanger.setSelectedProvider(_network.provider)
       backgroundMessanger.setNetwork(_network)
 
-      logger.log(`(NetworkController) New selected provider ${_network.provider}`)
+      logger.log(
+        `(NetworkController) New selected provider ${_network.provider}`
+      )
     } catch (err) {
       throw new Error(err)
     }
@@ -75,7 +77,9 @@ class NetworkController {
 
       backgroundMessanger.setSelectedProvider(selectedNetwork.provider)
 
-      logger.log(`(NetworkController) Deleted provider ${currentNetwork.provider}`)
+      logger.log(
+        `(NetworkController) Deleted provider ${currentNetwork.provider}`
+      )
 
       return currentNetwork
     } catch (err) {

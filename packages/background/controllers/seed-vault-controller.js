@@ -54,7 +54,9 @@ class SeedVaultController {
     const blob = new Blob([vault])
     FileSaver.saveAs(blob, `pegasus-vault-${account.name}.kdbx`)
 
-    logger.log(`(SeedVaulController) Exporting seed into file: pegasus-vault-${account.name}.kdbx`)
+    logger.log(
+      `(SeedVaulController) Exporting seed into file: pegasus-vault-${account.name}.kdbx`
+    )
 
     return true
   }

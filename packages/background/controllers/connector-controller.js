@@ -142,14 +142,21 @@ class ConnectorController {
   }
 
   estabilishConnection(website) {
-    logger.log(`(ConnectorController) Estabilishing connection with ${website.origin}`)
+    logger.log(
+      `(ConnectorController) Estabilishing connection with ${website.origin}`
+    )
 
     const state = this.walletController.getState()
     const account = this.walletController.getCurrentAccount()
 
     if (this.connections[website.origin]) {
-      if (this.connections[website.origin].enabled && state >= APP_STATE.WALLET_UNLOCKED) {
-        logger.log(`(ConnectorController) Connection with ${website.origin} already enabled`)
+      if (
+        this.connections[website.origin].enabled &&
+        state >= APP_STATE.WALLET_UNLOCKED
+      ) {
+        logger.log(
+          `(ConnectorController) Connection with ${website.origin} already enabled`
+        )
         return account.data.latestAddress
       }
     }
@@ -172,13 +179,17 @@ class ConnectorController {
   }
 
   removeConnection(_connectionToRemove) {
-    logger.log(`(ConnectorController) Remove connection with ${_connectionToRemove.website.origin}`)
+    logger.log(
+      `(ConnectorController) Remove connection with ${_connectionToRemove.website.origin}`
+    )
     delete this.connections[_connectionToRemove.website.origin]
     return true
   }
 
   addConnection(_connection) {
-    logger.log(`(ConnectorController) Add connection with ${_connection.website.origin}`)
+    logger.log(
+      `(ConnectorController) Add connection with ${_connection.website.origin}`
+    )
     if (this.connections[_connection.website.origin]) return false
 
     this.connections[_connection.website.origin] = _connection

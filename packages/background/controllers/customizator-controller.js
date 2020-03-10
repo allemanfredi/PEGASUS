@@ -96,7 +96,9 @@ class CustomizatorController {
         this.popupController.openPopup()
       }
 
-      logger.log(`(CustomizatorController) Pushing request ${uuid} - ${method} because of locked wallet`)
+      logger.log(
+        `(CustomizatorController) Pushing request ${uuid} - ${method} because of locked wallet`
+      )
 
       this.requests = [
         {
@@ -152,14 +154,16 @@ class CustomizatorController {
 
   async executeRequest(_request) {
     //needed because request handler remove resolve/reject
-    const request = this.requests.find(
-      request => _request.uuid ? request.uuid === _request.uuid : false
+    const request = this.requests.find(request =>
+      _request.uuid ? request.uuid === _request.uuid : false
     )
- 
+
     if (_request.connection.enabled && !request) {
       const res = await this.execute(_request)
 
-      logger.log(`(CustomizatorController) Executed request ${_request.uuid} - ${_request.method} to execute from popup`)
+      logger.log(
+        `(CustomizatorController) Executed request ${_request.uuid} - ${_request.method} to execute from popup`
+      )
       return res
     }
 
@@ -174,7 +178,9 @@ class CustomizatorController {
 
       this._removeRequest(_request)
 
-      logger.log(`(CustomizatorController) Executed request ${_request.uuid} - ${_request.method} to execute from tab`)
+      logger.log(
+        `(CustomizatorController) Executed request ${_request.uuid} - ${_request.method} to execute from tab`
+      )
 
       if (this.requests.length === 0) {
         this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
@@ -268,7 +274,9 @@ class CustomizatorController {
         uuid: request.uuid
       })
 
-      logger.log(`(CustomizatorController) Rejecting (All) request ${request.uuid} - ${request.method}`)
+      logger.log(
+        `(CustomizatorController) Rejecting (All) request ${request.uuid} - ${request.method}`
+      )
 
       this._removeRequest(request)
     })
@@ -362,7 +370,9 @@ class CustomizatorController {
   }
 
   _removeRequest(_request) {
-    logger.log(`(CustomizatorController) Removing request ${_request.uuid} - ${_request.method}`)
+    logger.log(
+      `(CustomizatorController) Removing request ${_request.uuid} - ${_request.method}`
+    )
 
     this.requests = this.requests.filter(
       request => request.uuid !== _request.uuid

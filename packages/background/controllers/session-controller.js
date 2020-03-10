@@ -37,10 +37,16 @@ class SessionController {
     }
 
     const requests = this.customizatorController.getRequests()
-    const requestWitUserInteraction = requests.filter(request => request.needUserInteraction)
-    if (requestWitUserInteraction.length === 0 && currentState === APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION)
-    {
-      logger.log(`(SessionController) found state = WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION with requests = 0 -> set to WALLET_UNLOCKED`)
+    const requestWitUserInteraction = requests.filter(
+      request => request.needUserInteraction
+    )
+    if (
+      requestWitUserInteraction.length === 0 &&
+      currentState === APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION
+    ) {
+      logger.log(
+        `(SessionController) found state = WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION with requests = 0 -> set to WALLET_UNLOCKED`
+      )
       this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
       return
     }
@@ -49,7 +55,9 @@ class SessionController {
       this.walletController.setState(APP_STATE.WALLET_NOT_INITIALIZED)
       this.stateStorageController.lock()
 
-      logger.log(`(SessionController) Locking wallet because no password and wallet is not setup`)
+      logger.log(
+        `(SessionController) Locking wallet because no password and wallet is not setup`
+      )
       return
     }
 
@@ -60,7 +68,9 @@ class SessionController {
         this.stateStorageController.lock()
         if (currentState >= APP_STATE.WALLET_UNLOCKED) {
           this.walletController.setState(APP_STATE.WALLET_LOCKED)
-          logger.log(`(SessionController) Session expired... Locking the wallet`)
+          logger.log(
+            `(SessionController) Session expired... Locking the wallet`
+          )
         }
         return
       }

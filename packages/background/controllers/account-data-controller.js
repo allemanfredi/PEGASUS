@@ -229,13 +229,9 @@ class AccountDataController {
     for (let [index, tail] of tails.entries()) {
       if (!states[index] && (await iota.isPromotable(tail))) {
         await iota.promoteTransaction(tail, 3, 14)
-        logger.log(
-          `(AccountDataController) Transaction promoted ${tail}`
-        )
+        logger.log(`(AccountDataController) Transaction promoted ${tail}`)
       } else {
-        logger.log(
-          `(AccountDataController) Transaction not promotable ${tail}`
-        )
+        logger.log(`(AccountDataController) Transaction not promotable ${tail}`)
       }
     }
   }
