@@ -382,6 +382,8 @@ class WalletController {
       account.current = false
     })
 
+    logger.log(`(WalletController) Deleted account ${_account.name}`)
+
     accounts[0].current = true
     this.stateStorageController.set('accounts', accounts)
     backgroundMessanger.setAccount(accounts[0])
