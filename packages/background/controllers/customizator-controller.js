@@ -158,6 +158,14 @@ class CustomizatorController {
 
     const { resolve, uuid, connection } = request
 
+    if (this.requests.length === 1) {
+      logger.log(
+        `Last request to execute`
+      )
+      this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
+    }
+      
+
     if (connection.enabled && !resolve) return this.execute(_request)
 
     if (connection.enabled && resolve) {
@@ -195,6 +203,13 @@ class CustomizatorController {
     )
 
     const { uuid, resolve } = request
+
+    if (this.requests.length === 1) {
+      logger.log(
+        `Last request to execute`
+      )
+      this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
+    }
 
     const res = await this.execute(request)
 

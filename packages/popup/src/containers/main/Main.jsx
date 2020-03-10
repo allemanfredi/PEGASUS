@@ -103,7 +103,7 @@ class Main extends Component {
     )
     if (!connection && requestsWithNoUserInteraction.length > 0) {
       for (let request of requestsWithNoUserInteraction) {
-        await popupMessanger.executeRequest(request)
+        popupMessanger.executeRequest(request)
       }
     }
 
@@ -142,7 +142,7 @@ class Main extends Component {
 
     if (requestsWithNoUserInteraction.length > 0) {
       for (let request of requestsWithNoUserInteraction) {
-        await popupMessanger.executeRequest(request)
+        popupMessanger.executeRequest(request)
       }
       popupMessanger.closePopup()
     }
