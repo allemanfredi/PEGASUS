@@ -201,14 +201,14 @@ class CustomizatorController {
 
     const { uuid, resolve } = request
 
+    const res = await this.execute(request)
+
+    if (res.tryAgain) return
+
     if (this.requests.length === 1) {
       logger.log(`(CustomizatorController) Last request to execute`)
       this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
     }
-
-    const res = await this.execute(request)
-
-    if (res.tryAgain) return
 
     this._removeRequest(request)
 
