@@ -38,28 +38,25 @@ class ConnectorController {
   }
 
   connect(_uuid, _resolve, _website) {
-    const connection = {
+    this.connectionRequest = {
       website: _website,
       requestToConnect: true,
-      enabled: false
-    }
-
-    console.log("new connect request", connection)
-
-    this.connectionRequest = {
-      uuid: _uuid,
+      enabled: false,
       resolve: _resolve,
-      connection
+      uuid: _uuid,
     }
+
+    console.log("new connect request",  this.connectionRequest)
 
     this.walletController.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
   }
 
   completeConnection(_connection, _requests) {
     console.log("completing",_connection, _requests)
+
     const account = this.walletController.getCurrentAccount()
     if (this.connectionRequest.resolve) {
-      connectionRequest.resolve({
+      this.connectionRequest.resolve({
         data: true,
         success: true,
         uuid: this.connectionRequest.uuid
@@ -68,9 +65,10 @@ class ConnectorController {
 
     this.connectionRequest = null
 
-    this.connections[_connection.website.origin] = _connection
+    this.connections[_connection.website.origin] = Object.assign({}, _connection, {
+      enabled: true
+    })
 
-    //in case there was already the connection stored
     _requests.forEach(request => {
       if (request.connection.website.origin === _connection.website.origin) {
         request.connection.requestToConnect = false
@@ -84,11 +82,11 @@ class ConnectorController {
   }
 
   rejectConnection(_connection, _requests) {
-    if (this.connectionRequest) {
-      connectionRequest.resolve({
+    if (this.connectionRequest.resolve) {
+      this.connectionRequest.resolve({
         data: false,
         success: true,
-        uuid: connectionRequest.uuid
+        uuid: this.connectionRequest.uuid
       })
       this.connectionRequest = null
     }
@@ -110,6 +108,10 @@ class ConnectorController {
   }
 
   estabilishConnection(website) {
+
+    if (this.connections[website.origin])
+      return
+
     this.connections[website.origin] = {
       website,
       requestToConnect: false,
@@ -140,16 +142,6 @@ class ConnectorController {
 
     this.connections[_connection.website.origin] = _connection
     return true
-  }
-
-  async getCurrentWebsiteOrigin() {
-    const website = await backgroundMessanger.sendToContentScript('getWebsiteMetadata')
-  }
-
-  async getCurrentWebsite() {
-    const origin = await this.getCurrentWebsiteOrigin()
-    console.log("getting website", this.connections[origin].website, origin)
-    return this.connections[origin].website
   }
 }
 

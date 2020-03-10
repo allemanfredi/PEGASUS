@@ -53,7 +53,7 @@ class CustomizatorController {
   async pushRequest(_request) {
     const { method, uuid, resolve, data, website } = _request
 
-    const connection = this.connectorController.getConnection(website.origin)
+    let connection = this.connectorController.getConnection(website.origin)
     let isPopupAlreadyOpened = false
 
     const requestsWithUserInteraction = [
@@ -62,8 +62,17 @@ class CustomizatorController {
       'prepareTransfers'
     ]
     console.log("new request", _request)
+    console.log("connection", connection)
 
     const popup = this.popupController.getPopup()
+
+    if (!connection) {
+      connection = {
+        requestToConnect: false,
+        enabled: false,
+        website
+      }
+    } 
 
     if (!connection.requestToConnect && !connection.enabled) {
       this.connectorController.setConnectionRequest(Object.assign({}, connection, {

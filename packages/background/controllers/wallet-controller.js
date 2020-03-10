@@ -130,6 +130,7 @@ class WalletController {
 
   setState(_state) {
     this.stateStorageController.set('state', _state)
+    backgroundMessanger.setAppState(_state)
   }
 
   getState() {

@@ -126,6 +126,7 @@ class Main extends Component {
     this.props.duplex.on('setAppState', appState => {
       this.setState({ appState })
       if (appState > APP_STATE.WALLET_LOCKED) this.props.showHeader(true)
+      if (appState === APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION || appState === APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION) this.props.showHeader(false)
       else this.props.showHeader(false)
     })
   }
