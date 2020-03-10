@@ -12,7 +12,7 @@ class ConnectionsSettings extends React.Component {
     this.removeConnection = this.removeConnection.bind(this)
 
     this.state = {
-      connections: [],
+      connections: {},
       website: ''
     }
   }
@@ -117,7 +117,7 @@ class ConnectionsSettings extends React.Component {
           <div className="col-12 text-gray mb-1">Connected Websites</div>
         </div>
 
-        {this.state.connections.map(connection => {
+        {Object.values(this.state.connections).map(connection => {
           return (
             <div className="row mt-1">
               <div className="col-3">

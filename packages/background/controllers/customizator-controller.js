@@ -55,7 +55,7 @@ class CustomizatorController {
 
   async pushRequest(_request) {
     logger.log(
-      `New request ${_request.uuid} - ${_request.method} from tab: ${_request.website.origin}`
+      `(CustomizatorController) New request ${_request.uuid} - ${_request.method} from tab: ${_request.website.origin}`
     )
 
     const { method, uuid, resolve, data, website } = _request
@@ -96,7 +96,7 @@ class CustomizatorController {
         this.popupController.openPopup()
       }
 
-      logger.log(`Pushing request ${uuid} - ${method} because of locked wallet`)
+      logger.log(`(CustomizatorController) Pushing request ${uuid} - ${method} because of locked wallet`)
 
       this.requests = [
         {
@@ -116,7 +116,7 @@ class CustomizatorController {
     } else if (connection.enabled && state >= APP_STATE.WALLET_UNLOCKED) {
       if (requestsWithUserInteraction.includes(method)) {
         logger.log(
-          `Pushing request ${uuid} - ${method} and asking for user permission`
+          `(CustomizatorController) Pushing request ${uuid} - ${method} and asking for user permission`
         )
 
         this.requests = [
@@ -159,12 +159,9 @@ class CustomizatorController {
     const { resolve, uuid, connection } = request
 
     if (this.requests.length === 1) {
-      logger.log(
-        `Last request to execute`
-      )
+      logger.log(`(CustomizatorController) Last request to execute`)
       this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
     }
-      
 
     if (connection.enabled && !resolve) return this.execute(_request)
 
@@ -182,7 +179,7 @@ class CustomizatorController {
       return res
     } else if (!connection.enabled && resolve) {
       logger.log(
-        `Rejecting request ${uuid} - ${method} because of no granted permission`
+        `(CustomizatorController) Rejecting request ${uuid} - ${method} because of no granted permission`
       )
 
       _request.resolve({
@@ -205,9 +202,7 @@ class CustomizatorController {
     const { uuid, resolve } = request
 
     if (this.requests.length === 1) {
-      logger.log(
-        `Last request to execute`
-      )
+      logger.log(`(CustomizatorController) Last request to execute`)
       this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
     }
 
@@ -238,7 +233,7 @@ class CustomizatorController {
     )
 
     logger.log(
-      `Rejecting (singular) request ${request.uuid} - ${request.method}`
+      `(CustomizatorController) Rejecting (singular) request ${request.uuid} - ${request.method}`
     )
 
     request.resolve({
@@ -265,7 +260,7 @@ class CustomizatorController {
         uuid: request.uuid
       })
 
-      logger.log(`Rejecting (All) request ${request.uuid} - ${request.method}`)
+      logger.log(`(CustomizatorController) Rejecting (All) request ${request.uuid} - ${request.method}`)
 
       this._removeRequest(request)
     })
@@ -277,7 +272,7 @@ class CustomizatorController {
   async execute(_request) {
     const { method, data } = _request
 
-    logger.log(`Executing request ${_request.uuid} - ${method}`)
+    logger.log(`(CustomizatorController) Executing request ${_request.uuid} - ${method}`)
 
     const network = this.networkController.getCurrentNetwork()
     const iota = composeAPI({ provider: network.provider })
@@ -361,7 +356,7 @@ class CustomizatorController {
   }
 
   _removeRequest(_request) {
-    logger.log(`Removing request ${_request.uuid} - ${_request.method}`)
+    logger.log(`(CustomizatorController) Removing request ${_request.uuid} - ${_request.method}`)
 
     this.requests = this.requests.filter(
       request => request.uuid !== _request.uuid

@@ -51,7 +51,7 @@ class ConnectorController {
     }
 
     logger.log(
-      `New _connect request with ${this.connectionRequest.website.origin}`
+      `(ConnectorController) New _connect request with ${this.connectionRequest.website.origin}`
     )
 
     this.walletController.setState(
@@ -61,7 +61,7 @@ class ConnectorController {
 
   completeConnection(_requests) {
     logger.log(
-      `Completing connection with ${this.connectionRequest.website.origin}`
+      `(ConnectorController) Completing connection with ${this.connectionRequest.website.origin}`
     )
 
     const account = this.walletController.getCurrentAccount()
@@ -105,7 +105,7 @@ class ConnectorController {
 
   rejectConnection(_requests) {
     logger.log(
-      `Rejecting connection with ${this.connectionRequest.website.origin}`
+      `(ConnectorController) Rejecting connection with ${this.connectionRequest.website.origin}`
     )
 
     if (this.connectionRequest.resolve) {
@@ -142,7 +142,7 @@ class ConnectorController {
   }
 
   estabilishConnection(website) {
-    logger.log(`Estabilishing connection with ${website.origin}`)
+    logger.log(`(ConnectorController) Estabilishing connection with ${website.origin}`)
 
     if (this.connections[website.origin]) return
 
@@ -162,13 +162,13 @@ class ConnectorController {
   }
 
   removeConnection(_connectionToRemove) {
-    logger.log(`Remove connection with ${_connectionToRemove.website.origin}`)
+    logger.log(`(ConnectorController) Remove connection with ${_connectionToRemove.website.origin}`)
     delete this.connections[_connectionToRemove.website.origin]
     return true
   }
 
   addConnection(_connection) {
-    logger.log(`Add connection with ${_connection.website.origin}`)
+    logger.log(`(ConnectorController) Add connection with ${_connection.website.origin}`)
     if (this.connections[_connection.website.origin]) return false
 
     this.connections[_connection.website.origin] = _connection

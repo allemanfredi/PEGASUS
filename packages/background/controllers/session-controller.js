@@ -26,8 +26,12 @@ class SessionController {
     const currentState = this.walletController.getState()
 
     const password = this.walletController.getPassword()
-    if (!password) {
-      logger.log(`Locking wallet because no password`)
+    if (
+      !password &&
+      currentState !== APP_STATE.WALLET_RESTORE &&
+      currentState !== APP_STATE.WALLET_NOT_INITIALIZED
+    ) {
+      logger.log(`(SessionController) Locking wallet because no password`)
       this.walletController.setState(APP_STATE.WALLET_LOCKED)
       return
     }
@@ -36,7 +40,7 @@ class SessionController {
       this.walletController.setState(APP_STATE.WALLET_NOT_INITIALIZED)
       this.stateStorageController.lock()
 
-      logger.log(`Locking wallet because no password and wallet is not setup`)
+      logger.log(`(SessionController) Locking wallet because no password and wallet is not setup`)
       return
     }
 
@@ -45,11 +49,13 @@ class SessionController {
       const currentTime = date.getTime()
       if (currentTime - this.session > 300000) {
         this.stateStorageController.lock()
-        this.walletController.setState(APP_STATE.WALLET_LOCKED)
-        logger.log(`Session expired... Locking the wallet`)
+        if (state >= APP_STATE.WALLET_UNLOCKED) {
+          this.walletController.setState(APP_STATE.WALLET_LOCKED)
+          logger.log(`(SessionController) Session expired... Locking the wallet`)
+        }
         return
       }
-      logger.log(`Session still valid`)
+      logger.log(`(SessionController) Session still valid`)
       return
     } else {
       this.password = false

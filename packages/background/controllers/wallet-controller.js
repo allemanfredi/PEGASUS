@@ -77,7 +77,7 @@ class WalletController {
 
       backgroundMessanger.setAccount(account)
 
-      logger.log(`Wallet unlocked with account: ${account.name}`)
+      logger.log(`(WalletController) Wallet unlocked with account: ${account.name}`)
       return true
     }
 
@@ -124,7 +124,7 @@ class WalletController {
 
       backgroundMessanger.setAccount(obj)
 
-      logger.log(`Wallet restored with account: ${_account.name}`)
+      logger.log(`(WalletController) Wallet restored with account: ${_account.name}`)
       return true
     } catch (err) {
       return false
@@ -132,7 +132,7 @@ class WalletController {
   }
 
   setState(_state) {
-    logger.log(`State updated: ${STATE_NAME[_state.toString()]}`)
+    logger.log(`(WalletController) State updated: ${STATE_NAME[_state.toString()]}`)
     this.stateStorageController.set('state', _state)
     backgroundMessanger.setAppState(_state)
   }

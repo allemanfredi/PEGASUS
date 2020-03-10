@@ -1,4 +1,5 @@
 import { backgroundMessanger } from '@pegasus/utils/messangers'
+import logger from '@pegasus/utils/logger'
 
 class NetworkController {
   constructor(configs) {
@@ -20,6 +21,8 @@ class NetworkController {
 
       backgroundMessanger.setSelectedProvider(_network.provider)
       backgroundMessanger.setNetwork(_network)
+
+      logger.log(`(NetworkController) New selected provider ${_network.provider}`)
     } catch (err) {
       throw new Error(err)
     }
@@ -44,6 +47,8 @@ class NetworkController {
       this.stateStorageController.set('configs', configs)
 
       backgroundMessanger.setNetworks(configs.networks)
+
+      logger.log(`(NetworkController) New provider added ${_network.provider}`)
     } catch (err) {
       throw new Error(err)
     }
@@ -69,6 +74,8 @@ class NetworkController {
       backgroundMessanger.setNetwork(selectedNetwork)
 
       backgroundMessanger.setSelectedProvider(selectedNetwork.provider)
+
+      logger.log(`(NetworkController) Deleted provider ${currentNetwork.provider}`)
 
       return currentNetwork
     } catch (err) {
