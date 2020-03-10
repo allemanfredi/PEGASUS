@@ -238,7 +238,7 @@ class WalletController {
 
       backgroundMessanger.setAccount(accountToAdd)
 
-      logger.log(`Account added : ${accountToAdd.name}`)
+      logger.log(`(WalletController) Account added : ${accountToAdd.name}`)
 
       return true
     } catch (err) {
@@ -277,6 +277,7 @@ class WalletController {
         account.current = true
         backgroundMessanger.setAccount(account)
 
+        logger.log(`(WalletController) Set current account : ${account.name}`)
         backgroundMessanger.setSelectedAccount(account.data.latestAddress)
       }
     })
@@ -294,8 +295,11 @@ class WalletController {
       if (account.current) {
         account.data = _updatedData
         updatedAccount = account
+
+        logger.log(`(WalletController) Update account data for ${account.name}`)
       }
     })
+
     this.stateStorageController.set('accounts', accounts)
     return updatedAccount
   }
@@ -308,6 +312,8 @@ class WalletController {
       if (account.current) {
         account.transactions = _transactions
         updatedAccount = account
+
+        logger.log(`(WalletController) Update transactions for ${account.name}`)
       }
     })
 
@@ -326,6 +332,8 @@ class WalletController {
     let updatedAccount = {}
     accounts.forEach(account => {
       if (account.id === _current.id) {
+        logger.log(`(WalletController) Update name for ${account.name} with new one: ${_newName}`)
+
         account.name = _newName
         account.id = Utils.sha256(_newName)
         updatedAccount = account
@@ -345,6 +353,8 @@ class WalletController {
       if (account.id === _current.id) {
         account['avatar'] = _avatar
         updatedAccount = account
+
+        logger.log(`(WalletController) Update avatar for ${account.name}`)
       }
     })
 
