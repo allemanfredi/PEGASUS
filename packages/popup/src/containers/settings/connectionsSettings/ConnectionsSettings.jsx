@@ -117,34 +117,36 @@ class ConnectionsSettings extends React.Component {
           <div className="col-12 text-gray mb-1">Connected Websites</div>
         </div>
 
-        {Object.values(this.state.connections).filter(connection => connection.enabled).map(connection => {
-          return (
-            <div key={connection.website.hostname} className="row mt-1">
-              <div className="col-3">
-                <img
-                  className="border-radius-50"
-                  src={
-                    connection.website.favicon
-                      ? connection.website.favicon
-                      : `${connection.website.hostname}/favicon.ico`
-                  }
-                  height="25"
-                  width="25"
-                  alt="website logo"
-                />
+        {Object.values(this.state.connections)
+          .filter(connection => connection.enabled)
+          .map(connection => {
+            return (
+              <div key={connection.website.hostname} className="row mt-1">
+                <div className="col-3">
+                  <img
+                    className="border-radius-50"
+                    src={
+                      connection.website.favicon
+                        ? connection.website.favicon
+                        : `${connection.website.hostname}/favicon.ico`
+                    }
+                    height="25"
+                    width="25"
+                    alt="website logo"
+                  />
+                </div>
+                <div className="col-6 text-black text-xs text-center font-weight-bold my-auto">
+                  {connection.website.hostname}
+                </div>
+                <div className="col-3 my-auto text-right">
+                  <i
+                    onClick={() => this.removeConnection(connection)}
+                    className="fa fa-trash cursor-pointer"
+                  />
+                </div>
               </div>
-              <div className="col-6 text-black text-xs text-center font-weight-bold my-auto">
-                {connection.website.hostname}
-              </div>
-              <div className="col-3 my-auto text-right">
-                <i
-                  onClick={() => this.removeConnection(connection)}
-                  className="fa fa-trash cursor-pointer"
-                />
-              </div>
-            </div>
-          )
-        })}
+            )
+          })}
       </React.Fragment>
     )
   }
