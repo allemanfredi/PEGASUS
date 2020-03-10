@@ -57,17 +57,10 @@ const backgroundScript = {
 
     duplex.on('getRequests', this.engine.getRequests)
     duplex.on('rejectRequests', this.engine.rejectRequests)
-    duplex.on(
-      'getRequestsWithUserInteraction',
-      this.engine.getRequestsWithUserInteraction
-    )
-    duplex.on(
-      'getExecutableRequests',
-      this.engine.getExecutableRequests
-    )
+    duplex.on('getExecutableRequests', this.engine.getExecutableRequests)
     duplex.on('confirmRequest', this.engine.confirmRequest)
     duplex.on('rejectRequest', this.engine.rejectRequest)
-    duplex.on('executeRequestFromPopup', this.engine.executeRequestFromPopup)
+    duplex.on('executeRequest', this.engine.executeRequest)
 
     duplex.on('startHandleAccountData', this.engine.startHandleAccountData)
     duplex.on('stopHandleAccountData', this.engine.stopHandleAccountData)
@@ -79,7 +72,6 @@ const backgroundScript = {
     duplex.on('openPopup', this.engine.openPopup)
     duplex.on('closePopup', this.engine.closePopup)
 
-    duplex.on('executeRequests', this.engine.executeRequests)
     duplex.on('getConnection', this.engine.getConnection)
     duplex.on('pushConnection', this.engine.pushConnection)
     duplex.on('updateConnection', this.engine.updateConnection)

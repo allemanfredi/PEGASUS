@@ -245,8 +245,8 @@ class PegasusEngine {
     this.popupController.closePopup()
   }
 
-  executeRequestFromPopup(request) {
-    return this.customizatorController.executeRequestFromPopup(request)
+  executeRequest(request) {
+    return this.customizatorController.executeRequest(request)
   }
 
   pushRequest(method, { uuid, resolve, data, website }) {
@@ -263,16 +263,8 @@ class PegasusEngine {
     return this.customizatorController.getRequests()
   }
 
-  getRequestsWithUserInteraction() {
-    return this.customizatorController.getRequestsWithUserInteraction()
-  }
-
   getExecutableRequests() {
     return this.customizatorController.getExecutableRequests()
-  }
-
-  executeRequests() {
-    this.customizatorController.executeRequests()
   }
 
   rejectRequests() {
@@ -304,15 +296,15 @@ class PegasusEngine {
     this.connectorController.updateConnection(connection)
   }
 
-  completeConnection(connection) {
+  completeConnection() {
     let requests = this.customizatorController.getRequests()
-    requests = this.connectorController.completeConnection(connection, requests)
+    requests = this.connectorController.completeConnection(requests)
     this.customizatorController.setRequests(requests)
   }
 
-  rejectConnection(connection) {
+  rejectConnection() {
     let requests = this.customizatorController.getRequests()
-    requests = this.connectorController.rejectConnection(connection, requests)
+    requests = this.connectorController.rejectConnection(requests)
     this.customizatorController.setRequests(requests)
     this.popupController.closePopup()
   }

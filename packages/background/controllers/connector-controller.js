@@ -1,7 +1,6 @@
 import { backgroundMessanger } from '@pegasus/utils/messangers'
 import { APP_STATE } from '@pegasus/utils/states'
-import extension from 'extensionizer'
-import Url from 'url-parse'
+import logger from '@pegasus/utils/logger'
 
 class ConnectorController {
   constructor() {
@@ -26,7 +25,9 @@ class ConnectorController {
 
   setConnectionRequest(_connection) {
     this.connectionRequest = _connection
-    this.walletController.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
+    this.walletController.setState(
+      APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
+    )
   }
 
   getConnectionRequest(_connection) {
@@ -43,16 +44,22 @@ class ConnectorController {
       requestToConnect: true,
       enabled: false,
       resolve: _resolve,
-      uuid: _uuid,
+      uuid: _uuid
     }
 
-    console.log("new connect request",  this.connectionRequest)
+    logger.log(
+      `New _connect request with ${this.connectionRequest.website.origin}`
+    )
 
-    this.walletController.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
+    this.walletController.setState(
+      APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
+    )
   }
 
-  completeConnection(_connection, _requests) {
-    console.log("completing",_connection, _requests)
+  completeConnection(_requests) {
+    logger.log(
+      `Completing connection with ${this.connectionRequest.website.origin}`
+    )
 
     const account = this.walletController.getCurrentAccount()
     if (this.connectionRequest.resolve) {
@@ -63,65 +70,74 @@ class ConnectorController {
       })
     }
 
-    this.connectionRequest = null
-
-    this.connections[_connection.website.origin] = Object.assign({}, _connection, {
-      enabled: true
-    })
+    this.connections[this.connectionRequest.website.origin] = Object.assign(
+      {},
+      this.connectionRequest,
+      {
+        enabled: true
+      }
+    )
 
     _requests.forEach(request => {
-      if (request.connection.website.origin === _connection.website.origin) {
+      if (
+        request.connection.website.origin ===
+        this.connectionRequest.website.origin
+      ) {
         request.connection.requestToConnect = false
         request.connection.enabled = true
       }
     })
 
-    backgroundMessanger.setSelectedAccount(account.data.latestAddress)
+    this.connectionRequest = null
 
+    backgroundMessanger.setSelectedAccount(account.data.latestAddress)
     return _requests
   }
 
-  rejectConnection(_connection, _requests) {
+  rejectConnection(_requests) {
+    logger.log(
+      `Rejecting connection with ${this.connectionRequest.website.origin}`
+    )
+
     if (this.connectionRequest.resolve) {
       this.connectionRequest.resolve({
         data: false,
         success: true,
         uuid: this.connectionRequest.uuid
       })
-      this.connectionRequest = null
     }
 
     this.removeConnection({
-      website: _connection.website,
+      website: this.connectionRequest.website,
       requestToConnect: false,
       enabled: false
     })
 
     _requests.forEach(request => {
-      if (request.connection.website.origin === _connection.website.origin) {
+      if (
+        request.connection.website.origin ===
+        this.connectionRequest.website.origin
+      ) {
         request.connection.requestToConnect = false
         request.connection.enabled = false
       }
     })
 
+    this.connectionRequest = null
+
     return _requests
   }
 
   estabilishConnection(website) {
+    logger.log(`Estabilishing connection with ${website.origin}`)
 
-    if (this.connections[website.origin])
-      return
+    if (this.connections[website.origin]) return
 
     this.connections[website.origin] = {
       website,
       requestToConnect: false,
-      enabled: false,
+      enabled: false
     }
-    console.log(
-      'estabilished connection',
-      this.connections[website.origin],
-      website.origin
-    )
   }
 
   setConnectionRequest(_connection) {
@@ -133,11 +149,13 @@ class ConnectorController {
   }
 
   removeConnection(_connectionToRemove) {
+    logger.log(`Remove connection with ${_connectionToRemove.website.origin}`)
     delete this.connections[_connectionToRemove.website.origin]
     return true
   }
 
   addConnection(_connection) {
+    logger.log(`Add connection with ${_connection.website.origin}`)
     if (this.connections[_connection.website.origin]) return false
 
     this.connections[_connection.website.origin] = _connection

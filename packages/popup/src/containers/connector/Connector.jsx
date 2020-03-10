@@ -97,7 +97,7 @@ class Connector extends Component {
         <div className="row mt-12">
           <div className="col-6 pl-5 pr-5">
             <button
-              onClick={() => this.props.onPermissionNotGranted(this.state.website)}
+              onClick={() => this.props.onPermissionNotGranted()}
               className="btn btn-border-blue text-sm text-bold btn-big"
             >
               Reject
@@ -105,7 +105,7 @@ class Connector extends Component {
           </div>
           <div className="col-6 pl-5 pr-5">
             <button
-              onClick={() => this.props.onPermissionGranted(this.state.website)}
+              onClick={() => this.props.onPermissionGranted()}
               className="btn btn-blue text-sm text-bold btn-big"
             >
               Confirm

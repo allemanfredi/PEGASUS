@@ -155,14 +155,6 @@ export default {
     return this.duplex.send('closePopup')
   },
 
-  executeRequests() {
-    return this.duplex.send('executeRequests')
-  },
-
-  getConnection(origin, accountId) {
-    return this.duplex.send('getConnection', { origin, accountId })
-  },
-
   pushConnection(connection) {
     return this.duplex.send('pushConnection', connection)
   },
@@ -171,12 +163,12 @@ export default {
     return this.duplex.send('updateConnection', connection)
   },
 
-  completeConnection(connection) {
-    return this.duplex.send('completeConnection', connection)
+  completeConnection() {
+    return this.duplex.send('completeConnection')
   },
 
-  rejectConnection(connection) {
-    return this.duplex.send('rejectConnection', connection)
+  rejectConnection() {
+    return this.duplex.send('rejectConnection')
   },
 
   getConnectionRequest() {
@@ -203,10 +195,6 @@ export default {
     return this.duplex.send('getRequests')
   },
 
-  getRequestsWithUserInteraction() {
-    return this.duplex.send('getRequestsWithUserInteraction')
-  },
-
   getExecutableRequests() {
     return this.duplex.send('getExecutableRequests')
   },
@@ -227,8 +215,8 @@ export default {
     return this.duplex.send('rejectRequest', request)
   },
 
-  executeRequestFromPopup(request) {
-    return this.duplex.send('executeRequestFromPopup', request)
+  executeRequest(request) {
+    return this.duplex.send('executeRequest', request)
   },
 
   logout() {

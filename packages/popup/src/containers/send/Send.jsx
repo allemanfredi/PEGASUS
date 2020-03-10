@@ -71,16 +71,17 @@ class Send extends Component {
       needConfirmation: true,
       transfer: {
         method: 'prepareTransfers',
-        data
+        data,
+        connection: {
+          enabled: true
+        }
       }
     })
     this.props.onHideTop(true)
   }
 
   async confirmTransfer() {
-    const res = await popupMessanger.executeRequestFromPopup(
-      this.state.transfer
-    )
+    const res = await popupMessanger.executeRequest(this.state.transfer)
     if (res.success) {
       this.props.onHideTop(false)
       this.props.onBack()

@@ -58,7 +58,7 @@ class StateStorageController extends Store {
     //NOTE: in order to keep a global state for the popup (for the future)
     this.state$.subscribe(_state => {
       //backgroundMessanger.changeGlobalState(_state)
-      console.log(_state)
+      //console.log(_state)
     })
 
     this.unlocked = false

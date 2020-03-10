@@ -41,12 +41,16 @@ class Main extends Component {
       popupMessanger.startHandleAccountData()
       this.props.showHeader(true)
     }
-    
+
     if (state === APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION)
       this.props.showHeader(false)
 
     const connection = await popupMessanger.getConnectionRequest()
-    if (connection && connection.requestToConnect && state > APP_STATE.WALLET_LOCKED) {
+    if (
+      connection &&
+      connection.requestToConnect &&
+      state > APP_STATE.WALLET_LOCKED
+    ) {
       popupMessanger.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
       state = APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
       this.props.showHeader(false)
@@ -55,15 +59,17 @@ class Main extends Component {
     const executableRequests = await popupMessanger.getExecutableRequests()
 
     if (!connection && executableRequests.length > 0) {
-      const needUserInteraction= executableRequests.find(request => request.needUserInteraction)
+      const needUserInteraction = executableRequests.find(
+        request => request.needUserInteraction
+      )
       if (needUserInteraction) {
         this.props.showHeader(false)
-        popupMessanger.setState(APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION)
+        popupMessanger.setState(
+          APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION
+        )
         state = APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION
       }
     }
-
-    console.log(connection, executableRequests)
 
     this.setState({ appState: state })
     this.bindDuplexRequests()
@@ -72,28 +78,42 @@ class Main extends Component {
   async onSuccessFromLogin() {
     popupMessanger.startSession()
     popupMessanger.setState(APP_STATE.WALLET_UNLOCKED)
-    this.setState({ appState: APP_STATE.WALLET_UNLOCKED})
+    this.setState({ appState: APP_STATE.WALLET_UNLOCKED })
 
     const connection = await popupMessanger.getConnectionRequest()
     if (connection && connection.requestToConnect) {
       popupMessanger.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
-      this.setState({ appState: APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION })
+      this.setState({
+        appState: APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
+      })
       this.props.showHeader(false)
     }
 
-    if (!connection) popupMessanger.closePopup()
-    popupMessanger.executeRequests()
-  }
-
-  async onPermissionGranted(website) {
-    const requestsWithUserInteraction = await popupMessanger.getRequestsWithUserInteraction()
-    const connection = {
-      website,
-      requestToConnect: false,
-      enabled: true,
+    const executableRequests = await popupMessanger.getExecutableRequests()
+    const requestsWithNoUserInteraction = executableRequests.filter(
+      request => !request.needUserInteraction
+    )
+    if (!connection && requestsWithNoUserInteraction.length > 0) {
+      for (let request of requestsWithNoUserInteraction) {
+        await popupMessanger.executeRequest(request)
+      }
     }
 
-    await popupMessanger.completeConnection(connection)
+    if (!connection) popupMessanger.closePopup()
+  }
+
+  async onPermissionGranted() {
+    await popupMessanger.completeConnection()
+
+    const executableRequests = await popupMessanger.getExecutableRequests()
+
+    const requestsWithUserInteraction = executableRequests.filter(
+      request => request.needUserInteraction
+    )
+    
+    const requestsWithNoUserInteraction = executableRequests.filter(
+      request => !request.needUserInteraction
+    )
 
     if (requestsWithUserInteraction.length > 0) {
       this.props.showHeader(false)
@@ -104,30 +124,41 @@ class Main extends Component {
         APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION
       )
       return
-    } else {
-      popupMessanger.closePopup()
-      popupMessanger.executeRequests()
     }
+
+    if (requestsWithNoUserInteraction.length > 0) {
+      for (let request of requestsWithNoUserInteraction) {
+        await popupMessanger.executeRequest(request)
+      }
+      popupMessanger.closePopup()
+    }
+
     this.props.showHeader(true)
     this.setState({ appState: APP_STATE.WALLET_UNLOCKED })
   }
 
-  onPermissionNotGranted(website) {
-    popupMessanger.rejectConnection({
-      website,
-      requestToConnect: false,
-      enabled: false,
-    })
+  onPermissionNotGranted() {
+    popupMessanger.rejectConnection()
     popupMessanger.rejectRequests()
     this.props.showHeader(true)
   }
 
   bindDuplexRequests() {
     this.props.duplex.on('setAppState', appState => {
-      this.setState({ appState })
-      if (appState > APP_STATE.WALLET_LOCKED) this.props.showHeader(true)
-      if (appState === APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION || appState === APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION) this.props.showHeader(false)
+      if (
+        appState !== APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION ||
+        appState !== APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
+      )
+        this.setState({ appState })
+
+      if (appState >= APP_STATE.WALLET_LOCKED) this.props.showHeader(true)
       else this.props.showHeader(false)
+
+      if (
+        appState === APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION ||
+        appState === APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
+      )
+        this.props.showHeader(false)
     })
   }
 

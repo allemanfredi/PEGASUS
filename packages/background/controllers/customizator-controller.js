@@ -2,9 +2,16 @@ import { composeAPI } from '@iota/core'
 import { APP_STATE } from '@pegasus/utils/states'
 import { backgroundMessanger } from '@pegasus/utils/messangers'
 import extensionizer from 'extensionizer'
+import logger from '@pegasus/utils/logger'
+
+const requestsWithUserInteraction = [
+  'mam_init',
+  'mam_changeMode',
+  'prepareTransfers'
+]
 
 class CustomizatorController {
-  constructor(options, provider) {
+  constructor(options) {
     const {
       connectorController,
       walletController,
@@ -22,22 +29,6 @@ class CustomizatorController {
     this.requests = []
   }
 
-  setRequests(_requests) {
-    this.requests = _requests
-  }
-
-  getRequests() {
-    return this.requests
-  }
-
-  getRequestsWithUserInteraction() {
-    return this.requests.filter(request => request.needUserInteraction === true)
-  }
-
-  getExecutableRequests() {
-    return this.requests.filter(request => request.connection.enabled)
-  }
-
   setWalletController(_walletController) {
     this.walletController = _walletController
   }
@@ -50,19 +41,28 @@ class CustomizatorController {
     this.transferController = _networkController
   }
 
+  setRequests(_requests) {
+    this.requests = _requests
+  }
+
+  getRequests() {
+    return this.requests
+  }
+
+  getExecutableRequests() {
+    return this.requests.filter(request => request.connection.enabled)
+  }
+
   async pushRequest(_request) {
+    logger.log(
+      `New request ${_request.uuid} - ${_request.method} from tab: ${_request.website.origin}`
+    )
+    console.log(_request)
+
     const { method, uuid, resolve, data, website } = _request
 
-    let connection = this.connectorController.getConnection(website.origin)
+    const connection = this.connectorController.getConnection(website.origin)
     let isPopupAlreadyOpened = false
-
-    const requestsWithUserInteraction = [
-      'mam_init',
-      'mam_changeMode',
-      'prepareTransfers'
-    ]
-    console.log("new request", _request)
-    console.log("connection", connection)
 
     const popup = this.popupController.getPopup()
 
@@ -72,12 +72,14 @@ class CustomizatorController {
         enabled: false,
         website
       }
-    } 
+    }
 
     if (!connection.requestToConnect && !connection.enabled) {
-      this.connectorController.setConnectionRequest(Object.assign({}, connection, {
-        requestToConnect: true
-      }))
+      this.connectorController.setConnectionRequest(
+        Object.assign({}, connection, {
+          requestToConnect: true
+        })
+      )
 
       this.walletController.setState(
         APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
@@ -91,13 +93,12 @@ class CustomizatorController {
 
     const state = this.walletController.getState()
 
-    if (
-      state <= APP_STATE.WALLET_LOCKED ||
-      !connection.enabled
-    ) {
+    if (state <= APP_STATE.WALLET_LOCKED || !connection.enabled) {
       if (!popup && isPopupAlreadyOpened === false) {
         this.popupController.openPopup()
       }
+
+      logger.log(`Pushing request ${uuid} - ${method} because of locked wallet`)
 
       this.requests = [
         {
@@ -116,6 +117,10 @@ class CustomizatorController {
       })
     } else if (connection.enabled && state >= APP_STATE.WALLET_UNLOCKED) {
       if (requestsWithUserInteraction.includes(method)) {
+        logger.log(
+          `Pushing request ${uuid} - ${method} and asking for user permission`
+        )
+
         this.requests = [
           {
             connection,
@@ -147,50 +152,57 @@ class CustomizatorController {
     }
   }
 
-  async executeRequestFromPopup(_request) {
-    return this.execute(_request)
-  }
+  async executeRequest(_request) {
+    //needed because request handler remove resolve/reject
+    const request = this.requests.find(
+      request => request.uuid === _request.uuid
+    )
 
-  //request that does not need of popup interaction (ex: getCurrentAccount)
-  executeRequests() {
-    this.requests
-      .filter(req => req.needUserInteraction !== true)
-      .forEach(async request => {
-        if (request.connection.enabled) {
-          const { resolve, uuid } = request
+    const { resolve, uuid, connection } = request
 
-          const res = await this.execute(request)
-          this._removeRequest(request)
+    if (connection.enabled && !resolve) return this.execute(_request)
 
-          resolve({
-            data: res.success ? res.data : res.error,
-            success: res.success,
-            uuid
-          })
-        } else {
-          request.resolve({
-            data: 'No granted permissions',
-            success: false,
-            uuid: request.uuid
-          })
+    if (connection.enabled && resolve) {
+      const res = await this.execute(_request)
 
-          this._removeRequest(request)
-        }
+      resolve({
+        data: res.success ? res.data : res.error,
+        success: res.success,
+        uuid
       })
+
+      this._removeRequest(_request)
+
+      return res
+    } else if (!connection.enabled && resolve) {
+      logger.log(
+        `Rejecting request ${uuid} - ${method} because of no granted permission`
+      )
+
+      _request.resolve({
+        data: 'No granted permissions',
+        success: false,
+        uuid: _request.uuid
+      })
+
+      this._removeRequest(_request)
+    }
+    return
   }
 
   async confirmRequest(_request) {
-    const requestToExecute = this.requests.find(
-      req => req.uuid === _request.uuid
+    //needed because request handler remove resolve/reject
+    const request = this.requests.find(
+      request => request.uuid === _request.uuid
     )
 
-    const { uuid, resolve } = requestToExecute
+    const { uuid, resolve } = request
 
-    const res = await this.execute(requestToExecute)
+    const res = await this.execute(request)
 
     if (res.tryAgain) return
 
-    this._removeRequest(_request)
+    this._removeRequest(request)
 
     if (this.requests.length === 0) {
       this.popupController.closePopup()
@@ -207,17 +219,23 @@ class CustomizatorController {
   }
 
   rejectRequest(_request) {
-    const requestToReject = this.requests.find(
+    //needed because request handler remove resolve/reject
+    const request = this.requests.find(
       request => request.uuid === _request.uuid
     )
 
-    requestToReject.resolve({
+    logger.log(
+      `Rejecting (singular) request ${request.uuid} - ${request.method}`
+    )
+    console.log(request)
+
+    request.resolve({
       data: 'Request has been rejected by the user',
       success: false,
-      uuid: requestToReject.uuid
+      uuid: request.uuid
     })
 
-    this._removeRequest(_request)
+    this._removeRequest(request)
 
     if (this.requests.length === 0) {
       this.popupController.closePopup()
@@ -235,6 +253,8 @@ class CustomizatorController {
         uuid: request.uuid
       })
 
+      logger.log(`Rejecting (All) request ${request.uuid} - ${request.method}`)
+
       this._removeRequest(request)
     })
     this.requests = []
@@ -244,6 +264,8 @@ class CustomizatorController {
 
   async execute(_request) {
     const { method, data } = _request
+
+    logger.log(`Executing request ${_request.uuid} - ${method}`)
 
     const network = this.networkController.getCurrentNetwork()
     const iota = composeAPI({ provider: network.provider })
@@ -326,8 +348,12 @@ class CustomizatorController {
     }
   }
 
-  _removeRequest(request) {
-    this.requests = this.requests.filter(req => req.uuid !== request.uuid)
+  _removeRequest(_request) {
+    logger.log(`Removing request ${_request.uuid} - ${_request.method}`)
+
+    this.requests = this.requests.filter(
+      request => request.uuid !== _request.uuid
+    )
 
     extensionizer.browserAction.setBadgeText({
       text: this.requests.length !== 0 ? this.requests.length.toString() : ''

@@ -23,7 +23,7 @@ class SessionController {
 
   checkSession() {
     const currentState = this.walletController.getState()
-    
+
     // requests queue not empty during an extension hard reload cause show confirm view with 0 request
     // since the requests are deleted during the hard rel
     if (

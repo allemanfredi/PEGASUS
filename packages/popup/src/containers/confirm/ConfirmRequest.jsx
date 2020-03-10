@@ -9,7 +9,6 @@ class ConfirmRequest extends Component {
   constructor(props, context) {
     super(props, context)
 
-    this.bindDuplexRequests = this.bindDuplexRequests.bind(this)
     this.reject = this.reject.bind(this)
     this.rejectAll = this.rejectAll.bind(this)
     this.confirm = this.confirm.bind(this)
@@ -20,7 +19,10 @@ class ConfirmRequest extends Component {
   }
 
   async componentWillMount() {
-    const requests = await popupMessanger.getRequestsWithUserInteraction()
+    const executableRequests = await popupMessanger.getExecutableRequests()
+    const requests = executableRequests.filter(
+      request => request.needUserInteraction
+    )
     this.setState({ requests })
 
     this.props.duplex.on('setRequests', requests => {
@@ -40,14 +42,9 @@ class ConfirmRequest extends Component {
     popupMessanger.rejectRequests()
   }
 
-  bindDuplexRequests() {
-    this.props.duplex.on('setRequests', requests => {
-      this.setState({ requests })
-    })
-  }
-
   render() {
     const request = this.state.requests[0]
+    console.log(request)
 
     if (request) {
       switch (request.method) {
