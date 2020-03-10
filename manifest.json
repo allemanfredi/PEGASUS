@@ -11,6 +11,7 @@
   },
   "author": "Alessandro Manfredi",
   "permissions": [
+    "storage",
     "unlimitedStorage",
     "notifications"
   ],

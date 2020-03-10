@@ -3,11 +3,12 @@
 import Utils from '@pegasus/utils/utils'
 import configs from '@pegasus/utils/options'
 import { Store } from 'rxjs-observable-store'
-
-const withinData = ['accounts', 'mamChannels', 'connections']
+import extension from 'extensionizer'
+import logger from '@pegasus/utils/logger'
 
 const storageKeys = {
-  data: 'PEGASUS_DATA',
+  accounts: 'PEGASUS_ACCOUNT',
+  mamChannels: 'PEGASUS_MAM_CHANNELS',
   hpsw: 'PEGASUS_HPSW',
   configs: 'PEGASUS_CONFIGS',
   popupSettings: 'PEGASUS_POPUP_SETTINGS',
@@ -30,11 +31,9 @@ class PegasusGlobalState {
         hideReattachedTxs: false
       }
     }
-    ;(this.state = 0),
-      (this.data = {
-        accounts: [],
-        mamChannels: {}
-      })
+    this.state = 0
+    this.accounts = []
+    this.mamChannels = {}
   }
 }
 
@@ -49,12 +48,6 @@ class StateStorageController extends Store {
       }
     }, 60000)
 
-    const data = this._loadFromStorage()
-    if (data) {
-      this.setState(data)
-      this.toLoadFromStorage = true
-    } else this.toLoadFromStorage = false
-
     //NOTE: in order to keep a global state for the popup (for the future)
     this.state$.subscribe(_state => {
       //backgroundMessanger.changeGlobalState(_state)
@@ -64,39 +57,39 @@ class StateStorageController extends Store {
     this.unlocked = false
   }
 
-  _loadFromStorage() {
-    const data = localStorage.getItem('PEGASUS_DATA')
-    const hpsw = localStorage.getItem('PEGASUS_HPSW')
-    const configs = localStorage.getItem('PEGASUS_CONFIGS')
-    const popupSettings = localStorage.getItem('PEGASUS_POPUP_SETTINGS')
-    const state = localStorage.getItem('PEGASUS_STATE')
-
-    const savedState = {
-      data,
-      hpsw: JSON.parse(hpsw),
-      configs: JSON.parse(configs),
-      popupSettings: JSON.parse(popupSettings),
-      state: parseInt(JSON.parse(state))
-    }
-
-    return data && hpsw && configs && popupSettings && state ? savedState : null
+  isReady() {
+    return this.encryptionkey && this.unlocked ? true : false
   }
 
-  _writeToStorage(_key, _value, _encrypt = false) {
-    localStorage.setItem(
-      _key,
-      _encrypt
-        ? Utils.aes256encrypt(JSON.stringify(_value), this.encryptionkey)
-        : JSON.stringify(_value)
-    )
+  setEncryptionKey(key) {
+    this.encryptionkey = key
+  }
+
+  async _init() {
+    const data = await this._loadFromStorage()
+    if (data) {
+      this.setState(data)
+      this.toLoadFromStorage = true
+    } else this.toLoadFromStorage = false
+  }
+
+  lock() {
+    if (!this.unlocked) return
+
+    this.writeToStorage()
+    this.unlocked = false
+    this.encryptionkey = null
   }
 
   get(_key) {
     if (this.encryptionkey && !this.unlocked && this.toLoadFromStorage) {
       this.setState({
         ...this.state,
-        data: JSON.parse(
-          Utils.aes256decrypt(this.state.data, this.encryptionkey)
+        accounts: JSON.parse(
+          Utils.aes256decrypt(this.state.accounts, this.encryptionkey)
+        ),
+        mamChannels: JSON.parse(
+          Utils.aes256decrypt(this.state.mamChannels, this.encryptionkey)
         )
       })
 
@@ -104,33 +97,15 @@ class StateStorageController extends Store {
       this.toLoadFromStorage = false
     }
 
-    return withinData.includes(_key) ? this.state.data[_key] : this.state[_key]
+    return this.state[_key]
   }
 
   set(_key, _data, _writeToStorage) {
     const state = this.state
 
-    withinData.includes(_key)
-      ? (state.data[_key] = _data)
-      : (state[_key] = _data)
-
-    if (_writeToStorage) {
-      if (withinData.includes(_key)) {
-        this._writeToStorage(storageKeys[_key], _data, true)
-      } else {
-        this._writeToStorage(storageKeys[_key], state[_key], false)
-      }
-    }
+    state[_key] = _data
 
     this.setState(state)
-  }
-
-  isReady() {
-    return this.encryptionkey && this.unlocked ? true : false
-  }
-
-  setEncryptionKey(key) {
-    this.encryptionkey = key
   }
 
   reset() {
@@ -148,33 +123,102 @@ class StateStorageController extends Store {
           hideReattachedTxs: false
         }
       },
-      data: {
-        accounts: [],
-        mamChannels: {}
-      }
+      accounts: [],
+      mamChannels: {}
     })
 
     this.writeToStorage()
   }
 
-  lock() {
-    if (!this.unlocked) return
+  async _loadFromStorage() {
+    const accounts = await this._get('PEGASUS_ACCOUNTS')
+    const mamChannels = await this._get('PEGASUS_MAM_CHANNELS')
+    const hpsw = await this._get('PEGASUS_HPSW')
+    const configs = await this._get('PEGASUS_CONFIGS')
+    const popupSettings = await this._get('PEGASUS_POPUP_SETTINGS')
+    const state = await this._get('PEGASUS_STATE')
 
-    this.writeToStorage()
-    this.unlocked = false
-    this.encryptionkey = null
+    const savedState = {
+      accounts, //still encryped
+      mamChannels, //still encryped
+      hpsw: JSON.parse(hpsw),
+      configs: JSON.parse(configs),
+      popupSettings: JSON.parse(popupSettings),
+      state: parseInt(JSON.parse(state))
+    }
+
+    logger.log(
+      `(StateStorageController) Loaded from storage`
+    )
+
+    return accounts && mamChannels && hpsw && configs && popupSettings && state ? savedState : null
   }
 
-  writeToStorage() {
-    this._writeToStorage('PEGASUS_DATA', this.state.data, true)
-    this._writeToStorage('PEGASUS_HPSW', this.state.hpsw, false)
-    this._writeToStorage('PEGASUS_CONFIGS', this.state.configs, false)
-    this._writeToStorage(
-      'PEGASUS_POPUP_SETTINGS',
-      this.state.popupSettings,
-      false
+  async writeToStorage() {
+    await this._set({
+      PEGASUS_ACCOUNTS: Utils.aes256encrypt(JSON.stringify(this.state.accounts))
+    }, this.encryptionkey)
+
+    await this._set({
+      PEGASUS_MAM_CHANNELS: Utils.aes256encrypt(JSON.stringify(this.state.mamChannels))
+    }, this.encryptionkey)
+
+    await this._set({
+      PEGASUS_HPSW: JSON.stringify(this.state.hpsw)
+    }, this.encryptionkey)
+
+    await this._set({
+      PEGASUS_CONFIGS: JSON.stringify(this.state.configs)
+    }, this.encryptionkey)
+
+    await this._set({
+      PEGASUS_POPUP_SETTINGS: JSON.stringify(this.state.popupSettings)
+    }, this.encryptionkey)
+
+    await this._set({
+      PEGASUS_STATE: JSON.stringify(this.state.state)
+    }, this.encryptionkey)
+
+    logger.log(
+      `(StateStorageController) Written to storage`
     )
-    this._writeToStorage('PEGASUS_STATE', this.state.state, false)
+  }
+
+  _get(_key) {
+    return new Promise((resolve, reject) => {
+      extension.storage.local.get(_key, (result) => {
+        const err = this._checkForError()
+        if (err) {
+          reject(err)
+        } else {
+          resolve(result)
+        }
+      })
+    })
+  }
+
+  _set(_value) {
+    return new Promise((resolve, reject) => {
+      extension.storage.local.set(_value, (result) => {
+        const err = this._checkForError()
+        if (err) {
+          reject(err)
+        } else {
+          resolve(result)
+        }
+      })
+    })
+  }
+
+  _checkForError () {
+    const lastError = extension.runtime.lastError
+    if (!lastError) {
+      return
+    }
+    if (lastError.stack && lastError.message) {
+      return lastError
+    }
+    return new Error(lastError.message)
   }
 }
 
