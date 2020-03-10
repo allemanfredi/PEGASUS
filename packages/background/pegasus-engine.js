@@ -312,7 +312,7 @@ class PegasusEngine {
   }
 
   estabilishConnection(website) {
-    this.connectorController.estabilishConnection(website)
+    return this.connectorController.estabilishConnection(website)
   }
 
   getConnections() {

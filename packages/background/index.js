@@ -119,11 +119,12 @@ const backgroundScript = {
         switch (action) {
           case 'init': {
             const currentNetwork = this.engine.getCurrentNetwork()
-            const response = {
-              selectedProvider: currentNetwork.provider
-            }
+            const selectedAccount = this.engine.estabilishConnection(website)
 
-            this.engine.estabilishConnection(website)
+            const response = {
+              selectedProvider: currentNetwork.provider,
+              selectedAccount
+            }
 
             resolve({
               success: true,

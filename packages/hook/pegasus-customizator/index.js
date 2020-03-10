@@ -38,8 +38,12 @@ class PegasusCustomizator extends EventEmitter {
       if (this._callbacks[uuid]) this._callbacks[uuid](data)
     })
 
-    this.pegasusConnector.send('init').then(({ selectedProvider }) => {
+    this.pegasusConnector.send('init').then(({ selectedProvider, selectedAccount }) => {
       this._set(selectedProvider)
+      if (selectedAccount) {
+        this.selectedAccount = selectedAccount
+        this.emit('onAccountChanged', selectedAccount)
+      }
     })
   }
 

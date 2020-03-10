@@ -36,6 +36,15 @@ class SessionController {
       return
     }
 
+    const requests = this.customizatorController.getRequests()
+    const requestWitUserInteraction = requests.filter(request => request.needUserInteraction)
+    if (requestWitUserInteraction.length === 0 && currentState === APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION)
+    {
+      logger.log(`(SessionController) found state = WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION with requests = 0 -> set to WALLET_UNLOCKED`)
+      this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
+      return
+    }
+
     if (!password && !this.walletController.isWalletSetup()) {
       this.walletController.setState(APP_STATE.WALLET_NOT_INITIALIZED)
       this.stateStorageController.lock()
@@ -49,7 +58,7 @@ class SessionController {
       const currentTime = date.getTime()
       if (currentTime - this.session > 300000) {
         this.stateStorageController.lock()
-        if (state >= APP_STATE.WALLET_UNLOCKED) {
+        if (currentState >= APP_STATE.WALLET_UNLOCKED) {
           this.walletController.setState(APP_STATE.WALLET_LOCKED)
           logger.log(`(SessionController) Session expired... Locking the wallet`)
         }

@@ -277,20 +277,7 @@ class WalletController {
         account.current = true
         backgroundMessanger.setAccount(account)
 
-        //injection
-        const website = this.connectorController.getCurrentWebsite()
-
-        if (!website) {
-          this.stateStorageController.set('accounts', accounts)
-          return
-        }
-
-        const connection = this.connectorController.getConnection(
-          website.origin
-        )
-        if (connection && connection.enabled) {
-          backgroundMessanger.setSelectedAccount(account.data.latestAddress)
-        }
+        backgroundMessanger.setSelectedAccount(account.data.latestAddress)
       }
     })
     this.stateStorageController.set('accounts', accounts)
@@ -383,15 +370,7 @@ class WalletController {
     backgroundMessanger.setAccount(accounts[0])
 
     //injection
-    const website = this.connectorController.getCurrentWebsite()
-    if (!website) {
-      return true
-    }
-
-    const connection = this.connectorController.getConnection(website.origin)
-    if (connection && connection.enabled) {
-      backgroundMessanger.setSelectedAccount(accounts[0].data.latestAddress)
-    }
+    backgroundMessanger.setSelectedAccount(accounts[0].data.latestAddress)
 
     return true
   }

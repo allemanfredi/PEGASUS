@@ -144,13 +144,23 @@ class ConnectorController {
   estabilishConnection(website) {
     logger.log(`(ConnectorController) Estabilishing connection with ${website.origin}`)
 
-    if (this.connections[website.origin]) return
+    const state = this.walletController.getState()
+    const account = this.walletController.getCurrentAccount()
+
+    if (this.connections[website.origin]) {
+      if (this.connections[website.origin].enabled && state >= APP_STATE.WALLET_UNLOCKED) {
+        logger.log(`(ConnectorController) Connection with ${website.origin} already enabled`)
+        return account.data.latestAddress
+      }
+    }
 
     this.connections[website.origin] = {
       website,
       requestToConnect: false,
       enabled: false
     }
+
+    return null
   }
 
   setConnectionRequest(_connection) {
