@@ -209,6 +209,7 @@ class Send extends Component {
                 onChange={e => this.setState({ value: e.target.value })}
                 label="value"
                 id="inp-value"
+                type="number"
               />
             </div>
           </div>
