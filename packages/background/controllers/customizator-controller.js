@@ -60,7 +60,7 @@ class CustomizatorController {
 
     const { method, uuid, resolve, data, website } = _request
 
-    const connection = this.connectorController.getConnection(website.origin)
+    let connection = this.connectorController.getConnection(website.origin)
     let isPopupAlreadyOpened = false
 
     const popup = this.popupController.getPopup()
