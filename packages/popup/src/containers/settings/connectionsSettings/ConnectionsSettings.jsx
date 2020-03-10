@@ -63,7 +63,7 @@ class ConnectionsSettings extends React.Component {
 
     const connections = await popupMessanger.getConnections()
     this.setState({
-      connections: connections.filter(connection => connection.enabled)
+      connections
     })
   }
 
@@ -78,7 +78,7 @@ class ConnectionsSettings extends React.Component {
 
       const connections = await popupMessanger.getConnections()
       this.setState({
-        connections: connections.filter(connection => connection.enabled)
+        connections
       })
     }
   }
@@ -117,9 +117,9 @@ class ConnectionsSettings extends React.Component {
           <div className="col-12 text-gray mb-1">Connected Websites</div>
         </div>
 
-        {Object.values(this.state.connections).map(connection => {
+        {Object.values(this.state.connections).filter(connection => connection.enabled).map(connection => {
           return (
-            <div className="row mt-1">
+            <div key={connection.website.hostname} className="row mt-1">
               <div className="col-3">
                 <img
                   className="border-radius-50"
