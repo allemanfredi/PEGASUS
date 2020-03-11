@@ -38,7 +38,7 @@
     }
   ],
   "web_accessible_resources": [
-    "dist/hook.js"
+    "dist/inpage-client.js"
   ],
   "externally_connectable": {
     "ids": [

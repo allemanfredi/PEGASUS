@@ -1,11 +1,11 @@
 {
-  "name": "@pegasus/hook",
+  "name": "@pegasus/inpage-client",
   "main": "index.js",
   "author": "allemanfredi <alle.manfredi@gmail.com>",
   "private": true,
   "version": "0.6.0",
   "scripts": {
-    "build": "webpack --config ../../webpack.config.js --progress --colors -o ../../dist/hook.js",
+    "build": "webpack --config ../../webpack.config.js --progress --colors -o ../../dist/inpage-client.js",
     "lint": "npx eslint . --fix"
   },
   "dependencies": {
@@ -19,7 +19,8 @@
     "@iota/unit-converter": "^1.0.0-beta.23",
     "@iota/validators": "^1.0.0-beta.23",
     "eventemitter3": "^4.0.0",
-    "mam.client.js": "iotaledger/mam.client.js"
+    "mam.client.js": "iotaledger/mam.client.js",
+    "post-message-stream": "^3.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",

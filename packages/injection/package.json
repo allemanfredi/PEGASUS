@@ -5,12 +5,13 @@
   "private": true,
   "version": "0.6.0",
   "scripts": {
-    "build": "webpack --config ../../webpack.config.js --progress --colors -o ../../dist/injection.js",
+    "build": "webpack --config ../../webpack.config.js --colors -o ../../dist/injection.js",
     "lint": "npx eslint . --fix"
   },
   "dependencies": {
     "@pegasus/utils": "^0.6.0",
-    "extensionizer": "^1.0.1"
+    "extensionizer": "^1.0.1",
+    "post-message-stream": "^3.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",
