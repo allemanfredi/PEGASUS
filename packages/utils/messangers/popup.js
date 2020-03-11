@@ -3,20 +3,8 @@ export default {
     this.duplex = duplex
   },
 
-  isWalletSetup() {
-    return this.duplex.send('isWalletSetup')
-  },
-
-  setupWallet() {
-    return this.duplex.send('setupWallet')
-  },
-
-  storePassword(psw) {
-    return this.duplex.send('storePassword', psw)
-  },
-
-  setPassword(psw) {
-    return this.duplex.send('setPassword', psw)
+  initWallet(psw) {
+    return this.duplex.send('initWallet', psw)
   },
 
   comparePassword(psw) {
@@ -27,16 +15,8 @@ export default {
     return this.duplex.send('unlockWallet', psw)
   },
 
-  restoreWallet(account, network, key) {
-    return this.duplex.send('restoreWallet', { account, network, key })
-  },
-
-  setStorageKey(key) {
-    return this.duplex.send('setStorageKey', key)
-  },
-
-  writeOnLocalStorage() {
-    return this.duplex.send('writeOnLocalStorage')
+  restoreWallet(account, password) {
+    return this.duplex.send('restoreWallet', { account, password })
   },
 
   unlockSeed(psw) {
@@ -75,10 +55,6 @@ export default {
     return this.duplex.send('setCurrentAccount', { currentAccount })
   },
 
-  resetData() {
-    return this.duplex.send('resetData')
-  },
-
   updateDataAccount(newData) {
     return this.duplex.send('updateDataAccount', { newData })
   },
@@ -107,10 +83,6 @@ export default {
     return this.duplex.send('generateSeed', length)
   },
 
-  startSession() {
-    return this.duplex.send('startSession')
-  },
-
   checkSession() {
     return this.duplex.send('checkSession')
   },
@@ -127,28 +99,8 @@ export default {
     return this.duplex.send('setState', state)
   },
 
-  pushTransfersFromPopup(transfer) {
-    return this.duplex.send('pushTransfersFromPopup', transfer)
-  },
-
-  startHandleAccountData() {
-    return this.duplex.send('startHandleAccountData')
-  },
-
-  stopHandleAccountData() {
-    return this.duplex.send('stopHandleAccountData')
-  },
-
-  loadAccountData() {
-    return this.duplex.send('loadAccountData')
-  },
-
   reloadAccountData() {
     return this.duplex.send('reloadAccountData')
-  },
-
-  openPopup() {
-    return this.duplex.send('openPopup')
   },
 
   closePopup() {
@@ -219,8 +171,8 @@ export default {
     return this.duplex.send('executeRequest', request)
   },
 
-  logout() {
-    return this.duplex.send('logout')
+  lockWallet() {
+    return this.duplex.send('lockWallet')
   },
 
   setPopupSettings(settings) {

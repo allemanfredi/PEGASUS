@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import IOTA from '@pegasus/utils/iota'
 import { popupMessanger } from '@pegasus/utils/messangers'
 import Loader from '../../components/loader/Loader'
 import Utils from '@pegasus/utils/utils'
+import { composeAPI } from '@iota/core'
 
 class Restore extends Component {
   constructor(props, context) {
@@ -39,20 +39,12 @@ class Restore extends Component {
 
     this.setState({ isLoading: true })
 
-    await popupMessanger.setStorageKey(this.state.psw)
-
-    await popupMessanger.resetData()
-
-    const data = await IOTA.getAccountData(this.state.seed)
     const account = {
-      name: this.state.accountName,
-      seed: this.state.seed,
-      data,
-      network: this.props.network
+      name: this.state.accountName
     }
+
     const isRestored = await popupMessanger.restoreWallet(
       account,
-      this.props.network,
       this.state.psw
     )
 

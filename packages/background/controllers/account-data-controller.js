@@ -4,6 +4,8 @@ import { composeAPI } from '@iota/core'
 import { extractJson } from '@iota/extract-json'
 import logger from '@pegasus/utils/logger'
 
+const ACCOUNT_RELOAD_TIME = 100000
+
 class AccountDataController {
   constructor(options) {
     const {
@@ -15,6 +17,83 @@ class AccountDataController {
     this.networkController = networkController
     this.walletController = walletController
     this.notificationsController = notificationsController
+  }
+
+  stopHandle() {
+    clearInterval(this.accountDataHandler)
+  }
+
+  startHandle() {
+    const account = this.walletController.getCurrentAccount()
+
+    if (account) backgroundMessanger.setAccount(account)
+
+    if (this.accountDataHandler) {
+      return
+    }
+
+    this.accountDataHandler = setInterval(() => {
+      const state = this.walletController.getState()
+      if (state < APP_STATE.WALLET_UNLOCKED) {
+        clearInterval(this.accountDataHandler)
+        return
+      }
+
+      this.loadAccountData()
+    }, ACCOUNT_RELOAD_TIME)
+  }
+
+  async loadAccountData() {
+    const state = this.walletController.getState()
+    if (state < APP_STATE.WALLET_UNLOCKED) {
+      return
+    }
+
+    const seed = this.walletController.getCurrentSeed()
+    const network = this.networkController.getCurrentNetwork()
+    let account = this.walletController.getCurrentAccount()
+    const { transactions, newData } = await this.retrieveAccountData(
+      seed,
+      network,
+      account
+    )
+
+    //show notification
+    const transactionsJustConfirmed = this.getTransactionsJustConfirmed(
+      account,
+      transactions
+    )
+    transactionsJustConfirmed.forEach(transaction => {
+      this.notificationsController.showNotification(
+        'Transaction Confirmed',
+        transaction.bundle,
+        network.link + 'bundle/' + transaction.bundle
+      )
+    })
+
+    account = this.updateAccountTransactionsPersistence(account, transactions)
+    const newTransactions = this.getNewTransactionsFromAll(
+      account,
+      transactions
+    )
+
+    const totalTransactions = [...newTransactions, ...account.transactions]
+
+    const transactionsWithReattachSet = this.setTransactionsReattach(
+      totalTransactions
+    )
+
+    const updatedData = Object.assign({}, newData, {
+      transactions: transactionsWithReattachSet
+    })
+
+    this.walletController.updateTransactionsAccount(transactionsWithReattachSet)
+
+    const updatedAccount = this.walletController.updateDataAccount(
+      updatedData,
+      network
+    )
+    backgroundMessanger.setAccount(updatedAccount)
   }
 
   async retrieveAccountData(_seed, _network, _currentAccount) {
@@ -159,59 +238,6 @@ class AccountDataController {
       }
     }
     return _transactions
-  }
-
-  async loadAccountData() {
-    const state = this.walletController.getState()
-    if (state < APP_STATE.WALLET_UNLOCKED) {
-      return
-    }
-
-    const seed = this.walletController.getCurrentSeed()
-    const network = this.networkController.getCurrentNetwork()
-    let account = this.walletController.getCurrentAccount()
-    const { transactions, newData } = await this.retrieveAccountData(
-      seed,
-      network,
-      account
-    )
-
-    //show notification
-    const transactionsJustConfirmed = this.getTransactionsJustConfirmed(
-      account,
-      transactions
-    )
-    transactionsJustConfirmed.forEach(transaction => {
-      this.notificationsController.showNotification(
-        'Transaction Confirmed',
-        transaction.bundle,
-        network.link + 'bundle/' + transaction.bundle
-      )
-    })
-
-    account = this.updateAccountTransactionsPersistence(account, transactions)
-    const newTransactions = this.getNewTransactionsFromAll(
-      account,
-      transactions
-    )
-
-    const totalTransactions = [...newTransactions, ...account.transactions]
-
-    const transactionsWithReattachSet = this.setTransactionsReattach(
-      totalTransactions
-    )
-
-    const updatedData = Object.assign({}, newData, {
-      transactions: transactionsWithReattachSet
-    })
-
-    this.walletController.updateTransactionsAccount(transactionsWithReattachSet)
-
-    const updatedAccount = this.walletController.updateDataAccount(
-      updatedData,
-      network
-    )
-    backgroundMessanger.setAccount(updatedAccount)
   }
 
   async promoteTransactions() {

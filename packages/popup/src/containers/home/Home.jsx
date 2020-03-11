@@ -235,7 +235,7 @@ class Home extends Component {
 
   onLogout() {
     this.props.onLogout()
-    popupMessanger.logout()
+    popupMessanger.lockWallet()
   }
 
   onMam() {

@@ -72,7 +72,6 @@ class Add extends Component {
         this.goBack()
         return
       }
-      await popupMessanger.writeOnLocalStorage()
       this.setState({ isLoading: false })
       this.props.onBack()
     }

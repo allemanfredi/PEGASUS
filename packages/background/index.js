@@ -15,15 +15,10 @@ const backgroundScript = {
 
   bindPopupApi() {
     // Wallet Service
-    duplex.on('isWalletSetup', this.engine.isWalletSetup)
-    duplex.on('setupWallet', this.engine.setupWallet)
-    duplex.on('setStorageKey', this.engine.setStorageKey)
-    duplex.on('writeOnLocalStorage', this.engine.writeOnLocalStorage)
     duplex.on('unlockWallet', this.engine.unlockWallet)
     duplex.on('restoreWallet', this.engine.restoreWallet)
     duplex.on('unlockSeed', this.engine.unlockSeed)
-    duplex.on('storePassword', this.engine.storePassword)
-    duplex.on('setPassword', this.engine.setPassword)
+    duplex.on('initWallet', this.engine.initWallet)
     duplex.on('comparePassword', this.engine.comparePassword)
 
     duplex.on('setCurrentNetwork', this.engine.setCurrentNetwork)
@@ -44,13 +39,10 @@ const backgroundScript = {
     duplex.on('updateAvatarAccount', this.engine.updateAvatarAccount)
     duplex.on('deleteAccount', this.engine.deleteAccount)
 
-    duplex.on('resetData', this.engine.resetData)
-
     duplex.on('generateSeed', this.engine.generateSeed)
 
     duplex.on('checkSession', this.engine.checkSession)
     duplex.on('deleteSession', this.engine.deleteSession)
-    duplex.on('startSession', this.engine.startSession)
 
     duplex.on('getState', this.engine.getState)
     duplex.on('setState', this.engine.setState)
@@ -62,14 +54,10 @@ const backgroundScript = {
     duplex.on('rejectRequest', this.engine.rejectRequest)
     duplex.on('executeRequest', this.engine.executeRequest)
 
-    duplex.on('startHandleAccountData', this.engine.startHandleAccountData)
-    duplex.on('stopHandleAccountData', this.engine.stopHandleAccountData)
-    duplex.on('loadAccountData', this.engine.loadAccountData)
     duplex.on('reloadAccountData', this.engine.reloadAccountData)
 
     duplex.on('createSeedVault', this.engine.createSeedVault)
 
-    duplex.on('openPopup', this.engine.openPopup)
     duplex.on('closePopup', this.engine.closePopup)
 
     duplex.on('getConnection', this.engine.getConnection)
@@ -86,7 +74,7 @@ const backgroundScript = {
     duplex.on('getMamChannels', this.engine.getMamChannels)
     duplex.on('registerMamChannel', this.engine.registerMamChannel)
 
-    duplex.on('logout', this.engine.logout)
+    duplex.on('lockWallet', this.engine.lockWallet)
 
     duplex.on('setPopupSettings', this.engine.setPopupSettings)
     duplex.on('getPopupSettings', this.engine.getPopupSettings)

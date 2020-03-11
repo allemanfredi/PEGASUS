@@ -879,7 +879,7 @@ header{
     color: black;
     font-size: 14px;
 }
-.sidebar-nav > .sidebar-brand-logout a{
+.sidebar-nav > .sidebar-brand-lockWallet a{
     /*line-height: 60px;*/
     color: black;
     font-size: 14px;

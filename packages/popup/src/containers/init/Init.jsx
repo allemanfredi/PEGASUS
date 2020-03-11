@@ -142,8 +142,7 @@ class Init extends Component {
       if (isCreated) {
         this.props.onSuccess()
       } else {
-        this.goBack()
-
+        this.props.goBack()
         this.props.setNotification({
           type: 'danger',
           text: 'Error during creating the wallet! Try Again!'
@@ -205,9 +204,7 @@ class Init extends Component {
 
   async createWallet() {
     try {
-      await popupMessanger.storePassword(this.state.psw)
-      await popupMessanger.setStorageKey(this.state.psw)
-
+      await popupMessanger.initWallet(this.state.psw)
       let seed = this.state.seed
       if (!Array.isArray(seed)) seed = seed.split()
 
@@ -219,8 +216,6 @@ class Init extends Component {
 
       const isAdded = await popupMessanger.addAccount(account, true)
       if (!isAdded) return false
-
-      popupMessanger.writeOnLocalStorage()
 
       return true
     } catch (err) {

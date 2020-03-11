@@ -43,7 +43,6 @@ class Main extends Component {
       this.props.showHeader(true)
     }
     if (state >= APP_STATE.WALLET_UNLOCKED) {
-      popupMessanger.startHandleAccountData()
       this.props.showHeader(true)
     }
 
@@ -85,7 +84,6 @@ class Main extends Component {
   }
 
   async onSuccessFromLogin() {
-    popupMessanger.startSession()
     popupMessanger.setState(APP_STATE.WALLET_UNLOCKED)
     this.setState({ appState: APP_STATE.WALLET_UNLOCKED })
 
@@ -189,22 +187,16 @@ class Main extends Component {
   onSuccessFromInit() {
     this.props.showHeader(true)
     this.setState({ appState: APP_STATE.WALLET_UNLOCKED })
-    popupMessanger.startHandleAccountData()
     popupMessanger.setState(APP_STATE.WALLET_UNLOCKED)
-    popupMessanger.startSession()
   }
 
   onSuccessFromRestore() {
     this.props.showHeader(true)
     this.setState({ appState: APP_STATE.WALLET_UNLOCKED })
     popupMessanger.setState(APP_STATE.WALLET_UNLOCKED)
-    popupMessanger.startHandleAccountData()
-    popupMessanger.startSession()
   }
 
   onLogout() {
-    popupMessanger.deleteSession()
-    popupMessanger.stopHandleAccountData()
     this.props.showHeader(true)
     this.setState({ appState: APP_STATE.WALLET_LOCKED })
     popupMessanger.setState(APP_STATE.WALLET_LOCKED)

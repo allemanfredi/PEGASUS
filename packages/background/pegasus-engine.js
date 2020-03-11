@@ -16,7 +16,6 @@ import SeedVaultController from './controllers/seed-vault-controller'
 import { APP_STATE } from '@pegasus/utils/states'
 
 const SESSION_TIME = 30000
-const ACCOUNT_RELOAD_TIME = 100000
 
 class PegasusEngine {
   constructor() {
@@ -91,10 +90,11 @@ class PegasusEngine {
     this.walletController.setAccountDataController(this.accountDataController)
     this.connectorController.setNetworkController(this.networkController)
     this.networkController.setWalletController(this.walletController)
+    this.walletController.setSessionController(this.sessionController)
     /* E N D   C O N T R O L L E R S */
 
     if (!this.walletController.isWalletSetup()) {
-      this.walletController.setupWallet()
+      this.walletController.setState(APP_STATE.WALLET_NOT_INITIALIZED)
     }
 
     const currentNetwork = this.networkController.getCurrentNetwork()
@@ -117,38 +117,20 @@ class PegasusEngine {
     return this.walletController.isWalletSetup()
   }
 
-  setupWallet() {
-    this.walletController.setupWallet()
-  }
-
-  setStorageKey(key) {
-    this.stateStorageController.setEncryptionKey(key)
-  }
-
-  writeOnLocalStorage() {
-    if (this.stateStorageController) {
-      this.stateStorageController.writeToStorage()
-    }
-  }
-
   unlockWallet(psw) {
-    this.walletController.unlockWallet(psw)
+    return this.walletController.unlockWallet(psw)
   }
 
-  restoreWallet({ account, network, key }) {
-    return this.walletController.restoreWallet(account, network, key)
+  restoreWallet({ account, password }) {
+    return this.walletController.restoreWallet(account, password)
   }
 
   unlockSeed(psw) {
     return this.walletController.unlockSeed(psw)
   }
 
-  storePassword(psw) {
-    this.walletController.storePassword(psw)
-  }
-
-  setPassword(psw) {
-    this.walletController.setPassword(psw)
+  initWallet(psw) {
+    return this.walletController.initWallet(psw)
   }
 
   comparePassword(psw) {
@@ -156,11 +138,7 @@ class PegasusEngine {
   }
 
   setCurrentNetwork(network) {
-    this.networkController.setCurrentNetwork(network)
-    const account = this.getCurrentAccount()
-    if (account) {
-      backgroundMessanger.setAccount(account)
-    }
+    return this.networkController.setCurrentNetwork(network)
   }
 
   getCurrentNetwork() {
@@ -172,14 +150,14 @@ class PegasusEngine {
   }
 
   addNetwork(network) {
-    this.networkController.addNetwork(network)
+    return this.networkController.addNetwork(network)
   }
 
   deleteCurrentNetwork() {
-    this.networkController.deleteCurrentNetwork()
+    return this.networkController.deleteCurrentNetwork()
   }
 
-  async addAccount({ account, isCurrent }) {
+  addAccount({ account, isCurrent }) {
     return this.walletController.addAccount(account, isCurrent)
   }
 
@@ -196,7 +174,7 @@ class PegasusEngine {
   }
 
   setCurrentAccount({ currentAccount }) {
-    this.walletController.setCurrentAccount(currentAccount)
+    return this.walletController.setCurrentAccount(currentAccount)
   }
 
   updateNameAccount({ current, newName }) {
@@ -211,24 +189,16 @@ class PegasusEngine {
     return this.walletController.deleteAccount(account)
   }
 
-  resetData() {
-    this.walletController.resetData()
-  }
-
   generateSeed(length = 81) {
     return this.walletController.generateSeed(length)
   }
 
-  startSession() {
-    this.sessionController.startSession()
-  }
-
   checkSession() {
-    this.sessionController.checkSession()
+    return this.sessionController.checkSession()
   }
 
   deleteSession() {
-    this.sessionController.deleteSession()
+    return this.sessionController.deleteSession()
   }
 
   getState() {
@@ -236,15 +206,11 @@ class PegasusEngine {
   }
 
   setState(state) {
-    this.walletController.setState(state)
-  }
-
-  openPopup() {
-    this.popupController.openPopup()
+    return this.walletController.setState(state)
   }
 
   closePopup() {
-    this.popupController.closePopup()
+    return this.popupController.closePopup()
   }
 
   executeRequest(request) {
@@ -270,15 +236,15 @@ class PegasusEngine {
   }
 
   rejectRequests() {
-    this.customizatorController.rejectRequests()
+    return this.customizatorController.rejectRequests()
   }
 
   confirmRequest(request) {
-    this.customizatorController.confirmRequest(request)
+    return this.customizatorController.confirmRequest(request)
   }
 
   rejectRequest(request) {
-    this.customizatorController.rejectRequest(request)
+    return this.customizatorController.rejectRequest(request)
   }
 
   connect(uuid, resolve, website) {
@@ -291,24 +257,28 @@ class PegasusEngine {
   }
 
   pushConnection(connection) {
-    this.connectorController.pushConnection(connection)
+    return this.connectorController.pushConnection(connection)
   }
 
   updateConnection(connection) {
-    this.connectorController.updateConnection(connection)
+    return this.connectorController.updateConnection(connection)
   }
 
   completeConnection() {
-    let requests = this.customizatorController.getRequests()
-    requests = this.connectorController.completeConnection(requests)
+    const requests = this.connectorController.completeConnection(
+      this.customizatorController.getRequests()
+    )
     this.customizatorController.setRequests(requests)
+    return true
   }
 
   rejectConnection() {
-    let requests = this.customizatorController.getRequests()
-    requests = this.connectorController.rejectConnection(requests)
+    const requests = this.connectorController.rejectConnection(
+      this.customizatorController.getRequests()
+    )
     this.customizatorController.setRequests(requests)
     this.popupController.closePopup()
+    return true
   }
 
   estabilishConnection(website) {
@@ -331,48 +301,6 @@ class PegasusEngine {
     return this.connectorController.getConnectionRequest()
   }
 
-  loadAccountData() {
-    this.accountDataController.loadAccountData()
-  }
-
-  startHandleAccountData() {
-    const account = this.walletController.getCurrentAccount()
-    backgroundMessanger.setAccount(account)
-
-    if (this.accountDataHandler) {
-      return
-    }
-
-    this.accountDataHandler = setInterval(() => {
-      const state = this.walletController.getState()
-      if (state < APP_STATE.WALLET_UNLOCKED) {
-        clearInterval(this.accountDataHandler)
-        return
-      }
-
-      this.accountDataController.loadAccountData()
-    }, ACCOUNT_RELOAD_TIME)
-  }
-
-  stopHandleAccountData() {
-    clearInterval(this.accountDataHandler)
-  }
-
-  async reloadAccountData() {
-    clearInterval(this.accountDataHandler)
-
-    this.accountDataController.loadAccountData()
-    this.accountDataHandler = setInterval(() => {
-      const state = this.walletController.getState()
-      if (state < APP_STATE.WALLET_UNLOCKED) {
-        clearInterval(this.accountDataHandler)
-        return
-      }
-
-      this.accountDataController.loadAccountData()
-    }, ACCOUNT_RELOAD_TIME)
-  }
-
   createSeedVault(password) {
     return this.seedVaultController.createSeedVault(password)
   }
@@ -390,6 +318,10 @@ class PegasusEngine {
     )
   }
 
+  reloadAccountData() {
+    return this.accountDataController.loadAccountData()
+  }
+
   getMamChannels() {
     return this.mamController.getMamChannels()
   }
@@ -398,8 +330,8 @@ class PegasusEngine {
     return this.mamController.registerMamChannel(channel)
   }
 
-  logout() {
-    return this.walletController.logout()
+  lockWallet() {
+    return this.walletController.lockWallet()
   }
 
   setPopupSettings(settings) {

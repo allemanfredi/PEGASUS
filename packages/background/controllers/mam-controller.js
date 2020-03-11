@@ -27,13 +27,11 @@ class MamController {
 
     const id = Utils.sha256(state.seed)
 
-    const encryptionKey = this.walletController.getKey()
     const mamChannels = this.stateStorageController.get('mamChannels')
     const currentAccount = this.walletController.getCurrentAccount()
 
     //encrypt the channel seed in order to not store it in plain text
     const stateToStore = Utils.copyObject(state)
-    stateToStore.seed = Utils.aes256encrypt(stateToStore.seed, encryptionKey)
 
     if (!mamChannels[currentAccount.id]) {
       mamChannels[currentAccount.id] = {
@@ -56,7 +54,6 @@ class MamController {
   changeMode(_state, _mode, _sidekey = null) {
     const id = _state.seed
 
-    const encryptionKey = this.walletController.getKey()
     const mamChannels = this.stateStorageController.get('mamChannels')
     const currentAccount = this.walletController.getCurrentAccount()
 
@@ -67,19 +64,16 @@ class MamController {
       }
     }
 
-    const encryptedState = mamChannels[currentAccount.id]['owner'][id]
-    _state.seed = Utils.aes256decrypt(encryptedState.seed, encryptionKey)
-    if (encryptedState.channel.side_key)
-      _state.channel.side_key = Utils.aes256decrypt(
-        encryptedState.channel.side_key,
-        encryptionKey
-      )
+    const _storedState = mamChannels[currentAccount.id]['owner'][id]
+    _state.seed = _storedState.seed
+    if (_storedState.channel.side_key)
+      _state.channel.side_key = _storedState.side_key
 
     const stateToStore = Mam.changeMode(_state, _mode, _sidekey)
 
     const root = Mam.getRoot(stateToStore)
 
-    stateToStore.seed = Utils.aes256encrypt(stateToStore.seed, encryptionKey)
+    stateToStore.seed = _storedState.seed
 
     if (_mode == 'public' || _mode == 'private')
       stateToStore.channel.side_key = null
@@ -87,10 +81,6 @@ class MamController {
     let sideKeyToReturn = null
     if (stateToStore.channel.side_key) {
       sideKeyToReturn = Utils.sha256(stateToStore.channel.side_key)
-      stateToStore.channel.side_key = Utils.aes256encrypt(
-        stateToStore.channel.side_key,
-        encryptionKey
-      )
     }
 
     mamChannels[currentAccount.id]['owner'][id] = { ...stateToStore, root }
@@ -101,6 +91,8 @@ class MamController {
     stateToReturn.seed = id
     stateToReturn.channel.side_key = sideKeyToReturn
 
+    console.log(stateToReturn)
+
     return {
       success: true,
       data: stateToReturn
@@ -110,7 +102,6 @@ class MamController {
   getRoot(_state) {
     const id = _state.seed
 
-    const encryptionKey = this.walletController.getKey()
     const mamChannels = this.stateStorageController.get('mamChannels')
     const currentAccount = this.walletController.getCurrentAccount()
 
@@ -121,14 +112,8 @@ class MamController {
       }
     }
 
-    const encryptedState = mamChannels[currentAccount.id]['owner'][id]
-    _state.seed = Utils.aes256decrypt(encryptedState.seed, encryptionKey)
-
-    if (_state.channel.side_key)
-      _state.channel.side_key = Utils.aes256decrypt(
-        _state.channel.side_key,
-        encryptionKey
-      )
+    const storedState = mamChannels[currentAccount.id]['owner'][id]
+    _state.seed = storedState.seed
 
     const root = Mam.getRoot(_state)
 
@@ -141,7 +126,6 @@ class MamController {
   create(_state, message) {
     const id = _state.seed
 
-    const encryptionKey = this.walletController.getKey()
     const mamChannels = this.stateStorageController.get('mamChannels')
     const currentAccount = this.walletController.getCurrentAccount()
 
@@ -159,15 +143,12 @@ class MamController {
       }
     }
 
-    const encryptedState = mamChannels[currentAccount.id]['owner'][id]
-    _state.seed = Utils.aes256decrypt(encryptedState.seed, encryptionKey)
+    const storedState = mamChannels[currentAccount.id]['owner'][id]
+    _state.seed = storedState.seed
 
     let sideKeyToReturn = null
     if (_state.channel.side_key) {
-      _state.channel.side_key = Utils.aes256decrypt(
-        encryptedState.channel.side_key,
-        encryptionKey
-      )
+      _state.channel.side_key = storedState.channel.side_key
       sideKeyToReturn = Utils.sha256(_state.channel.side_key)
     }
 
@@ -176,6 +157,8 @@ class MamController {
     mamMessage.state.seed = Utils.sha256(_state.seed)
     mamMessage.state.channel.side_key = sideKeyToReturn
 
+    console.log(mamMessage)
+
     return {
       success: true,
       data: mamMessage
@@ -183,7 +166,6 @@ class MamController {
   }
 
   decode(_payload, _root) {
-    const encryptionKey = this.walletController.getKey()
     const mamChannels = this.stateStorageController.get('mamChannels')
     const currentAccount = this.walletController.getCurrentAccount()
 
@@ -215,17 +197,11 @@ class MamController {
     )
     const foundRoot = this._searchRootIntoUserChannels(userMamChannels, _root)
 
-    let state = null
-    if (sidekey && foundRoot) {
-      //restricted
-      const decryptedSidekey = Utils.aes256decrypt(sidekey, encryptionKey)
-      state = Mam.decode(_payload, decryptedSidekey, _root)
-    } else if (foundRoot) {
-      //private/public
-      state = Mam.decode(_payload, null, _root)
-    } else {
-      state = Mam.decode(_payload, null, _root)
-    }
+    const state = Mam.decode(
+      _payload,
+      sidekey && foundRoot ? sidekey : null,
+      _root
+    )
 
     if (state.channel.side_key) {
       state.channel.side_key = Utils.sha256(state.channel.side_key)
@@ -268,7 +244,6 @@ class MamController {
       let sidekey = null
 
       if (_mode === 'restricted') {
-        const encryptionKey = this.walletController.getKey()
         const mamChannels = this.stateStorageController.get('mamChannels')
         const currentAccount = this.walletController.getCurrentAccount()
 
@@ -285,20 +260,16 @@ class MamController {
           sidekey = await this._bruteForceToFindSidekeyCorrespondingToChildStoredRoot(
             Mam,
             mamChannels[currentAccount.id],
-            _root,
-            encryptionKey
+            _root
           )
         }
 
-        if (sidekey) {
-          sidekey = Utils.aes256decrypt(sidekey, encryptionKey)
-        } else {
+        if (!sidekey)
           resolve({
             success: false,
             data: `Sidekey Not Found for ${_root}`
           })
-          return
-        }
+        return
       }
 
       const packets = await Mam.fetch(
@@ -306,6 +277,7 @@ class MamController {
         _mode,
         sidekey,
         e => {
+          console.log(e)
           if (_options.reply) {
             backgroundMessanger.sendToContentScript('mam_onFetch', {
               data: e,
@@ -340,8 +312,7 @@ class MamController {
   async _bruteForceToFindSidekeyCorrespondingToChildStoredRoot(
     _mam,
     _userMamChannels,
-    _root,
-    _encryptionKey
+    _root
   ) {
     let foundSideKey = null
     for (let state of Object.values(_userMamChannels.owner)) {
@@ -350,7 +321,7 @@ class MamController {
         const packet = await _mam.fetchSingle(
           _root,
           'restricted',
-          Utils.aes256decrypt(foundSideKey, _encryptionKey)
+          state.channel.side_key
         )
 
         if (!Utils.isError(packet)) {
@@ -370,7 +341,7 @@ class MamController {
         const packet = await _mam.fetchSingle(
           _root,
           'restricted',
-          Utils.aes256decrypt(foundSideKey, _encryptionKey)
+          state.channel.side_key
         )
 
         if (!Utils.isError(packet)) {
@@ -451,7 +422,6 @@ class MamController {
   registerMamChannel(_channel) {
     const mamChannels = this.stateStorageController.get('mamChannels')
     const currentAccount = this.walletController.getCurrentAccount()
-    const encryptionKey = this.walletController.getKey()
 
     if (!mamChannels[currentAccount.id]) {
       mamChannels[currentAccount.id] = {
@@ -464,15 +434,10 @@ class MamController {
       mamChannels[currentAccount.id]['subscriber'] = {}
     }
 
-    let eSidekey = null
-    if (_channel.mode === 'restricted') {
-      eSidekey = Utils.aes256encrypt(_channel.sidekey, encryptionKey)
-    }
-
     const id = Utils.sha256(_channel.root)
     mamChannels[currentAccount.id]['subscriber'][id] = {
       channel: {
-        side_key: eSidekey,
+        side_key: _channel.sidekey,
         mode: _channel.mode
       },
       root: _channel.root

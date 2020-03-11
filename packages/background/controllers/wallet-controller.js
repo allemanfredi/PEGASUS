@@ -19,6 +19,10 @@ class WalletController {
     this.connectorController = connectorController
   }
 
+  setSessionController(_sessionController) {
+    this.sessionController = _sessionController
+  }
+
   setAccountDataController(accountDataController) {
     this.accountDataController = accountDataController
   }
@@ -32,14 +36,18 @@ class WalletController {
     return false
   }
 
-  setupWallet() {
-    this.setState(APP_STATE.WALLET_NOT_INITIALIZED)
-  }
-
   storePassword(_password) {
     const hash = Utils.sha256(_password)
     this.password = _password
     this.stateStorageController.set('hpsw', hash, true)
+  }
+
+  getPassword() {
+    return this.password
+  }
+
+  setPassword(_password) {
+    this.password = _password
   }
 
   comparePassword(_password) {
@@ -49,28 +57,27 @@ class WalletController {
     if (pswToCompare === Utils.sha256(_password)) return true
   }
 
-  setPassword(password) {
-    this.password = password
-  }
+  initWallet(_password) {
+    this.storePassword(_password)
 
-  getPassword() {
-    return this.password
+    this.stateStorageController.unlock(_password)
+    this.accountDataController.startHandle()
+    this.sessionController.startSession()
+
+    logger.log(`(WalletController) Wallet initialized`)
   }
 
   unlockWallet(_password) {
-    const hash = Utils.sha256(_password)
-    let pswToCompare
+    if (this.comparePassword()) {
+      this.password = _password
 
-    if ((pswToCompare = this.stateStorageController.get('hpsw')) === null) {
-      return false
-    }
-
-    if (pswToCompare === hash) {
       this.setState(APP_STATE.WALLET_UNLOCKED)
       const account = this.getCurrentAccount()
       const network = this.networkController.getCurrentNetwork()
 
-      this.stateStorageController.setEncryptionKey(_password)
+      this.stateStorageController.unlock(_password)
+      this.sessionController.startSession()
+      this.accountDataController.startHandle()
 
       //injection
       backgroundMessanger.setSelectedProvider(network.provider)
@@ -86,56 +93,46 @@ class WalletController {
     return false
   }
 
-  async restoreWallet(_account, _network, _key) {
-    const transactions = await this.accountDataController.mapTransactions(
-      _account.data,
-      _network
-    )
+  lockWallet() {
+    this.password = null
+    this.setState(APP_STATE.WALLET_LOCKED)
+    this.stateStorageController.lock()
+    this.sessionController.deleteSession()
+    this.accountDataController.stopHandle()
 
-    _account.data.balance =
-      _network.type === 'mainnet'
-        ? {
-            mainnet: _account.data.balance,
-            testnet: 0
-          }
-        : {
-            mainnet: _account.data.balance,
-            testnet: 0
-          }
+    backgroundMessanger.setAccount(null)
+    backgroundMessanger.setSelectedAccount(null)
 
-    const eseed = Utils.aes256encrypt(_account.seed, _key)
-    const obj = {
-      name: _account.name,
-      seed: eseed,
-      transactions,
-      data: _account.data,
-      current: true,
-      id: Utils.sha256(_account.name)
-    }
+    logger.log(`(WalletController) Wallet succesfully locked`)
+    return true
+  }
+
+  async restoreWallet(_account, _network, _password) {
+    if (!this.unlockWallet(_password)) throw new Error('Invalid Password')
 
     try {
-      this.stateStorageController.setEncryptionKey(_key)
-
-      const restoredAccounts = []
-      restoredAccounts.push(obj)
-      this.stateStorageController.set('accounts', restoredAccounts)
-      this.stateStorageController.writeToStorage()
-
-      this.password = _key
+      this.stateStorageController.reset()
       this.networkController.setCurrentNetwork(_network)
 
-      backgroundMessanger.setAccount(obj)
+      const isAdded = await this.addAccount(_account)
+      if (!isAdded) return false
 
       logger.log(
         `(WalletController) Wallet restored with account: ${_account.name}`
       )
       return true
     } catch (err) {
+      logger.error(
+        `(WalletController) Account during wallet restoring: ${err.message}`
+      )
       return false
     }
   }
 
   setState(_state) {
+    const currentState = this.getState('state')
+    if (currentState === _state) return
+
     logger.log(
       `(WalletController) State updated: ${STATE_NAME[_state.toString()]}`
     )
@@ -148,12 +145,7 @@ class WalletController {
   }
 
   unlockSeed(_password) {
-    const hash = Utils.sha256(_password)
-    let pswToCompare
-    if (!(pswToCompare = this.stateStorageController.get('hpsw'))) return false
-    if (pswToCompare === hash) {
-      return this.getCurrentSeed()
-    }
+    if (this.comparePassword(_password)) return this.getCurrentSeed()
     return false
   }
 
@@ -165,8 +157,7 @@ class WalletController {
     const account = this.getCurrentAccount()
     if (!account) return false
 
-    const key = this.getKey()
-    return Utils.aes256decrypt(account.seed, key)
+    return account.seed //Utils.aes256decrypt(account.seed, key)
   }
 
   isAccountNameAlreadyExists(_name) {
@@ -210,19 +201,19 @@ class WalletController {
               testnet: balance
             }
 
-      const key = this.getKey()
-      const eseed = Utils.aes256encrypt(seed, key)
-
       const transactions = await this.accountDataController.mapTransactions(
         accountData,
         network
+      )
+      const transactionsWithReattachSet = this.accountDataController.setTransactionsReattach(
+        transactions
       )
 
       const accountToAdd = {
         name: _account.name,
         avatar: _account.avatar,
-        seed: eseed,
-        transactions,
+        seed,
+        transactions: transactionsWithReattachSet,
         data: accountData,
         current: Boolean(_isCurrent),
         id: Utils.sha256(_account.name)
@@ -239,15 +230,17 @@ class WalletController {
 
       accounts.push(accountToAdd)
       this.stateStorageController.set('accounts', accounts)
-
-      this.setState(APP_STATE.WALLET_UNLOCKED)
+      //this.stateStorageController.writeToStorage()
 
       backgroundMessanger.setAccount(accountToAdd)
 
       logger.log(`(WalletController) Account added : ${accountToAdd.name}`)
 
       return true
-    } catch (err) {
+    } catch (error) {
+      logger.error(
+        `(WalletController) Account during account creation: ${error}`
+      )
       return false
     }
   }
@@ -287,10 +280,6 @@ class WalletController {
       }
     })
     this.stateStorageController.set('accounts', accounts)
-  }
-
-  resetData() {
-    this.stateStorageController.reset()
   }
 
   updateDataAccount(_updatedData) {
@@ -407,11 +396,6 @@ class WalletController {
     const bytes = Utils.randomBytes(_length, 27)
     const seed = bytes.map(byte => Utils.byteToChar(byte))
     return seed
-  }
-
-  logout() {
-    backgroundMessanger.setAccount(null)
-    backgroundMessanger.setSelectedAccount(null)
   }
 }
 

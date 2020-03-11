@@ -18,21 +18,20 @@ class PegasusInpageClient extends EventEmitter {
 
     this.inpageStream = inpageStream
 
-    this._callbacks = {}
+    this._mamFetches = {}
     this._calls = {}
 
     this.send = this.send.bind(this)
 
     this._bindListener()
 
-    this.send('init')
-      .then(({ selectedProvider, selectedAccount }) => {
-        this._set(selectedProvider)
-        if (selectedAccount) {
-          this.selectedAccount = selectedAccount
-          this.emit('onAccountChanged', selectedAccount)
-        }
-      })
+    this.send('init').then(({ selectedProvider, selectedAccount }) => {
+      this._set(selectedProvider)
+      if (selectedAccount) {
+        this.selectedAccount = selectedAccount
+        this.emit('onAccountChanged', selectedAccount)
+      }
+    })
   }
 
   send(action, data = {}) {
@@ -79,7 +78,7 @@ class PegasusInpageClient extends EventEmitter {
 
   _bindListener() {
     this.inpageStream.on('data', ({ success, data, uuid, action }) => {
-      switch(action) {
+      switch (action) {
         case 'setSelectedProvider': {
           this.selectedProvider = data
           this.emit('onProviderChanged', data)
@@ -92,13 +91,13 @@ class PegasusInpageClient extends EventEmitter {
         }
         case 'mam_onFetch': {
           const { data, uuid } = e
-          if (this._callbacks[uuid]) this._callbacks[uuid](data)
+          if (this._mamFetches[uuid]) this._mamFetches[uuid](data)
           break
         }
         default: {
           if (success) this._calls[uuid].resolve(data)
           else this._calls[uuid].reject(data)
-    
+
           delete this._calls[uuid]
           break
         }
@@ -125,7 +124,7 @@ class PegasusInpageClient extends EventEmitter {
 
       const isFunction = Utils.isFunction(args[2])
       if (isFunction) {
-        this._callbacks[uuid] = args[2]
+        this._mamFetches[uuid] = args[2]
         args[2] = {
           uuid,
           reply: true

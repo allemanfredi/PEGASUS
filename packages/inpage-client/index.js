@@ -8,7 +8,7 @@ const inpageStream = new PostMessageStream({
 
 const pegasusInpageClient = new PegasusInpageClient(inpageStream)
 
-const proxiedPegasusInpageClient= new Proxy(pegasusInpageClient, {
+const proxiedPegasusInpageClient = new Proxy(pegasusInpageClient, {
   deleteProperty: () => true
 })
 

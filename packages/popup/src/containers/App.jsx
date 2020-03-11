@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import Duplex from '@pegasus/utils/duplex'
 import { popupMessanger } from '@pegasus/utils/messangers'
-import IOTA from '@pegasus/utils/iota'
 import Header from './header/Header'
 import Main from './main/Main'
 import { APP_STATE } from '@pegasus/utils/states'
@@ -38,18 +37,19 @@ class App extends Component {
     //check if the current network has been already set, if no => set to testnet (options[0])
     const network = await popupMessanger.getCurrentNetwork()
     const networks = await popupMessanger.getAllNetworks()
-    IOTA.init(network.provider)
+    const account = await popupMessanger.getCurrentAccount()
     this.setState(() => {
-      return {
-        network,
-        networks
-      }
+      return account
+        ? {
+            network,
+            networks,
+            account
+          }
+        : {
+            network,
+            networks
+          }
     })
-  }
-
-  //when user stop to use the extension, background will save the data in the local storage
-  componentWillUnmount() {
-    popupMessanger.writeDataOnLocalStorage()
   }
 
   onHandleLogin(value) {
@@ -61,12 +61,7 @@ class App extends Component {
   }
 
   onHandleNetworkChanging(network) {
-    IOTA.setProvider(network.provider)
     popupMessanger.setCurrentNetwork(network)
-
-    //transactions handler for new network
-    popupMessanger.stopHandleAccountData()
-    popupMessanger.startHandleAccountData()
   }
 
   async onAddCustomNetwork() {

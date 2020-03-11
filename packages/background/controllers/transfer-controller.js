@@ -49,6 +49,11 @@ class TransferController {
           })
           .then(bundle => {
             backgroundMessanger.setTransfersConfirmationLoading(false)
+
+            logger.error(
+              `(TransferController) Transfer success : ${bundle[0].bundle}`
+            )
+
             resolve({
               success: true,
               data: bundle
@@ -58,6 +63,10 @@ class TransferController {
             backgroundMessanger.setTransfersConfirmationError(error.message)
             backgroundMessanger.setTransfersConfirmationLoading(false)
 
+            logger.error(
+              `(TransferController) Account during account transfer : ${error.message}`
+            )
+
             resolve({
               success: false,
               tryAgain: true,
@@ -65,6 +74,10 @@ class TransferController {
             })
           })
       } catch (error) {
+        logger.error(
+          `(TransferController) Account during account transfer : ${error.message}`
+        )
+
         backgroundMessanger.setTransfersConfirmationError(error.message)
         backgroundMessanger.setTransfersConfirmationLoading(false)
 

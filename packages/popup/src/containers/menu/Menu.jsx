@@ -215,7 +215,7 @@ class Settings extends Component {
                         this.props.onSettings()
                       }}
                     >
-                      <div className="text-black">Settings</div>
+                      <div className="text-black">settings</div>
                     </span>
                   </div>
                 </div>
