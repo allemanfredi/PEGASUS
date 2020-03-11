@@ -31,23 +31,16 @@ class StateStorageController extends Store {
   constructor() {
     super(new PegasusGlobalState())
 
-    //automatic writing (if wallet is unlocked) in storage each minute
-    setTimeout(() => {
-      if (this.encryptionkey) {
-        this.writeToStorage()
-      }
-    }, 60000)
-
     const data = this.loadFromStorage()
     if (data) {
       this.setState(data)
-      this.toLoadFromStorage = true
-    } else this.toLoadFromStorage = false
+      this._toLoadFromStorage = false
+    } else this._toLoadFromStorage = true
 
     //NOTE: in order to keep a global state for the popup (for the future)
     this.state$.subscribe(_state => {
       //backgroundMessanger.changeGlobalState(_state)
-      //console.log(_state)
+      console.log(_state)
     })
 
     this.unlocked = false
@@ -69,13 +62,18 @@ class StateStorageController extends Store {
 
     this.setState({
       ...this.state,
-      accounts: [],
-      mamChannels: {}
+      accounts: 
+        Utils.aes256encrypt(JSON.stringify(this.state.accounts), this.encryptionkey)
+      ,
+      mamChannels:
+        Utils.aes256encrypt(JSON.stringify(this.state.mamChannels), this.encryptionkey)
     })
 
     this.writeToStorage()
+
     this.unlocked = false
     this.encryptionkey = null
+    this._toLoadFromStorage = true
 
     logger.log('(StateStorageController) Protected data succesfully locked')
   }
@@ -91,14 +89,21 @@ class StateStorageController extends Store {
 
     if (!this.isInitialized()) return
 
+    if (this._toLoadFromStorage) {
+      this._toLoadFromStorage = false
+      this.loadFromStorage()
+    }
+
     this.setState({
       ...this.state,
-      accounts: JSON.parse(
-        Utils.aes256decrypt(this.state.accounts, this.encryptionkey)
-      ),
-      mamChannels: JSON.parse(
-        Utils.aes256decrypt(this.state.mamChannels, this.encryptionkey)
-      )
+      accounts: JSON.parse(Utils.aes256decrypt(
+        this.state.accounts,
+        this.encryptionkey
+      )),
+      mamChannels: JSON.parse(Utils.aes256decrypt(
+        this.state.mamChannels,
+        this.encryptionkey
+      ))
     })
   }
 
@@ -161,22 +166,15 @@ class StateStorageController extends Store {
   }
 
   writeToStorage() {
-    console.log(this.state)
     localStorage.setItem(
       'PEGASUS_ACCOUNTS',
-      Utils.aes256encrypt(
-        JSON.stringify(this.state.accounts),
-        this.encryptionkey
-      )
+      this.state.accounts,
+      this.encryptionkey
     )
-    console.log('1')
-
     localStorage.setItem(
       'PEGASUS_MAM_CHANNELS',
-      Utils.aes256encrypt(
-        JSON.stringify(this.state.mamChannels),
-        this.encryptionkey
-      )
+      this.state.mamChannels,
+      this.encryptionkey
     )
     localStorage.setItem(
       'PEGASUS_HPSW',

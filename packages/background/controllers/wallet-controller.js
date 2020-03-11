@@ -68,20 +68,19 @@ class WalletController {
   }
 
   unlockWallet(_password) {
-    if (this.comparePassword()) {
+    if (this.comparePassword(_password)) {
       this.password = _password
 
       this.setState(APP_STATE.WALLET_UNLOCKED)
-      const account = this.getCurrentAccount()
-      const network = this.networkController.getCurrentNetwork()
 
       this.stateStorageController.unlock(_password)
       this.sessionController.startSession()
       this.accountDataController.startHandle()
 
-      //injection
-      backgroundMessanger.setSelectedProvider(network.provider)
+      const account = this.getCurrentAccount()
+      const network = this.networkController.getCurrentNetwork()
 
+      backgroundMessanger.setSelectedProvider(network.provider)
       backgroundMessanger.setAccount(account)
 
       logger.log(
@@ -230,7 +229,6 @@ class WalletController {
 
       accounts.push(accountToAdd)
       this.stateStorageController.set('accounts', accounts)
-      //this.stateStorageController.writeToStorage()
 
       backgroundMessanger.setAccount(accountToAdd)
 
@@ -246,14 +244,8 @@ class WalletController {
   }
 
   getCurrentAccount() {
-    const state = this.getState()
-    if (state < APP_STATE.WALLET_UNLOCKED) return null
-
-    if (!this.stateStorageController) return null
-
     const accounts = this.stateStorageController.get('accounts')
-    if (accounts.length === 0 && state === APP_STATE.WALLET_NOT_INITIALIZED)
-      return null
+    if (accounts.length === 0) return null
 
     for (let account of accounts) {
       if (account.current) {

@@ -59,9 +59,8 @@ class SessionController {
       const date = new Date()
       const currentTime = date.getTime()
       if (currentTime - this.session > 300000) {
-        this.stateStorageController.lock()
         if (currentState >= APP_STATE.WALLET_UNLOCKED) {
-          this.walletController.setState(APP_STATE.WALLET_LOCKED)
+          this.walletController.lockWallet()
           logger.log(
             `(SessionController) Session expired... Locking the wallet`
           )
@@ -77,7 +76,6 @@ class SessionController {
 
   deleteSession() {
     this.session = null
-    this.walletController.lockWallet()
   }
 }
 

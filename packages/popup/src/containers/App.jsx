@@ -37,18 +37,12 @@ class App extends Component {
     //check if the current network has been already set, if no => set to testnet (options[0])
     const network = await popupMessanger.getCurrentNetwork()
     const networks = await popupMessanger.getAllNetworks()
-    const account = await popupMessanger.getCurrentAccount()
+
     this.setState(() => {
-      return account
-        ? {
-            network,
-            networks,
-            account
-          }
-        : {
-            network,
-            networks
-          }
+      return {
+        network,
+        networks
+      }
     })
   }
 

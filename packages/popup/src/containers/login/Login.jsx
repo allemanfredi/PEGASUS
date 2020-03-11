@@ -20,9 +20,9 @@ class Login extends Component {
 
     this.setState({ shake: false })
 
-    const canAccess = await popupMessanger.comparePassword(this.state.psw)
+    const canAccess = await popupMessanger.unlockWallet(this.state.psw)
+    console.log(canAccess)
     if (canAccess) {
-      await popupMessanger.unlockWallet(this.state.psw)
       this.props.onSuccess()
     } else {
       this.setState({ shake: true })

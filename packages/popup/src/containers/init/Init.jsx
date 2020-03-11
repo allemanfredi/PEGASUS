@@ -142,7 +142,7 @@ class Init extends Component {
       if (isCreated) {
         this.props.onSuccess()
       } else {
-        this.props.goBack()
+        this.goBack()
         this.props.setNotification({
           type: 'danger',
           text: 'Error during creating the wallet! Try Again!'
