@@ -48,7 +48,7 @@ After having built the application, it needs to be loaded on chrome.
 
 ## :seedling: How the seed is stored?
 
-The seed is saved in the local storage of the browser, encrypted (through aes256) with the login password that a user chooses during the wallet initialization phase. To make it more difficult to find out, the password must meet the following requirements:
+The seed is saved in the local storage of the browser, encrypted (through __`argon2id + aes256-cbc`__) with the login password that a user chooses during the wallet initialization phase. To make it more difficult to find out, the password must meet the following requirements:
 
 - Must contains at least 8 characters
 - Must contains at least 1 uppercase character
