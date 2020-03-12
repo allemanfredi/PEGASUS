@@ -91,8 +91,6 @@ class MamController {
     stateToReturn.seed = id
     stateToReturn.channel.side_key = sideKeyToReturn
 
-    console.log(stateToReturn)
-
     return {
       success: true,
       data: stateToReturn
@@ -156,8 +154,6 @@ class MamController {
 
     mamMessage.state.seed = Utils.sha256(_state.seed)
     mamMessage.state.channel.side_key = sideKeyToReturn
-
-    console.log(mamMessage)
 
     return {
       success: true,
@@ -277,7 +273,6 @@ class MamController {
         _mode,
         sidekey,
         e => {
-          console.log(e)
           if (_options.reply) {
             backgroundMessanger.sendToContentScript('mam_onFetch', {
               data: e,

@@ -34,13 +34,12 @@ class StateStorageController extends Store {
     const data = this.loadFromStorage()
     if (data) {
       this.setState(data)
-      this._toLoadFromStorage = false
-    } else this._toLoadFromStorage = true
+    }
 
     //NOTE: in order to keep a global state for the popup (for the future)
     this.state$.subscribe(_state => {
       //backgroundMessanger.changeGlobalState(_state)
-      console.log(_state)
+      //console.log(_state)
     })
 
     this.unlocked = false
@@ -62,11 +61,14 @@ class StateStorageController extends Store {
 
     this.setState({
       ...this.state,
-      accounts: 
-        Utils.aes256encrypt(JSON.stringify(this.state.accounts), this.encryptionkey)
-      ,
-      mamChannels:
-        Utils.aes256encrypt(JSON.stringify(this.state.mamChannels), this.encryptionkey)
+      accounts: Utils.aes256encrypt(
+        JSON.stringify(this.state.accounts),
+        this.encryptionkey
+      ),
+      mamChannels: Utils.aes256encrypt(
+        JSON.stringify(this.state.mamChannels),
+        this.encryptionkey
+      )
     })
 
     this.writeToStorage()
@@ -78,6 +80,12 @@ class StateStorageController extends Store {
     logger.log('(StateStorageController) Protected data succesfully locked')
   }
 
+  init(_encryptionKey) {
+    this.encryptionkey = _encryptionKey
+    this.unlocked = true
+    logger.log('(StateStorageController) Initialized succesfully')
+  }
+
   unlock(_encryptionKey) {
     if (this.unlocked) {
       logger.log('(StateStorageController) Protected data already unlocked')
@@ -87,23 +95,14 @@ class StateStorageController extends Store {
     this.encryptionkey = _encryptionKey
     this.unlocked = true
 
-    if (!this.isInitialized()) return
-
-    if (this._toLoadFromStorage) {
-      this._toLoadFromStorage = false
-      this.loadFromStorage()
-    }
-
     this.setState({
       ...this.state,
-      accounts: JSON.parse(Utils.aes256decrypt(
-        this.state.accounts,
-        this.encryptionkey
-      )),
-      mamChannels: JSON.parse(Utils.aes256decrypt(
-        this.state.mamChannels,
-        this.encryptionkey
-      ))
+      accounts: JSON.parse(
+        Utils.aes256decrypt(this.state.accounts, this.encryptionkey)
+      ),
+      mamChannels: JSON.parse(
+        Utils.aes256decrypt(this.state.mamChannels, this.encryptionkey)
+      )
     })
   }
 

@@ -60,7 +60,7 @@ class WalletController {
   initWallet(_password) {
     this.storePassword(_password)
 
-    this.stateStorageController.unlock(_password)
+    this.stateStorageController.init(_password)
     this.accountDataController.startHandle()
     this.sessionController.startSession()
 

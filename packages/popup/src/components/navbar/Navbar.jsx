@@ -140,9 +140,9 @@ export default class Navbar extends Component {
                 <a
                   className="text-white text-xs cursor-pointer"
                   href={
-                    this.props.network.link +
-                    'address/' +
-                    this.props.account.data.latestAddress
+                    this.props.network.link + 'address/' + this.props.account
+                      ? this.props.account.data.latestAddress
+                      : ''
                   }
                   target="_blank"
                 >

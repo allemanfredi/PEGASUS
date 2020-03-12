@@ -275,6 +275,7 @@ class Home extends Component {
   }
 
   render() {
+    console.log(this.props)
     return (
       <div>
         {this.state.showNavbar ? (
@@ -285,7 +286,7 @@ class Home extends Component {
             showBtnEllipse={this.state.showHome}
             showBtnBack={!this.state.showHome}
             text={
-              this.state.showHome
+              this.state.showHome && this.props.account
                 ? this.props.account.name
                 : this.state.navbarText
             }
@@ -301,10 +302,7 @@ class Home extends Component {
             onShowSettings={this.onShowSettings}
           ></Navbar>
         ) : null}
-        {!(
-          Object.keys(this.props.account).length === 0 &&
-          this.props.account.constructor === Object
-        ) ? (
+        {this.props.account && this.props.account.data ? (
           <React.Fragment>
             {this.state.showMenu ? (
               <Menu
