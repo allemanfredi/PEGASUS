@@ -13,6 +13,7 @@ import SessionsController from './controllers/session-controller'
 import PopupController from './controllers/popup-controller'
 import TransferController from './controllers/transfer-controller'
 import SeedVaultController from './controllers/seed-vault-controller'
+import LoginPasswordController from './controllers/login-password-controller'
 import { APP_STATE } from '@pegasus/utils/states'
 
 const SESSION_TIME = 30000
@@ -52,10 +53,15 @@ class PegasusEngine {
       customizatorController: this.customizatorController
     })
 
+    this.loginPasswordController = new LoginPasswordController({
+      stateStorageController: this.stateStorageController
+    })
+
     this.walletController = new walletController({
       stateStorageController: this.stateStorageController,
       networkController: this.networkController,
-      connectorController: this.connectorController
+      connectorController: this.connectorController,
+      loginPasswordController: this.loginPasswordController
     })
 
     this.accountDataController = new AccountDataController({
@@ -67,7 +73,8 @@ class PegasusEngine {
     this.sessionController = new SessionsController({
       walletController: this.walletController,
       stateStorageController: this.stateStorageController,
-      customizatorController: this.customizatorController
+      customizatorController: this.customizatorController,
+      loginPasswordController: this.loginPasswordController
     })
 
     this.transferController = new TransferController({
@@ -117,24 +124,24 @@ class PegasusEngine {
     return this.walletController.isWalletSetup()
   }
 
-  unlockWallet(psw) {
-    return this.walletController.unlockWallet(psw)
+  unlockWallet(password) {
+    return this.walletController.unlockWallet(password)
   }
 
   restoreWallet({ account, password }) {
     return this.walletController.restoreWallet(account, password)
   }
 
-  unlockSeed(psw) {
-    return this.walletController.unlockSeed(psw)
+  unlockSeed(password) {
+    return this.walletController.unlockSeed(password)
   }
 
-  initWallet(psw) {
-    return this.walletController.initWallet(psw)
+  initWallet(password) {
+    return this.walletController.initWallet(password)
   }
 
-  comparePassword(psw) {
-    return this.walletController.comparePassword(psw)
+  comparePassword(password) {
+    return this.loginPasswordController.comparePassword(password)
   }
 
   setCurrentNetwork(network) {

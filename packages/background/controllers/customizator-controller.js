@@ -113,9 +113,7 @@ class CustomizatorController {
       ]
 
       if (state <= APP_STATE.WALLET_LOCKED) {
-        this.walletController.setState(
-          APP_STATE.WALLET_LOCKED
-        )
+        this.walletController.setState(APP_STATE.WALLET_LOCKED)
       }
 
       extensionizer.browserAction.setBadgeText({

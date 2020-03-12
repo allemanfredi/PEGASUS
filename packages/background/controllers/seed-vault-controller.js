@@ -12,9 +12,8 @@ class SeedVaultController {
   }
 
   async createSeedVault(_password) {
-    const key = this.walletController.getKey()
     const account = this.walletController.getCurrentAccount()
-    const seed = Utils.aes256decrypt(account.seed, key)
+    const seed = account.seed
 
     kdbxweb.CryptoEngine.argon2 = async (
       _password,

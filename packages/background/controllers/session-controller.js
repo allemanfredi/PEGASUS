@@ -6,12 +6,14 @@ class SessionController {
     const {
       walletController,
       customizatorController,
-      stateStorageController
+      stateStorageController,
+      loginPasswordController
     } = options
 
     this.walletController = walletController
     this.stateStorageController = stateStorageController
     this.customizatorController = customizatorController
+    this.loginPasswordController = loginPasswordController
 
     this.session = null
   }
@@ -24,7 +26,7 @@ class SessionController {
   checkSession() {
     const currentState = this.walletController.getState()
 
-    const password = this.walletController.getPassword()
+    const password = this.loginPasswordController.getPassword()
 
     if (!password && !this.walletController.isWalletSetup()) {
       this.walletController.setState(APP_STATE.WALLET_NOT_INITIALIZED)

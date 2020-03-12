@@ -3,22 +3,20 @@ import { APP_STATE, STATE_NAME } from '@pegasus/utils/states'
 import Utils from '@pegasus/utils/utils'
 import { composeAPI } from '@iota/core'
 import logger from '@pegasus/utils/logger'
-import argon2 from 'argon2-browser'
-import crypto from 'crypto'
 
 class WalletController {
   constructor(options) {
     const {
       stateStorageController,
       networkController,
-      connectorController
+      connectorController,
+      loginPasswordController
     } = options
-
-    this.password = null
 
     this.stateStorageController = stateStorageController
     this.networkController = networkController
     this.connectorController = connectorController
+    this.loginPasswordController = loginPasswordController
   }
 
   setSessionController(_sessionController) {
@@ -38,41 +36,8 @@ class WalletController {
     return false
   }
 
-  async storePassword(_password) {
-    const result = await argon2.hash({
-      pass: _password,
-      salt: crypto.randomBytes(128),
-      time: 100,
-      mem: 1048,
-      hashLen: 32,
-      parallelism: 2,
-      type: argon2.ArgonType.Argon2id,
-      distPath: ''
-    })
-
-    this.password = _password
-    this.stateStorageController.set('hpsw', result.encoded, true)
-  }
-
-  getPassword() {
-    return this.password
-  }
-
-  comparePassword(_password) {
-    const encoded = this.stateStorageController.get('hpsw')
-
-    return new Promise(resolve=> {
-      argon2.verify({
-        pass: _password,
-        encoded,
-      })
-      .then(() => resolve(true))
-      .catch(() => resolve(false))
-    })
-  }
-
   async initWallet(_password) {
-    await this.storePassword(_password)
+    await this.loginPasswordController.storePassword(_password)
 
     this.stateStorageController.init(_password)
     this.accountDataController.startHandle()
@@ -82,8 +47,8 @@ class WalletController {
   }
 
   async unlockWallet(_password) {
-    if (await this.comparePassword(_password)) {
-      this.password = _password
+    if (await this.loginPasswordController.comparePassword(_password)) {
+      this.loginPasswordController.setPassword(_password)
 
       this.setState(APP_STATE.WALLET_UNLOCKED)
 
@@ -107,7 +72,7 @@ class WalletController {
   }
 
   lockWallet() {
-    this.password = null
+    this.loginPasswordController.setPassword(null)
     this.setState(APP_STATE.WALLET_LOCKED)
     this.stateStorageController.lock()
     this.sessionController.deleteSession()
@@ -158,12 +123,13 @@ class WalletController {
   }
 
   async unlockSeed(_password) {
-    if (await this.comparePassword(_password)) return this.getCurrentSeed()
+    if (await this.loginPasswordController.comparePassword(_password))
+      return this.getCurrentSeed()
     return false
   }
 
   getKey() {
-    return this.password
+    return this.loginPasswordController.getPassword()
   }
 
   getCurrentSeed() {
