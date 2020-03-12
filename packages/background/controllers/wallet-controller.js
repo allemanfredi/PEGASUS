@@ -70,8 +70,6 @@ class WalletController {
     if (await this.loginPasswordController.comparePassword(_password)) {
       this.loginPasswordController.setPassword(_password)
 
-      this.setState(APP_STATE.WALLET_UNLOCKED)
-
       await this.stateStorageController.unlock(_password)
       this.sessionController.startSession()
       this.accountDataController.startHandle()
@@ -81,6 +79,8 @@ class WalletController {
 
       backgroundMessanger.setSelectedProvider(network.provider)
       backgroundMessanger.setAccount(account)
+
+      this.setState(APP_STATE.WALLET_UNLOCKED)
 
       logger.log(
         `(WalletController) Wallet unlocked with account: ${account.name}`
