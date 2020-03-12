@@ -270,12 +270,13 @@ class AccountDataController {
   enableTransactionsAutoPromotion(_time) {
     this.transactionsAutoPromotionHandler = setInterval(
       () => {
-        if (this.stateStorageController.isReady())
-          this.promoteTransactions()
+        if (this.stateStorageController.isReady()) this.promoteTransactions()
       },
       _time > 3 ? _time : 3
     )
-    logger.log(`(AccountDataController) Enabled transactions auto promotion every ${_time} ms`)
+    logger.log(
+      `(AccountDataController) Enabled transactions auto promotion every ${_time} ms`
+    )
   }
 
   disableTransactionsAutoPromotion() {

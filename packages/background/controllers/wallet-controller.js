@@ -43,7 +43,7 @@ class WalletController {
 
       await this.loginPasswordController.storePassword(_password)
 
-      this.stateStorageController.unlock(_password)
+      await this.stateStorageController.unlock(_password)
 
       const isCreated = await this.addAccount(_account, true)
       if (!isCreated) return false
@@ -51,9 +51,8 @@ class WalletController {
       this.setState(APP_STATE.WALLET_INITIALIZED)
 
       //in order to write on storage the first time
-      this.stateStorageController.lock()
-      this.stateStorageController.unlock(_password)
-
+      await this.stateStorageController.lock()
+      await this.stateStorageController.unlock(_password)
       this.accountDataController.startHandle()
       this.sessionController.startSession()
 
@@ -73,7 +72,7 @@ class WalletController {
 
       this.setState(APP_STATE.WALLET_UNLOCKED)
 
-      this.stateStorageController.unlock(_password)
+      await this.stateStorageController.unlock(_password)
       this.sessionController.startSession()
       this.accountDataController.startHandle()
 
@@ -92,10 +91,10 @@ class WalletController {
     return false
   }
 
-  lockWallet() {
+  async lockWallet() {
     this.loginPasswordController.setPassword(null)
     this.setState(APP_STATE.WALLET_LOCKED)
-    this.stateStorageController.lock()
+    await this.stateStorageController.lock()
     this.sessionController.deleteSession()
     this.accountDataController.stopHandle()
 

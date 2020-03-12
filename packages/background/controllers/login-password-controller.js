@@ -13,7 +13,7 @@ class LoginPasswordController {
   async storePassword(_password) {
     const result = await argon2.hash({
       pass: _password,
-      salt: crypto.randomBytes(128),
+      salt: crypto.randomBytes(16),
       time: 9,
       mem: 16384,
       hashLen: 32,
