@@ -67,7 +67,8 @@ class PegasusEngine {
     this.accountDataController = new AccountDataController({
       networkController: this.networkController,
       walletController: this.walletController,
-      notificationsController: this.notificationsController
+      notificationsController: this.notificationsController,
+      stateStorageController: this.stateStorageController
     })
 
     this.sessionController = new SessionsController({
@@ -118,7 +119,7 @@ class PegasusEngine {
 
     const popupSettings = this.getPopupSettings()
     if (popupSettings.autoPromotion.enabled)
-      this.enableTransactionsAutoPromotion(
+      this.accountDataController.enableTransactionsAutoPromotion(
         parseInt(popupSettings.autoPromotion.time * 1000 * 60)
       )
   }
@@ -354,17 +355,11 @@ class PegasusEngine {
   }
 
   enableTransactionsAutoPromotion(time) {
-    this.transactionsAutoPromotionHandler = setInterval(
-      () => {
-        if (this.stateStorageController.isReady())
-          this.accountDataController.promoteTransactions()
-      },
-      time > 3 ? time : 3
-    )
+    return this.accountDataController.enableTransactionsAutoPromotion(time)
   }
 
   disableTransactionsAutoPromotion() {
-    clearInterval(this.transactionsAutoPromotionHandler)
+    return this.accountDataController.disableTransactionsAutoPromotion()
   }
 }
 

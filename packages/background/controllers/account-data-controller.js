@@ -11,12 +11,17 @@ class AccountDataController {
     const {
       networkController,
       walletController,
-      notificationsController
+      notificationsController,
+      stateStorageController
     } = options
 
     this.networkController = networkController
     this.walletController = walletController
     this.notificationsController = notificationsController
+    this.stateStorageController = stateStorageController
+
+    this.accountDataHandler = null
+    this.transactionsAutoPromotionHandler = null
   }
 
   stopHandle() {
@@ -260,6 +265,22 @@ class AccountDataController {
         logger.log(`(AccountDataController) Transaction not promotable ${tail}`)
       }
     }
+  }
+
+  enableTransactionsAutoPromotion(_time) {
+    this.transactionsAutoPromotionHandler = setInterval(
+      () => {
+        if (this.stateStorageController.isReady())
+          this.promoteTransactions()
+      },
+      _time > 3 ? _time : 3
+    )
+    logger.log(`(AccountDataController) Enabled transactions auto promotion every ${_time} ms`)
+  }
+
+  disableTransactionsAutoPromotion() {
+    clearInterval(this.transactionsAutoPromotionHandler)
+    logger.log(`(AccountDataController) Disabled transactions auto promotion`)
   }
 
   getMessage(_bundle) {
