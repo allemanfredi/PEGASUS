@@ -40,7 +40,8 @@ class Restore extends Component {
     this.setState({ isLoading: true })
 
     const account = {
-      name: this.state.accountName
+      name: this.state.accountName,
+      seed: this.state.seed.split()
     }
 
     const isRestored = await popupMessanger.restoreWallet(

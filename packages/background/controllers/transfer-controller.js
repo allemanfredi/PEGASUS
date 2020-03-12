@@ -25,9 +25,8 @@ class TransferController {
       const network = this.networkController.getCurrentNetwork()
       const iota = composeAPI({ provider: network.provider })
 
-      const key = this.walletController.getKey()
       const account = this.walletController.getCurrentAccount()
-      const seed = Utils.aes256decrypt(account.seed, key)
+      const seed = account.seed
 
       const depth = 3
       const minWeightMagnitude = network.difficulty

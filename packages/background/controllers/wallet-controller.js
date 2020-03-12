@@ -3,6 +3,7 @@ import { APP_STATE, STATE_NAME } from '@pegasus/utils/states'
 import Utils from '@pegasus/utils/utils'
 import { composeAPI } from '@iota/core'
 import logger from '@pegasus/utils/logger'
+import options from '@pegasus/utils/options'
 
 class WalletController {
   constructor(options) {
@@ -85,14 +86,14 @@ class WalletController {
     return true
   }
 
-  async restoreWallet(_account, _network, _password) {
-    if (!this.unlockWallet(_password)) throw new Error('Invalid Password')
+  async restoreWallet(_account, _password) {
+    if (!await this.unlockWallet(_password)) throw new Error('Invalid Password')
 
     try {
       this.stateStorageController.reset()
-      this.networkController.setCurrentNetwork(_network)
+      this.networkController.setCurrentNetwork(options.networks[0])
 
-      const isAdded = await this.addAccount(_account)
+      const isAdded = await this.addAccount(_account, true)
       if (!isAdded) return false
 
       logger.log(
@@ -126,10 +127,6 @@ class WalletController {
     if (await this.loginPasswordController.comparePassword(_password))
       return this.getCurrentSeed()
     return false
-  }
-
-  getKey() {
-    return this.loginPasswordController.getPassword()
   }
 
   getCurrentSeed() {
