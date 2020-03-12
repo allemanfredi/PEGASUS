@@ -260,12 +260,13 @@ class MamController {
           )
         }
 
-        if (!sidekey)
+        if (!sidekey) {
           resolve({
             success: false,
             data: `Sidekey Not Found for ${_root}`
           })
-        return
+          return
+        }
       }
 
       const packets = await Mam.fetch(

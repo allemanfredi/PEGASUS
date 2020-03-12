@@ -90,7 +90,6 @@ class PegasusInpageClient extends EventEmitter {
           break
         }
         case 'mam_onFetch': {
-          const { data, uuid } = e
           if (this._mamFetches[uuid]) this._mamFetches[uuid](data)
           break
         }
