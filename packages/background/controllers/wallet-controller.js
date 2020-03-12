@@ -74,13 +74,13 @@ class WalletController {
       this.sessionController.startSession()
       this.accountDataController.startHandle()
 
+      this.setState(APP_STATE.WALLET_UNLOCKED)
+
       const account = this.getCurrentAccount()
       const network = this.networkController.getCurrentNetwork()
 
       backgroundMessanger.setSelectedProvider(network.provider)
       backgroundMessanger.setAccount(account)
-
-      this.setState(APP_STATE.WALLET_UNLOCKED)
 
       logger.log(
         `(WalletController) Wallet unlocked with account: ${account.name}`
@@ -241,6 +241,10 @@ class WalletController {
   }
 
   getCurrentAccount() {
+
+    if (this.getState() < APP_STATE.WALLET_UNLOCKED)
+      return
+
     const accounts = this.stateStorageController.get('accounts')
     if (accounts.length === 0) return null
 

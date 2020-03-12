@@ -268,6 +268,8 @@ class MamController {
         return
       }
 
+      console.log(_root,_mode, _sidekey)
+
       const packets = await Mam.fetch(
         _root,
         _mode,
