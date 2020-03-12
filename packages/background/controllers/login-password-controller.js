@@ -14,8 +14,8 @@ class LoginPasswordController {
     const result = await argon2.hash({
       pass: _password,
       salt: crypto.randomBytes(128),
-      time: 100,
-      mem: 1048,
+      time: 9,
+      mem: 16384,
       hashLen: 32,
       parallelism: 2,
       type: argon2.ArgonType.Argon2id,
