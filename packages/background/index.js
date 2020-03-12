@@ -94,7 +94,7 @@ const backgroundScript = {
       'tabRequest',
       async ({ resolve, data: { action, data, uuid, website } }) => {
         const iota = composeAPI()
-        if (action !== 'prepareTransfers' && iota[action]) {
+        if (iota[action]) {
           this.engine.pushRequest(action, {
             data,
             uuid,
@@ -135,15 +135,6 @@ const backgroundScript = {
           }
           case 'getCurrentProvider': {
             this.engine.pushRequest('getCurrentProvider', {
-              uuid,
-              resolve,
-              website
-            })
-            break
-          }
-          case 'prepareTransfers': {
-            this.engine.pushRequest('prepareTransfers', {
-              data,
               uuid,
               resolve,
               website
