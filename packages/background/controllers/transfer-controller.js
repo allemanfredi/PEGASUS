@@ -2,6 +2,7 @@ import { backgroundMessanger } from '@pegasus/utils/messangers'
 import Utils from '@pegasus/utils/utils'
 import { composeAPI } from '@iota/core'
 import { asciiToTrytes } from '@iota/converter'
+import logger from '@pegasus/utils/logger'
 
 class TransferController {
   constructor(options) {
@@ -49,7 +50,7 @@ class TransferController {
           .then(bundle => {
             backgroundMessanger.setTransfersConfirmationLoading(false)
 
-            logger.error(
+            logger.log(
               `(TransferController) Transfer success : ${bundle[0].bundle}`
             )
 

@@ -85,6 +85,11 @@ class Send extends Component {
     if (res.success) {
       this.props.onHideTop(false)
       this.props.onBack()
+      this.props.setNotification({
+        type: 'success',
+        text: 'Transfer was successful',
+        position: 'under-bar'
+      })
     }
   }
 
