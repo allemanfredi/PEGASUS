@@ -3,24 +3,24 @@ export default {
     this.duplex = duplex
   },
 
-  initWallet(psw) {
-    return this.duplex.send('initWallet', psw)
+  initWallet(password, account) {
+    return this.duplex.send('initWallet', { password, account })
   },
 
-  comparePassword(psw) {
-    return this.duplex.send('comparePassword', psw)
+  comparePassword(password) {
+    return this.duplex.send('comparePassword', password)
   },
 
-  unlockWallet(psw) {
-    return this.duplex.send('unlockWallet', psw)
+  unlockWallet(password) {
+    return this.duplex.send('unlockWallet', password)
   },
 
   restoreWallet(account, password) {
     return this.duplex.send('restoreWallet', { account, password })
   },
 
-  unlockSeed(psw) {
-    return this.duplex.send('unlockSeed', psw)
+  unlockSeed(password) {
+    return this.duplex.send('unlockSeed', password)
   },
 
   setCurrentNetwork(network) {

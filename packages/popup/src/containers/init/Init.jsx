@@ -204,7 +204,6 @@ class Init extends Component {
 
   async createWallet() {
     try {
-      await popupMessanger.initWallet(this.state.psw)
       let seed = this.state.seed
       if (!Array.isArray(seed)) seed = seed.split()
 
@@ -214,7 +213,7 @@ class Init extends Component {
         seed
       }
 
-      const isAdded = await popupMessanger.addAccount(account, true)
+      const isAdded = await popupMessanger.initWallet(this.state.psw, account)
       if (!isAdded) return false
 
       return true

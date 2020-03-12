@@ -37,14 +37,34 @@ class WalletController {
     return false
   }
 
-  async initWallet(_password) {
-    await this.loginPasswordController.storePassword(_password)
+  async initWallet(_password, _account) {
+    try {
+      this.stateStorageController.init(_password)
 
-    this.stateStorageController.init(_password)
-    this.accountDataController.startHandle()
-    this.sessionController.startSession()
+      await this.loginPasswordController.storePassword(_password)
 
-    logger.log(`(WalletController) Wallet initialized`)
+      this.stateStorageController.unlock(_password)
+
+      const isCreated = await this.addAccount(_account, true)
+      if (!isCreated) return false
+
+      this.setState(APP_STATE.WALLET_INITIALIZED)
+
+      //in order to write on storage the first time
+      this.stateStorageController.lock()
+      this.stateStorageController.unlock(_password)
+
+      this.accountDataController.startHandle()
+      this.sessionController.startSession()
+
+      logger.log(`(WalletController) Wallet initialized`)
+      return true
+    } catch (err) {
+      logger.error(
+        `(WalletController) Error during wallet initialization ${err.message}`
+      )
+      return false
+    }
   }
 
   async unlockWallet(_password) {
@@ -87,7 +107,8 @@ class WalletController {
   }
 
   async restoreWallet(_account, _password) {
-    if (!await this.unlockWallet(_password)) throw new Error('Invalid Password')
+    if (!(await this.unlockWallet(_password)))
+      throw new Error('Invalid Password')
 
     try {
       this.stateStorageController.reset()

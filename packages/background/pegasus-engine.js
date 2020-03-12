@@ -100,9 +100,13 @@ class PegasusEngine {
     this.walletController.setSessionController(this.sessionController)
     /* E N D   C O N T R O L L E R S */
 
+    const state = this.walletController.getState()
     if (!this.walletController.isWalletSetup()) {
       this.walletController.setState(APP_STATE.WALLET_NOT_INITIALIZED)
     }
+
+    if (state === APP_STATE.WALLET_INITIALIZED)
+      this.walletController.setState(APP_STATE.WALLET_LOCKED)
 
     const currentNetwork = this.networkController.getCurrentNetwork()
     if (!currentNetwork) {
@@ -136,8 +140,8 @@ class PegasusEngine {
     return this.walletController.unlockSeed(password)
   }
 
-  initWallet(password) {
-    return this.walletController.initWallet(password)
+  initWallet({ password, account }) {
+    return this.walletController.initWallet(password, account)
   }
 
   comparePassword(password) {
