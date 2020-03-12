@@ -3,6 +3,8 @@ import { APP_STATE, STATE_NAME } from '@pegasus/utils/states'
 import Utils from '@pegasus/utils/utils'
 import { composeAPI } from '@iota/core'
 import logger from '@pegasus/utils/logger'
+import argon2 from 'argon2-browser'
+import crypto from 'crypto'
 
 class WalletController {
   constructor(options) {
@@ -36,29 +38,41 @@ class WalletController {
     return false
   }
 
-  storePassword(_password) {
-    const hash = Utils.sha256(_password)
+  async storePassword(_password) {
+    const result = await argon2.hash({
+      pass: _password,
+      salt: crypto.randomBytes(128),
+      time: 100,
+      mem: 1048,
+      hashLen: 32,
+      parallelism: 2,
+      type: argon2.ArgonType.Argon2id,
+      distPath: ''
+    })
+
     this.password = _password
-    this.stateStorageController.set('hpsw', hash, true)
+    this.stateStorageController.set('hpsw', result.encoded, true)
   }
 
   getPassword() {
     return this.password
   }
 
-  setPassword(_password) {
-    this.password = _password
-  }
-
   comparePassword(_password) {
-    let pswToCompare
-    if ((pswToCompare = this.stateStorageController.get('hpsw')) === null)
-      return false
-    if (pswToCompare === Utils.sha256(_password)) return true
+    const encoded = this.stateStorageController.get('hpsw')
+
+    return new Promise(resolve=> {
+      argon2.verify({
+        pass: _password,
+        encoded,
+      })
+      .then(() => resolve(true))
+      .catch(() => resolve(false))
+    })
   }
 
-  initWallet(_password) {
-    this.storePassword(_password)
+  async initWallet(_password) {
+    await this.storePassword(_password)
 
     this.stateStorageController.init(_password)
     this.accountDataController.startHandle()
@@ -67,8 +81,8 @@ class WalletController {
     logger.log(`(WalletController) Wallet initialized`)
   }
 
-  unlockWallet(_password) {
-    if (this.comparePassword(_password)) {
+  async unlockWallet(_password) {
+    if (await this.comparePassword(_password)) {
       this.password = _password
 
       this.setState(APP_STATE.WALLET_UNLOCKED)
@@ -143,8 +157,8 @@ class WalletController {
     return parseInt(this.stateStorageController.get('state'))
   }
 
-  unlockSeed(_password) {
-    if (this.comparePassword(_password)) return this.getCurrentSeed()
+  async unlockSeed(_password) {
+    if (await this.comparePassword(_password)) return this.getCurrentSeed()
     return false
   }
 
