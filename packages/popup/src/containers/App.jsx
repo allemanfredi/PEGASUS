@@ -39,8 +39,6 @@ class App extends Component {
     const networks = await popupMessanger.getAllNetworks()
     const account = await popupMessanger.getCurrentAccount()
 
-    console.log(account)
-
     this.setState(() => {
       return account
         ? {

@@ -110,7 +110,7 @@ class WalletController {
       throw new Error('Invalid Password')
 
     try {
-      this.stateStorageController.reset()
+      await this.stateStorageController.reset()
       this.networkController.setCurrentNetwork(options.networks[0])
 
       const isAdded = await this.addAccount(_account, true)
@@ -241,9 +241,7 @@ class WalletController {
   }
 
   getCurrentAccount() {
-
-    if (this.getState() < APP_STATE.WALLET_UNLOCKED)
-      return
+    if (this.getState() < APP_STATE.WALLET_UNLOCKED) return
 
     const accounts = this.stateStorageController.get('accounts')
     if (accounts.length === 0) return null

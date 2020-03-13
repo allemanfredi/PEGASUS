@@ -1,16 +1,18 @@
 // class used to encrypt the content of wallet data in order to make more difficult the decryption of the seed since is encrypted togheter with other data (ex name, address ecc)
 // options, state, password hash and session(timestamp for checking the last login) are not encrypted
-import Utils from '@pegasus/utils/utils'
 import configs from '@pegasus/utils/options'
 import { Store } from 'rxjs-observable-store'
 import logger from '@pegasus/utils/logger'
 import { encrypt, decrypt } from '@pegasus/utils/storage-encryption'
+import ExtensionStore from '@pegasus/utils/extension-store'
+import { APP_STATE } from '@pegasus/utils/states'
 
 //NOTE: init state
 class PegasusGlobalState {
   constructor() {
     this.hpsw = null
-    this.configs = configs
+    this.selectedNetwork = configs.networks[0]
+    this.networks = configs.networks
     this.popupSettings = {
       autoPromotion: {
         emabled: false,
@@ -33,11 +35,6 @@ class StateStorageController extends Store {
   constructor() {
     super(new PegasusGlobalState())
 
-    const data = this.loadFromStorage()
-    if (data) {
-      this.setState(data)
-    }
-
     //NOTE: in order to keep a global state for the popup (for the future)
     this.state$.subscribe(_state => {
       //backgroundMessanger.changeGlobalState(_state)
@@ -45,6 +42,16 @@ class StateStorageController extends Store {
     })
 
     this.unlocked = false
+    this.storage = new ExtensionStore()
+
+    this._init()
+  }
+
+  async _init() {
+    const data = await this._loadFromStorage()
+    if (data) {
+      this.setState(data)
+    }
   }
 
   isReady() {
@@ -73,7 +80,7 @@ class StateStorageController extends Store {
       data: encryptedData
     })
 
-    this.writeToStorage()
+    await this._writeToStorage()
 
     this.unlocked = false
     this.encryptionkey = null
@@ -121,7 +128,7 @@ class StateStorageController extends Store {
     this.setState(state)
   }
 
-  reset() {
+  async reset() {
     //keep the psw
     this.setState({
       ...this.state,
@@ -144,38 +151,35 @@ class StateStorageController extends Store {
       }
     })
 
-    this.writeToStorage()
+    await this._writeToStorage()
   }
 
-  loadFromStorage() {
-    const data = localStorage.getItem('PEGASUS_DATA')
-    const hpsw = localStorage.getItem('PEGASUS_HPSW')
-    const configs = localStorage.getItem('PEGASUS_CONFIGS')
-    const popupSettings = localStorage.getItem('PEGASUS_POPUP_SETTINGS')
-    const state = localStorage.getItem('PEGASUS_STATE')
+  async _loadFromStorage() {
+    const storedData = await this.storage.get()
+    if (!storedData) return null
 
     const savedState = {
-      data, //still encrypted
-      hpsw: JSON.parse(hpsw),
-      configs: JSON.parse(configs),
-      popupSettings: JSON.parse(popupSettings),
-      state: parseInt(JSON.parse(state))
+      data: storedData['PEGASUS_DATA'], //still encrypted
+      hpsw: storedData['PEGASUS_HPSW'],
+      popupSettings: storedData['PEGASUS_POPUP_SETTINGS'],
+      selectedNetwork: storedData['PEGASUS_SELECTED_NETWORK'],
+      networks: storedData['PEGASUS_NETWORKS'],
+      state: APP_STATE.WALLET_LOCKED //in order to start from login
     }
 
     logger.log(`(StateStorageController) Loaded from storage`)
 
-    return data && hpsw && configs && popupSettings && state ? savedState : null
+    return savedState
   }
 
-  writeToStorage() {
-    localStorage.setItem('PEGASUS_DATA', this.state.data)
-    localStorage.setItem('PEGASUS_HPSW', JSON.stringify(this.state.hpsw))
-    localStorage.setItem('PEGASUS_CONFIGS', JSON.stringify(this.state.configs))
-    localStorage.setItem(
-      'PEGASUS_POPUP_SETTINGS',
-      JSON.stringify(this.state.popupSettings)
-    )
-    localStorage.setItem('PEGASUS_STATE', JSON.stringify(this.state.state))
+  async _writeToStorage() {
+    await this.storage.set({ PEGASUS_DATA: this.state.data })
+    await this.storage.set({ PEGASUS_HPSW: this.state.hpsw })
+    await this.storage.set({
+      PEGASUS_SELECTED_NETWORK: this.state.selectedNetwork
+    })
+    await this.storage.set({ PEGASUS_NETWORKS: this.state.networks })
+    await this.storage.set({ PEGASUS_POPUP_SETTINGS: this.state.popupSettings })
 
     logger.log(`(StateStorageController) Written to storage`)
   }
