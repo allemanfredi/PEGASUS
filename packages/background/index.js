@@ -5,6 +5,8 @@ import { composeAPI } from '@iota/core'
 
 const duplex = new Duplex.Host()
 
+const forbiddenRequests = ['getAccountData', 'getNewAddress', 'getInputs']
+
 const backgroundScript = {
   engine: Utils.requestHandler(new PegasusEngine()),
 
@@ -94,7 +96,7 @@ const backgroundScript = {
       'tabRequest',
       async ({ resolve, data: { action, data, uuid, website } }) => {
         const iota = composeAPI()
-        if (iota[action]) {
+        if (iota[action] && !forbiddenRequests.includes(action)) {
           this.engine.pushRequest(action, {
             data,
             uuid,
@@ -210,6 +212,14 @@ const backgroundScript = {
               resolve,
               data,
               website
+            })
+            break
+          }
+          default: {
+            resolve({
+              success: false,
+              data: 'Request not available',
+              uuid
             })
             break
           }
