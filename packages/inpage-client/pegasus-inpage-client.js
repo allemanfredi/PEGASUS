@@ -36,17 +36,10 @@ class PegasusInpageClient extends EventEmitter {
 
   send(action, data = {}) {
     const uuid = randomUUID()
-    const origin = this.getOrigin()
     const favicon = this.getFavicon()
-    const hostname = this.getHostName()
-    const website = {
-      favicon,
-      origin,
-      hostname
-    }
-
+    
     this.inpageStream.write({
-      website,
+      favicon,
       action,
       data,
       uuid
@@ -168,14 +161,6 @@ class PegasusInpageClient extends EventEmitter {
     delete iota.core.getAccountData
     delete iota.core.getInputs
     delete iota.core.getNewAddress
-  }
-
-  getOrigin() {
-    return location.origin
-  }
-
-  getHostName() {
-    return window.location.hostname
   }
 
   getFavicon() {

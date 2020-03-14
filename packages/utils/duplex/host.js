@@ -32,20 +32,19 @@ class DuplexHost extends EventEmitter {
     if (!this.channels.has(name)) this.emit(`${name}:connect`)
 
     const channelList = this.channels.get(name) || new Map()
-    const hostname = new URL(url).hostname
 
     this.channels.set(
       name,
       channelList.set(uuid, {
         channel,
-        url
+        url: new URL(url)
       })
     )
 
     channel.onMessage.addListener(message =>
       this.handleMessage(name, {
         ...message,
-        hostname
+        url: new URL(url)
       })
     )
 
@@ -64,14 +63,14 @@ class DuplexHost extends EventEmitter {
   }
 
   handleMessage(source, message) {
-    const { noAck = false, hostname, messageID, action, data } = message
+    const { noAck = false, url, messageID, action, data } = message
 
     if (action === 'messageReply') return this.handleReply(data)
 
     if (source === 'tab' && !['tabRequest'].includes(action))
       return console.log(`Droping unauthorized tab request: ${action}`, data)
 
-    if (noAck) return this.emit(action, { hostname, data })
+    if (noAck) return this.emit(action, { url, data })
 
     this.incoming.set(messageID, res =>
       this.send(
@@ -101,7 +100,7 @@ class DuplexHost extends EventEmitter {
         this.incoming.delete(messageID)
       },
       data,
-      hostname
+      url
     })
   }
 

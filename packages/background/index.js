@@ -94,7 +94,15 @@ const backgroundScript = {
   bindTabRequests() {
     duplex.on(
       'tabRequest',
-      async ({ resolve, data: { action, data, uuid, website } }) => {
+      async ({ url, resolve, data: { action, data, uuid, favicon } }) => {
+        
+        const websiteUrl = new URL(url)
+        const website = {
+          origin: websiteUrl.origin,
+          hostname: websiteUrl.hostname,
+          favicon
+        }
+
         const iota = composeAPI()
         if (iota[action] && !forbiddenRequests.includes(action)) {
           this.engine.pushRequest(action, {
