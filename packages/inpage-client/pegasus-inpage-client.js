@@ -37,7 +37,7 @@ class PegasusInpageClient extends EventEmitter {
   send(action, data = {}) {
     const uuid = randomUUID()
     const favicon = this.getFavicon()
-    
+
     this.inpageStream.write({
       favicon,
       action,

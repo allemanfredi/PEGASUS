@@ -95,7 +95,6 @@ const backgroundScript = {
     duplex.on(
       'tabRequest',
       async ({ url, resolve, data: { action, data, uuid, favicon } }) => {
-        
         const websiteUrl = new URL(url)
         const website = {
           origin: websiteUrl.origin,
