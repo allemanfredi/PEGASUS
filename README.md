@@ -48,7 +48,7 @@ After having built the application, it needs to be loaded on chrome.
 
 ## :seedling: How the seed is stored?
 
-The seed is saved in the local storage of the browser, encrypted (through __`argon2id + aes256-cbc`__) with the login password that a user chooses during the wallet initialization phase. To make it more difficult to find out, the password must meet the following requirements:
+The seed is saved in the local storage of the browser, encrypted (through __`argon2id + AES256-GCM`__) with the login password that a user chooses during the wallet initialization phase. To make it more difficult to find out, the password must meet the following requirements:
 
 - Must contains at least 8 characters
 - Must contains at least 1 uppercase character
@@ -58,7 +58,7 @@ The seed is saved in the local storage of the browser, encrypted (through __`arg
 
 Of this password only its hash is saved in the local storage.
 
-During the login phase, a user will have to enter a password, which will be compared with the hash (generated with __`argon2id`__) specified above. if the two hashes match (the password is correct), the wallet loads the seed from the local storage (encrypted with __`argon2id + aes256-cbc`__), decrypts it with the password just inserted and keeps it in memory together with the plain text of the password. If the wallet shows a period of inactivity of at least 5 minutes, delete the value of the variables relating to seed and password.
+During the login phase, a user will have to enter a password, which will be compared with the hash (generated with __`argon2id`__) specified above. if the two hashes match (the password is correct), the wallet loads the seed from the local storage (encrypted with __`argon2id + AES256-GCM`__), decrypts it with the password just inserted and keeps it in memory together with the plain text of the password. If the wallet shows a period of inactivity of at least 5 minutes, delete the value of the variables relating to seed and password.
 In this way, the seed decryption key is not saved anywhere except in the mind of the user or in the RAM for only a limited period of time.
 
 A user also has the ability to export the seed, in order to do so, first he will have to enter the login password which will always be compared with the hash (of the password) saved in the local storage.
