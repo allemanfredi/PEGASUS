@@ -55,10 +55,10 @@ class CustomizatorController {
 
   async pushRequest(_request) {
     logger.log(
-      `(CustomizatorController) New request ${_request.uuid} - ${_request.method} from tab: ${_request.website.origin}`
+      `(CustomizatorController) New request ${_request.uuid} - ${_request.method} from ${_request.website.origin}`
     )
 
-    const { method, uuid, resolve, data, website } = _request
+    const { method, uuid, args, resolve, website } = _request
 
     let connection = this.connectorController.getConnection(website.origin)
     let isPopupAlreadyOpened = false
@@ -106,7 +106,7 @@ class CustomizatorController {
           method,
           uuid,
           resolve,
-          data,
+          data: args,
           needUserInteraction: requestsWithUserInteraction.includes(method)
         },
         ...this.requests
@@ -131,7 +131,7 @@ class CustomizatorController {
             method,
             uuid,
             resolve,
-            data,
+            data: args,
             needUserInteraction: true
           },
           ...this.requests
@@ -144,8 +144,8 @@ class CustomizatorController {
 
         backgroundMessanger.setRequests(this.requests)
       } else {
-        const res = await this.execute({ method, uuid, resolve, data })
-        this._removeRequest({ method, uuid, resolve, data })
+        const res = await this.execute({ method, uuid, resolve, data: args })
+        this._removeRequest({ method, uuid, resolve, data: args })
 
         resolve({
           data: res.success ? res.data : res.error,

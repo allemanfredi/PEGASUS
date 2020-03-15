@@ -5602,7 +5602,7 @@ encoding@^0.1.11:
   dependencies:
     iconv-lite "~0.4.13"
 
-end-of-stream@^1.0.0, end-of-stream@^1.1.0:
+end-of-stream@^1.0.0, end-of-stream@^1.1.0, end-of-stream@^1.4.0:
   version "1.4.4"
   resolved "https://registry.yarnpkg.com/end-of-stream/-/end-of-stream-1.4.4.tgz#5ae64a5f45057baf3626ec14da0ca5e4b2431eb0"
   integrity sha512-+uw1inIHVPQoaVuHzRyXd21icM+cnt4CzD5rW+NC1wjOUSTOs+Te7FOv7AhN7vS9x/oIyhLP5PR1H+phQAHu5Q==
@@ -6172,6 +6172,14 @@ extend@~3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/extend/-/extend-3.0.2.tgz#f8b1136b4071fbd8eb140aff858b1019ec2915fa"
   integrity sha512-fjquC59cD7CyW6urNXK0FBufkZcoiGG80wTuPujX590cB5Ttln20E2UB4S/WARVqhXffZl2LNgS+gQdPIIim/g==
+
+extension-port-stream@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/extension-port-stream/-/extension-port-stream-1.0.0.tgz#5da21d4627dfef6013ae101cb3ff8eacaf18b279"
+  integrity sha512-FsFr64yr6ituPdaGP6Io5recGFWVjJoDYt7asz2AvPkYqGN9c923nmEtyHH+413066bjGcQZaF8w5wn9HbNXiQ==
+  dependencies:
+    readable-stream "^2.3.6"
+    util "^0.11.0"
 
 extensionizer@^1.0.1:
   version "1.0.1"
@@ -9711,6 +9719,15 @@ oauth-sign@~0.9.0:
   resolved "https://registry.yarnpkg.com/oauth-sign/-/oauth-sign-0.9.0.tgz#47a7b016baa68b5fa0ecf3dee08a85c679ac6455"
   integrity sha512-fexhUFFPTGV8ybAtSIGbV6gOkSv8UtRbDBnAyLQw4QPKkgNlsH2ByPGtMUqdWkos6YCRmAqViwgZrJc/mRDzZQ==
 
+obj-multiplex@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/obj-multiplex/-/obj-multiplex-1.0.0.tgz#2f2ae6bfd4ae11befe742ea9ea5b36636eabffc1"
+  integrity sha1-Lyrmv9SuEb7+dC6p6ls2Y26r/8E=
+  dependencies:
+    end-of-stream "^1.4.0"
+    once "^1.4.0"
+    readable-stream "^2.3.3"
+
 object-assign@4.1.1, object-assign@^4.0.1, object-assign@^4.1.0, object-assign@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
@@ -11607,6 +11624,15 @@ readable-stream@^2.1.4:
     safe-buffer "~5.1.1"
     string_decoder "~1.1.1"
     util-deprecate "~1.0.1"
+
+readable-stream@^3.6.0:
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-3.6.0.tgz#337bbda3adc0706bd3e024426a286d4b4b2c9198"
+  integrity sha512-BViHy7LKeTz4oNnkcLJ+lVSL6vpiFeX6/d3oSH8zCW7UxP2onchk+vTGB143xuFjHS3deTgkKoXXymXqymiIdA==
+  dependencies:
+    inherits "^2.0.3"
+    string_decoder "^1.1.1"
+    util-deprecate "^1.0.1"
 
 readdir-scoped-modules@^1.0.0:
   version "1.1.0"

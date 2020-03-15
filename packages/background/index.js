@@ -1,4 +1,4 @@
-import Duplex from '@pegasus/utils/duplex'
+/*import Duplex from '@pegasus/utils/duplex'
 import PegasusEngine from './pegasus-engine'
 import Utils from '@pegasus/utils/utils'
 import { composeAPI } from '@iota/core'
@@ -114,26 +114,6 @@ const backgroundScript = {
         }
 
         switch (action) {
-          case 'init': {
-            const currentNetwork = this.engine.getCurrentNetwork()
-            const selectedAccount = this.engine.estabilishConnection(website)
-
-            const response = {
-              selectedProvider: currentNetwork.provider,
-              selectedAccount
-            }
-
-            resolve({
-              success: true,
-              data: response,
-              uuid
-            })
-            break
-          }
-          case 'connect': {
-            this.engine.connect(uuid, resolve, website)
-            break
-          }
           case 'getCurrentAccount': {
             this.engine.pushRequest('getCurrentAccount', {
               uuid,
@@ -237,3 +217,42 @@ const backgroundScript = {
 }
 
 backgroundScript.run()
+*/
+
+import extension from 'extensionizer'
+import PortStream from 'extension-port-stream'
+import PegasusEngine from './pegasus-engine'
+import ObjectMultiplex from 'obj-multiplex'
+import logger from '@pegasus/utils/logger'
+import pump from 'pump'
+
+const engine = new PegasusEngine()
+
+extension.runtime.onConnect.addListener(port => handleConnection(port))
+
+const handleConnection = port => {
+  if (port.sender && port.sender.tab && port.sender.url) {
+    
+    port.onMessage.addListener((msg) => {
+      if (msg.data && msg.data.method === 'connect') {
+        //this.engine.connect(uuid, resolve, website)
+      }
+    })
+
+    const portStream = new PortStream(port)
+    const mux = new ObjectMultiplex()
+    pump(
+      portStream,
+      mux,
+      portStream,
+      (err) => {
+        if (err) {
+          logger.error(err)
+        }
+      }
+    )
+        
+    // messages between inpage and background
+    engine.setupInpageClientConnection(mux.createStream('inpageClient'), port.sender)
+  }
+}

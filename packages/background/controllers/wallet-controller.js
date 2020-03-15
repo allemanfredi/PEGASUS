@@ -79,8 +79,8 @@ class WalletController {
       const account = this.getCurrentAccount()
       const network = this.networkController.getCurrentNetwork()
 
-      backgroundMessanger.setSelectedProvider(network.provider)
-      backgroundMessanger.setAccount(account)
+      //backgroundMessanger.setSelectedProvider(network.provider)
+      //backgroundMessanger.setAccount(account)
 
       logger.log(
         `(WalletController) Wallet unlocked with account: ${account.name}`
@@ -98,8 +98,8 @@ class WalletController {
     this.sessionController.deleteSession()
     this.accountDataController.stopHandle()
 
-    backgroundMessanger.setAccount(null)
-    backgroundMessanger.setSelectedAccount(null)
+    //backgroundMessanger.setAccount(null)
+    //backgroundMessanger.setSelectedAccount(null)
 
     logger.log(`(WalletController) Wallet succesfully locked`)
     return true
@@ -136,7 +136,7 @@ class WalletController {
       `(WalletController) State updated: ${STATE_NAME[_state.toString()]}`
     )
     this.stateStorageController.set('state', _state)
-    backgroundMessanger.setAppState(_state)
+    //backgroundMessanger.setAppState(_state)
   }
 
   getState() {
@@ -227,7 +227,7 @@ class WalletController {
       accounts.push(accountToAdd)
       this.stateStorageController.set('accounts', accounts)
 
-      backgroundMessanger.setAccount(accountToAdd)
+      //backgroundMessanger.setAccount(accountToAdd)
 
       logger.log(`(WalletController) Account added : ${accountToAdd.name}`)
 
@@ -264,10 +264,10 @@ class WalletController {
     accounts.forEach(account => {
       if (account.id === _currentAccount.id) {
         account.current = true
-        backgroundMessanger.setAccount(account)
+        //backgroundMessanger.setAccount(account)
 
         logger.log(`(WalletController) Set current account : ${account.name}`)
-        backgroundMessanger.setSelectedAccount(account.data.latestAddress)
+        //backgroundMessanger.setSelectedAccount(account.data.latestAddress)
       }
     })
     this.stateStorageController.set('accounts', accounts)
@@ -328,7 +328,7 @@ class WalletController {
     })
 
     this.stateStorageController.set('accounts', accounts)
-    backgroundMessanger.setAccount(updatedAccount)
+    //backgroundMessanger.setAccount(updatedAccount)
 
     return true
   }
@@ -346,7 +346,7 @@ class WalletController {
     })
 
     this.stateStorageController.set('accounts', accounts)
-    backgroundMessanger.setAccount(updatedAccount)
+    //backgroundMessanger.setAccount(updatedAccount)
   }
 
   async deleteAccount(_account) {
@@ -366,10 +366,10 @@ class WalletController {
 
     accounts[0].current = true
     this.stateStorageController.set('accounts', accounts)
-    backgroundMessanger.setAccount(accounts[0])
+    //backgroundMessanger.setAccount(accounts[0])
 
     //injection
-    backgroundMessanger.setSelectedAccount(accounts[0].data.latestAddress)
+    //backgroundMessanger.setSelectedAccount(accounts[0].data.latestAddress)
 
     return true
   }

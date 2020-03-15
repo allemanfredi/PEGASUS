@@ -1,4 +1,3 @@
-import Duplex from '@pegasus/utils/duplex'
 import { backgroundMessanger } from '@pegasus/utils/messangers'
 import settings from '@pegasus/utils/options'
 import AccountDataController from './controllers/account-data-controller'
@@ -15,17 +14,24 @@ import TransferController from './controllers/transfer-controller'
 import SeedVaultController from './controllers/seed-vault-controller'
 import LoginPasswordController from './controllers/login-password-controller'
 import { APP_STATE } from '@pegasus/utils/states'
+import logger from '@pegasus/utils/logger'
+import pump from 'pump'
+import createEngineStream from './lib/engine-stream'
+import { EventEmitter } from 'eventemitter3'
+import { composeAPI } from '@iota/core'
 
 const SESSION_TIME = 30000
 
-class PegasusEngine {
+const forbiddenRequests = ['getAccountData', 'getNewAddress', 'getInputs']
+
+class PegasusEngine extends EventEmitter {
   constructor() {
+
+    super()
+
     this.requests = []
     this.accountDataHandler = false
     this.transactionsAutoPromotionHandler = false
-
-    const duplex = new Duplex.Host()
-    backgroundMessanger.init(duplex)
 
     /* C O N T R O L L E R S */
     this.popupController = new PopupController()
@@ -101,7 +107,7 @@ class PegasusEngine {
     this.walletController.setSessionController(this.sessionController)
     /* E N D   C O N T R O L L E R S */
 
-    const state = this.walletController.getState()
+    /*const state = this.walletController.getState()
     if (!this.walletController.isWalletSetup()) {
       this.walletController.setState(APP_STATE.WALLET_NOT_INITIALIZED)
     }
@@ -121,7 +127,58 @@ class PegasusEngine {
     if (popupSettings.autoPromotion.enabled)
       this.accountDataController.enableTransactionsAutoPromotion(
         parseInt(popupSettings.autoPromotion.time * 1000 * 60)
-      )
+      )*/
+  }
+
+  setupInpageClientConnection(outStream, sender) {
+    const url = new URL(sender.url)
+
+    const website = {
+      origin: url.origin,
+      hostname: url.hostname,
+      title: sender.tab.title,
+      favicon: sender.tab.favIconUrl
+    }
+
+    const inpageClientStream = createEngineStream(this, website)
+
+    //const connectionId = 
+
+    /*const account = this.connectorController.estabilishConnection(website)
+    console.log(account)*/
+
+    this.connectorController.estabilishConnection(website)
+
+    pump(
+      outStream,
+      inpageClientStream,
+      outStream,
+      (err) => {
+        if (err) {
+          logger.error(err)
+        }
+      }
+    )
+  }
+
+  handle(_request) {
+    console.log('Handling new request', _request)
+
+    const iota = composeAPI()
+    if (iota[_request.method] && !forbiddenRequests.includes(_request.method)) {
+      this.customizatorController.pushRequest(_request)
+    }
+
+    /*this.customizatorController.pushRequest({
+      method,
+      uuid,
+      resolve,
+      data,
+      website
+    })*/
+
+
+    return 'hello'
   }
 
   // WALLET BACKGROUND API
@@ -227,16 +284,6 @@ class PegasusEngine {
 
   executeRequest(request) {
     return this.customizatorController.executeRequest(request)
-  }
-
-  pushRequest(method, { uuid, resolve, data, website }) {
-    this.customizatorController.pushRequest({
-      method,
-      uuid,
-      resolve,
-      data,
-      website
-    })
   }
 
   getRequests() {

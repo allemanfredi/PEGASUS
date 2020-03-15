@@ -27,11 +27,28 @@ class App extends Component {
       showHeader: false
     }
 
-    this.duplex = new Duplex.Popup()
+    //this.duplex = new Duplex.Popup()
   }
 
   async componentWillMount() {
-    popupMessanger.init(this.duplex)
+
+
+    const extensionPort = extension.runtime.connect({ name: windowType })
+    const connectionStream = new PortStream(extensionPort)
+    const mux = new ObjectMultiplex()
+    
+    pump(
+      connectionStream,
+      mux,
+      connectionStream,
+      (err) => {
+        if (err) {
+          console.error(err)
+        }
+      }
+    )
+
+    /*popupMessanger.init(this.duplex)
     this.bindDuplexRequests()
 
     //check if the current network has been already set, if no => set to testnet (options[0])
@@ -50,7 +67,7 @@ class App extends Component {
             network,
             networks
           }
-    })
+    })*/
   }
 
   onHandleLogin(value) {

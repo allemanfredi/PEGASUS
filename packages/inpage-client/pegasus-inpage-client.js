@@ -11,6 +11,8 @@ import Mam from '@iota/mam/lib/mam.web.min.js'
 import Utils from '@pegasus/utils/utils'
 import randomUUID from 'uuid/v4'
 import EventEmitter from 'eventemitter3'
+import ObjectMultiplex from 'obj-multiplex'
+import pump from 'pump'
 
 class PegasusInpageClient extends EventEmitter {
   constructor(inpageStream) {
@@ -25,24 +27,26 @@ class PegasusInpageClient extends EventEmitter {
 
     this._bindListener()
 
-    this.send('init').then(({ selectedProvider, selectedAccount }) => {
-      this._set(selectedProvider)
-      if (selectedAccount) {
-        this.selectedAccount = selectedAccount
-        this.emit('onAccountChanged', selectedAccount)
-      }
-    })
+    this._init()
+
+    const mux = this.mux = new ObjectMultiplex()
+    pump(
+      this.inpageStream,
+      mux,
+      this.inpageStream,
+      e => console.log('Pegasus inpage client disconnected', e)
+    )
+
   }
 
-  send(action, data = {}) {
+  send(data = {}) {
     const uuid = randomUUID()
-    const favicon = this.getFavicon()
 
     this.inpageStream.write({
-      favicon,
-      action,
-      data,
-      uuid
+      name: 'inpageClient',
+      data: Object.assign({}, data, {
+        uuid
+      }),
     })
 
     return new Promise((resolve, reject) => {
@@ -57,13 +61,17 @@ class PegasusInpageClient extends EventEmitter {
     const cb = args[args.length - 1] ? args[args.length - 1] : null
 
     if (!Utils.isFunction(cb)) {
-      return Utils.injectPromise(this.send, prefix + method, {
+      return Utils.injectPromise(this.send, {
+        method: prefix + method, 
         args
       })
     } else {
       args = args ? args.slice(0, args.length - 1) : null
 
-      this.send(prefix + method, { args })
+      this.send({
+        method: prefix + method, 
+        args
+      })
         .then(res => cb(res, null))
         .catch(err => cb(null, err))
     }
@@ -71,7 +79,10 @@ class PegasusInpageClient extends EventEmitter {
 
   _bindListener() {
     this.inpageStream.on('data', ({ success, data, uuid, action }) => {
-      switch (action) {
+
+      console.log(data)
+
+      /*switch (action) {
         case 'setSelectedProvider': {
           this.selectedProvider = data
           this.emit('onProviderChanged', data)
@@ -93,11 +104,11 @@ class PegasusInpageClient extends EventEmitter {
           delete this._calls[uuid]
           break
         }
-      }
+      }*/
     })
   }
 
-  _set(provider) {
+  _init() {
     const core = composeAPI()
     Object.keys(core).forEach(method => {
       core[method] = (...args) => this._handleInjectedRequest(args, method)
@@ -106,7 +117,8 @@ class PegasusInpageClient extends EventEmitter {
     const mam = {}
     Object.keys(Mam).forEach(method => {
       mam[method] = (...args) =>
-        Utils.injectPromise(this.send, 'mam_' + method, {
+        Utils.injectPromise(this.send, {
+          method: 'mam_' + method,
           args
         })
     })
@@ -130,7 +142,8 @@ class PegasusInpageClient extends EventEmitter {
         args.push(limit)
       }
 
-      return Utils.injectPromise(this.send, 'mam_fetch', {
+      return Utils.injectPromise(this.send, {
+        method: 'mam_fetch', 
         args
       })
     }
@@ -146,21 +159,19 @@ class PegasusInpageClient extends EventEmitter {
     this.validators = validators
     this.mam = mam
 
-    this.selectedProvider = provider
-
     const additionalMethods = [
       'connect',
       'getCurrentAccount',
       'getCurrentProvider'
     ]
     additionalMethods.forEach(method => {
-      iota[method] = (...args) => this._handleInjectedRequest(args, method)
+      this[method] = (...args) => this._handleInjectedRequest(args, method)
     })
 
     //disabled for security reasons
-    delete iota.core.getAccountData
-    delete iota.core.getInputs
-    delete iota.core.getNewAddress
+    delete core.getAccountData
+    delete core.getInputs
+    delete core.getNewAddress
   }
 
   getFavicon() {
