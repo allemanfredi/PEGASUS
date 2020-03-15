@@ -3,7 +3,7 @@
 import configs from '@pegasus/utils/options'
 import { Store } from 'rxjs-observable-store'
 import logger from '@pegasus/utils/logger'
-import { encrypt, decrypt } from '@pegasus/utils/storage-encryption'
+import { encrypt, decrypt } from 'browser-protector'
 import ExtensionStore from '@pegasus/utils/extension-store'
 import { APP_STATE } from '@pegasus/utils/states'
 
