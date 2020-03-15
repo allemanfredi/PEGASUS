@@ -230,7 +230,28 @@ const engine = new PegasusEngine()
 
 extension.runtime.onConnect.addListener(port => handleConnection(port))
 
+
 const handleConnection = port => {
+
+  if (port.name === 'popup') {
+    const portStream = new PortStream(port)
+    // communication with popup
+
+    const mux = new ObjectMultiplex()
+    pump(
+      portStream,
+      mux,
+      portStream,
+      (err) => {
+        if (err) {
+          logger.error(err)
+        }
+      }
+    )
+
+    engine.setupEngineConnectionWithPopup(mux.createStream('engine'))
+  }
+
   if (port.sender && port.sender.tab && port.sender.url) {
     
     port.onMessage.addListener((msg) => {

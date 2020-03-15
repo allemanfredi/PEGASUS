@@ -5,6 +5,41 @@ import Header from './header/Header'
 import Main from './main/Main'
 import { APP_STATE } from '@pegasus/utils/states'
 import Notifications from './notifications/Notifications'
+import ObjectMultiplex from 'obj-multiplex'
+import PortStream from 'extension-port-stream'
+import EventEmitter from 'eventemitter3'
+import Dnode from 'dnode'
+import extension from 'extensionizer'
+import pump from 'pump'
+
+const extensionPort = extension.runtime.connect({ name: 'popup' })
+const connectionStream = new PortStream(extensionPort)
+const mux = new ObjectMultiplex()
+  pump(
+    connectionStream,
+    mux,
+    connectionStream,
+    (err) => {
+      if (err) {
+        console.error(err)
+      }
+    }
+  )
+
+const eventEmitter = new EventEmitter()
+const backgroundDnode = Dnode({
+  sendUpdate: function (state) {
+    eventEmitter.emit('update', state)
+  },
+})
+
+connectionStream.pipe(backgroundDnode).pipe(connectionStream)
+backgroundDnode.once('remote', function (backgroundConnection) {
+  backgroundConnection.on = eventEmitter.on.bind(eventEmitter)
+  //cb(null, backgroundConnection)
+  console.log(backgroundConnection)
+})
+
 
 class App extends Component {
   constructor(props, context) {
@@ -32,11 +67,6 @@ class App extends Component {
 
   async componentWillMount() {
 
-
-    const extensionPort = extension.runtime.connect({ name: windowType })
-    const connectionStream = new PortStream(extensionPort)
-    const mux = new ObjectMultiplex()
-    
     pump(
       connectionStream,
       mux,
