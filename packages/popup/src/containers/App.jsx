@@ -5,40 +5,7 @@ import Header from './header/Header'
 import Main from './main/Main'
 import { APP_STATE } from '@pegasus/utils/states'
 import Notifications from './notifications/Notifications'
-import ObjectMultiplex from 'obj-multiplex'
-import PortStream from 'extension-port-stream'
-import EventEmitter from 'eventemitter3'
-import Dnode from 'dnode'
-import extension from 'extensionizer'
-import pump from 'pump'
 
-const extensionPort = extension.runtime.connect({ name: 'popup' })
-const connectionStream = new PortStream(extensionPort)
-const mux = new ObjectMultiplex()
-  pump(
-    connectionStream,
-    mux,
-    connectionStream,
-    (err) => {
-      if (err) {
-        console.error(err)
-      }
-    }
-  )
-
-const eventEmitter = new EventEmitter()
-const backgroundDnode = Dnode({
-  sendUpdate: function (state) {
-    eventEmitter.emit('update', state)
-  },
-})
-
-connectionStream.pipe(backgroundDnode).pipe(connectionStream)
-backgroundDnode.once('remote', function (backgroundConnection) {
-  backgroundConnection.on = eventEmitter.on.bind(eventEmitter)
-  //cb(null, backgroundConnection)
-  console.log(backgroundConnection)
-})
 
 
 class App extends Component {
@@ -66,17 +33,6 @@ class App extends Component {
   }
 
   async componentWillMount() {
-
-    pump(
-      connectionStream,
-      mux,
-      connectionStream,
-      (err) => {
-        if (err) {
-          console.error(err)
-        }
-      }
-    )
 
     /*popupMessanger.init(this.duplex)
     this.bindDuplexRequests()
@@ -130,7 +86,7 @@ class App extends Component {
     return (
       <div className="app-wrapper">
         <div className="app chrome">
-          {this.state.showHeader ? (
+          {/*this.state.showHeader ? (
             <Header
               ref={this.header}
               account={this.state.account}
@@ -142,8 +98,8 @@ class App extends Component {
             />
           ) : (
             ''
-          )}
-          <Notifications duplex={this.duplex}>
+          )*/}
+          {/*<Notifications duplex={this.duplex}>
             <Main
               showHeader={this.onShowHeader}
               ref={this.main}
@@ -151,9 +107,9 @@ class App extends Component {
               account={this.state.account}
               duplex={this.duplex}
             />
-          </Notifications>
+        </Notifications>*/}
         </div>
-      </div>
+          </div>
     )
   }
 }

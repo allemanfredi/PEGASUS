@@ -19,7 +19,8 @@ import pump from 'pump'
 import createEngineStream from './lib/engine-stream'
 import { EventEmitter } from 'eventemitter3'
 import { composeAPI } from '@iota/core'
-import Dnode from 'dnode'
+import Dnode from 'dnode/browser'
+import Utils from '@pegasus/utils/utils'
 
 const SESSION_TIME = 30000
 
@@ -131,6 +132,12 @@ class PegasusEngine extends EventEmitter {
       )*/
   }
 
+  /**
+   * Create a connection between the inpageClient and the engine
+   * 
+   * @param {Stream} outStream 
+   * @param {Object} sender 
+   */
   setupInpageClientConnection(outStream, sender) {
     const url = new URL(sender.url)
 
@@ -162,8 +169,13 @@ class PegasusEngine extends EventEmitter {
     )
   }
 
+  /**
+   * Create a connection with the popup by exposing the engine APIs
+   * 
+   * @param {Stream} outStream 
+   */
   setupEngineConnectionWithPopup (outStream) {
-    /*const api = this.getApi()
+    const api = this.getApi()
     const dnode = Dnode(api)
 
     pump(
@@ -172,20 +184,30 @@ class PegasusEngine extends EventEmitter {
       outStream,
       (err) => {
         if (err) {
-          logger.error(err)
+          log.error(err)
         }
       }
     )
-    dnode.on('remote', (remote) => {
-      // push updates to popup
-      const sendUpdate = (update) => remote.sendUpdate(update)
-      this.on('update', sendUpdate)
-      // remove update listener once the connection ends
-      //dnode.on('end', () => this.removeListener('update', sendUpdate))
-    })*/
-    console.log("popu connection estabilished")
+    dnode.on('remote', remote => {
+      const {
+        sendUpdate
+      } = remote
+
+      this.stateStorageController.state$.subscribe(_state => {
+        //backgroundMessanger.changeGlobalState(_state)
+        //console.log(_state)
+
+        //before sending the update, the _state objecy must be modified, we need to remove the seed from obj to send to the popup
+        sendUpdate(_state)
+      })
+    })
   }
 
+  /**
+   * Handle a request from tabs
+   * 
+   * @param {Object} _request 
+   */
   handle(_request) {
     console.log('Handling new request', _request)
 
@@ -209,7 +231,7 @@ class PegasusEngine extends EventEmitter {
 
   getApi() {
     return {
-      hello: () => 'hello'
+      isWalletSetup: (...params) => new Promise(resolve => resolve(this.walletController.isWalletSetup(params)))
     }
   }
 

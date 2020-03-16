@@ -250,6 +250,7 @@ const handleConnection = port => {
     )
 
     engine.setupEngineConnectionWithPopup(mux.createStream('engine'))
+    return
   }
 
   if (port.sender && port.sender.tab && port.sender.url) {

@@ -4,7 +4,6 @@ import PortStream from 'extension-port-stream'
 import PostMessageStream from 'post-message-stream'
 import pump from 'pump'
 
-
 const inject = () => {
   const injectionSite = document.head || document.documentElement
   const container = document.createElement('script')
@@ -41,7 +40,7 @@ const setupStreams = () => {
     extensionMux,
     extensionStream,
     extensionMux,
-    (err) => logStreamDisconnectWarning('Pegasus Background Multiplex', err)
+    (err) => console.warn('Pegasus Background Multiplex', err)
   )
 
   const pageChannel = pageMux.createStream('inpageClient')
@@ -51,19 +50,9 @@ const setupStreams = () => {
     pageChannel,
     extensionChannel,
     pageChannel,
-    (err) => logStreamDisconnectWarning('Pegasus traffic lost to inpageClient', err)
+    (err) => console.warn('Pegasus traffic lost to inpageClient', err)
   )
 }
-
-
-const logStreamDisconnectWarning = (remoteLabel, err) => {
-  let warningMsg = `PegasusContentscript - lost connection to ${remoteLabel}`
-  if (err) {
-    warningMsg += '\n' + err.stack
-  }
-  console.warn(warningMsg)
-}
-
 
 setupStreams()
 inject()
