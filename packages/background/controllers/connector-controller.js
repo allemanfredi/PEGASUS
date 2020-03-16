@@ -18,6 +18,10 @@ class ConnectorController {
     this.networkController = _networkController
   }
 
+  setCustomizatorController(_customizatorController) {
+    this.customizatorController = _customizatorController
+  }
+
   getConnection(_origin) {
     return this.connections[_origin]
   }
@@ -57,9 +61,13 @@ class ConnectorController {
     this.walletController.setState(
       APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
     )
+
+    this.popupController.openPopup()
   }
 
-  completeConnection(_requests) {
+  completeConnection() {
+    const requests = this.customizatorController.getRequests()
+
     logger.log(
       `(ConnectorController) Completing connection with ${this.connectionRequest.website.origin}`
     )
@@ -81,7 +89,7 @@ class ConnectorController {
       }
     )
 
-    _requests.forEach(request => {
+    requests.forEach(request => {
       if (
         request.connection.website.origin ===
         this.connectionRequest.website.origin
@@ -91,7 +99,7 @@ class ConnectorController {
       }
     })
 
-    if (_requests.length === 0) {
+    if (requests.length === 0) {
       this.popupController.closePopup()
     }
 
@@ -99,11 +107,16 @@ class ConnectorController {
 
     this.connectionRequest = null
 
+    this.customizatorController.setRequests(requests)
+
     backgroundMessanger.setSelectedAccount(account.data.latestAddress)
-    return _requests
+
+    return true
   }
 
-  rejectConnection(_requests) {
+  rejectConnection() {
+    const requests = this.customizatorController.getRequests()
+
     logger.log(
       `(ConnectorController) Rejecting connection with ${this.connectionRequest.website.origin}`
     )
@@ -124,7 +137,7 @@ class ConnectorController {
 
     this.popupController.closePopup()
 
-    _requests.forEach(request => {
+    requests.forEach(request => {
       if (
         request.connection.website.origin ===
         this.connectionRequest.website.origin
@@ -138,7 +151,9 @@ class ConnectorController {
 
     this.connectionRequest = null
 
-    return _requests
+    this.customizatorController.setRequests(requests)
+
+    return true
   }
 
   estabilishConnection(website) {

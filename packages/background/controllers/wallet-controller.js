@@ -388,6 +388,14 @@ class WalletController {
     const seed = bytes.map(byte => Utils.byteToChar(byte))
     return seed
   }
+
+  setPopupSettings(_settings) {
+    this.stateStorageController.set('popupSettings', _settings, true)
+  }
+
+  getPopupSettings() {
+    return this.stateStorageController.get('popupSettings')
+  }
 }
 
 export default WalletController

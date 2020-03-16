@@ -392,11 +392,15 @@ class MamController {
     return foundRoot
   }
 
-  fetchFromPopup(_provider, _root, _mode, _sidekey, _callback) {
+  fetchFromPopup(_options) {
+    const network = this.networkController.getCurrentNetwork()
+
+    const { root, mode, _sidekey } = _options
+
     try {
-      Mam.init(_provider)
-      Mam.fetch(_root, _mode, _sidekey, event => {
-        _callback(JSON.parse(trytesToAscii(event)))
+      Mam.init(network.provider)
+      Mam.fetch(root, mode, _sidekey, event => {
+        //backgroundMessanger.newMamData(JSON.parse(trytesToAscii(event)))
       })
     } catch (error) {
       console.log('MAM fetch error', error)

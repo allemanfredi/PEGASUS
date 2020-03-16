@@ -106,6 +106,9 @@ class PegasusEngine extends EventEmitter {
     this.connectorController.setNetworkController(this.networkController)
     this.networkController.setWalletController(this.walletController)
     this.walletController.setSessionController(this.sessionController)
+    this.connectorController.setCustomizatorController(
+      this.customizatorController
+    )
     /* E N D   C O N T R O L L E R S */
 
     /*const state = this.walletController.getState()
@@ -181,7 +184,6 @@ class PegasusEngine extends EventEmitter {
       const { sendUpdate } = remote
 
       this.stateStorageController.state$.subscribe(_state => {
-        //backgroundMessanger.changeGlobalState(_state)
         //console.log(_state)
 
         //before sending the update, the _state objecy must be modified, we need to remove the seed from obj to send to the popup
@@ -219,6 +221,7 @@ class PegasusEngine extends EventEmitter {
       isWalletSetup: cb => cb(this.walletController.isWalletSetup()),
       initWallet: (password, account, cb) =>
         nodeify(this.walletController.initWallet(password, account), cb),
+      lockWallet: cb => nodeify(this.walletController.lockWallet(), cb),
       unlockWallet: (password, cb) =>
         nodeify(this.walletController.unlockWallet(password), cb),
       restoreWallet: (password, account, cb) =>
@@ -227,17 +230,8 @@ class PegasusEngine extends EventEmitter {
         nodeify(this.walletController.unlockSeed(password), cb),
       comparePassword: (password, cb) =>
         nodeify(this.walletController.comparePassword(password), cb),
-      setCurrentNetwork: (network, cb) =>
-        cb(this.networkController.setCurrentNetwork(network)),
-      getCurrentNetwork: cb => cb(this.networkController.getCurrentNetwork()),
-      getAllNetworks: cb => cb(this.networkController.getAllNetworks()),
-      addNetwork: (network, cb) =>
-        cb(this.networkController.addNetwork(network)),
-      deleteCurrentNetwork: cb =>
-        cb(this.networkController.deleteCurrentNetwork()),
       addAccount: (account, isCurrent, cb) =>
         nodeify(this.walletController.addAccount(account, isCurrent), cb),
-
       isAccountNameAlreadyExists: (name, cb) =>
         cb(this.walletController.isAccountNameAlreadyExists(name)),
       getCurrentAccount: cb => cb(this.walletController.getCurrentAccount()),
@@ -249,161 +243,83 @@ class PegasusEngine extends EventEmitter {
       updateAvatarAccount: (account, avatar, cb) =>
         cb(this.walletController.updateAvatarAccount(account, avatar)),
       deleteAccount: (account, cb) =>
-        cb(this.walletController.deleteAccount(account))
+        cb(this.walletController.deleteAccount(account)),
+      generateSeed: (length, cb) =>
+        cb(this.walletController.generateSeed(length)),
+      getState: cb => cb(this.walletController.getState()),
+      setPopupSettings: (settings, cb) =>
+        cb(this.walletController.setPopupSettings(settings)),
+      getPopupSettings: cb => cb(this.walletController.getPopupSettings()),
+
+      //session controller
+      checkSession: cb => cb(this.sessionController.checkSession()),
+      deleteSession: cb => cb(this.sessionController.deleteSession()),
+
+      //network controller
+      setCurrentNetwork: (network, cb) =>
+        cb(this.networkController.setCurrentNetwork(network)),
+      getCurrentNetwork: cb => cb(this.networkController.getCurrentNetwork()),
+      getAllNetworks: cb => cb(this.networkController.getAllNetworks()),
+      addNetwork: (network, cb) =>
+        cb(this.networkController.addNetwork(network)),
+      deleteCurrentNetwork: cb =>
+        cb(this.networkController.deleteCurrentNetwork()),
+
+      setState: (state, cb) => cb(this.popupController.setState(state)),
+      closePopup: cb => cb(this.popupController.closePopup()),
+
+      //customizator controller
+      executeRequest: (request, cb) =>
+        nodeify(this.customizatorController.executeRequest(request), cb),
+      getRequests: cb => cb(this.customizatorController.getRequests()),
+      getExecutableRequests: cb =>
+        cb(this.customizatorController.getExecutableRequests()),
+
+      rejectRequest: (request, cb) =>
+        cb(this.customizatorController.rejectRequest(request)),
+      rejectRequests: cb => cb(this.customizatorController.rejectRequests()),
+      confirmRequest: (request, cb) =>
+        nodeify(this.customizatorController.confirmRequest(request), cb),
+
+      //connector controller
+      getConnection: (origin, cb) =>
+        cb(this.connectorController.getConnection(origin)),
+      pushConnection: (connection, cb) =>
+        cb(this.connectorController.pushConnection(connection)),
+      updateConnection: (connection, cb) =>
+        cb(this.connectorController.updateConnection(connection)),
+      completeConnection: cb =>
+        cb(this.connectorController.completeConnection()),
+      rejectConnection: cb => cb(this.connectorController.rejectConnection()),
+      getConnections: cb => cb(this.connectorController.getConnections()),
+      removeConnection: (connection, cb) =>
+        cb(this.connectorController.removeConnection(connection)),
+      addConnection: (connection, cb) =>
+        cb(this.connectorController.addConnection(connection)),
+      getConnectionRequest: cb =>
+        cb(this.connectorController.getConnectionRequest()),
+
+      //seed vault controller
+      createSeedVault: (password, cb) =>
+        nodeify(this.seedVaultController.createSeedVault(password), cb),
+
+      //mam controller
+      startFetchMam: (options, cb) =>
+        cb(this.mamController.startFetchMam(options)),
+      getMamChannels: cb => cb(this.mamController.getMamChannels()),
+      registerMamChannel: (channel, cb) =>
+        cb(this.mamController.registerMamChannel(channel)),
+
+      //accountData controller
+      reloadAccountData: cb =>
+        nodeify(this.accountDataController.reloadAccountData(), cb),
+
+      enableTransactionsAutoPromotion: (time, cb) =>
+        cb(this.accountDataController.enableTransactionsAutoPromotion(time)),
+
+      disableTransactionsAutoPromotion: cb =>
+        cb(this.accountDataController.disableTransactionsAutoPromotion())
     }
-  }
-
-  // WALLET BACKGROUND API
-
-  generateSeed(length = 81) {
-    return this.walletController.generateSeed(length)
-  }
-
-  checkSession() {
-    return this.sessionController.checkSession()
-  }
-
-  deleteSession() {
-    return this.sessionController.deleteSession()
-  }
-
-  getState() {
-    return this.walletController.getState()
-  }
-
-  setState(state) {
-    return this.walletController.setState(state)
-  }
-
-  closePopup() {
-    return this.popupController.closePopup()
-  }
-
-  executeRequest(request) {
-    return this.customizatorController.executeRequest(request)
-  }
-
-  getRequests() {
-    return this.customizatorController.getRequests()
-  }
-
-  getExecutableRequests() {
-    return this.customizatorController.getExecutableRequests()
-  }
-
-  rejectRequests() {
-    return this.customizatorController.rejectRequests()
-  }
-
-  confirmRequest(request) {
-    return this.customizatorController.confirmRequest(request)
-  }
-
-  rejectRequest(request) {
-    return this.customizatorController.rejectRequest(request)
-  }
-
-  connect(uuid, resolve, website) {
-    this.connectorController.connect(uuid, resolve, website)
-    this.popupController.openPopup()
-  }
-
-  getConnection({ origin }) {
-    return this.connectorController.getConnection(origin)
-  }
-
-  pushConnection(connection) {
-    return this.connectorController.pushConnection(connection)
-  }
-
-  updateConnection(connection) {
-    return this.connectorController.updateConnection(connection)
-  }
-
-  completeConnection() {
-    const requests = this.connectorController.completeConnection(
-      this.customizatorController.getRequests()
-    )
-    this.customizatorController.setRequests(requests)
-    return true
-  }
-
-  rejectConnection() {
-    const requests = this.connectorController.rejectConnection(
-      this.customizatorController.getRequests()
-    )
-    this.customizatorController.setRequests(requests)
-    this.popupController.closePopup()
-    return true
-  }
-
-  estabilishConnection(website) {
-    return this.connectorController.estabilishConnection(website)
-  }
-
-  getConnections() {
-    return this.connectorController.getConnections()
-  }
-
-  removeConnection(connection) {
-    return this.connectorController.removeConnection(connection)
-  }
-
-  addConnection(connection) {
-    return this.connectorController.addConnection(connection)
-  }
-
-  getConnectionRequest() {
-    return this.connectorController.getConnectionRequest()
-  }
-
-  createSeedVault(password) {
-    return this.seedVaultController.createSeedVault(password)
-  }
-
-  startFetchMam(options) {
-    const network = this.networkController.getCurrentNetwork()
-    this.mamController.fetchFromPopup(
-      network.provider,
-      options.root,
-      options.mode,
-      options.sideKey,
-      data => {
-        backgroundMessanger.newMamData(data)
-      }
-    )
-  }
-
-  reloadAccountData() {
-    return this.accountDataController.loadAccountData()
-  }
-
-  getMamChannels() {
-    return this.mamController.getMamChannels()
-  }
-
-  registerMamChannel(channel) {
-    return this.mamController.registerMamChannel(channel)
-  }
-
-  lockWallet() {
-    return this.walletController.lockWallet()
-  }
-
-  setPopupSettings(settings) {
-    this.stateStorageController.set('popupSettings', settings, true)
-  }
-
-  getPopupSettings() {
-    return this.stateStorageController.get('popupSettings')
-  }
-
-  enableTransactionsAutoPromotion(time) {
-    return this.accountDataController.enableTransactionsAutoPromotion(time)
-  }
-
-  disableTransactionsAutoPromotion() {
-    return this.accountDataController.disableTransactionsAutoPromotion()
   }
 }
 
