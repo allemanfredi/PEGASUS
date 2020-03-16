@@ -20,7 +20,7 @@ import createEngineStream from './lib/engine-stream'
 import { EventEmitter } from 'eventemitter3'
 import { composeAPI } from '@iota/core'
 import Dnode from 'dnode/browser'
-import Utils from '@pegasus/utils/utils'
+import nodeify from 'nodeify'
 
 const SESSION_TIME = 30000
 
@@ -28,7 +28,6 @@ const forbiddenRequests = ['getAccountData', 'getNewAddress', 'getInputs']
 
 class PegasusEngine extends EventEmitter {
   constructor() {
-
     super()
 
     this.requests = []
@@ -134,9 +133,9 @@ class PegasusEngine extends EventEmitter {
 
   /**
    * Create a connection between the inpageClient and the engine
-   * 
-   * @param {Stream} outStream 
-   * @param {Object} sender 
+   *
+   * @param {Stream} outStream
+   * @param {Object} sender
    */
   setupInpageClientConnection(outStream, sender) {
     const url = new URL(sender.url)
@@ -150,48 +149,36 @@ class PegasusEngine extends EventEmitter {
 
     const inpageClientStream = createEngineStream(this, website)
 
-    //const connectionId = 
+    //const connectionId =
 
     /*const account = this.connectorController.estabilishConnection(website)
     console.log(account)*/
 
     this.connectorController.estabilishConnection(website)
 
-    pump(
-      outStream,
-      inpageClientStream,
-      outStream,
-      (err) => {
-        if (err) {
-          logger.error(err)
-        }
+    pump(outStream, inpageClientStream, outStream, err => {
+      if (err) {
+        logger.error(err)
       }
-    )
+    })
   }
 
   /**
    * Create a connection with the popup by exposing the engine APIs
-   * 
-   * @param {Stream} outStream 
+   *
+   * @param {Stream} outStream
    */
-  setupEngineConnectionWithPopup (outStream) {
+  setupEngineConnectionWithPopup(outStream) {
     const api = this.getApi()
     const dnode = Dnode(api)
 
-    pump(
-      outStream,
-      dnode,
-      outStream,
-      (err) => {
-        if (err) {
-          log.error(err)
-        }
+    pump(outStream, dnode, outStream, err => {
+      if (err) {
+        logger.error(err)
       }
-    )
+    })
     dnode.on('remote', remote => {
-      const {
-        sendUpdate
-      } = remote
+      const { sendUpdate } = remote
 
       this.stateStorageController.state$.subscribe(_state => {
         //backgroundMessanger.changeGlobalState(_state)
@@ -205,8 +192,8 @@ class PegasusEngine extends EventEmitter {
 
   /**
    * Handle a request from tabs
-   * 
-   * @param {Object} _request 
+   *
+   * @param {Object} _request
    */
   handle(_request) {
     console.log('Handling new request', _request)
@@ -224,94 +211,49 @@ class PegasusEngine extends EventEmitter {
       website
     })*/
 
-
     return 'hello'
   }
 
-
   getApi() {
     return {
-      isWalletSetup: (...params) => new Promise(resolve => resolve(this.walletController.isWalletSetup(params)))
+      isWalletSetup: cb => cb(this.walletController.isWalletSetup()),
+      initWallet: (password, account, cb) =>
+        nodeify(this.walletController.initWallet(password, account), cb),
+      unlockWallet: (password, cb) =>
+        nodeify(this.walletController.unlockWallet(password), cb),
+      restoreWallet: (password, account, cb) =>
+        nodeify(this.walletController.unlockWallet(password, account), cb),
+      unlockSeed: (password, cb) =>
+        nodeify(this.walletController.unlockSeed(password), cb),
+      comparePassword: (password, cb) =>
+        nodeify(this.walletController.comparePassword(password), cb),
+      setCurrentNetwork: (network, cb) =>
+        cb(this.networkController.setCurrentNetwork(network)),
+      getCurrentNetwork: cb => cb(this.networkController.getCurrentNetwork()),
+      getAllNetworks: cb => cb(this.networkController.getAllNetworks()),
+      addNetwork: (network, cb) =>
+        cb(this.networkController.addNetwork(network)),
+      deleteCurrentNetwork: cb =>
+        cb(this.networkController.deleteCurrentNetwork()),
+      addAccount: (account, isCurrent, cb) =>
+        nodeify(this.walletController.addAccount(account, isCurrent), cb),
+
+      isAccountNameAlreadyExists: (name, cb) =>
+        cb(this.walletController.isAccountNameAlreadyExists(name)),
+      getCurrentAccount: cb => cb(this.walletController.getCurrentAccount()),
+      getAllAccounts: cb => cb(this.walletController.getAllAccounts()),
+      setCurrentAccount: (account, cb) =>
+        cb(this.walletController.setCurrentAccount(account)),
+      updateNameAccount: (account, newName, cb) =>
+        cb(this.walletController.updateNameAccount(account, newName)),
+      updateAvatarAccount: (account, avatar, cb) =>
+        cb(this.walletController.updateAvatarAccount(account, avatar)),
+      deleteAccount: (account, cb) =>
+        cb(this.walletController.deleteAccount(account))
     }
   }
 
-
   // WALLET BACKGROUND API
-  isWalletSetup() {
-    return this.walletController.isWalletSetup()
-  }
-
-  unlockWallet(password) {
-    return this.walletController.unlockWallet(password)
-  }
-
-  restoreWallet({ account, password }) {
-    return this.walletController.restoreWallet(account, password)
-  }
-
-  unlockSeed(password) {
-    return this.walletController.unlockSeed(password)
-  }
-
-  initWallet({ password, account }) {
-    return this.walletController.initWallet(password, account)
-  }
-
-  comparePassword(password) {
-    return this.loginPasswordController.comparePassword(password)
-  }
-
-  setCurrentNetwork(network) {
-    return this.networkController.setCurrentNetwork(network)
-  }
-
-  getCurrentNetwork() {
-    return this.networkController.getCurrentNetwork()
-  }
-
-  getAllNetworks() {
-    return this.networkController.getAllNetworks()
-  }
-
-  addNetwork(network) {
-    return this.networkController.addNetwork(network)
-  }
-
-  deleteCurrentNetwork() {
-    return this.networkController.deleteCurrentNetwork()
-  }
-
-  addAccount({ account, isCurrent }) {
-    return this.walletController.addAccount(account, isCurrent)
-  }
-
-  isAccountNameAlreadyExists({ name }) {
-    return this.walletController.isAccountNameAlreadyExists(name)
-  }
-
-  getCurrentAccount() {
-    return this.walletController.getCurrentAccount()
-  }
-
-  getAllAccounts() {
-    return this.walletController.getAllAccounts()
-  }
-
-  setCurrentAccount({ currentAccount }) {
-    return this.walletController.setCurrentAccount(currentAccount)
-  }
-
-  updateNameAccount({ current, newName }) {
-    return this.walletController.updateNameAccount(current, newName)
-  }
-
-  updateAvatarAccount({ current, avatar }) {
-    return this.walletController.updateAvatarAccount(current, avatar)
-  }
-
-  deleteAccount({ account }) {
-    return this.walletController.deleteAccount(account)
-  }
 
   generateSeed(length = 81) {
     return this.walletController.generateSeed(length)

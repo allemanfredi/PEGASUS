@@ -29,14 +29,10 @@ class PegasusInpageClient extends EventEmitter {
 
     this._init()
 
-    const mux = this.mux = new ObjectMultiplex()
-    pump(
-      this.inpageStream,
-      mux,
-      this.inpageStream,
-      e => console.log('Pegasus inpage client disconnected', e)
+    const mux = (this.mux = new ObjectMultiplex())
+    pump(this.inpageStream, mux, this.inpageStream, e =>
+      console.log('Pegasus inpage client disconnected', e)
     )
-
   }
 
   send(data = {}) {
@@ -46,7 +42,7 @@ class PegasusInpageClient extends EventEmitter {
       name: 'inpageClient',
       data: Object.assign({}, data, {
         uuid
-      }),
+      })
     })
 
     return new Promise((resolve, reject) => {
@@ -62,14 +58,14 @@ class PegasusInpageClient extends EventEmitter {
 
     if (!Utils.isFunction(cb)) {
       return Utils.injectPromise(this.send, {
-        method: prefix + method, 
+        method: prefix + method,
         args
       })
     } else {
       args = args ? args.slice(0, args.length - 1) : null
 
       this.send({
-        method: prefix + method, 
+        method: prefix + method,
         args
       })
         .then(res => cb(res, null))
@@ -79,7 +75,6 @@ class PegasusInpageClient extends EventEmitter {
 
   _bindListener() {
     this.inpageStream.on('data', ({ success, data, uuid, action }) => {
-
       console.log(data)
 
       /*switch (action) {
@@ -143,7 +138,7 @@ class PegasusInpageClient extends EventEmitter {
       }
 
       return Utils.injectPromise(this.send, {
-        method: 'mam_fetch', 
+        method: 'mam_fetch',
         args
       })
     }

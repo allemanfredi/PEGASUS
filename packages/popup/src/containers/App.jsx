@@ -6,8 +6,6 @@ import Main from './main/Main'
 import { APP_STATE } from '@pegasus/utils/states'
 import Notifications from './notifications/Notifications'
 
-
-
 class App extends Component {
   constructor(props, context) {
     super(props, context)
@@ -33,7 +31,6 @@ class App extends Component {
   }
 
   async componentWillMount() {
-
     /*popupMessanger.init(this.duplex)
     this.bindDuplexRequests()
 
@@ -109,7 +106,7 @@ class App extends Component {
             />
         </Notifications>*/}
         </div>
-          </div>
+      </div>
     )
   }
 }

@@ -7,31 +7,26 @@ import EventEmitter from 'eventemitter3'
 import Dnode from 'dnode/browser'
 import extension from 'extensionizer'
 import pump from 'pump'
+import buildPromisedApi from './apiInterface'
 
 import './styles/styles.css'
 
 const extensionPort = extension.runtime.connect({ name: 'popup' })
 const connectionStream = new PortStream(extensionPort)
 const mux = new ObjectMultiplex()
-  pump(
-    connectionStream,
-    mux,
-    connectionStream,
-    (err) => {
-      if (err) {
-        console.error(err)
-      }
-    }
-  )
-
+pump(connectionStream, mux, connectionStream, err => {
+  if (err) {
+    console.error(err)
+  }
+})
 
 const engineStream = mux.createStream('engine')
 const eventEmitter = new EventEmitter()
 const backgroundDnode = Dnode({
   sendUpdate: state => {
     eventEmitter.emit('update', state)
-    console.log("2", state)
-  },
+    console.log('2', state)
+  }
 })
 
 engineStream.pipe(backgroundDnode).pipe(engineStream)
@@ -39,9 +34,13 @@ engineStream.pipe(backgroundDnode).pipe(engineStream)
 backgroundDnode.once('remote', async backgroundConnection => {
   //backgroundConnection.on = eventEmitter.on.bind(eventEmitter)
   //cb(null, backgroundConnection)
-  
+
+  const backgroundMessanger = buildPromisedApi(backgroundConnection)
+
   //backgroundConnection is the API object
-  console.log(await backgroundConnection.isWalletSetup())
+  console.log(await backgroundMessanger.isWalletSetup())
+  console.log(await backgroundMessanger.unlockWallet('hello'))
+  console.log(await backgroundMessanger.getCurrentNetwork())
 })
 
 ReactDOM.render(<App />, document.getElementById('root'))

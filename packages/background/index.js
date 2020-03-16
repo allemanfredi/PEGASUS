@@ -230,32 +230,24 @@ const engine = new PegasusEngine()
 
 extension.runtime.onConnect.addListener(port => handleConnection(port))
 
-
 const handleConnection = port => {
-
   if (port.name === 'popup') {
     const portStream = new PortStream(port)
     // communication with popup
 
     const mux = new ObjectMultiplex()
-    pump(
-      portStream,
-      mux,
-      portStream,
-      (err) => {
-        if (err) {
-          logger.error(err)
-        }
+    pump(portStream, mux, portStream, err => {
+      if (err) {
+        logger.error(err)
       }
-    )
+    })
 
     engine.setupEngineConnectionWithPopup(mux.createStream('engine'))
     return
   }
 
   if (port.sender && port.sender.tab && port.sender.url) {
-    
-    port.onMessage.addListener((msg) => {
+    port.onMessage.addListener(msg => {
       if (msg.data && msg.data.method === 'connect') {
         //this.engine.connect(uuid, resolve, website)
       }
@@ -263,18 +255,16 @@ const handleConnection = port => {
 
     const portStream = new PortStream(port)
     const mux = new ObjectMultiplex()
-    pump(
-      portStream,
-      mux,
-      portStream,
-      (err) => {
-        if (err) {
-          logger.error(err)
-        }
+    pump(portStream, mux, portStream, err => {
+      if (err) {
+        logger.error(err)
       }
-    )
-        
+    })
+
     // messages between inpage and background
-    engine.setupInpageClientConnection(mux.createStream('inpageClient'), port.sender)
+    engine.setupInpageClientConnection(
+      mux.createStream('inpageClient'),
+      port.sender
+    )
   }
 }

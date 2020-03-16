@@ -105,7 +105,7 @@ class WalletController {
     return true
   }
 
-  async restoreWallet(_account, _password) {
+  async restoreWallet(_password, _account) {
     if (!(await this.unlockWallet(_password)))
       throw new Error('Invalid Password')
 

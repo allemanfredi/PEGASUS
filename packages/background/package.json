@@ -20,6 +20,7 @@
     "file-saver": "^2.0.2",
     "kdbxweb": "^1.5.7",
     "net": "^1.0.2",
+    "nodeify": "^1.0.1",
     "obj-multiplex": "^1.0.0",
     "pump": "^3.0.0",
     "readable-stream": "^3.6.0",

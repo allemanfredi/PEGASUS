@@ -2,15 +2,15 @@
 import DuplexStream from 'readable-stream/duplex'
 
 /**
- * 
+ *
  * Handle request from a specific website tab
- * 
- * @param {PegasusEngine} engine 
- * @param {Object} website 
+ *
+ * @param {PegasusEngine} engine
+ * @param {Object} website
  */
 function createEngineStream(engine, website) {
   const stream = new DuplexStream({ objectMode: true, read, write })
-  
+
   /*if (engine.on) {
     engine.on('notification', (message) => {
       stream.push(message)
@@ -18,14 +18,16 @@ function createEngineStream(engine, website) {
   }*/
   return stream
 
-  function read () {
+  function read() {
     return false
   }
-  function write (request, encoding, cb) {
-    engine.handle(Object.assign({}, request, {
-      website,
-      resolve: this.push
-    }))
+  function write(request, encoding, cb) {
+    engine.handle(
+      Object.assign({}, request, {
+        website,
+        resolve: this.push
+      })
+    )
     cb()
   }
 }
