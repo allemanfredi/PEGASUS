@@ -125,7 +125,7 @@ class Init extends Component {
     this.setState({ indexInitialization: this.state.indexInitialization + 1 })
 
     if (this.state.indexInitialization === 2 && this.state.mode === 'new') {
-      const seed = await this.props.background.generateSeed()
+      const seed = await this.props.background.generateSeed(81)
       this.setState({ seed })
     }
 

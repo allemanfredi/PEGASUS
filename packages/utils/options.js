@@ -17,8 +17,8 @@ const options = {
       default: true
     },
     {
-      name: 'localhost:14265',
-      provider: 'http://localhost:14265',
+      name: 'trinity.iota-tangle.io',
+      provider: 'http://trinity.iota-tangle.io:14265',
       link: 'https://thetangle.org/',
       type: 'mainnet',
       difficulty: 14,

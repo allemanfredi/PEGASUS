@@ -1,6 +1,8 @@
 import { APP_STATE } from '@pegasus/utils/states'
 import logger from '@pegasus/utils/logger'
 
+const SESSION_TIME_CHECK = 30000
+
 class SessionController {
   constructor(options) {
     const {
@@ -21,6 +23,10 @@ class SessionController {
   startSession() {
     const date = new Date()
     this.session = date.getTime()
+    this.sessionInterval = setInterval(
+      () => this.checkSession(),
+      SESSION_TIME_CHECK
+    )
   }
 
   checkSession() {
@@ -78,6 +84,7 @@ class SessionController {
 
   deleteSession() {
     this.session = null
+    clearInterval(this.sessionInterval)
   }
 }
 

@@ -55,6 +55,8 @@ class WalletController {
       this.accountDataController.startHandle()
       this.sessionController.startSession()
 
+      this.setState(APP_STATE.WALLET_UNLOCKED)
+
       logger.log(`(WalletController) Wallet initialized`)
       return true
     } catch (err) {
@@ -67,10 +69,11 @@ class WalletController {
 
   async unlockWallet(_password) {
     if (await this.loginPasswordController.comparePassword(_password)) {
+      this.sessionController.startSession()
+
       this.loginPasswordController.setPassword(_password)
 
       await this.stateStorageController.unlock(_password)
-      this.sessionController.startSession()
       this.accountDataController.startHandle()
 
       this.setState(APP_STATE.WALLET_UNLOCKED)
@@ -105,19 +108,30 @@ class WalletController {
   }
 
   async restoreWallet(_password, _account) {
-    if (!(await this.unlockWallet(_password)))
-      throw new Error('Invalid Password')
+    if (!(await this.loginPasswordController.comparePassword(_password)))
+      return false
 
     try {
+      this.setState(APP_STATE.WALLET_RESTORE)
+
+      this.sessionController.startSession()
+      this.loginPasswordController.setPassword(_password)
+      this.accountDataController.startHandle()
+
       await this.stateStorageController.reset()
       this.networkController.setCurrentNetwork(options.networks[0])
 
       const isAdded = await this.addAccount(_account, true)
-      if (!isAdded) return false
+      if (!isAdded) {
+        return false
+      }
 
       logger.log(
         `(WalletController) Wallet restored with account: ${_account.name}`
       )
+
+      this.setState(APP_STATE.WALLET_UNLOCKED)
+
       return true
     } catch (err) {
       logger.error(
@@ -224,6 +238,11 @@ class WalletController {
       this.stateStorageController.set('accounts', accounts)
 
       //background.setAccount(accountToAdd)
+
+      //in order to write on storage the first time
+      const password = this.loginPasswordController.getPassword()
+      await this.stateStorageController.lock()
+      await this.stateStorageController.unlock(password)
 
       logger.log(`(WalletController) Account added : ${accountToAdd.name}`)
 

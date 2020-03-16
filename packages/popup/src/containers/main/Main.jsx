@@ -171,34 +171,23 @@ class Main extends Component {
         state !== APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION ||
         state !== APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION ||
         state !== APP_STATE.WALLET_RESTORE
-      )
+      ) {
         this.setState({ appState: state })
-
-      if (
-        state >= APP_STATE.WALLET_LOCKED ||
-        state === APP_STATE.WALLET_RESTORE
-      )
-        this.props.showHeader(true)
-      else this.props.showHeader(false)
-
-      if (
-        state === APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION ||
-        state === APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
-      )
-        this.props.showHeader(false)
+        console.log('state sed', state)
+      }
     })
   }
 
   onSuccessFromInit() {
     this.props.showHeader(true)
-    this.setState({ appState: APP_STATE.WALLET_UNLOCKED })
-    this.props.background.setState(APP_STATE.WALLET_UNLOCKED)
+    /*this.setState({ appState: APP_STATE.WALLET_UNLOCKED })
+    this.props.background.setState(APP_STATE.WALLET_UNLOCKED)*/
   }
 
   onSuccessFromRestore() {
     this.props.showHeader(true)
-    this.setState({ appState: APP_STATE.WALLET_UNLOCKED })
-    this.props.background.setState(APP_STATE.WALLET_UNLOCKED)
+    /*this.setState({ appState: APP_STATE.WALLET_UNLOCKED })
+    this.props.background.setState(APP_STATE.WALLET_UNLOCKED)*/
   }
 
   onLogout() {

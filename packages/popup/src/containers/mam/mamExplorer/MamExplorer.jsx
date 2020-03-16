@@ -67,7 +67,7 @@ class MamExplorer extends Component {
       mode: this.state.mode,
       sideKey: this.state.sideKey !== '' ? this.state.sideKey : null
     }
-    this.props.background.startFetchMam(options)
+    this.props.background.fetchFromPopup(options)
   }
 
   render() {

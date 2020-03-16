@@ -63,19 +63,38 @@ class App extends Component {
 
   bindStateUpdate() {
     this.props.background.on('update', backgroundState => {
-      console.log(backgroundState)
+      const { state, accounts, selectedNetwork, networks } = backgroundState
 
-      if (backgroundState.state > APP_STATE.WALLET_LOCKED) {
-        const currentAccount = backgroundState.accounts.find(
-          account => account.current
-        )
-        this.setState({ account: currentAccount })
+      if (
+        state > APP_STATE.WALLET_LOCKED &&
+        state !== APP_STATE.WALLET_RESTORE
+      ) {
+        if (accounts.length > 0) {
+          const currentAccount = accounts.find(account => account.current)
+          this.setState({ account: currentAccount })
+        }
       }
 
+      if (
+        state >= APP_STATE.WALLET_LOCKED ||
+        state === APP_STATE.WALLET_RESTORE
+      )
+        this.setState({ showHeader: true })
+      else this.setState({ showHeader: false })
+
+      if (
+        state === APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION ||
+        state === APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
+      )
+        this.setState({ showHeader: false })
+
       this.setState({
-        network: backgroundState.selectedNetwork,
-        networks: backgroundState.networks,
-        appState: backgroundState.state
+        network: selectedNetwork,
+        networks: networks,
+        appState:
+          state !== APP_STATE.WALLET_RESTORE
+            ? backgroundState.state
+            : this.state.appState
       })
     })
   }

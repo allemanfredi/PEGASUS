@@ -249,16 +249,16 @@ const buildPromisedBackgroundApi = _backgroundConnection => {
         )
       ),
 
-    startFetchMam: options =>
+    fetchFromPopup: options =>
       new Promise((resolve, reject) =>
-        _backgroundConnection.startFetchMam(options, (res, err) =>
+        _backgroundConnection.fetchFromPopup(options, (res, err) =>
           err ? reject(err) : resolve(res)
         )
       ),
 
     getMamChannels: () =>
       new Promise((resolve, reject) =>
-        _backgroundConnection.startFetchMam((res, err) =>
+        _backgroundConnection.fetchFromPopup((res, err) =>
           err ? reject(err) : resolve(res)
         )
       ),

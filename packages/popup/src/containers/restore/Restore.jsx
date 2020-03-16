@@ -44,8 +44,8 @@ class Restore extends Component {
     }
 
     const isRestored = await this.props.background.restoreWallet(
-      account,
-      this.state.psw
+      this.state.psw,
+      account
     )
 
     if (!isRestored) {

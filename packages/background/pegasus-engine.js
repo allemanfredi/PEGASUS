@@ -21,8 +21,6 @@ import { composeAPI } from '@iota/core'
 import Dnode from 'dnode/browser'
 import nodeify from 'nodeify'
 
-const SESSION_TIME = 30000
-
 const forbiddenRequests = ['getAccountData', 'getNewAddress', 'getInputs']
 
 class PegasusEngine extends EventEmitter {
@@ -123,9 +121,6 @@ class PegasusEngine extends EventEmitter {
     if (!currentNetwork) {
       this.networkController.setCurrentNetwork(settings.networks[0])
     }
-
-    this.sessionController.checkSession()
-    setInterval(() => this.sessionController.checkSession(), SESSION_TIME)
 
     const popupSettings = this.walletController.getPopupSettings()
     if (popupSettings.autoPromotion.enabled)
@@ -314,8 +309,8 @@ class PegasusEngine extends EventEmitter {
         ),
 
       //mam controller
-      startFetchMam: (options, cb) =>
-        cb(this.mamController.startFetchMam(options)),
+      fetchFromPopup: (options, cb) =>
+        cb(this.mamController.fetchFromPopup(options)),
       getMamChannels: cb => cb(this.mamController.getMamChannels()),
       registerMamChannel: (channel, cb) =>
         cb(this.mamController.registerMamChannel(channel)),
