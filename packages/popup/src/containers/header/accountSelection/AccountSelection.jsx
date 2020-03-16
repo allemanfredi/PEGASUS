@@ -1,5 +1,6 @@
 import React from 'react'
 import Utils from '@pegasus/utils/utils'
+import { APP_STATE } from '@pegasus/utils/states'
 
 class AccountSelection extends React.Component {
   constructor(props, context) {
@@ -13,10 +14,6 @@ class AccountSelection extends React.Component {
       isClosing: false,
       accounts: []
     }
-  }
-
-  componentWillMount() {
-    this.loadAccounts()
   }
 
   componentDidMount() {
@@ -38,10 +35,18 @@ class AccountSelection extends React.Component {
     }
   }
 
+  async componentWillMount() {
+    this.loadAccounts()
+    this.props.background.on('update', backgroundState => {
+      if (backgroundState.state > APP_STATE.WALLET_LOCKED) {
+        this.setState({
+          accounts: backgroundState.accounts.filter(account => !account.current)
+        })
+      }
+    })
+  }
+
   async switchAccount(newAccount) {
-    let accounts = await this.props.background.getAllAccounts()
-    accounts = accounts.filter(account => account.id !== newAccount.id)
-    this.setState({ accounts })
     await this.props.background.setCurrentAccount(newAccount)
   }
 

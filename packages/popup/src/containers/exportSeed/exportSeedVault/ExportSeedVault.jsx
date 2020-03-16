@@ -12,7 +12,8 @@ class ExportSeedVault extends Component {
     this.state = {
       psw: '',
       repsw: '',
-      canExport: false
+      canExport: false,
+      loginPassword: null
     }
   }
 
@@ -25,7 +26,10 @@ class ExportSeedVault extends Component {
     )
       return
 
-    await this.props.background.createSeedVault(this.state.psw)
+    await this.props.background.createSeedVault(
+      this.state.loginPassword,
+      this.state.psw
+    )
   }
 
   unlock() {}
@@ -34,7 +38,12 @@ class ExportSeedVault extends Component {
     return (
       <React.Fragment>
         {!this.state.canExport ? (
-          <Unlock onUnlock={() => this.setState({ canExport: true })} />
+          <Unlock
+            background={this.props.background}
+            onUnlock={loginPassword =>
+              this.setState({ canExport: true, loginPassword })
+            }
+          />
         ) : (
           <div className="container">
             <div className="row mt-3 mb-3">

@@ -92,7 +92,8 @@ class PegasusEngine extends EventEmitter {
     })
 
     this.seedVaultController = new SeedVaultController({
-      walletController: this.walletController
+      walletController: this.walletController,
+      loginPasswordController: this.loginPasswordController
     })
 
     this.customizatorController.setWalletController(this.walletController)
@@ -110,7 +111,7 @@ class PegasusEngine extends EventEmitter {
     )
     /* E N D   C O N T R O L L E R S */
 
-    /*const state = this.walletController.getState()
+    const state = this.walletController.getState()
     if (!this.walletController.isWalletSetup()) {
       this.walletController.setState(APP_STATE.WALLET_NOT_INITIALIZED)
     }
@@ -126,11 +127,11 @@ class PegasusEngine extends EventEmitter {
     this.sessionController.checkSession()
     setInterval(() => this.sessionController.checkSession(), SESSION_TIME)
 
-    const popupSettings = this.getPopupSettings()
+    const popupSettings = this.walletController.getPopupSettings()
     if (popupSettings.autoPromotion.enabled)
       this.accountDataController.enableTransactionsAutoPromotion(
         parseInt(popupSettings.autoPromotion.time * 1000 * 60)
-      )*/
+      )
   }
 
   /**
@@ -228,8 +229,6 @@ class PegasusEngine extends EventEmitter {
         nodeify(this.walletController.restoreWallet(password, account), cb),
       unlockSeed: (password, cb) =>
         nodeify(this.walletController.unlockSeed(password), cb),
-      comparePassword: (password, cb) =>
-        nodeify(this.walletController.comparePassword(password), cb),
       addAccount: (account, isCurrent, cb) =>
         nodeify(this.walletController.addAccount(account, isCurrent), cb),
       isAccountNameAlreadyExists: (name, cb) =>
@@ -251,6 +250,10 @@ class PegasusEngine extends EventEmitter {
       setPopupSettings: (settings, cb) =>
         cb(this.walletController.setPopupSettings(settings)),
       getPopupSettings: cb => cb(this.walletController.getPopupSettings()),
+
+      //login password controller
+      comparePassword: (password, cb) =>
+        nodeify(this.loginPasswordController.comparePassword(password), cb),
 
       //session controller
       checkSession: cb => cb(this.sessionController.checkSession()),
@@ -301,8 +304,14 @@ class PegasusEngine extends EventEmitter {
         cb(this.connectorController.getConnectionRequest()),
 
       //seed vault controller
-      createSeedVault: (password, cb) =>
-        nodeify(this.seedVaultController.createSeedVault(password), cb),
+      createSeedVault: (loginPassword, encryptionPassword, cb) =>
+        nodeify(
+          this.seedVaultController.createSeedVault(
+            loginPassword,
+            encryptionPassword
+          ),
+          cb
+        ),
 
       //mam controller
       startFetchMam: (options, cb) =>
@@ -312,8 +321,8 @@ class PegasusEngine extends EventEmitter {
         cb(this.mamController.registerMamChannel(channel)),
 
       //accountData controller
-      reloadAccountData: cb =>
-        nodeify(this.accountDataController.reloadAccountData(), cb),
+      loadAccountData: cb =>
+        nodeify(this.accountDataController.loadAccountData(), cb),
 
       enableTransactionsAutoPromotion: (time, cb) =>
         cb(this.accountDataController.enableTransactionsAutoPromotion(time)),

@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import Utils from '@pegasus/utils/utils'
-
 import ReactTooltip from 'react-tooltip'
-import ChangeAvatar from '../changeAvatar/ChangeAvatar'
+import ChangeAvatar from './changeAvatar/ChangeAvatar'
 
 class Settings extends Component {
   constructor(props, context) {
@@ -60,6 +59,7 @@ class Settings extends Component {
       <div className="modal mt-6">
         {this.state.showChangeAvatar ? (
           <ChangeAvatar
+            background={this.props.background}
             account={this.props.account}
             onClose={() => this.setState({ showChangeAvatar: false })}
           />

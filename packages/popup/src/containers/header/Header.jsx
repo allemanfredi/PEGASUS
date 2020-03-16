@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Utils from '@pegasus/utils/utils'
 import AccountSelection from './accountSelection/AccountSelection'
+import { APP_STATE } from '@pegasus/utils/states'
 
 class Header extends Component {
   constructor(props, context) {
@@ -42,9 +43,6 @@ class Header extends Component {
   }
 
   render() {
-    const isLogged =
-      this.props.account && !Utils.isEmptyObject(this.props.account)
-
     return (
       <React.Fragment>
         <header>
@@ -79,7 +77,7 @@ class Header extends Component {
                 </div>
               </div>
             </div>
-            {isLogged ? (
+            {this.props.appState > APP_STATE.WALLET_LOCKED ? (
               <div className="col-3 my-auto text-right">
                 <img
                   className="border-radius-50 border-darkblue cursor-pointer"
@@ -155,9 +153,11 @@ class Header extends Component {
             <div className="col-1"></div>
           </div>
         </header>
-        {this.state.isSelectingAccount && isLogged ? (
+        {this.state.isSelectingAccount &&
+        this.props.appState > APP_STATE.WALLET_LOCKED ? (
           <AccountSelection
             network={this.props.network}
+            background={this.props.background}
             onClose={() => this.setState({ isSelectingAccount: false })}
           />
         ) : null}

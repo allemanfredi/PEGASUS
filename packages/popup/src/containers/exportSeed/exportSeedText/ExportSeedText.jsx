@@ -30,13 +30,14 @@ class ExportSeedText extends Component {
 
     this.props.setNotification({
       type: 'success',
-      text: 'Copied!'
+      text: 'Copied!',
+      position: 'under-bar'
     })
   }
 
   render() {
     return !this.state.seed ? (
-      <Unlock onUnlock={this.getSeed} />
+      <Unlock background={this.props.background} onUnlock={this.getSeed} />
     ) : (
       <div className="container">
         <div className="row mt-3 mb-3">

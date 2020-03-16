@@ -30,7 +30,7 @@ class AccountDataController {
   startHandle() {
     const account = this.walletController.getCurrentAccount()
 
-    if (account) background.setAccount(account)
+    //if (account) background.setAccount(account)
 
     if (this.accountDataHandler) {
       return
@@ -93,11 +93,10 @@ class AccountDataController {
 
     this.walletController.updateTransactionsAccount(transactionsWithReattachSet)
 
-    const updatedAccount = this.walletController.updateDataAccount(
-      updatedData,
-      network
-    )
-    background.setAccount(updatedAccount)
+    this.walletController.updateDataAccount(updatedData, network)
+
+    return true
+    //background.setAccount(updatedAccount)
   }
 
   async retrieveAccountData(_seed, _network, _currentAccount) {

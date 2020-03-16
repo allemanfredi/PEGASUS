@@ -28,7 +28,7 @@ class Add extends Component {
   }
 
   async componentDidMount() {
-    const seed = await this.props.background.generateSeed()
+    const seed = await this.props.background.generateSeed(81)
     this.setState({ seed })
   }
 

@@ -11,7 +11,6 @@ class App extends Component {
     this.main = React.createRef()
     this.header = React.createRef()
 
-    this.onHandleLogin = this.onHandleLogin.bind(this)
     this.onShowHeader = this.onShowHeader.bind(this)
     this.onHandleNetworkChanging = this.onHandleNetworkChanging.bind(this)
     this.bindStateUpdate = this.bindStateUpdate.bind(this)
@@ -22,10 +21,9 @@ class App extends Component {
       network: {},
       networks: [],
       account: {},
-      showHeader: false
+      showHeader: false,
+      appState: 0
     }
-
-    //this.duplex = new Duplex.Popup()
   }
 
   async componentWillMount() {
@@ -50,10 +48,6 @@ class App extends Component {
     })
   }
 
-  onHandleLogin(value) {
-    this.setState({ isLogged: value })
-  }
-
   onShowHeader(value) {
     this.setState({ showHeader: value })
   }
@@ -69,6 +63,8 @@ class App extends Component {
 
   bindStateUpdate() {
     this.props.background.on('update', backgroundState => {
+      console.log(backgroundState)
+
       if (backgroundState.state > APP_STATE.WALLET_LOCKED) {
         const currentAccount = backgroundState.accounts.find(
           account => account.current
@@ -78,7 +74,8 @@ class App extends Component {
 
       this.setState({
         network: backgroundState.selectedNetwork,
-        networks: backgroundState.networks
+        networks: backgroundState.networks,
+        appState: backgroundState.state
       })
     })
   }
@@ -92,8 +89,9 @@ class App extends Component {
               ref={this.header}
               account={this.state.account}
               network={this.state.network}
+              background={this.props.background}
               networks={this.state.networks}
-              isLogged={this.state.isLogged}
+              appState={this.state.appState}
               changeNetwork={this.onHandleNetworkChanging}
               addCustomNetwork={this.onAddCustomNetwork}
             />

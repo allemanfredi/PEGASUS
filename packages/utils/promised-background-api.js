@@ -135,7 +135,7 @@ const buildPromisedBackgroundApi = _backgroundConnection => {
 
     deleteAccount: account =>
       new Promise((resolve, reject) =>
-        _backgroundConnection.updateAvatarAccount(account, avatar, (res, err) =>
+        _backgroundConnection.deleteAccount(account, (res, err) =>
           err ? reject(err) : resolve(res)
         )
       ),
@@ -238,11 +238,15 @@ const buildPromisedBackgroundApi = _backgroundConnection => {
         )
       ),
 
-    createSeedVault: password =>
+    createSeedVault: (loginPassword, encryptionPassword) =>
       new Promise((resolve, reject) =>
-        _backgroundConnection.createSeedVault(password, (err, res) => {
-          err ? reject(err) : resolve(res)
-        })
+        _backgroundConnection.createSeedVault(
+          loginPassword,
+          encryptionPassword,
+          (err, res) => {
+            err ? reject(err) : resolve(res)
+          }
+        )
       ),
 
     startFetchMam: options =>
@@ -266,9 +270,9 @@ const buildPromisedBackgroundApi = _backgroundConnection => {
         )
       ),
 
-    reloadAccountData: () =>
+    loadAccountData: () =>
       new Promise((resolve, reject) =>
-        _backgroundConnection.reloadAccountData((err, res) => {
+        _backgroundConnection.loadAccountData((err, res) => {
           err ? reject(err) : resolve(res)
         })
       ),

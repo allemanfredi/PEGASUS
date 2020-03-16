@@ -167,12 +167,11 @@ class WalletController {
 
   async addAccount(_account, _isCurrent) {
     try {
+      const accounts = this.stateStorageController.get('accounts')
       if (_isCurrent) {
-        const accounts = this.stateStorageController.get('accounts')
         accounts.forEach(user => {
           user.current = false
         })
-        this.stateStorageController.set('accounts', accounts)
       }
 
       const network = this.networkController.getCurrentNetwork()
@@ -214,8 +213,6 @@ class WalletController {
         id: Utils.sha256(_account.name)
       }
 
-      const accounts = this.stateStorageController.get('accounts')
-
       const alreadyExists = accounts.find(
         account => account.id === accountToAdd.id
       )
@@ -253,18 +250,14 @@ class WalletController {
   }
 
   setCurrentAccount(_currentAccount) {
-    let currentsAccount = this.stateStorageController.get('accounts')
-    currentsAccount.forEach(account => {
+    let accounts = this.stateStorageController.get('accounts')
+    accounts.forEach(account => {
       account.current = false
     })
-    this.stateStorageController.set('accounts', currentsAccount)
 
-    const accounts = this.stateStorageController.get('accounts')
     accounts.forEach(account => {
       if (account.id === _currentAccount.id) {
         account.current = true
-        //background.setAccount(account)
-
         logger.log(`(WalletController) Set current account : ${account.name}`)
         //background.setSelectedAccount(account.data.latestAddress)
       }
@@ -274,35 +267,30 @@ class WalletController {
 
   updateDataAccount(_updatedData) {
     const accounts = this.stateStorageController.get('accounts')
-    let updatedAccount = {}
     accounts.forEach(account => {
       if (account.current) {
         account.data = _updatedData
-        updatedAccount = account
 
         logger.log(`(WalletController) Update account data for ${account.name}`)
       }
     })
 
     this.stateStorageController.set('accounts', accounts)
-    return updatedAccount
+    return true
   }
 
   updateTransactionsAccount(_transactions) {
     const accounts = this.stateStorageController.get('accounts')
 
-    let updatedAccount = {}
     accounts.forEach(account => {
       if (account.current) {
         account.transactions = _transactions
-        updatedAccount = account
-
         logger.log(`(WalletController) Update transactions for ${account.name}`)
       }
     })
 
     this.stateStorageController.set('accounts', accounts)
-    return updatedAccount
+    return true
   }
 
   updateNameAccount(_current, _newName) {
@@ -313,7 +301,6 @@ class WalletController {
       }
     }
 
-    let updatedAccount = {}
     accounts.forEach(account => {
       if (account.id === _current.id) {
         logger.log(
@@ -322,30 +309,23 @@ class WalletController {
 
         account.name = _newName
         account.id = Utils.sha256(_newName)
-        updatedAccount = account
       }
     })
 
     this.stateStorageController.set('accounts', accounts)
-    //background.setAccount(updatedAccount)
-
     return true
   }
 
   updateAvatarAccount(_current, _avatar) {
     const accounts = this.stateStorageController.get('accounts')
-    let updatedAccount = {}
     accounts.forEach(account => {
       if (account.id === _current.id) {
         account['avatar'] = _avatar
-        updatedAccount = account
-
         logger.log(`(WalletController) Update avatar for ${account.name}`)
       }
     })
 
     this.stateStorageController.set('accounts', accounts)
-    //background.setAccount(updatedAccount)
   }
 
   async deleteAccount(_account) {
@@ -365,7 +345,6 @@ class WalletController {
 
     accounts[0].current = true
     this.stateStorageController.set('accounts', accounts)
-    //background.setAccount(accounts[0])
 
     //injection
     //background.setSelectedAccount(accounts[0].data.latestAddress)
@@ -374,12 +353,7 @@ class WalletController {
   }
 
   getAllAccounts() {
-    const accounts = []
-
-    this.stateStorageController.get('accounts').forEach(account => {
-      accounts.push(account)
-    })
-    return accounts
+    return this.stateStorageController.get('accounts')
   }
 
   generateSeed(_length = 81) {

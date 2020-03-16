@@ -1,22 +1,25 @@
 import kdbxweb from 'kdbxweb'
 import argon2 from 'argon2-browser'
-import Utils from '@pegasus/utils/utils'
 import * as FileSaver from 'file-saver'
 import logger from '@pegasus/utils/logger'
 
 class SeedVaultController {
   constructor(configs) {
-    const { walletController } = configs
+    const { walletController, loginPasswordController } = configs
 
     this.walletController = walletController
+    this.loginPasswordController = loginPasswordController
   }
 
-  async createSeedVault(_password) {
+  async createSeedVault(_loginPassword, _encryptionPassword) {
+    if (!this.loginPasswordController.comparePassword(_loginPassword))
+      return false
+
     const account = this.walletController.getCurrentAccount()
     const seed = account.seed
 
     kdbxweb.CryptoEngine.argon2 = async (
-      _password,
+      _encryptionPassword,
       salt,
       memory,
       iterations,
@@ -26,7 +29,7 @@ class SeedVaultController {
       version
     ) => {
       const hash = await argon2.hash({
-        pass: new Uint8Array(_password),
+        pass: new Uint8Array(_encryptionPassword),
         salt: new Uint8Array(salt),
         mem: memory,
         time: iterations,
@@ -38,7 +41,7 @@ class SeedVaultController {
     }
 
     const credentials = new kdbxweb.Credentials(
-      kdbxweb.ProtectedValue.fromString(_password),
+      kdbxweb.ProtectedValue.fromString(_encryptionPassword),
       null
     )
     const db = kdbxweb.Kdbx.create(credentials, 'Trinity')

@@ -80,10 +80,16 @@ class Settings extends React.Component {
             })
           : null}
         {this.state.show[0] ? (
-          <ConnectionsSettings setNotification={this.props.setNotification} />
+          <ConnectionsSettings
+            background={this.props.background}
+            setNotification={this.props.setNotification}
+          />
         ) : null}
         {this.state.show[1] ? (
-          <TransactionsSettings setNotification={this.props.setNotification} />
+          <TransactionsSettings
+            background={this.props.background}
+            setNotification={this.props.setNotification}
+          />
         ) : null}
       </div>
     )

@@ -44,6 +44,13 @@ class StateStorageController extends Store {
     this.unlocked = false
     this.storage = new ExtensionStore()
 
+    chrome.storage.local.clear(function() {
+      var error = chrome.runtime.lastError
+      if (error) {
+        console.error(error)
+      }
+    })
+
     this._init()
   }
 
