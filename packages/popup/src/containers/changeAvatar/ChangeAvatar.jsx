@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { popupMessanger } from '@pegasus/utils/messangers'
 
 class ChangeAvatar extends Component {
   constructor(props) {
@@ -12,8 +11,8 @@ class ChangeAvatar extends Component {
     }
   }
 
-  confirm() {
-    popupMessanger.updateAvatarAccount(
+  async confirm() {
+    await this.props.background.updateAvatarAccount(
       this.props.account,
       this.state.selectedAvatar
     )

@@ -100,7 +100,7 @@ class Mam extends Component {
         ) : null}
         {this.state.show[2] ? (
           <MamExplorer
-            duplex={this.props.duplex}
+            background={this.props.background}
             onBack={() => this.props.onBack()}
           />
         ) : null}

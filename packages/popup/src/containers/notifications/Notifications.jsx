@@ -12,9 +12,9 @@ class Notifications extends React.Component {
   }
 
   componentDidMount() {
-    this.props.duplex.on('setNotification', notification =>
+    /*this.props.duplex.on('setNotification', notification =>
       this.setNotification(notification)
-    )
+    )*/
   }
 
   setNotification(notification) {

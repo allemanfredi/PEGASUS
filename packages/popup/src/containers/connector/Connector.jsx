@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { popupMessanger } from '@pegasus/utils/messangers'
 
 class Connector extends Component {
   constructor(props, context) {
@@ -14,7 +13,7 @@ class Connector extends Component {
   }
 
   async componentDidMount() {
-    const connection = await popupMessanger.getConnectionRequest()
+    const connection = await this.props.background.getConnectionRequest()
     this.setState({
       website: connection.website
     })

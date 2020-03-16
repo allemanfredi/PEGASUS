@@ -19,12 +19,12 @@ class ConfirmTransfers extends Component {
   }
 
   bindDuplexRequests() {
-    this.props.duplex.on('setTransfersConfirmationLoading', isLoading =>
+    /*this.props.duplex.on('setTransfersConfirmationLoading', isLoading =>
       this.setState({ isLoading })
     )
     this.props.duplex.on('setTransfersConfirmationError', error =>
       this.setState({ error })
-    )
+    )*/
   }
 
   render() {

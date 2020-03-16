@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { popupMessanger } from '@pegasus/utils/messangers'
 import ConfirmTransfers from './confirmTransfers/ConfirmTransfers'
 import ConfirmCreateMamChannel from './confirmCreateMamChannel/ConfirmCreateMamChannel'
 import ConfirmChangeModeMamChannel from './confirmChangeModeMamChannel/ConfirmChangeModeMamChannel'
@@ -20,31 +19,31 @@ class ConfirmRequest extends Component {
   }
 
   async componentWillMount() {
-    await popupMessanger.setState(
+    await this.props.background.setState(
       APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION
     )
 
-    const executableRequests = await popupMessanger.getExecutableRequests()
+    const executableRequests = await this.props.background.getExecutableRequests()
     const requests = executableRequests.filter(
       request => request.needUserInteraction
     )
     this.setState({ requests })
 
-    this.props.duplex.on('setRequests', requests => {
+    /*this.props.duplex.on('setRequests', requests => {
       this.setState({ requests })
-    })
+    })*/
   }
 
   async confirm(request) {
-    await popupMessanger.confirmRequest(request)
+    await this.props.background.confirmRequest(request)
   }
 
   async reject(request) {
-    await popupMessanger.rejectRequest(request)
+    await this.props.background.rejectRequest(request)
   }
 
   rejectAll() {
-    popupMessanger.rejectRequests()
+    this.props.background.rejectRequests()
   }
 
   render() {
@@ -56,7 +55,7 @@ class ConfirmRequest extends Component {
           return (
             <ConfirmTransfers
               transfer={request}
-              duplex={this.props.duplex}
+              background={this.props.this.props.background}
               onConfirm={this.confirm}
               onReject={this.reject}
             />

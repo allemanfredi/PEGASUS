@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { popupMessanger } from '@pegasus/utils/messangers'
+
 import Utils from '@pegasus/utils/utils'
 import ConfirmTransfers from '../confirm/confirmTransfers/ConfirmTransfers'
 import Input from '../../components/input/Input'
@@ -39,7 +39,7 @@ class Send extends Component {
   }
 
   async loadAccounts() {
-    let accounts = await popupMessanger.getAllAccounts()
+    let accounts = await this.props.background.getAllAccounts()
     accounts = accounts.filter(account => account.id !== this.props.account.id)
     this.setState({ accounts })
   }
@@ -81,7 +81,7 @@ class Send extends Component {
   }
 
   async confirmTransfer() {
-    const res = await popupMessanger.executeRequest(this.state.transfer)
+    const res = await this.props.background.executeRequest(this.state.transfer)
     if (res.success) {
       this.props.onHideTop(false)
       this.props.onBack()
@@ -107,7 +107,7 @@ class Send extends Component {
         transfer={this.state.transfer}
         onConfirm={this.confirmTransfer}
         onReject={this.rejectTransfer}
-        duplex={this.props.duplex}
+        background={this.props.background}
       />
     ) : (
       <div className="container overflow-auto-475h">

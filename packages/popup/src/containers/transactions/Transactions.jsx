@@ -3,7 +3,6 @@ import Utils from '@pegasus/utils/utils'
 import Details from './details/Details'
 import Spinner from '../../components/spinner/Spinner'
 import Filters from './filters/Filters'
-import { popupMessanger } from '@pegasus/utils/messangers'
 import { composeAPI } from '@iota/core'
 
 class Transactions extends Component {
@@ -31,7 +30,7 @@ class Transactions extends Component {
 
   async promoteTransaction(hash) {
     try {
-      const network = await popupMessanger.getCurrentNetwork()
+      const network = await this.props.background.getCurrentNetwork()
       const iota = composeAPI({ provider: network.provider })
       await iota.promoteTransaction(hash, 3, 14)
 
@@ -51,7 +50,7 @@ class Transactions extends Component {
 
   async replayBundle(hash) {
     try {
-      const network = await popupMessanger.getCurrentNetwork()
+      const network = await this.props.background.getCurrentNetwork()
       const iota = composeAPI({ provider: network.provider })
       await iota.replayBundle(hash, 3, 14)
       this.props.setNotification({
@@ -71,7 +70,7 @@ class Transactions extends Component {
   async componentWillMount() {
     this.handleShowDetails()
 
-    const settings = await popupMessanger.getPopupSettings()
+    const settings = await this.props.background.getPopupSettings()
     if (!settings) return
 
     this.setState({ settings })
@@ -108,7 +107,7 @@ class Transactions extends Component {
     const settings = this.state.settings
     settings.filters[filter] = !settings.filters[filter]
     this.setState({ settings })
-    popupMessanger.setPopupSettings(settings)
+    this.props.background.setPopupSettings(settings)
   }
 
   render() {

@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { popupMessanger } from '@pegasus/utils/messangers'
 import Unlock from '../../unlock/Unlock'
 
 class ExportSeedText extends Component {
@@ -15,7 +14,7 @@ class ExportSeedText extends Component {
   }
 
   async getSeed(password) {
-    const seed = await popupMessanger.unlockSeed(password)
+    const seed = await this.props.background.unlockSeed(password)
     this.setState({
       seed
     })

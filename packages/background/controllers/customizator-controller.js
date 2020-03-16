@@ -1,6 +1,6 @@
 import { composeAPI } from '@iota/core'
 import { APP_STATE } from '@pegasus/utils/states'
-import { backgroundMessanger } from '@pegasus/utils/messangers'
+
 import extensionizer from 'extensionizer'
 import logger from '@pegasus/utils/logger'
 
@@ -142,7 +142,7 @@ class CustomizatorController {
           text: this.requests.length.toString()
         })
 
-        backgroundMessanger.setRequests(this.requests)
+        background.setRequests(this.requests)
       } else {
         const res = await this.execute({ method, uuid, resolve, data: args })
         this._removeRequest({ method, uuid, resolve, data: args })
@@ -232,9 +232,9 @@ class CustomizatorController {
 
     if (this.requests.length === 0) {
       this.popupController.closePopup()
-      backgroundMessanger.setAppState(APP_STATE.WALLET_UNLOCKED)
+      background.setAppState(APP_STATE.WALLET_UNLOCKED)
     } else {
-      backgroundMessanger.setRequests(this.requests)
+      background.setRequests(this.requests)
     }
 
     resolve({
@@ -264,9 +264,9 @@ class CustomizatorController {
 
     if (this.requests.length === 0) {
       this.popupController.closePopup()
-      backgroundMessanger.setAppState(APP_STATE.WALLET_UNLOCKED)
+      background.setAppState(APP_STATE.WALLET_UNLOCKED)
     } else {
-      backgroundMessanger.setRequests(this.requests)
+      background.setRequests(this.requests)
     }
   }
 
@@ -286,7 +286,7 @@ class CustomizatorController {
     })
     this.requests = []
     this.popupController.closePopup()
-    backgroundMessanger.setAppState(APP_STATE.WALLET_UNLOCKED)
+    background.setAppState(APP_STATE.WALLET_UNLOCKED)
   }
 
   async execute(_request) {

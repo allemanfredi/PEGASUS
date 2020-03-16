@@ -1,5 +1,4 @@
 import React from 'react'
-import { popupMessanger } from '@pegasus/utils/messangers'
 import Utils from '@pegasus/utils/utils'
 
 class AccountSelection extends React.Component {
@@ -40,14 +39,14 @@ class AccountSelection extends React.Component {
   }
 
   async switchAccount(newAccount) {
-    let accounts = await popupMessanger.getAllAccounts()
+    let accounts = await this.props.background.getAllAccounts()
     accounts = accounts.filter(account => account.id !== newAccount.id)
     this.setState({ accounts })
-    popupMessanger.setCurrentAccount(newAccount)
+    await this.props.background.setCurrentAccount(newAccount)
   }
 
   async loadAccounts() {
-    let accounts = await popupMessanger.getAllAccounts()
+    let accounts = await this.props.background.getAllAccounts()
     accounts = accounts.filter(account => !account.current)
     this.setState({ accounts })
   }

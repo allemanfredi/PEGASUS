@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Picklist from '../../../components/picklist/Picklist'
-import { popupMessanger } from '@pegasus/utils/messangers'
+
 import Utils from '@pegasus/utils/utils'
 import Input from '../../../components/input/Input'
 
@@ -42,7 +42,7 @@ class RegisterMamChannel extends Component {
       return
     }
 
-    const res = await popupMessanger.registerMamChannel({
+    const res = await this.props.background.registerMamChannel({
       sidekey: this.state.registerChannelSidekey,
       root: this.state.registerChannelRoot,
       mode: this.state.registerChannelMode

@@ -5,7 +5,6 @@ import Init from '../init/Init'
 import Restore from '../restore/Restore'
 import ConfirmRequest from '../confirm/ConfirmRequest'
 import Connector from '../connector/Connector'
-import { popupMessanger } from '@pegasus/utils/messangers'
 import { APP_STATE } from '@pegasus/utils/states'
 
 class Main extends Component {
@@ -31,8 +30,8 @@ class Main extends Component {
   }
 
   async componentDidMount() {
-    await popupMessanger.checkSession()
-    let state = await popupMessanger.getState()
+    await this.props.background.checkSession()
+    let state = await this.props.background.getState()
 
     //closing popup in restore page
     if (state === APP_STATE.WALLET_RESTORE) {
@@ -49,18 +48,20 @@ class Main extends Component {
     if (state === APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION)
       this.props.showHeader(false)
 
-    const connection = await popupMessanger.getConnectionRequest()
+    const connection = await this.props.background.getConnectionRequest()
     if (
       connection &&
       connection.requestToConnect &&
       state > APP_STATE.WALLET_LOCKED
     ) {
-      popupMessanger.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
+      this.props.background.setState(
+        APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
+      )
       state = APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
       this.props.showHeader(false)
     }
 
-    const executableRequests = await popupMessanger.getExecutableRequests()
+    const executableRequests = await this.props.background.getExecutableRequests()
 
     if (
       !connection &&
@@ -72,7 +73,7 @@ class Main extends Component {
       )
       if (needUserInteraction) {
         this.props.showHeader(false)
-        popupMessanger.setState(
+        this.props.background.setState(
           APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION
         )
         state = APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION
@@ -84,19 +85,21 @@ class Main extends Component {
   }
 
   async onSuccessFromLogin() {
-    popupMessanger.setState(APP_STATE.WALLET_UNLOCKED)
+    this.props.background.setState(APP_STATE.WALLET_UNLOCKED)
     this.setState({ appState: APP_STATE.WALLET_UNLOCKED })
 
-    const connection = await popupMessanger.getConnectionRequest()
+    const connection = await this.props.background.getConnectionRequest()
     if (connection && connection.requestToConnect) {
-      popupMessanger.setState(APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION)
+      this.props.background.setState(
+        APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
+      )
       this.setState({
         appState: APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
       })
       this.props.showHeader(false)
     }
 
-    const executableRequests = await popupMessanger.getExecutableRequests()
+    const executableRequests = await this.props.background.getExecutableRequests()
     const requestsWithNoUserInteraction = executableRequests.filter(
       request => !request.needUserInteraction
     )
@@ -106,23 +109,23 @@ class Main extends Component {
     )
     if (!connection && requestsWithNoUserInteraction.length > 0) {
       for (let request of requestsWithNoUserInteraction) {
-        popupMessanger.executeRequest(request)
+        this.props.background.executeRequest(request)
       }
     }
 
     if (requestsWithUserInteraction.length > 0)
-      popupMessanger.setState(
+      this.props.background.setState(
         APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION
       )
 
     if (!connection && requestsWithUserInteraction.length === 0)
-      popupMessanger.closePopup()
+      this.props.background.closePopup()
   }
 
   async onPermissionGranted() {
-    await popupMessanger.completeConnection()
+    await this.props.background.completeConnection()
 
-    const executableRequests = await popupMessanger.getExecutableRequests()
+    const executableRequests = await this.props.background.getExecutableRequests()
 
     const requestsWithUserInteraction = executableRequests.filter(
       request => request.needUserInteraction
@@ -137,7 +140,7 @@ class Main extends Component {
       this.setState({
         appState: APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION
       })
-      popupMessanger.setState(
+      this.props.background.setState(
         APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION
       )
       return
@@ -145,9 +148,9 @@ class Main extends Component {
 
     if (requestsWithNoUserInteraction.length > 0) {
       for (let request of requestsWithNoUserInteraction) {
-        popupMessanger.executeRequest(request)
+        this.props.background.executeRequest(request)
       }
-      popupMessanger.closePopup()
+      this.props.background.closePopup()
     }
 
     this.props.showHeader(true)
@@ -155,30 +158,32 @@ class Main extends Component {
   }
 
   onPermissionNotGranted() {
-    popupMessanger.rejectConnection()
-    popupMessanger.rejectRequests()
+    this.props.background.rejectConnection()
+    this.props.background.rejectRequests()
     this.props.showHeader(true)
   }
 
   bindDuplexRequests() {
-    this.props.duplex.on('setAppState', appState => {
-      if (
-        appState !== APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION ||
-        appState !== APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION ||
-        appState !== APP_STATE.WALLET_RESTORE
-      )
-        this.setState({ appState })
+    this.props.background.on('update', e => {
+      const { state } = e
 
       if (
-        appState >= APP_STATE.WALLET_LOCKED ||
-        appState === APP_STATE.WALLET_RESTORE
+        state !== APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION ||
+        state !== APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION ||
+        state !== APP_STATE.WALLET_RESTORE
+      )
+        this.setState({ appState: state })
+
+      if (
+        state >= APP_STATE.WALLET_LOCKED ||
+        state === APP_STATE.WALLET_RESTORE
       )
         this.props.showHeader(true)
       else this.props.showHeader(false)
 
       if (
-        appState === APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION ||
-        appState === APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
+        state === APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION ||
+        state === APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
       )
         this.props.showHeader(false)
     })
@@ -187,36 +192,36 @@ class Main extends Component {
   onSuccessFromInit() {
     this.props.showHeader(true)
     this.setState({ appState: APP_STATE.WALLET_UNLOCKED })
-    popupMessanger.setState(APP_STATE.WALLET_UNLOCKED)
+    this.props.background.setState(APP_STATE.WALLET_UNLOCKED)
   }
 
   onSuccessFromRestore() {
     this.props.showHeader(true)
     this.setState({ appState: APP_STATE.WALLET_UNLOCKED })
-    popupMessanger.setState(APP_STATE.WALLET_UNLOCKED)
+    this.props.background.setState(APP_STATE.WALLET_UNLOCKED)
   }
 
   onLogout() {
     this.props.showHeader(true)
     this.setState({ appState: APP_STATE.WALLET_LOCKED })
-    popupMessanger.setState(APP_STATE.WALLET_LOCKED)
+    this.props.background.setState(APP_STATE.WALLET_LOCKED)
   }
 
   onRestore() {
     this.props.showHeader(true)
     this.setState({ appState: APP_STATE.WALLET_RESTORE })
-    popupMessanger.setState(APP_STATE.WALLET_RESTORE)
+    this.props.background.setState(APP_STATE.WALLET_RESTORE)
   }
 
   onBack() {
     this.setState({ appState: APP_STATE.WALLET_LOCKED })
-    popupMessanger.setState(APP_STATE.WALLET_LOCKED)
+    this.props.background.setState(APP_STATE.WALLET_LOCKED)
   }
 
   /*onRejectAll() {
     this.props.showHeader(true)
     this.setState({ appState: APP_STATE.WALLET_UNLOCKED })
-    popupMessanger.rejectAllTransfers()
+    this.props.background.rejectAllTransfers()
   }*/
 
   //add network
@@ -230,12 +235,14 @@ class Main extends Component {
         return (
           <Init
             setNotification={this.props.setNotification}
+            background={this.props.background}
             onSuccess={this.onSuccessFromInit}
           />
         )
       case APP_STATE.WALLET_LOCKED:
         return (
           <Login
+            background={this.props.background}
             onSuccess={this.onSuccessFromLogin}
             onRestore={this.onRestore}
           />
@@ -244,6 +251,7 @@ class Main extends Component {
         return (
           <Restore
             network={this.props.network}
+            background={this.props.background}
             setNotification={this.props.setNotification}
             onSuccess={this.onSuccessFromRestore}
             onBack={this.onBack}
@@ -253,21 +261,22 @@ class Main extends Component {
         return (
           <Home
             ref={this.home}
-            duplex={this.props.duplex}
             account={this.props.account}
             network={this.props.network}
+            background={this.props.background}
             setNotification={this.props.setNotification}
             onLogout={this.onLogout}
             onShowHeader={show => this.props.showHeader(show)}
           />
         )
       case APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION:
-        return <ConfirmRequest duplex={this.props.duplex} />
+        return <ConfirmRequest background={this.props.background} />
       case APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION:
         return (
           <Connector
             ref={this.connector}
             account={this.props.account}
+            background={this.props.background}
             onPermissionGranted={this.onPermissionGranted}
             onPermissionNotGranted={this.onPermissionNotGranted}
           />

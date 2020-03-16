@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { popupMessanger } from '@pegasus/utils/messangers'
 import Utils from '@pegasus/utils/utils'
 import ReactTooltip from 'react-tooltip'
 
@@ -16,7 +15,7 @@ class ShowChannelsList extends Component {
   }
 
   async componentWillMount() {
-    const channels = await popupMessanger.getMamChannels()
+    const channels = await this.props.background.getMamChannels()
 
     if (!channels || Utils.isEmptyObject(channels)) {
       return

@@ -1,4 +1,3 @@
-import { backgroundMessanger } from '@pegasus/utils/messangers'
 import settings from '@pegasus/utils/options'
 import AccountDataController from './controllers/account-data-controller'
 import CustomizatorController from './controllers/customizator-controller'
@@ -152,8 +151,6 @@ class PegasusEngine extends EventEmitter {
 
     const inpageClientStream = createEngineStream(this, website)
 
-    //const connectionId =
-
     /*const account = this.connectorController.estabilishConnection(website)
     console.log(account)*/
 
@@ -216,6 +213,9 @@ class PegasusEngine extends EventEmitter {
     return 'hello'
   }
 
+  /**
+   * Background api used by the popup
+   */
   getApi() {
     return {
       isWalletSetup: cb => cb(this.walletController.isWalletSetup()),
@@ -225,7 +225,7 @@ class PegasusEngine extends EventEmitter {
       unlockWallet: (password, cb) =>
         nodeify(this.walletController.unlockWallet(password), cb),
       restoreWallet: (password, account, cb) =>
-        nodeify(this.walletController.unlockWallet(password, account), cb),
+        nodeify(this.walletController.restoreWallet(password, account), cb),
       unlockSeed: (password, cb) =>
         nodeify(this.walletController.unlockSeed(password), cb),
       comparePassword: (password, cb) =>
@@ -247,6 +247,7 @@ class PegasusEngine extends EventEmitter {
       generateSeed: (length, cb) =>
         cb(this.walletController.generateSeed(length)),
       getState: cb => cb(this.walletController.getState()),
+      setState: (state, cb) => cb(this.walletController.setState(state)),
       setPopupSettings: (settings, cb) =>
         cb(this.walletController.setPopupSettings(settings)),
       getPopupSettings: cb => cb(this.walletController.getPopupSettings()),
@@ -265,7 +266,7 @@ class PegasusEngine extends EventEmitter {
       deleteCurrentNetwork: cb =>
         cb(this.networkController.deleteCurrentNetwork()),
 
-      setState: (state, cb) => cb(this.popupController.setState(state)),
+      //popup controller
       closePopup: cb => cb(this.popupController.closePopup()),
 
       //customizator controller

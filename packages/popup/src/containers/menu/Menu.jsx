@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Utils from '@pegasus/utils/utils'
-import { popupMessanger } from '@pegasus/utils/messangers'
+
 import ReactTooltip from 'react-tooltip'
 import ChangeAvatar from '../changeAvatar/ChangeAvatar'
 
@@ -28,7 +28,7 @@ class Settings extends Component {
   }
 
   async updateData() {
-    let accounts = await popupMessanger.getAllAccounts()
+    let accounts = await this.props.background.getAllAccounts()
     accounts = accounts.filter(account => !account.current)
     this.setState({ accounts })
   }
@@ -52,7 +52,7 @@ class Settings extends Component {
     const newName = e.target.value
     this.setState({ editedName: newName })
 
-    await popupMessanger.updateNameAccount(this.props.account, newName)
+    await this.props.background.updateNameAccount(this.props.account, newName)
   }
 
   render() {

@@ -1,6 +1,5 @@
 import React from 'react'
 import Switch from 'react-switch'
-import { popupMessanger } from '@pegasus/utils/messangers'
 import ReactTooltip from 'react-tooltip'
 import Input from '../../../components/input/Input'
 
@@ -21,7 +20,7 @@ class TransactionsSettings extends React.Component {
   }
 
   async componentWillMount() {
-    const settings = await popupMessanger.getPopupSettings()
+    const settings = await this.props.background.getPopupSettings()
     if (!settings) return
 
     this.setState({ settings })
@@ -29,15 +28,15 @@ class TransactionsSettings extends React.Component {
 
   handleChange(settings, action) {
     this.setState({ settings })
-    popupMessanger.setPopupSettings(settings)
+    this.props.background.setPopupSettings(settings)
 
     if (action === 'promote') {
       if (settings.autoPromotion.enabled && settings.autoPromotion.time > 0) {
-        popupMessanger.enableTransactionsAutoPromotion(
+        this.props.background.enableTransactionsAutoPromotion(
           this.state.settings.autoPromotion.time * 1000 * 60
         )
       } else if (!settings.autoPromotion.enabled) {
-        popupMessanger.disableTransactionsAutoPromotion()
+        this.props.background.disableTransactionsAutoPromotion()
       }
     }
   }

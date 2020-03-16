@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { popupMessanger } from '@pegasus/utils/messangers'
 import Input from '../../../components/input/Input'
 import Unlock from '../../unlock/Unlock'
 
@@ -26,7 +25,7 @@ class ExportSeedVault extends Component {
     )
       return
 
-    await popupMessanger.createSeedVault(this.state.psw)
+    await this.props.background.createSeedVault(this.state.psw)
   }
 
   unlock() {}

@@ -7,7 +7,7 @@ import EventEmitter from 'eventemitter3'
 import Dnode from 'dnode/browser'
 import extension from 'extensionizer'
 import pump from 'pump'
-import buildPromisedBackgroundApi from '@pegasus/utils/promised-api'
+import buildPromisedBackgroundApi from '@pegasus/utils/promised-background-api'
 
 import './styles/styles.css'
 
@@ -25,22 +25,19 @@ const eventEmitter = new EventEmitter()
 const backgroundDnode = Dnode({
   sendUpdate: state => {
     eventEmitter.emit('update', state)
-    console.log('2', state)
   }
 })
 
 engineStream.pipe(backgroundDnode).pipe(engineStream)
 
 backgroundDnode.once('remote', async backgroundConnection => {
-  //backgroundConnection.on = eventEmitter.on.bind(eventEmitter)
-  //cb(null, backgroundConnection)
+  const background = buildPromisedBackgroundApi(backgroundConnection)
+  background.on = eventEmitter.on.bind(eventEmitter)
 
-  const backgroundMessanger = buildPromisedBackgroundApi(backgroundConnection)
-
-  //backgroundConnection is the API object
-  console.log(await backgroundMessanger.isWalletSetup())
-  console.log(await backgroundMessanger.unlockWallet('hello'))
-  console.log(await backgroundMessanger.getCurrentNetwork())
+  ReactDOM.render(
+    <App background={background} />,
+    document.getElementById('root')
+  )
 })
 
-ReactDOM.render(<App />, document.getElementById('root'))
+//when the UI will be refactored, redux will be used and background will be used only within actions

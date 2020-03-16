@@ -1,4 +1,3 @@
-import { backgroundMessanger } from '@pegasus/utils/messangers'
 import Utils from '@pegasus/utils/utils'
 import { composeAPI } from '@iota/core'
 import { asciiToTrytes } from '@iota/converter'
@@ -21,7 +20,7 @@ class TransferController {
 
   confirmTransfers(_transfers) {
     return new Promise(resolve => {
-      backgroundMessanger.setTransfersConfirmationLoading(true)
+      //background.setTransfersConfirmationLoading(true)
 
       const network = this.networkController.getCurrentNetwork()
       const iota = composeAPI({ provider: network.provider })
@@ -48,7 +47,7 @@ class TransferController {
             return iota.sendTrytes(trytes, depth, minWeightMagnitude)
           })
           .then(bundle => {
-            backgroundMessanger.setTransfersConfirmationLoading(false)
+            //background.setTransfersConfirmationLoading(false)
 
             logger.log(
               `(TransferController) Transfer success : ${bundle[0].bundle}`
@@ -60,8 +59,8 @@ class TransferController {
             })
           })
           .catch(error => {
-            backgroundMessanger.setTransfersConfirmationError(error.message)
-            backgroundMessanger.setTransfersConfirmationLoading(false)
+            //background.setTransfersConfirmationError(error.message)
+            //background.setTransfersConfirmationLoading(false)
 
             logger.error(
               `(TransferController) Account during account transfer : ${error.message}`
@@ -78,8 +77,8 @@ class TransferController {
           `(TransferController) Account during account transfer : ${error.message}`
         )
 
-        backgroundMessanger.setTransfersConfirmationError(error.message)
-        backgroundMessanger.setTransfersConfirmationLoading(false)
+        //background.setTransfersConfirmationError(error.message)
+        //background.setTransfersConfirmationLoading(false)
 
         resolve({
           success: false,

@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { popupMessanger } from '@pegasus/utils/messangers'
 import * as passwordValidator from 'password-validator'
 import Spinner from '../../components/spinner/Spinner'
 import Welcome from './welcome/Welcome'
@@ -126,7 +125,7 @@ class Init extends Component {
     this.setState({ indexInitialization: this.state.indexInitialization + 1 })
 
     if (this.state.indexInitialization === 2 && this.state.mode === 'new') {
-      const seed = await popupMessanger.generateSeed()
+      const seed = await this.props.background.generateSeed()
       this.setState({ seed })
     }
 
@@ -177,7 +176,7 @@ class Init extends Component {
       this.setState({ randomLetters: this.state.randomLetters - 1 })
     }
 
-    const letter = await popupMessanger.generateSeed(1)
+    const letter = await this.props.background.generateSeed(1)
     this.setState(state => {
       const seed = state.seed
       seed[index] = letter[0]
@@ -213,7 +212,10 @@ class Init extends Component {
         seed
       }
 
-      const isAdded = await popupMessanger.initWallet(this.state.psw, account)
+      const isAdded = await this.props.background.initWallet(
+        this.state.psw,
+        account
+      )
       if (!isAdded) return false
 
       return true

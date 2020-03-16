@@ -1,4 +1,3 @@
-import { backgroundMessanger } from '@pegasus/utils/messangers'
 import { APP_STATE } from '@pegasus/utils/states'
 import logger from '@pegasus/utils/logger'
 
@@ -109,7 +108,7 @@ class ConnectorController {
 
     this.customizatorController.setRequests(requests)
 
-    backgroundMessanger.setSelectedAccount(account.data.latestAddress)
+    background.setSelectedAccount(account.data.latestAddress)
 
     return true
   }

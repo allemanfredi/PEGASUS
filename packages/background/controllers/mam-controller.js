@@ -1,7 +1,6 @@
 import Mam from '@iota/mam/lib/mam.web.min.js'
 import { trytesToAscii } from '@iota/converter'
 import Utils from '@pegasus/utils/utils'
-import { backgroundMessanger } from '@pegasus/utils/messangers'
 
 class MamController {
   constructor(options) {
@@ -275,7 +274,7 @@ class MamController {
         sidekey,
         e => {
           if (_options.reply) {
-            backgroundMessanger.sendToContentScript('mam_onFetch', {
+            background.sendToContentScript('mam_onFetch', {
               data: e,
               uuid: _options.uuid
             })
@@ -400,7 +399,7 @@ class MamController {
     try {
       Mam.init(network.provider)
       Mam.fetch(root, mode, _sidekey, event => {
-        //backgroundMessanger.newMamData(JSON.parse(trytesToAscii(event)))
+        //background.newMamData(JSON.parse(trytesToAscii(event)))
       })
     } catch (error) {
       console.log('MAM fetch error', error)

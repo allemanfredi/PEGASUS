@@ -182,9 +182,9 @@ const buildPromisedBackgroundApi = _backgroundConnection => {
         )
       ),
 
-    setState: () =>
+    setState: state =>
       new Promise((resolve, reject) =>
-        _backgroundConnection.setState((res, err) =>
+        _backgroundConnection.setState(state, (res, err) =>
           err ? reject(err) : resolve(res)
         )
       ),
@@ -286,6 +286,69 @@ const buildPromisedBackgroundApi = _backgroundConnection => {
         _backgroundConnection.disableTransactionsAutoPromotion(
           time,
           (res, err) => (err ? reject(err) : resolve(res))
+        )
+      ),
+
+    getConnection: origin =>
+      new Promise((resolve, reject) =>
+        _backgroundConnection.getConnection(origin, (res, err) =>
+          err ? reject(err) : resolve(res)
+        )
+      ),
+
+    pushConnection: connection =>
+      new Promise((resolve, reject) =>
+        _backgroundConnection.pushConnection(connection, (res, err) =>
+          err ? reject(err) : resolve(res)
+        )
+      ),
+
+    updateConnection: connection =>
+      new Promise((resolve, reject) =>
+        _backgroundConnection.updateConnection(connection, (res, err) =>
+          err ? reject(err) : resolve(res)
+        )
+      ),
+
+    completeConnection: () =>
+      new Promise((resolve, reject) =>
+        _backgroundConnection.completeConnection((res, err) =>
+          err ? reject(err) : resolve(res)
+        )
+      ),
+
+    rejectConnection: () =>
+      new Promise((resolve, reject) =>
+        _backgroundConnection.rejectConnection((res, err) =>
+          err ? reject(err) : resolve(res)
+        )
+      ),
+
+    getConnections: () =>
+      new Promise((resolve, reject) =>
+        _backgroundConnection.getConnections((res, err) =>
+          err ? reject(err) : resolve(res)
+        )
+      ),
+
+    removeConnection: connection =>
+      new Promise((resolve, reject) =>
+        _backgroundConnection.removeConnection(connection, (res, err) =>
+          err ? reject(err) : resolve(res)
+        )
+      ),
+
+    addConnection: connection =>
+      new Promise((resolve, reject) =>
+        _backgroundConnection.addConnection(connection, (res, err) =>
+          err ? reject(err) : resolve(res)
+        )
+      ),
+
+    getConnectionRequest: () =>
+      new Promise((resolve, reject) =>
+        _backgroundConnection.getConnectionRequest((res, err) =>
+          err ? reject(err) : resolve(res)
         )
       )
   }

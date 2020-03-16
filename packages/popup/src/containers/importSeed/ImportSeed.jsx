@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { popupMessanger } from '@pegasus/utils/messangers'
 import Loader from '../../components/loader/Loader'
 import Input from '../../components/input/Input'
 import Utils from '@pegasus/utils/utils'
@@ -20,7 +19,7 @@ class ImportSeed extends Component {
   }
 
   async onImport() {
-    const nameAlreadyExixts = await popupMessanger.isAccountNameAlreadyExists(
+    const nameAlreadyExixts = await this.props.background.isAccountNameAlreadyExists(
       this.state.name
     )
     if (nameAlreadyExixts) {
@@ -46,7 +45,7 @@ class ImportSeed extends Component {
         seed: this.state.seed,
         name: this.state.name
       }
-      const isAdded = await popupMessanger.addAccount(
+      const isAdded = await this.props.background.addAccount(
         account,
         this.props.network,
         true
