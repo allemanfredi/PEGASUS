@@ -32,17 +32,17 @@ const setupStreams = () => {
   extensionMux.setMaxListeners(25)
 
   pump(pageMux, contentScriptStream, pageMux, err =>
-    logStreamDisconnectWarning('Pegasus Inpage Multiplex', err)
+    console.warn('Pegasus Inpage Multiplex Disconnected ', err ? err : '')
   )
   pump(extensionMux, extensionStream, extensionMux, err =>
-    console.warn('Pegasus Background Multiplex', err)
+    console.warn('Pegasus Background Multiplex Disconnected ', err ? err : '')
   )
 
   const pageChannel = pageMux.createStream('inpageClient')
   const extensionChannel = extensionMux.createStream('inpageClient')
 
   pump(pageChannel, extensionChannel, pageChannel, err =>
-    console.warn('Pegasus traffic lost to inpageClient', err)
+    console.warn('Pegasus traffic lost to inpageClient ', err ? err : '')
   )
 }
 

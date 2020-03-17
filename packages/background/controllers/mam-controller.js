@@ -46,7 +46,7 @@ class MamController {
 
     return {
       success: true,
-      data: state
+      response: state
     }
   }
 
@@ -92,7 +92,7 @@ class MamController {
 
     return {
       success: true,
-      data: stateToReturn
+      response: stateToReturn
     }
   }
 
@@ -116,7 +116,7 @@ class MamController {
 
     return {
       success: true,
-      data: root
+      response: root
     }
   }
 
@@ -156,7 +156,7 @@ class MamController {
 
     return {
       success: true,
-      data: mamMessage
+      response: mamMessage
     }
   }
 
@@ -207,7 +207,7 @@ class MamController {
 
     return {
       success: true,
-      data: state
+      response: state
     }
   }
 
@@ -216,16 +216,16 @@ class MamController {
       const network = this.networkController.getCurrentNetwork()
       Mam.init(network.provider)
       Mam.attach(_payload, _root, _depth, _minWeightMagnitude, _tag)
-        .then(data =>
+        .then(response =>
           resolve({
             success: true,
-            data
+            response
           })
         )
         .catch(error =>
           resolve({
             success: false,
-            error: error.message
+            response: error.message
           })
         )
     })
@@ -262,7 +262,7 @@ class MamController {
         if (!sidekey) {
           resolve({
             success: false,
-            data: `Sidekey Not Found for ${_root}`
+            response: `Sidekey Not Found for ${_root}`
           })
           return
         }
@@ -275,7 +275,7 @@ class MamController {
         e => {
           if (_options.reply) {
             background.sendToContentScript('mam_onFetch', {
-              data: e,
+              response: e,
               uuid: _options.uuid
             })
           }
@@ -285,7 +285,7 @@ class MamController {
 
       resolve({
         success: true,
-        data: packets
+        response: packets
       })
     })
   }

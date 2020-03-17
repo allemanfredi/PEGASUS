@@ -29,10 +29,10 @@ class PegasusInpageClient extends EventEmitter {
 
     this._init()
 
-    const mux = (this.mux = new ObjectMultiplex())
+    /*const mux = (this.mux = new ObjectMultiplex())
     pump(this.inpageStream, mux, this.inpageStream, e =>
       console.log('Pegasus inpage client disconnected', e)
-    )
+    )*/
   }
 
   send(data = {}) {
@@ -74,8 +74,10 @@ class PegasusInpageClient extends EventEmitter {
   }
 
   _bindListener() {
-    this.inpageStream.on('data', ({ success, data, uuid, action }) => {
-      console.log(data)
+    this.inpageStream.on('data', ({ data }) => {
+      const { response, uuid, action, success } = data
+
+      console.log(response, uuid, success)
 
       /*switch (action) {
         case 'setSelectedProvider': {

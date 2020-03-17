@@ -207,7 +207,8 @@ class PegasusEngine extends EventEmitter {
       default: {
         push({
           success: 'false',
-          data: 'Method Not Available'
+          data: 'Method Not Available',
+          uuid
         })
       }
     }

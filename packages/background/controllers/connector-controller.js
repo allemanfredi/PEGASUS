@@ -74,7 +74,7 @@ class ConnectorController {
     //const account = this.walletController.getCurrentAccount()
     if (this.connectionRequest.push) {
       this.connectionRequest.push({
-        data: true,
+        response: true,
         success: true,
         uuid: this.connectionRequest.uuid
       })
@@ -86,6 +86,10 @@ class ConnectorController {
       {
         enabled: true
       }
+    )
+
+    const requestWithUserInteraction = requests.filter(
+      request => request.needUserInteraction
     )
 
     requests.forEach(request => {
@@ -101,6 +105,9 @@ class ConnectorController {
           this.customizatorController.executeRequest(request)
       }
     })
+
+    if (requestWithUserInteraction.length === 0)
+      this.popupController.closePopup()
 
     this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
 
@@ -122,7 +129,7 @@ class ConnectorController {
 
     if (this.connectionRequest.push) {
       this.connectionRequest.push({
-        data: false,
+        response: false,
         success: true,
         uuid: this.connectionRequest.uuid
       })

@@ -82,7 +82,7 @@ class Send extends Component {
 
   async confirmTransfer() {
     const res = await this.props.background.executeRequest(this.state.transfer)
-    if (res.success) {
+    if (res) {
       this.props.onHideTop(false)
       this.props.onBack()
       this.props.setNotification({

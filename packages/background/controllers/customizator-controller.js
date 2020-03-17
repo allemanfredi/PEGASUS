@@ -147,7 +147,7 @@ class CustomizatorController {
         const res = await this.execute(_request)
 
         _request.push({
-          data: res.success ? res.data : res.error,
+          response: res.response,
           success: res.success,
           uuid
         })
@@ -159,11 +159,11 @@ class CustomizatorController {
 
   async executeRequest(_request) {
     //needed because request handler remove push/reject
-    const request = this.requests.find(request =>
+    const { push } = this.requests.find(request =>
       _request.uuid ? request.uuid === _request.uuid : false
     )
-    
-    if (_request.connection.enabled && !_request.push) {
+
+    if (_request.connection.enabled && !push) {
       const res = await this.execute(_request)
 
       logger.log(
@@ -172,14 +172,11 @@ class CustomizatorController {
       return res
     }
 
-    if (_request.connection.enabled && _request.push) {
+    if (_request.connection.enabled && push) {
       const res = await this.execute(_request)
 
-      console.log(_request.push)
-      console.log(request.push)
-
-      _request.push({
-        data: res.success ? res.data : res.error,
+      push({
+        response: res.response,
         success: res.success,
         uuid: _request.uuid
       })
@@ -196,13 +193,13 @@ class CustomizatorController {
       }
 
       return res
-    } else if (!_request.connection.enabled && _request.push) {
+    } else if (!_request.connection.enabled && push) {
       logger.log(
         `(CustomizatorController) Rejecting request ${_request.uuid} - ${_request.method} because of no granted permission`
       )
 
-      _request.push({
-        data: 'No granted permissions',
+      push({
+        response: 'No granted permissions',
         success: false,
         uuid: _request.uuid
       })
@@ -218,11 +215,9 @@ class CustomizatorController {
 
   async confirmRequest(_request) {
     //needed because request handler remove push/reject
-    /*const request = this.requests.find(
+    const { push } = this.requests.find(
       request => request.uuid === _request.uuid
-    )*/
-
-    const { uuid, push } = _request
+    )
 
     const res = await this.execute(_request)
 
@@ -244,24 +239,24 @@ class CustomizatorController {
     }
 
     push({
-      data: res.success ? res.data : res.error,
+      response: res.response,
       success: res.success,
-      uuid
+      uuid: _request.uuid
     })
   }
 
   rejectRequest(_request) {
     //needed because request handler remove push/reject
-    /*const request = this.requests.find(
+    const { push } = this.requests.find(
       request => request.uuid === _request.uuid
-    )*/
+    )
 
     logger.log(
       `(CustomizatorController) Rejecting (singular) request ${_request.uuid} - ${_request.method}`
     )
 
-    _request.push({
-      data: 'Request has been rejected by the user',
+    push({
+      response: 'Request has been rejected by the user',
       success: false,
       uuid: _request.uuid
     })
@@ -279,7 +274,7 @@ class CustomizatorController {
   rejectRequests() {
     this.requests.forEach(request => {
       request.push({
-        data: 'Request has been rejected by the user',
+        response: 'Request has been rejected by the user',
         success: false,
         uuid: request.uuid
       })
@@ -304,15 +299,15 @@ class CustomizatorController {
     if (method !== 'prepareTransfers' && iota[method]) {
       return new Promise(resolve => {
         iota[method](...args)
-          .then(data =>
+          .then(response =>
             resolve({
-              data,
+              response,
               success: true
             })
           )
           .catch(err =>
             resolve({
-              data: err,
+              response: err,
               success: false
             })
           )
@@ -327,7 +322,7 @@ class CustomizatorController {
         const account = this.walletController.getCurrentAccount()
         return new Promise(push =>
           push({
-            data: account.data.latestAddress,
+            response: account.data.latestAddress,
             success: true
           })
         )
@@ -336,43 +331,43 @@ class CustomizatorController {
         const network = this.networkController.getCurrentNetwork()
         return new Promise(resolve =>
           resolve({
-            data: network.provider,
+            response: network.provider,
             success: true
           })
         )
       }
       case 'mam_init': {
-        const res = this.mamController.init(...data.args)
+        const res = this.mamController.init(...args)
         return new Promise(resolve => resolve(res))
       }
       case 'mam_changeMode': {
-        const res = this.mamController.changeMode(...data.args)
+        const res = this.mamController.changeMode(...args)
         return new Promise(resolve => resolve(res))
       }
       case 'mam_getRoot': {
-        const res = this.mamController.getRoot(...data.args)
+        const res = this.mamController.getRoot(...args)
         return new Promise(resolve => resolve(res))
       }
       case 'mam_create': {
-        const res = this.mamController.create(...data.args)
+        const res = this.mamController.create(...args)
         return new Promise(resolve => resolve(res))
       }
       case 'mam_decode': {
-        const res = this.mamController.decode(...data.args)
+        const res = this.mamController.decode(...args)
         return new Promise(resolve => resolve(res))
       }
       case 'mam_attach': {
-        return this.mamController.attach(...data.args)
+        return this.mamController.attach(...args)
       }
       case 'mam_fetch': {
-        return this.mamController.fetch(...data.args)
+        return this.mamController.fetch(...args)
       }
       case 'mam_fetchSingle': {
-        return this.mamController.fetchSingle(...data.args)
+        return this.mamController.fetchSingle(...args)
       }
       default: {
         return {
-          error: 'Method Not Found',
+          response: 'Method Not Found',
           success: false
         }
       }
