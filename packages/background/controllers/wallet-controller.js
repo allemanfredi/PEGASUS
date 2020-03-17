@@ -375,12 +375,6 @@ class WalletController {
     return this.stateStorageController.get('accounts')
   }
 
-  generateSeed(_length = 81) {
-    const bytes = Utils.randomBytes(_length, 27)
-    const seed = bytes.map(byte => Utils.byteToChar(byte))
-    return seed
-  }
-
   setPopupSettings(_settings) {
     this.stateStorageController.set('popupSettings', _settings, true)
   }

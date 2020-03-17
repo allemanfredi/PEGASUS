@@ -24,6 +24,7 @@ const engineStream = mux.createStream('engine')
 const eventEmitter = new EventEmitter()
 const backgroundDnode = Dnode({
   sendUpdate: state => {
+    console.log(state)
     eventEmitter.emit('update', state)
   }
 })

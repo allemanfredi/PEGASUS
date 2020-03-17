@@ -20,6 +20,7 @@ import { EventEmitter } from 'eventemitter3'
 import { composeAPI } from '@iota/core'
 import Dnode from 'dnode/browser'
 import nodeify from 'nodeify'
+import { mapStateForPopup } from './lib/global-state-mapper'
 
 const forbiddenRequests = ['getAccountData', 'getNewAddress', 'getInputs']
 
@@ -179,8 +180,10 @@ class PegasusEngine extends EventEmitter {
       this.stateStorageController.state$.subscribe(_state => {
         //console.log(_state)
 
-        //before sending the update, the _state objecy must be modified, we need to remove the seed from obj to send to the popup
-        sendUpdate(_state)
+        //remove seed before sending
+        sendUpdate(
+          _state //mapStateForPopup(_state)
+        )
       })
     })
   }
@@ -243,8 +246,6 @@ class PegasusEngine extends EventEmitter {
         cb(this.walletController.updateAvatarAccount(account, avatar)),
       deleteAccount: (account, cb) =>
         cb(this.walletController.deleteAccount(account)),
-      generateSeed: (length, cb) =>
-        cb(this.walletController.generateSeed(length)),
       getState: cb => cb(this.walletController.getState()),
       setState: (state, cb) => cb(this.walletController.setState(state)),
       setPopupSettings: (settings, cb) =>

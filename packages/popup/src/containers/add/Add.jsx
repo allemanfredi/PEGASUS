@@ -4,6 +4,7 @@ import Name from '../init/name/Name'
 import GenerateSeed from '../init/generateSeed/GenerateSeed'
 import Avatar from '../init/avatar/Avatar'
 import Export from '../init/export/Export'
+import { generateSeed } from '@pegasus/utils/seed-generation'
 
 class Add extends Component {
   constructor(props, context) {
@@ -28,7 +29,7 @@ class Add extends Component {
   }
 
   async componentDidMount() {
-    const seed = await this.props.background.generateSeed(81)
+    const seed = generateSeed(81)
     this.setState({ seed })
   }
 
@@ -100,7 +101,7 @@ class Add extends Component {
       this.setState({ randomLetters: this.state.randomLetters - 1 })
     }
 
-    const letter = await this.props.background.generateSeed(1)
+    const letter = generateSeed(1)
     this.setState(state => {
       const seed = state.seed
       seed[index] = letter[0]

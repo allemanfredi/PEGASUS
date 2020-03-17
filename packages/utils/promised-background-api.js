@@ -140,13 +140,6 @@ const buildPromisedBackgroundApi = _backgroundConnection => {
         )
       ),
 
-    generateSeed: length =>
-      new Promise((resolve, reject) =>
-        _backgroundConnection.generateSeed(length, (res, err) =>
-          err ? reject(err) : resolve(res)
-        )
-      ),
-
     setPopupSettings: settings =>
       new Promise((resolve, reject) =>
         _backgroundConnection.setPopupSettings(settings, (res, err) =>

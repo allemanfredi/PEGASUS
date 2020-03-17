@@ -9,6 +9,7 @@ import Avatar from './avatar/Avatar'
 import Export from './export/Export'
 import ImportSeed from './importSeed/ImportSeed'
 import Utils from '@pegasus/utils/utils'
+import { generateSeed } from '@pegasus/utils/seed-generation'
 
 class Init extends Component {
   constructor(props, context) {
@@ -125,7 +126,7 @@ class Init extends Component {
     this.setState({ indexInitialization: this.state.indexInitialization + 1 })
 
     if (this.state.indexInitialization === 2 && this.state.mode === 'new') {
-      const seed = await this.props.background.generateSeed(81)
+      const seed = generateSeed(81)
       this.setState({ seed })
     }
 
@@ -176,7 +177,7 @@ class Init extends Component {
       this.setState({ randomLetters: this.state.randomLetters - 1 })
     }
 
-    const letter = await this.props.background.generateSeed(1)
+    const letter = generateSeed(1)
     this.setState(state => {
       const seed = state.seed
       seed[index] = letter[0]
