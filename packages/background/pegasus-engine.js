@@ -133,7 +133,7 @@ class PegasusEngine extends EventEmitter {
    * Create a connection between the inpageClient and the engine
    *
    * @param {Stream} outStream
-   * @param {Object} sender
+   * @param {Object} port
    */
   setupInpageClientConnection(outStream, sender) {
     const url = new URL(sender.url)
@@ -191,22 +191,26 @@ class PegasusEngine extends EventEmitter {
    * @param {Object} _request
    */
   handle(_request) {
-    console.log('Handling new request', _request)
+    const { method, args, uuid, resolve, website } = _request
 
     const iota = composeAPI()
     if (iota[_request.method] && !forbiddenRequests.includes(_request.method)) {
       this.customizatorController.pushRequest(_request)
+      return
     }
 
-    /*this.customizatorController.pushRequest({
-      method,
-      uuid,
-      resolve,
-      data,
-      website
-    })*/
-
-    return 'hello'
+    switch (method) {
+      case 'connect': {
+        this.connectorController.connect(uuid, resolve, website)
+        break
+      }
+      default: {
+        resolve({
+          success: 'false',
+          data: 'Method Not Available'
+        })
+      }
+    }
   }
 
   /**

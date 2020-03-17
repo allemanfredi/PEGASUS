@@ -108,7 +108,7 @@ class ConnectorController {
 
     this.customizatorController.setRequests(requests)
 
-    background.setSelectedAccount(account.data.latestAddress)
+    //background.setSelectedAccount(account.data.latestAddress)
 
     return true
   }
@@ -141,16 +141,13 @@ class ConnectorController {
         request.connection.website.origin ===
         this.connectionRequest.website.origin
       ) {
-        request.connection.requestToConnect = false
-        request.connection.enabled = false
+        this.customizatorController.removeRequest(request)
       }
     })
 
     this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
 
     this.connectionRequest = null
-
-    this.customizatorController.setRequests(requests)
 
     return true
   }

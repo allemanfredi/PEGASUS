@@ -26,12 +26,6 @@ const handleConnection = port => {
   }
 
   if (port.sender && port.sender.tab && port.sender.url) {
-    port.onMessage.addListener(msg => {
-      if (msg.data && msg.data.method === 'connect') {
-        //this.engine.connect(uuid, resolve, website)
-      }
-    })
-
     const portStream = new PortStream(port)
     const mux = new ObjectMultiplex()
     pump(portStream, mux, portStream, err => {

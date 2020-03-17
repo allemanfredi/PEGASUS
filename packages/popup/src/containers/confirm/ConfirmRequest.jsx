@@ -12,10 +12,19 @@ class ConfirmRequest extends Component {
     this.reject = this.reject.bind(this)
     this.rejectAll = this.rejectAll.bind(this)
     this.confirm = this.confirm.bind(this)
+    this.getRequests = this.getRequests.bind(this)
 
     this.state = {
       requests: []
     }
+  }
+
+  async getRequests() {
+    const executableRequests = await this.props.background.getExecutableRequests()
+    const requests = executableRequests.filter(
+      request => request.needUserInteraction
+    )
+    this.setState({ requests })
   }
 
   async componentWillMount() {
@@ -23,23 +32,17 @@ class ConfirmRequest extends Component {
       APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION
     )
 
-    const executableRequests = await this.props.background.getExecutableRequests()
-    const requests = executableRequests.filter(
-      request => request.needUserInteraction
-    )
-    this.setState({ requests })
-
-    /*this.props.duplex.on('setRequests', requests => {
-      this.setState({ requests })
-    })*/
+    await this.getRequests()
   }
 
   async confirm(request) {
     await this.props.background.confirmRequest(request)
+    await this.getRequests()
   }
 
   async reject(request) {
     await this.props.background.rejectRequest(request)
+    await this.getRequests()
   }
 
   rejectAll() {
@@ -55,7 +58,7 @@ class ConfirmRequest extends Component {
           return (
             <ConfirmTransfers
               transfer={request}
-              background={this.props.this.props.background}
+              background={this.props.background}
               onConfirm={this.confirm}
               onReject={this.reject}
             />
@@ -72,9 +75,9 @@ class ConfirmRequest extends Component {
         case 'mam_changeMode':
           return (
             <ConfirmChangeModeMamChannel
-              from={request.data.args[0].channel.mode}
-              to={request.data.args[1]}
-              sidekey={request.data.args[2] ? request.data.args[2] : null}
+              from={request.args[0].channel.mode}
+              to={request.args[1]}
+              sidekey={request.args[2] ? request.args[2] : null}
               request={request}
               onConfirm={this.confirm}
               onReject={this.reject}

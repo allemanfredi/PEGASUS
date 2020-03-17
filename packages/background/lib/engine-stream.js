@@ -25,7 +25,7 @@ function createEngineStream(engine, website) {
     engine.handle(
       Object.assign({}, request, {
         website,
-        resolve: this.push
+        resolve: this.push.bind(this)
       })
     )
     cb()

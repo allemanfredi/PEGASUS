@@ -157,9 +157,9 @@ class Main extends Component {
     this.setState({ appState: APP_STATE.WALLET_UNLOCKED })
   }
 
-  onPermissionNotGranted() {
-    this.props.background.rejectConnection()
-    this.props.background.rejectRequests()
+  async onPermissionNotGranted() {
+    await this.props.background.rejectConnection()
+    await this.props.background.rejectRequests()
     this.props.showHeader(true)
   }
 
@@ -173,7 +173,6 @@ class Main extends Component {
         state !== APP_STATE.WALLET_RESTORE
       ) {
         this.setState({ appState: state })
-        console.log('state sed', state)
       }
     })
   }

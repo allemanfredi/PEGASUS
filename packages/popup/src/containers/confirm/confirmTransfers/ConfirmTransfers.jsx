@@ -47,7 +47,7 @@ class ConfirmTransfers extends Component {
 
         <hr className="mt-2 mb-2" />
         <div class="container-confirm-transfers">
-          {this.props.transfer.data.args[0].map((singleTransfer, index) => {
+          {this.props.transfer.args[0].map((singleTransfer, index) => {
             return (
               <React.Fragment>
                 {index > 0 ? <hr className="mt-1 mb-1" /> : ''}
