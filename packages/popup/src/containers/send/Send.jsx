@@ -22,6 +22,7 @@ class Send extends Component {
       value: '',
       message: '',
       isLoading: false,
+      error: null,
       needConfirmation: false,
       isTransferingBetweenWalletAccounts: false,
       accounts: {}
@@ -63,15 +64,11 @@ class Send extends Component {
       }
     ]
 
-    const data = {
-      args: [transfer]
-    }
-
     this.setState({
       needConfirmation: true,
       transfer: {
         method: 'prepareTransfers',
-        data,
+        args: [transfer],
         connection: {
           enabled: true
         }
@@ -81,8 +78,15 @@ class Send extends Component {
   }
 
   async confirmTransfer() {
-    const res = await this.props.background.executeRequest(this.state.transfer)
-    if (res) {
+    this.setState({
+      isLoading: true,
+      error: null
+    })
+    const { response, success } = await this.props.background.executeRequest(
+      this.state.transfer
+    )
+    console.log(response, success)
+    if (success) {
       this.props.onHideTop(false)
       this.props.onBack()
       this.props.setNotification({
@@ -90,7 +94,12 @@ class Send extends Component {
         text: 'Transfer was successful',
         position: 'under-bar'
       })
+    } else {
+      this.props.onHideTop(true)
+      this.setState({ error: response })
     }
+
+    this.setState({ isLoading: false })
   }
 
   rejectTransfer() {
@@ -108,6 +117,8 @@ class Send extends Component {
         onConfirm={this.confirmTransfer}
         onReject={this.rejectTransfer}
         background={this.props.background}
+        isLoading={this.state.isLoading}
+        error={this.state.error}
       />
     ) : (
       <div className="container overflow-auto-475h">

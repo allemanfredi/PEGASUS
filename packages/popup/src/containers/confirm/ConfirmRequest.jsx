@@ -15,7 +15,9 @@ class ConfirmRequest extends Component {
     this.getRequests = this.getRequests.bind(this)
 
     this.state = {
-      requests: []
+      requests: [],
+      isLoading: false,
+      error: null
     }
   }
 
@@ -36,7 +38,26 @@ class ConfirmRequest extends Component {
   }
 
   async confirm(request) {
-    await this.props.background.confirmRequest(request)
+    this.setState({
+      isLoading: true,
+      error: null
+    })
+    const { response, success } = await this.props.background.confirmRequest(
+      request
+    )
+    if (success) {
+      this.props.onHideTop(false)
+      this.props.onBack()
+      this.props.setNotification({
+        type: 'success',
+        text: 'Transfer was successful',
+        position: 'under-bar'
+      })
+    } else {
+      this.setState({ error: response })
+    }
+    this.setState({ isLoading: false })
+
     await this.getRequests()
   }
 
@@ -57,6 +78,8 @@ class ConfirmRequest extends Component {
         case 'prepareTransfers':
           return (
             <ConfirmTransfers
+              isLoading={this.state.isLoading}
+              error={this.state.error}
               transfer={request}
               background={this.props.background}
               onConfirm={this.confirm}

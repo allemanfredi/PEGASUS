@@ -279,7 +279,6 @@ class PegasusEngine extends EventEmitter {
       getRequests: cb => cb(this.customizatorController.getRequests()),
       getExecutableRequests: cb =>
         cb(this.customizatorController.getExecutableRequests()),
-
       rejectRequest: (request, cb) =>
         cb(this.customizatorController.rejectRequest(request)),
       rejectRequests: cb => cb(this.customizatorController.rejectRequests()),
