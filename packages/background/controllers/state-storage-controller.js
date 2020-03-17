@@ -25,7 +25,10 @@ class PegasusGlobalState {
       }
     }
     this.state = 0
-    this.accounts = []
+    this.accounts = {
+      selected: {},
+      all: []
+    }
     this.mamChannels = {}
     this.data = null
   }
@@ -147,7 +150,10 @@ class StateStorageController extends Store {
       accounts: [],
       mamChannels: {},
       data: {
-        accounts: [],
+        accounts: {
+          selected: {},
+          all: []
+        },
         mamChannels: {}
       }
     })

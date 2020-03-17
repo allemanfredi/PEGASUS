@@ -41,4 +41,5 @@ backgroundDnode.once('remote', async backgroundConnection => {
   )
 })
 
+//THE POPUP PART WILL BE ALL REFACTORED
 //when the UI will be refactored, redux will be used and background will be used only within actions

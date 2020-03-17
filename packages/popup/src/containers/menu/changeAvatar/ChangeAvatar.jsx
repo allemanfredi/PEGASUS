@@ -12,10 +12,7 @@ class ChangeAvatar extends Component {
   }
 
   async confirm() {
-    await this.props.background.updateAvatarAccount(
-      this.props.account,
-      this.state.selectedAvatar
-    )
+    await this.props.background.updateAvatarAccount(this.state.selectedAvatar)
     this.props.onClose()
   }
 

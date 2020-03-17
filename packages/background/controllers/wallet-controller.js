@@ -171,22 +171,13 @@ class WalletController {
 
   isAccountNameAlreadyExists(_name) {
     const accounts = this.stateStorageController.get('accounts')
-    const alreadyExists = accounts.filter(account => account.name === _name)
-    if (alreadyExists.length > 0) {
-      return true
-    } else {
-      return false
-    }
+    const alreadyExists = accounts.all.find(account => account.name === _name)
+    return alreadyExists ? true : false
   }
 
   async addAccount(_account, _isCurrent) {
     try {
       const accounts = this.stateStorageController.get('accounts')
-      if (_isCurrent) {
-        accounts.forEach(user => {
-          user.current = false
-        })
-      }
 
       const network = this.networkController.getCurrentNetwork()
       const iota = composeAPI({ provider: network.provider })
@@ -217,6 +208,8 @@ class WalletController {
         transactions
       )
 
+      const id = Utils.sha256(_account.name)
+
       const accountToAdd = {
         name: _account.name,
         avatar: _account.avatar,
@@ -224,17 +217,18 @@ class WalletController {
         transactions: transactionsWithReattachSet,
         data: accountData,
         current: Boolean(_isCurrent),
-        id: Utils.sha256(_account.name)
+        id
       }
 
-      const alreadyExists = accounts.find(
-        account => account.id === accountToAdd.id
-      )
-      if (alreadyExists) {
+      const alreadyExist = accounts.all.find(account => account.id === id)
+      if (alreadyExist) {
         return false
       }
 
-      accounts.push(accountToAdd)
+      if (_isCurrent) accounts.selected = accountToAdd
+
+      accounts.all.push(accountToAdd)
+
       this.stateStorageController.set('accounts', accounts)
 
       //background.setAccount(accountToAdd)
@@ -259,110 +253,68 @@ class WalletController {
     if (this.getState() < APP_STATE.WALLET_UNLOCKED) return
 
     const accounts = this.stateStorageController.get('accounts')
-    if (accounts.length === 0) return null
+    if (!accounts.selected) return null
 
-    for (let account of accounts) {
-      if (account.current) {
-        return account
-      }
-    }
+    return accounts.selected
   }
 
-  setCurrentAccount(_currentAccount) {
-    let accounts = this.stateStorageController.get('accounts')
-    accounts.forEach(account => {
-      account.current = false
-    })
-
-    accounts.forEach(account => {
-      if (account.id === _currentAccount.id) {
-        account.current = true
-        logger.log(`(WalletController) Set current account : ${account.name}`)
-        //background.setSelectedAccount(account.data.latestAddress)
-      }
-    })
-    this.stateStorageController.set('accounts', accounts)
-  }
-
-  updateDataAccount(_updatedData) {
+  //all following methods updates data on the CURRENT account
+  setCurrentAccount(_account) {
     const accounts = this.stateStorageController.get('accounts')
-    accounts.forEach(account => {
-      if (account.current) {
-        account.data = _updatedData
-
-        logger.log(`(WalletController) Update account data for ${account.name}`)
-      }
-    })
-
+    accounts.selected = _account
     this.stateStorageController.set('accounts', accounts)
+    logger.log(`(WalletController) Set current account : ${_account.name}`)
+    return true
+  }
+
+  updateDataAccount(_data) {
+    const accounts = this.stateStorageController.get('accounts')
+    accounts.selected.data = _data
+    this.stateStorageController.set('accounts', accounts)
+    logger.log(`(WalletController) Data updated for ${accounts.selected.name}`)
     return true
   }
 
   updateTransactionsAccount(_transactions) {
     const accounts = this.stateStorageController.get('accounts')
-
-    accounts.forEach(account => {
-      if (account.current) {
-        account.transactions = _transactions
-        logger.log(`(WalletController) Update transactions for ${account.name}`)
-      }
-    })
-
+    accounts.selected.transactions = _transactions
     this.stateStorageController.set('accounts', accounts)
+    logger.log(
+      `(WalletController) transactions updated for ${accounts.selected.name}`
+    )
     return true
   }
 
-  updateNameAccount(_current, _newName) {
+  updateNameAccount(_name) {
     const accounts = this.stateStorageController.get('accounts')
-    for (let account of accounts) {
-      if (account.name === _newName) {
-        return false
-      }
-    }
-
-    accounts.forEach(account => {
-      if (account.id === _current.id) {
-        logger.log(
-          `(WalletController) Update name for ${account.name} with new one: ${_newName}`
-        )
-
-        account.name = _newName
-        account.id = Utils.sha256(_newName)
-      }
-    })
-
+    accounts.selected.name = _name
     this.stateStorageController.set('accounts', accounts)
+    logger.log(`(WalletController) Name updated for ${accounts.selected.name}`)
     return true
   }
 
-  updateAvatarAccount(_current, _avatar) {
+  updateAvatarAccount(_avatar) {
     const accounts = this.stateStorageController.get('accounts')
-    accounts.forEach(account => {
-      if (account.id === _current.id) {
-        account['avatar'] = _avatar
-        logger.log(`(WalletController) Update avatar for ${account.name}`)
-      }
-    })
-
+    accounts.selected.avatar = _avatar
     this.stateStorageController.set('accounts', accounts)
+    logger.log(
+      `(WalletController) Avatar updated for ${accounts.selected.name}`
+    )
+    return true
   }
 
-  async deleteAccount(_account) {
-    let accounts = this.stateStorageController.get('accounts')
+  deleteAccount(_account) {
+    const accounts = this.stateStorageController.get('accounts')
 
-    if (accounts.length === 1) {
+    if (accounts.all.length === 1) {
       return false
     }
 
-    accounts = accounts.filter(account => account.id !== _account.id)
-
-    accounts.forEach(account => {
-      account.current = false
-    })
+    accounts.all = accounts.all.filter(account => account.id !== _account.id)
 
     logger.log(`(WalletController) Deleted account ${_account.name}`)
 
-    accounts[0].current = true
+    accounts.selected = accounts.all[0]
     this.stateStorageController.set('accounts', accounts)
 
     //injection
@@ -372,7 +324,8 @@ class WalletController {
   }
 
   getAllAccounts() {
-    return this.stateStorageController.get('accounts')
+    const accounts = this.stateStorageController.get('accounts')
+    return accounts.all
   }
 
   setPopupSettings(_settings) {

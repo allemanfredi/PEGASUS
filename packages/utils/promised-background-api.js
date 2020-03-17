@@ -119,16 +119,16 @@ const buildPromisedBackgroundApi = _backgroundConnection => {
         )
       ),
 
-    updateNameAccount: (account, newName) =>
+    updateNameAccount: name =>
       new Promise((resolve, reject) =>
-        _backgroundConnection.updateNameAccount(account, newName, (res, err) =>
+        _backgroundConnection.updateNameAccount(name, (res, err) =>
           err ? reject(err) : resolve(res)
         )
       ),
 
-    updateAvatarAccount: (account, avatar) =>
+    updateAvatarAccount: avatar =>
       new Promise((resolve, reject) =>
-        _backgroundConnection.updateAvatarAccount(account, avatar, (res, err) =>
+        _backgroundConnection.updateAvatarAccount(avatar, (res, err) =>
           err ? reject(err) : resolve(res)
         )
       ),

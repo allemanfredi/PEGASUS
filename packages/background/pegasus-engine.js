@@ -240,10 +240,10 @@ class PegasusEngine extends EventEmitter {
       getAllAccounts: cb => cb(this.walletController.getAllAccounts()),
       setCurrentAccount: (account, cb) =>
         cb(this.walletController.setCurrentAccount(account)),
-      updateNameAccount: (account, newName, cb) =>
-        cb(this.walletController.updateNameAccount(account, newName)),
-      updateAvatarAccount: (account, avatar, cb) =>
-        cb(this.walletController.updateAvatarAccount(account, avatar)),
+      updateNameAccount: (name, cb) =>
+        cb(this.walletController.updateNameAccount(name)),
+      updateAvatarAccount: (avatar, cb) =>
+        cb(this.walletController.updateAvatarAccount(avatar)),
       deleteAccount: (account, cb) =>
         cb(this.walletController.deleteAccount(account)),
       getState: cb => cb(this.walletController.getState()),

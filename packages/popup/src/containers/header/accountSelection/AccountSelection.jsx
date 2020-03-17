@@ -40,7 +40,9 @@ class AccountSelection extends React.Component {
     this.props.background.on('update', backgroundState => {
       if (backgroundState.state > APP_STATE.WALLET_LOCKED) {
         this.setState({
-          accounts: backgroundState.accounts.filter(account => !account.current)
+          accounts: backgroundState.accounts.all.filter(
+            account => account.id !== this.props.account.id
+          )
         })
       }
     })
@@ -52,7 +54,7 @@ class AccountSelection extends React.Component {
 
   async loadAccounts() {
     let accounts = await this.props.background.getAllAccounts()
-    accounts = accounts.filter(account => !account.current)
+    accounts = accounts.filter(account => account.id !== this.props.account.id)
     this.setState({ accounts })
   }
 

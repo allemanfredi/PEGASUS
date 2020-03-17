@@ -7,7 +7,6 @@ class Settings extends Component {
   constructor(props, context) {
     super(props, context)
 
-    this.updateData = this.updateData.bind(this)
     this.onClose = this.onClose.bind(this)
     this.handleClick = this.handleClick.bind(this)
     this.onChangeName = this.onChangeName.bind(this)
@@ -20,16 +19,6 @@ class Settings extends Component {
       showFullAddress: false,
       showChangeAvatar: false
     }
-  }
-
-  async componentWillMount() {
-    this.updateData()
-  }
-
-  async updateData() {
-    let accounts = await this.props.background.getAllAccounts()
-    accounts = accounts.filter(account => !account.current)
-    this.setState({ accounts })
   }
 
   async onClose() {
@@ -51,7 +40,7 @@ class Settings extends Component {
     const newName = e.target.value
     this.setState({ editedName: newName })
 
-    await this.props.background.updateNameAccount(this.props.account, newName)
+    await this.props.background.updateNameAccount(newName)
   }
 
   render() {

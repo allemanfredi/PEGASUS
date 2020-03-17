@@ -156,6 +156,7 @@ class Header extends Component {
         {this.state.isSelectingAccount &&
         this.props.appState > APP_STATE.WALLET_LOCKED ? (
           <AccountSelection
+            account={this.props.account}
             network={this.props.network}
             background={this.props.background}
             onClose={() => this.setState({ isSelectingAccount: false })}
