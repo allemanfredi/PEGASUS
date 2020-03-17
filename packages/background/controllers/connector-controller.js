@@ -44,12 +44,12 @@ class ConnectorController {
     this.connections[_connection.website.origin] = _connection
   }
 
-  connect(_uuid, _resolve, _website) {
+  connect(_uuid, _push, _website) {
     this.connectionRequest = {
       website: _website,
       requestToConnect: true,
       enabled: false,
-      resolve: _resolve,
+      push: _push,
       uuid: _uuid
     }
 
@@ -71,9 +71,9 @@ class ConnectorController {
       `(ConnectorController) Completing connection with ${this.connectionRequest.website.origin}`
     )
 
-    const account = this.walletController.getCurrentAccount()
-    if (this.connectionRequest.resolve) {
-      this.connectionRequest.resolve({
+    //const account = this.walletController.getCurrentAccount()
+    if (this.connectionRequest.push) {
+      this.connectionRequest.push({
         data: true,
         success: true,
         uuid: this.connectionRequest.uuid
@@ -95,18 +95,18 @@ class ConnectorController {
       ) {
         request.connection.requestToConnect = false
         request.connection.enabled = true
+
+        //execute only request withot user interaction
+        if (!request.needUserInteraction)
+          this.customizatorController.executeRequest(request)
       }
     })
-
-    if (requests.length === 0) {
-      this.popupController.closePopup()
-    }
 
     this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
 
     this.connectionRequest = null
 
-    this.customizatorController.setRequests(requests)
+    //this.customizatorController.setRequests(requests)
 
     //background.setSelectedAccount(account.data.latestAddress)
 
@@ -120,8 +120,8 @@ class ConnectorController {
       `(ConnectorController) Rejecting connection with ${this.connectionRequest.website.origin}`
     )
 
-    if (this.connectionRequest.resolve) {
-      this.connectionRequest.resolve({
+    if (this.connectionRequest.push) {
+      this.connectionRequest.push({
         data: false,
         success: true,
         uuid: this.connectionRequest.uuid

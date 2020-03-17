@@ -43,10 +43,6 @@ class CustomizatorController {
 
   setRequests(_requests) {
     this.requests = _requests
-
-    extensionizer.browserAction.setBadgeText({
-      text: this.requests.length !== 0 ? this.requests.length.toString() : ''
-    })
   }
 
   getRequests() {
@@ -62,7 +58,7 @@ class CustomizatorController {
       `(CustomizatorController) New request ${_request.uuid} - ${_request.method} from ${_request.website.origin}`
     )
 
-    const { method, uuid, args, resolve, website } = _request
+    const { method, uuid, args, push, website } = _request
 
     let connection = this.connectorController.getConnection(website.origin)
     let isPopupAlreadyOpened = false
@@ -109,7 +105,7 @@ class CustomizatorController {
           connection,
           method,
           uuid,
-          resolve,
+          push,
           args,
           needUserInteraction: requestsWithUserInteraction.includes(method)
         },
@@ -134,7 +130,7 @@ class CustomizatorController {
             connection,
             method,
             uuid,
-            resolve,
+            push,
             args,
             needUserInteraction: true
           },
@@ -150,7 +146,7 @@ class CustomizatorController {
       } else {
         const res = await this.execute(_request)
 
-        _request.resolve({
+        _request.push({
           data: res.success ? res.data : res.error,
           success: res.success,
           uuid
@@ -162,11 +158,12 @@ class CustomizatorController {
   }
 
   async executeRequest(_request) {
-    //needed because request handler remove resolve/reject
-    /*const request = this.requests.find(request =>
+    //needed because request handler remove push/reject
+    const request = this.requests.find(request =>
       _request.uuid ? request.uuid === _request.uuid : false
-    )*/
-    if (_request.connection.enabled && !_request.resolve) {
+    )
+    
+    if (_request.connection.enabled && !_request.push) {
       const res = await this.execute(_request)
 
       logger.log(
@@ -175,11 +172,13 @@ class CustomizatorController {
       return res
     }
 
-    if (_request.connection.enabled && _request.resolve) {
+    if (_request.connection.enabled && _request.push) {
       const res = await this.execute(_request)
 
-      console.log(_request)
-      _request.resolve({
+      console.log(_request.push)
+      console.log(request.push)
+
+      _request.push({
         data: res.success ? res.data : res.error,
         success: res.success,
         uuid: _request.uuid
@@ -193,15 +192,16 @@ class CustomizatorController {
 
       if (this.requests.length === 0) {
         this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
+        this.popupController.closePopup()
       }
 
       return res
-    } else if (!_request.connection.enabled && _request.resolve) {
+    } else if (!_request.connection.enabled && _request.push) {
       logger.log(
         `(CustomizatorController) Rejecting request ${_request.uuid} - ${_request.method} because of no granted permission`
       )
 
-      _request.resolve({
+      _request.push({
         data: 'No granted permissions',
         success: false,
         uuid: _request.uuid
@@ -217,12 +217,12 @@ class CustomizatorController {
   }
 
   async confirmRequest(_request) {
-    //needed because request handler remove resolve/reject
+    //needed because request handler remove push/reject
     /*const request = this.requests.find(
       request => request.uuid === _request.uuid
     )*/
 
-    const { uuid, resolve } = _request
+    const { uuid, push } = _request
 
     const res = await this.execute(_request)
 
@@ -243,7 +243,7 @@ class CustomizatorController {
       //this.walletController.setState(APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION)
     }
 
-    resolve({
+    push({
       data: res.success ? res.data : res.error,
       success: res.success,
       uuid
@@ -251,7 +251,7 @@ class CustomizatorController {
   }
 
   rejectRequest(_request) {
-    //needed because request handler remove resolve/reject
+    //needed because request handler remove push/reject
     /*const request = this.requests.find(
       request => request.uuid === _request.uuid
     )*/
@@ -260,7 +260,7 @@ class CustomizatorController {
       `(CustomizatorController) Rejecting (singular) request ${_request.uuid} - ${_request.method}`
     )
 
-    _request.resolve({
+    _request.push({
       data: 'Request has been rejected by the user',
       success: false,
       uuid: _request.uuid
@@ -278,7 +278,7 @@ class CustomizatorController {
 
   rejectRequests() {
     this.requests.forEach(request => {
-      request.resolve({
+      request.push({
         data: 'Request has been rejected by the user',
         success: false,
         uuid: request.uuid
@@ -325,8 +325,8 @@ class CustomizatorController {
       }
       case 'getCurrentAccount': {
         const account = this.walletController.getCurrentAccount()
-        return new Promise(resolve =>
-          resolve({
+        return new Promise(push =>
+          push({
             data: account.data.latestAddress,
             success: true
           })

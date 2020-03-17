@@ -191,7 +191,7 @@ class PegasusEngine extends EventEmitter {
    * @param {Object} _request
    */
   handle(_request) {
-    const { method, args, uuid, resolve, website } = _request
+    const { method, args, uuid, push, website } = _request
 
     const iota = composeAPI()
     if (iota[_request.method] && !forbiddenRequests.includes(_request.method)) {
@@ -201,11 +201,11 @@ class PegasusEngine extends EventEmitter {
 
     switch (method) {
       case 'connect': {
-        this.connectorController.connect(uuid, resolve, website)
+        this.connectorController.connect(uuid, push, website)
         break
       }
       default: {
-        resolve({
+        push({
           success: 'false',
           data: 'Method Not Available'
         })

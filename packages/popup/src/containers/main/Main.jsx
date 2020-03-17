@@ -131,10 +131,6 @@ class Main extends Component {
       request => request.needUserInteraction
     )
 
-    const requestsWithNoUserInteraction = executableRequests.filter(
-      request => !request.needUserInteraction
-    )
-
     if (requestsWithUserInteraction.length > 0) {
       this.props.showHeader(false)
       this.setState({
@@ -144,13 +140,6 @@ class Main extends Component {
         APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION
       )
       return
-    }
-
-    if (requestsWithNoUserInteraction.length > 0) {
-      for (let request of requestsWithNoUserInteraction) {
-        this.props.background.executeRequest(request)
-      }
-      this.props.background.closePopup()
     }
 
     this.props.showHeader(true)
