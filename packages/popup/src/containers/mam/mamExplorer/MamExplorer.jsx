@@ -26,15 +26,6 @@ class MamExplorer extends Component {
     }
   }
 
-  async componentWillMount() {
-    /*this.props.duplex.on('newMamData', data =>
-      this.setState({
-        opened: [...this.state.opened, false],
-        data: [...this.state.data, data]
-      })
-    )*/
-  }
-
   onClickDetail(index) {
     this.setState(prevState => {
       const opened = prevState.opened
@@ -65,7 +56,13 @@ class MamExplorer extends Component {
     const options = {
       root: this.state.root,
       mode: this.state.mode,
-      sideKey: this.state.sideKey !== '' ? this.state.sideKey : null
+      sideKey: this.state.sideKey !== '' ? this.state.sideKey : null,
+      cb: data => {
+        this.setState({
+          opened: [...this.state.opened, false],
+          data: [...this.state.data, data]
+        })
+      }
     }
     this.props.background.fetchFromPopup(options)
   }
