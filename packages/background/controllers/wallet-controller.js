@@ -3,9 +3,12 @@ import Utils from '@pegasus/utils/utils'
 import { composeAPI } from '@iota/core'
 import logger from '@pegasus/utils/logger'
 import options from '@pegasus/utils/options'
+import { EventEmitter } from 'eventemitter3'
 
-class WalletController {
+class WalletController extends EventEmitter {
   constructor(options) {
+    super()
+
     const {
       stateStorageController,
       networkController,
@@ -79,10 +82,8 @@ class WalletController {
       this.setState(APP_STATE.WALLET_UNLOCKED)
 
       const account = this.getCurrentAccount()
-      const network = this.networkController.getCurrentNetwork()
 
-      //background.setSelectedProvider(network.provider)
-      //background.setAccount(account)
+      this.emit('accountChanged', account.data.latestAddress)
 
       logger.log(
         `(WalletController) Wallet unlocked with account: ${account.name}`
@@ -99,9 +100,6 @@ class WalletController {
     await this.stateStorageController.lock()
     this.sessionController.deleteSession()
     this.accountDataController.stopHandle()
-
-    //background.setAccount(null)
-    //background.setSelectedAccount(null)
 
     logger.log(`(WalletController) Wallet succesfully locked`)
     return true
@@ -149,7 +147,6 @@ class WalletController {
       `(WalletController) State updated: ${STATE_NAME[_state.toString()]}`
     )
     this.stateStorageController.set('state', _state)
-    //background.setAppState(_state)
   }
 
   getState() {
@@ -166,7 +163,7 @@ class WalletController {
     const account = this.getCurrentAccount()
     if (!account) return false
 
-    return account.seed //Utils.aes256decrypt(account.seed, key)
+    return account.seed
   }
 
   isAccountNameAlreadyExists(_name) {
@@ -216,7 +213,6 @@ class WalletController {
         seed,
         transactions: transactionsWithReattachSet,
         data: accountData,
-        current: Boolean(_isCurrent),
         id
       }
 
@@ -231,7 +227,7 @@ class WalletController {
 
       this.stateStorageController.set('accounts', accounts)
 
-      //background.setAccount(accountToAdd)
+      this.emit('accountChanged', accountToAdd.data.latestAddress)
 
       //in order to write on storage the first time
       const password = this.loginPasswordController.getPassword()
@@ -261,15 +257,22 @@ class WalletController {
   //all following methods updates data on the CURRENT account
   setCurrentAccount(_account) {
     const accounts = this.stateStorageController.get('accounts')
+
+    //seed not exposed outside of the popup
+    _account.seed = accounts.selected.seed
     accounts.selected = _account
+
     this.stateStorageController.set('accounts', accounts)
+
+    this.emit('accountChanged', _account.data.latestAddress)
+
     logger.log(`(WalletController) Set current account : ${_account.name}`)
     return true
   }
 
   updateDataAccount(_data) {
     const accounts = this.stateStorageController.get('accounts')
-    accounts.selected.data = _data
+
     this.stateStorageController.set('accounts', accounts)
     logger.log(`(WalletController) Data updated for ${accounts.selected.name}`)
     return true
@@ -317,8 +320,7 @@ class WalletController {
     accounts.selected = accounts.all[0]
     this.stateStorageController.set('accounts', accounts)
 
-    //injection
-    //background.setSelectedAccount(accounts[0].data.latestAddress)
+    this.emit('accountChanged', accounts.selected.data.latestAddress)
 
     return true
   }

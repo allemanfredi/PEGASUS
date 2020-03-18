@@ -286,23 +286,9 @@ const buildPromisedBackgroundApi = _backgroundConnection => {
         )
       ),
 
-    getConnection: origin =>
-      new Promise((resolve, reject) =>
-        _backgroundConnection.getConnection(origin, (res, err) =>
-          err ? reject(err) : resolve(res)
-        )
-      ),
-
     pushConnection: connection =>
       new Promise((resolve, reject) =>
         _backgroundConnection.pushConnection(connection, (res, err) =>
-          err ? reject(err) : resolve(res)
-        )
-      ),
-
-    updateConnection: connection =>
-      new Promise((resolve, reject) =>
-        _backgroundConnection.updateConnection(connection, (res, err) =>
           err ? reject(err) : resolve(res)
         )
       ),

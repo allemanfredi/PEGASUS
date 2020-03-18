@@ -6,7 +6,7 @@ import StateStorageController from './controllers/state-storage-controller'
 import NotificationsController from './controllers/notifications-controller'
 import ConnectorController from './controllers/connector-controller'
 import NetworkController from './controllers/network-controller'
-import walletController from './controllers/wallet-controller'
+import WalletController from './controllers/wallet-controller'
 import SessionsController from './controllers/session-controller'
 import PopupController from './controllers/popup-controller'
 import TransferController from './controllers/transfer-controller'
@@ -16,7 +16,6 @@ import { APP_STATE } from '@pegasus/utils/states'
 import logger from '@pegasus/utils/logger'
 import pump from 'pump'
 import createEngineStream from './lib/engine-stream'
-import { EventEmitter } from 'eventemitter3'
 import { composeAPI } from '@iota/core'
 import Dnode from 'dnode/browser'
 import nodeify from 'nodeify'
@@ -24,13 +23,9 @@ import { mapStateForPopup } from './lib/global-state-mapper'
 
 const forbiddenRequests = ['getAccountData', 'getNewAddress', 'getInputs']
 
-class PegasusEngine extends EventEmitter {
+class PegasusEngine {
   constructor() {
-    super()
-
-    this.requests = []
-    this.accountDataHandler = false
-    this.transactionsAutoPromotionHandler = false
+    this.activeStreams = {}
 
     /* C O N T R O L L E R S */
     this.popupController = new PopupController()
@@ -62,7 +57,7 @@ class PegasusEngine extends EventEmitter {
       stateStorageController: this.stateStorageController
     })
 
-    this.walletController = new walletController({
+    this.walletController = new WalletController({
       stateStorageController: this.stateStorageController,
       networkController: this.networkController,
       connectorController: this.connectorController,
@@ -148,16 +143,15 @@ class PegasusEngine extends EventEmitter {
 
     const inpageClientStream = createEngineStream(this, website)
 
-    /*const account = this.connectorController.estabilishConnection(website)
-    console.log(account)*/
-
-    this.connectorController.estabilishConnection(website)
-
     pump(outStream, inpageClientStream, outStream, err => {
       if (err) {
         logger.error(err)
       }
     })
+
+    this.setupInpageClientDefaultValues(inpageClientStream, url)
+
+    this.connectorController.estabilishConnection(website)
   }
 
   /**
@@ -181,9 +175,7 @@ class PegasusEngine extends EventEmitter {
         //console.log(_state)
 
         //remove seed before sending
-        sendUpdate(
-          mapStateForPopup(_state)
-        )
+        sendUpdate(mapStateForPopup(_state))
       })
     })
   }
@@ -286,12 +278,8 @@ class PegasusEngine extends EventEmitter {
         nodeify(this.customizatorController.confirmRequest(request), cb),
 
       //connector controller
-      getConnection: (origin, cb) =>
-        cb(this.connectorController.getConnection(origin)),
       pushConnection: (connection, cb) =>
         cb(this.connectorController.pushConnection(connection)),
-      updateConnection: (connection, cb) =>
-        cb(this.connectorController.updateConnection(connection)),
       completeConnection: cb =>
         cb(this.connectorController.completeConnection()),
       rejectConnection: cb => cb(this.connectorController.rejectConnection()),
@@ -329,6 +317,46 @@ class PegasusEngine extends EventEmitter {
 
       disableTransactionsAutoPromotion: cb =>
         cb(this.accountDataController.disableTransactionsAutoPromotion())
+    }
+  }
+
+  /**
+   * Send the current network provider to the inpageClient.
+   * Also check if the connection with a website is already enabled,
+   * in that case the engine it will send the address of the current account to the inpageClient.
+   * In addition listens for network/account changing in order to send to the inpageClient.
+   *
+   * @param {DuplexStream} _inpageClient
+   * @param {Url} _url
+   */
+  setupInpageClientDefaultValues(_inpageClient, _url) {
+    this.walletController.on('accountChanged', account => {
+      if (this.connectorController.isConnected(_url.origin)) {
+        _inpageClient.push({
+          action: 'accountChanged',
+          response: account
+        })
+      }
+    })
+
+    this.networkController.on('providerChanged', provider => {
+      _inpageClient.push({
+        action: 'providerChanged',
+        response: provider
+      })
+    })
+
+    _inpageClient.push({
+      action: 'providerChanged',
+      response: this.networkController.getCurrentNetwork().provider
+    })
+
+    if (this.connectorController.isConnected(_url.origin)) {
+      const account = this.walletController.getCurrentAccount()
+      _inpageClient.push({
+        action: 'accountChanged',
+        response: account.data.latestAddress
+      })
     }
   }
 }

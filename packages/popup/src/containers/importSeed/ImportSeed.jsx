@@ -123,7 +123,7 @@ class ImportSeed extends Component {
                   type="submit"
                   className="btn btn-blue text-bold btn-big"
                 >
-                  Import Seed
+                  Import Account
                 </button>
               </div>
             </div>

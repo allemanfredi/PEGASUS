@@ -1,7 +1,10 @@
 import logger from '@pegasus/utils/logger'
+import { EventEmitter } from 'eventemitter3'
 
-class NetworkController {
+class NetworkController extends EventEmitter {
   constructor(configs) {
+    super()
+
     const { stateStorageController, customizatorController } = configs
 
     this.stateStorageController = stateStorageController
@@ -16,7 +19,7 @@ class NetworkController {
     try {
       this.stateStorageController.set('selectedNetwork', _network)
 
-      //background.setSelectedProvider(_network.provider)
+      this.emit('providerChanged', _network.provider)
 
       logger.log(
         `(NetworkController) New selected provider ${_network.provider}`
@@ -42,6 +45,8 @@ class NetworkController {
       networks.push(_network)
       this.stateStorageController.set('networks', networks)
 
+      this.emit('providerChanged', _network.provider)
+
       logger.log(`(NetworkController) New provider added ${_network.provider}`)
     } catch (err) {
       throw new Error(err)
@@ -62,7 +67,7 @@ class NetworkController {
       this.stateStorageController.set('networks', networks)
       this.stateStorageController.set('selectedNetwork', selectedNetwork)
 
-      //background.setSelectedProvider(selectedNetwork.provider)
+      this.emit('providerChanged', selectedNetwork.provider)
 
       logger.log(
         `(NetworkController) Deleted provider ${currentNetwork.provider}`

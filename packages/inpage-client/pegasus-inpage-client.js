@@ -77,23 +77,23 @@ class PegasusInpageClient extends EventEmitter {
     this.inpageStream.on('data', ({ data }) => {
       const { response, uuid, action, success } = data
 
-      console.log(response, uuid, success)
+      console.log(response, uuid, success, action)
 
-      /*switch (action) {
-        case 'setSelectedProvider': {
-          this.selectedProvider = data
-          this.emit('onProviderChanged', data)
+      switch (action) {
+        case 'providerChanged': {
+          this.selectedProvider = response
+          this.emit('providerChanged', response)
           break
         }
-        case 'setSelectedAccount': {
-          this.selectedAccount = data
-          this.emit('onAccountChanged', data)
+        case 'accountChanged': {
+          this.selectedAccount = response
+          this.emit('accountChanged', response)
           break
         }
-        case 'mam_onFetch': {
+        /*case 'mam_onFetch': {
           if (this._mamFetches[uuid]) this._mamFetches[uuid](data)
           break
-        }
+        }*/
         default: {
           if (success) this._calls[uuid].resolve(data)
           else this._calls[uuid].reject(data)
@@ -101,7 +101,7 @@ class PegasusInpageClient extends EventEmitter {
           delete this._calls[uuid]
           break
         }
-      }*/
+      }
     })
   }
 

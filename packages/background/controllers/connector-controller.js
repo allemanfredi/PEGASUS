@@ -40,8 +40,10 @@ class ConnectorController {
     return this.connectionRequest
   }
 
-  updateConnection(_connection) {
-    this.connections[_connection.website.origin] = _connection
+  isConnected(_origin) {
+    return this.connections[_origin] && this.connections[_origin].enabled
+      ? true
+      : false
   }
 
   connect(_uuid, _push, _website) {
@@ -71,7 +73,6 @@ class ConnectorController {
       `(ConnectorController) Completing connection with ${this.connectionRequest.website.origin}`
     )
 
-    //const account = this.walletController.getCurrentAccount()
     if (this.connectionRequest.push) {
       this.connectionRequest.push({
         response: true,
@@ -100,7 +101,7 @@ class ConnectorController {
         request.connection.requestToConnect = false
         request.connection.enabled = true
 
-        //execute only request withot user interaction
+        //execute only request without user interaction
         if (!request.needUserInteraction)
           this.customizatorController.executeRequest(request)
       }
@@ -113,9 +114,8 @@ class ConnectorController {
 
     this.connectionRequest = null
 
-    //this.customizatorController.setRequests(requests)
-
-    //background.setSelectedAccount(account.data.latestAddress)
+    const account = this.walletController.getCurrentAccount()
+    this.walletController.emit('accountChanged', account.data.latestAddress)
 
     return true
   }

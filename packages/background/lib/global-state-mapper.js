@@ -1,9 +1,9 @@
 /**
- * 
- * function used to remove seeds from all accounts 
+ *
+ * function used to remove seeds from all accounts
  * before passing the global state object to the popup
- * 
- * @param {Object} _state 
+ *
+ * @param {Object} _state
  */
 const mapStateForPopup = _state => {
   const mappedState = JSON.parse(JSON.stringify(_state))
