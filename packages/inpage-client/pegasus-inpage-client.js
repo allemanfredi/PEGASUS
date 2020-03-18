@@ -11,8 +11,8 @@ import Mam from '@iota/mam/lib/mam.web.min.js'
 import Utils from '@pegasus/utils/utils'
 import randomUUID from 'uuid/v4'
 import EventEmitter from 'eventemitter3'
-import ObjectMultiplex from 'obj-multiplex'
-import pump from 'pump'
+/*import ObjectMultiplex from 'obj-multiplex'
+import pump from 'pump'*/
 
 class PegasusInpageClient extends EventEmitter {
   constructor(inpageStream) {
@@ -77,8 +77,6 @@ class PegasusInpageClient extends EventEmitter {
     this.inpageStream.on('data', ({ data }) => {
       const { response, uuid, action, success } = data
 
-      console.log(response, uuid, success, action)
-
       switch (action) {
         case 'providerChanged': {
           this.selectedProvider = response
@@ -95,8 +93,8 @@ class PegasusInpageClient extends EventEmitter {
           break
         }*/
         default: {
-          if (success) this._calls[uuid].resolve(data)
-          else this._calls[uuid].reject(data)
+          if (success) this._calls[uuid].resolve(response)
+          else this._calls[uuid].reject(response)
 
           delete this._calls[uuid]
           break

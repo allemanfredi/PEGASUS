@@ -351,8 +351,8 @@ class PegasusEngine {
       response: this.networkController.getCurrentNetwork().provider
     })
 
-    if (this.connectorController.isConnected(_url.origin)) {
-      const account = this.walletController.getCurrentAccount()
+    const account = this.walletController.getCurrentAccount()
+    if (this.connectorController.isConnected(_url.origin) && account) {
       _inpageClient.push({
         action: 'accountChanged',
         response: account.data.latestAddress
