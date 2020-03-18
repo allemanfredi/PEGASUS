@@ -182,7 +182,7 @@ class PegasusEngine extends EventEmitter {
 
         //remove seed before sending
         sendUpdate(
-          _state //mapStateForPopup(_state)
+          mapStateForPopup(_state)
         )
       })
     })
