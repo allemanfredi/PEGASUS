@@ -93,10 +93,10 @@ class Mam extends Component {
           </React.Fragment>
         ) : null}
         {this.state.show[0] ? (
-          <RegisterMamChannel onBack={() => this.props.onBack()} />
+          <RegisterMamChannel background={this.props.background} onBack={() => this.props.onBack()} />
         ) : null}
         {this.state.show[1] ? (
-          <ShowChannelsList onBack={() => this.props.onBack()} />
+          <ShowChannelsList background={this.props.background} onBack={() => this.props.onBack()} />
         ) : null}
         {this.state.show[2] ? (
           <MamExplorer
