@@ -91,10 +91,13 @@ class ExportSeed extends Component {
         {this.state.showExportSeedText ? (
           <ExportSeedText
             account={this.props.account}
+            background={this.props.background}
             setNotification={this.props.setNotification}
           />
         ) : null}
-        {this.state.showExportSeedVault ? <ExportSeedVault /> : null}
+        {this.state.showExportSeedVault ? (
+          <ExportSeedVault background={this.props.background} />
+        ) : null}
       </React.Fragment>
     )
   }

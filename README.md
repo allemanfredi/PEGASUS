@@ -80,8 +80,8 @@ if (window.iota) {
     //if user enabled
     if (isConnected) {
 
-        window.iota.on('onProviderChanged', provider => ...)
-        window.iota.on('onAccountChanged', account => ...)
+        window.iota.on('providerChanged', provider => ...)
+        window.iota.on('accountChanged', account => ...)
 
         const bundle = await window.iota.core.prepareTransfers(transfers)
         console.log(bundle)

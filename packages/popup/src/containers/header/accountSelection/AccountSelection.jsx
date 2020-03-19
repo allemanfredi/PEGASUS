@@ -1,6 +1,6 @@
 import React from 'react'
-import { popupMessanger } from '@pegasus/utils/messangers'
 import Utils from '@pegasus/utils/utils'
+import { APP_STATE } from '@pegasus/utils/states'
 
 class AccountSelection extends React.Component {
   constructor(props, context) {
@@ -14,10 +14,6 @@ class AccountSelection extends React.Component {
       isClosing: false,
       accounts: []
     }
-  }
-
-  componentWillMount() {
-    this.loadAccounts()
   }
 
   componentDidMount() {
@@ -39,16 +35,29 @@ class AccountSelection extends React.Component {
     }
   }
 
+  async componentWillMount() {
+    this.loadAccounts()
+    this.props.background.on('update', backgroundState => {
+      if (
+        backgroundState.state > APP_STATE.WALLET_LOCKED &&
+        backgroundState.accounts.all
+      ) {
+        this.setState({
+          accounts: backgroundState.accounts.all.filter(
+            account => account.id !== this.props.account.id
+          )
+        })
+      }
+    })
+  }
+
   async switchAccount(newAccount) {
-    let accounts = await popupMessanger.getAllAccounts()
-    accounts = accounts.filter(account => account.id !== newAccount.id)
-    this.setState({ accounts })
-    popupMessanger.setCurrentAccount(newAccount)
+    await this.props.background.setCurrentAccount(newAccount)
   }
 
   async loadAccounts() {
-    let accounts = await popupMessanger.getAllAccounts()
-    accounts = accounts.filter(account => !account.current)
+    let accounts = await this.props.background.getAllAccounts()
+    accounts = accounts.filter(account => account.id !== this.props.account.id)
     this.setState({ accounts })
   }
 

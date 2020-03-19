@@ -10,8 +10,11 @@
   },
   "dependencies": {
     "@pegasus/utils": "^0.7.0",
+    "extension-port-stream": "^1.0.0",
     "extensionizer": "^1.0.1",
-    "post-message-stream": "^3.0.0"
+    "obj-multiplex": "^1.0.0",
+    "post-message-stream": "^3.0.0",
+    "pump": "^3.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",

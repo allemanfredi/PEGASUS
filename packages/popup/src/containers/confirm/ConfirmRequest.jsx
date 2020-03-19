@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { popupMessanger } from '@pegasus/utils/messangers'
 import ConfirmTransfers from './confirmTransfers/ConfirmTransfers'
 import ConfirmCreateMamChannel from './confirmCreateMamChannel/ConfirmCreateMamChannel'
 import ConfirmChangeModeMamChannel from './confirmChangeModeMamChannel/ConfirmChangeModeMamChannel'
@@ -13,38 +12,62 @@ class ConfirmRequest extends Component {
     this.reject = this.reject.bind(this)
     this.rejectAll = this.rejectAll.bind(this)
     this.confirm = this.confirm.bind(this)
+    this.getRequests = this.getRequests.bind(this)
 
     this.state = {
-      requests: []
+      requests: [],
+      isLoading: false,
+      error: null
     }
   }
 
-  async componentWillMount() {
-    await popupMessanger.setState(
-      APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION
-    )
-
-    const executableRequests = await popupMessanger.getExecutableRequests()
+  async getRequests() {
+    const executableRequests = await this.props.background.getExecutableRequests()
     const requests = executableRequests.filter(
       request => request.needUserInteraction
     )
     this.setState({ requests })
+  }
 
-    this.props.duplex.on('setRequests', requests => {
-      this.setState({ requests })
-    })
+  async componentWillMount() {
+    await this.props.background.setState(
+      APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION
+    )
+
+    await this.getRequests()
   }
 
   async confirm(request) {
-    await popupMessanger.confirmRequest(request)
+    this.setState({
+      isLoading: true,
+      error: null
+    })
+    const { response, success } = await this.props.background.confirmRequest(
+      request
+    )
+    if (success) {
+      this.props.onHideTop(false)
+      this.props.onBack()
+      this.props.setNotification({
+        type: 'success',
+        text: 'Transfer was successful',
+        position: 'under-bar'
+      })
+    } else {
+      this.setState({ error: response })
+    }
+    this.setState({ isLoading: false })
+
+    await this.getRequests()
   }
 
   async reject(request) {
-    await popupMessanger.rejectRequest(request)
+    await this.props.background.rejectRequest(request)
+    await this.getRequests()
   }
 
   rejectAll() {
-    popupMessanger.rejectRequests()
+    this.props.background.rejectRequests()
   }
 
   render() {
@@ -55,8 +78,10 @@ class ConfirmRequest extends Component {
         case 'prepareTransfers':
           return (
             <ConfirmTransfers
+              isLoading={this.state.isLoading}
+              error={this.state.error}
               transfer={request}
-              duplex={this.props.duplex}
+              background={this.props.background}
               onConfirm={this.confirm}
               onReject={this.reject}
             />
@@ -73,9 +98,9 @@ class ConfirmRequest extends Component {
         case 'mam_changeMode':
           return (
             <ConfirmChangeModeMamChannel
-              from={request.data.args[0].channel.mode}
-              to={request.data.args[1]}
-              sidekey={request.data.args[2] ? request.data.args[2] : null}
+              from={request.args[0].channel.mode}
+              to={request.args[1]}
+              sidekey={request.args[2] ? request.args[2] : null}
               request={request}
               onConfirm={this.confirm}
               onReject={this.reject}

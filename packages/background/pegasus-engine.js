@@ -1,5 +1,3 @@
-import Duplex from '@pegasus/utils/duplex'
-import { backgroundMessanger } from '@pegasus/utils/messangers'
 import settings from '@pegasus/utils/options'
 import AccountDataController from './controllers/account-data-controller'
 import CustomizatorController from './controllers/customizator-controller'
@@ -8,24 +6,29 @@ import StateStorageController from './controllers/state-storage-controller'
 import NotificationsController from './controllers/notifications-controller'
 import ConnectorController from './controllers/connector-controller'
 import NetworkController from './controllers/network-controller'
-import walletController from './controllers/wallet-controller'
+import WalletController from './controllers/wallet-controller'
 import SessionsController from './controllers/session-controller'
 import PopupController from './controllers/popup-controller'
 import TransferController from './controllers/transfer-controller'
 import SeedVaultController from './controllers/seed-vault-controller'
 import LoginPasswordController from './controllers/login-password-controller'
 import { APP_STATE } from '@pegasus/utils/states'
-
-const SESSION_TIME = 30000
+import logger from '@pegasus/utils/logger'
+import pump from 'pump'
+import createEngineStream from './lib/engine-stream'
+import { composeAPI } from '@iota/core'
+import Dnode from 'dnode/browser'
+import nodeify from 'nodeify'
+import { mapStateForPopup } from './lib/global-state-mapper'
+import {
+  MAM_REQUESTS,
+  FORBIDDEN_REQUESTS,
+  ADDITIONAL_METHODS
+} from './lib/constants'
 
 class PegasusEngine {
   constructor() {
-    this.requests = []
-    this.accountDataHandler = false
-    this.transactionsAutoPromotionHandler = false
-
-    const duplex = new Duplex.Host()
-    backgroundMessanger.init(duplex)
+    this.activeStreams = {}
 
     /* C O N T R O L L E R S */
     this.popupController = new PopupController()
@@ -57,7 +60,7 @@ class PegasusEngine {
       stateStorageController: this.stateStorageController
     })
 
-    this.walletController = new walletController({
+    this.walletController = new WalletController({
       stateStorageController: this.stateStorageController,
       networkController: this.networkController,
       connectorController: this.connectorController,
@@ -86,7 +89,8 @@ class PegasusEngine {
     })
 
     this.seedVaultController = new SeedVaultController({
-      walletController: this.walletController
+      walletController: this.walletController,
+      loginPasswordController: this.loginPasswordController
     })
 
     this.customizatorController.setWalletController(this.walletController)
@@ -99,6 +103,9 @@ class PegasusEngine {
     this.connectorController.setNetworkController(this.networkController)
     this.networkController.setWalletController(this.walletController)
     this.walletController.setSessionController(this.sessionController)
+    this.connectorController.setCustomizatorController(
+      this.customizatorController
+    )
     /* E N D   C O N T R O L L E R S */
 
     const state = this.walletController.getState()
@@ -114,252 +121,254 @@ class PegasusEngine {
       this.networkController.setCurrentNetwork(settings.networks[0])
     }
 
-    this.sessionController.checkSession()
-    setInterval(() => this.sessionController.checkSession(), SESSION_TIME)
-
-    const popupSettings = this.getPopupSettings()
+    const popupSettings = this.walletController.getPopupSettings()
     if (popupSettings.autoPromotion.enabled)
       this.accountDataController.enableTransactionsAutoPromotion(
         parseInt(popupSettings.autoPromotion.time * 1000 * 60)
       )
   }
 
-  // WALLET BACKGROUND API
-  isWalletSetup() {
-    return this.walletController.isWalletSetup()
+  /**
+   * Create a connection between the inpageClient and the engine
+   *
+   * @param {Stream} outStream
+   * @param {Object} port
+   */
+  setupInpageClientConnection(outStream, sender) {
+    const url = new URL(sender.url)
+
+    const website = {
+      origin: url.origin,
+      hostname: url.hostname,
+      title: sender.tab.title,
+      favicon: sender.tab.favIconUrl
+    }
+
+    const inpageClientStream = createEngineStream(this, website)
+
+    pump(outStream, inpageClientStream, outStream, err => {
+      if (err) {
+        logger.error(err)
+      }
+    })
+
+    this.setupInpageClientDefaultValues(inpageClientStream, url)
+
+    this.connectorController.estabilishConnection(website)
   }
 
-  unlockWallet(password) {
-    return this.walletController.unlockWallet(password)
-  }
+  /**
+   * Create a connection with the popup by exposing the engine APIs
+   *
+   * @param {Stream} outStream
+   */
+  setupEngineConnectionWithPopup(outStream) {
+    const api = this.getApi()
+    const dnode = Dnode(api)
 
-  restoreWallet({ account, password }) {
-    return this.walletController.restoreWallet(account, password)
-  }
+    pump(outStream, dnode, outStream, err => {
+      if (err) {
+        logger.error(err)
+      }
+    })
+    dnode.on('remote', remote => {
+      const { sendUpdate } = remote
 
-  unlockSeed(password) {
-    return this.walletController.unlockSeed(password)
-  }
+      this.stateStorageController.state$.subscribe(_state => {
+        //console.log(_state)
 
-  initWallet({ password, account }) {
-    return this.walletController.initWallet(password, account)
-  }
-
-  comparePassword(password) {
-    return this.loginPasswordController.comparePassword(password)
-  }
-
-  setCurrentNetwork(network) {
-    return this.networkController.setCurrentNetwork(network)
-  }
-
-  getCurrentNetwork() {
-    return this.networkController.getCurrentNetwork()
-  }
-
-  getAllNetworks() {
-    return this.networkController.getAllNetworks()
-  }
-
-  addNetwork(network) {
-    return this.networkController.addNetwork(network)
-  }
-
-  deleteCurrentNetwork() {
-    return this.networkController.deleteCurrentNetwork()
-  }
-
-  addAccount({ account, isCurrent }) {
-    return this.walletController.addAccount(account, isCurrent)
-  }
-
-  isAccountNameAlreadyExists({ name }) {
-    return this.walletController.isAccountNameAlreadyExists(name)
-  }
-
-  getCurrentAccount() {
-    return this.walletController.getCurrentAccount()
-  }
-
-  getAllAccounts() {
-    return this.walletController.getAllAccounts()
-  }
-
-  setCurrentAccount({ currentAccount }) {
-    return this.walletController.setCurrentAccount(currentAccount)
-  }
-
-  updateNameAccount({ current, newName }) {
-    return this.walletController.updateNameAccount(current, newName)
-  }
-
-  updateAvatarAccount({ current, avatar }) {
-    return this.walletController.updateAvatarAccount(current, avatar)
-  }
-
-  deleteAccount({ account }) {
-    return this.walletController.deleteAccount(account)
-  }
-
-  generateSeed(length = 81) {
-    return this.walletController.generateSeed(length)
-  }
-
-  checkSession() {
-    return this.sessionController.checkSession()
-  }
-
-  deleteSession() {
-    return this.sessionController.deleteSession()
-  }
-
-  getState() {
-    return this.walletController.getState()
-  }
-
-  setState(state) {
-    return this.walletController.setState(state)
-  }
-
-  closePopup() {
-    return this.popupController.closePopup()
-  }
-
-  executeRequest(request) {
-    return this.customizatorController.executeRequest(request)
-  }
-
-  pushRequest(method, { uuid, resolve, data, website }) {
-    this.customizatorController.pushRequest({
-      method,
-      uuid,
-      resolve,
-      data,
-      website
+        //remove seed before sending
+        sendUpdate(mapStateForPopup(_state))
+      })
     })
   }
 
-  getRequests() {
-    return this.customizatorController.getRequests()
+  /**
+   * Handle a request from tabs
+   *
+   * @param {Object} _request
+   */
+  handle(_request) {
+    const { method, uuid, push, website } = _request
+
+    const iota = composeAPI()
+    if (
+      iota[_request.method] &&
+      !FORBIDDEN_REQUESTS.includes(_request.method)
+    ) {
+      this.customizatorController.pushRequest(_request)
+      return
+    }
+
+    if (
+      MAM_REQUESTS.includes(_request.method) ||
+      ADDITIONAL_METHODS.includes(_request.method)
+    ) {
+      this.customizatorController.pushRequest(_request)
+      return
+    }
+
+    if (method === 'connect') {
+      this.connectorController.connect(uuid, push, website)
+      return
+    }
+
+    push({
+      success: 'false',
+      response: 'Method Not Available',
+      uuid
+    })
   }
 
-  getExecutableRequests() {
-    return this.customizatorController.getExecutableRequests()
+  /**
+   * Background api used by the popup
+   */
+  getApi() {
+    return {
+      isWalletSetup: cb => cb(this.walletController.isWalletSetup()),
+      initWallet: (password, account, cb) =>
+        nodeify(this.walletController.initWallet(password, account), cb),
+      lockWallet: cb => nodeify(this.walletController.lockWallet(), cb),
+      unlockWallet: (password, cb) =>
+        nodeify(this.walletController.unlockWallet(password), cb),
+      restoreWallet: (password, account, cb) =>
+        nodeify(this.walletController.restoreWallet(password, account), cb),
+      unlockSeed: (password, cb) =>
+        nodeify(this.walletController.unlockSeed(password), cb),
+      addAccount: (account, isCurrent, cb) =>
+        nodeify(this.walletController.addAccount(account, isCurrent), cb),
+      isAccountNameAlreadyExists: (name, cb) =>
+        cb(this.walletController.isAccountNameAlreadyExists(name)),
+      getCurrentAccount: cb => cb(this.walletController.getCurrentAccount()),
+      getAllAccounts: cb => cb(this.walletController.getAllAccounts()),
+      setCurrentAccount: (account, cb) =>
+        cb(this.walletController.setCurrentAccount(account)),
+      updateNameAccount: (name, cb) =>
+        cb(this.walletController.updateNameAccount(name)),
+      updateAvatarAccount: (avatar, cb) =>
+        cb(this.walletController.updateAvatarAccount(avatar)),
+      deleteAccount: (account, cb) =>
+        cb(this.walletController.deleteAccount(account)),
+      getState: cb => cb(this.walletController.getState()),
+      setState: (state, cb) => cb(this.walletController.setState(state)),
+      setPopupSettings: (settings, cb) =>
+        cb(this.walletController.setPopupSettings(settings)),
+      getPopupSettings: cb => cb(this.walletController.getPopupSettings()),
+
+      //login password controller
+      comparePassword: (password, cb) =>
+        nodeify(this.loginPasswordController.comparePassword(password), cb),
+
+      //session controller
+      checkSession: cb => cb(this.sessionController.checkSession()),
+      deleteSession: cb => cb(this.sessionController.deleteSession()),
+
+      //network controller
+      setCurrentNetwork: (network, cb) =>
+        cb(this.networkController.setCurrentNetwork(network)),
+      getCurrentNetwork: cb => cb(this.networkController.getCurrentNetwork()),
+      getAllNetworks: cb => cb(this.networkController.getAllNetworks()),
+      addNetwork: (network, cb) =>
+        cb(this.networkController.addNetwork(network)),
+      deleteCurrentNetwork: cb =>
+        cb(this.networkController.deleteCurrentNetwork()),
+
+      //popup controller
+      closePopup: cb => cb(this.popupController.closePopup()),
+
+      //customizator controller
+      executeRequest: (request, cb) =>
+        nodeify(this.customizatorController.executeRequest(request), cb),
+      getRequests: cb => cb(this.customizatorController.getRequests()),
+      getExecutableRequests: cb =>
+        cb(this.customizatorController.getExecutableRequests()),
+      rejectRequest: (request, cb) =>
+        cb(this.customizatorController.rejectRequest(request)),
+      rejectRequests: cb => cb(this.customizatorController.rejectRequests()),
+      confirmRequest: (request, cb) =>
+        nodeify(this.customizatorController.confirmRequest(request), cb),
+
+      //connector controller
+      pushConnection: (connection, cb) =>
+        cb(this.connectorController.pushConnection(connection)),
+      completeConnection: cb =>
+        cb(this.connectorController.completeConnection()),
+      rejectConnection: cb => cb(this.connectorController.rejectConnection()),
+      getConnections: cb => cb(this.connectorController.getConnections()),
+      removeConnection: (connection, cb) =>
+        cb(this.connectorController.removeConnection(connection)),
+      addConnection: (connection, cb) =>
+        cb(this.connectorController.addConnection(connection)),
+      getConnectionRequest: cb =>
+        cb(this.connectorController.getConnectionRequest()),
+
+      //seed vault controller
+      createSeedVault: (loginPassword, encryptionPassword, cb) =>
+        nodeify(
+          this.seedVaultController.createSeedVault(
+            loginPassword,
+            encryptionPassword
+          ),
+          cb
+        ),
+
+      //mam controller
+      fetchFromPopup: (options, cb) =>
+        cb(this.mamController.fetchFromPopup(options)),
+      getMamChannels: cb => cb(this.mamController.getMamChannels()),
+      registerMamChannel: (channel, cb) =>
+        cb(this.mamController.registerMamChannel(channel)),
+
+      //accountData controller
+      loadAccountData: cb =>
+        nodeify(this.accountDataController.loadAccountData(), cb),
+
+      enableTransactionsAutoPromotion: (time, cb) =>
+        cb(this.accountDataController.enableTransactionsAutoPromotion(time)),
+
+      disableTransactionsAutoPromotion: cb =>
+        cb(this.accountDataController.disableTransactionsAutoPromotion())
+    }
   }
 
-  rejectRequests() {
-    return this.customizatorController.rejectRequests()
-  }
-
-  confirmRequest(request) {
-    return this.customizatorController.confirmRequest(request)
-  }
-
-  rejectRequest(request) {
-    return this.customizatorController.rejectRequest(request)
-  }
-
-  connect(uuid, resolve, website) {
-    this.connectorController.connect(uuid, resolve, website)
-    this.popupController.openPopup()
-  }
-
-  getConnection({ origin }) {
-    return this.connectorController.getConnection(origin)
-  }
-
-  pushConnection(connection) {
-    return this.connectorController.pushConnection(connection)
-  }
-
-  updateConnection(connection) {
-    return this.connectorController.updateConnection(connection)
-  }
-
-  completeConnection() {
-    const requests = this.connectorController.completeConnection(
-      this.customizatorController.getRequests()
-    )
-    this.customizatorController.setRequests(requests)
-    return true
-  }
-
-  rejectConnection() {
-    const requests = this.connectorController.rejectConnection(
-      this.customizatorController.getRequests()
-    )
-    this.customizatorController.setRequests(requests)
-    this.popupController.closePopup()
-    return true
-  }
-
-  estabilishConnection(website) {
-    return this.connectorController.estabilishConnection(website)
-  }
-
-  getConnections() {
-    return this.connectorController.getConnections()
-  }
-
-  removeConnection(connection) {
-    return this.connectorController.removeConnection(connection)
-  }
-
-  addConnection(connection) {
-    return this.connectorController.addConnection(connection)
-  }
-
-  getConnectionRequest() {
-    return this.connectorController.getConnectionRequest()
-  }
-
-  createSeedVault(password) {
-    return this.seedVaultController.createSeedVault(password)
-  }
-
-  startFetchMam(options) {
-    const network = this.networkController.getCurrentNetwork()
-    this.mamController.fetchFromPopup(
-      network.provider,
-      options.root,
-      options.mode,
-      options.sideKey,
-      data => {
-        backgroundMessanger.newMamData(data)
+  /**
+   * Send the current network provider to the inpageClient.
+   * Also check if the connection with a website is already enabled,
+   * in that case the engine it will send the address of the current account to the inpageClient.
+   * In addition listens for network/account changing in order to send to the inpageClient.
+   *
+   * @param {DuplexStream} _inpageClient
+   * @param {Url} _url
+   */
+  setupInpageClientDefaultValues(_inpageClient, _url) {
+    this.walletController.on('accountChanged', account => {
+      if (this.connectorController.isConnected(_url.origin)) {
+        _inpageClient.push({
+          action: 'accountChanged',
+          response: account
+        })
       }
-    )
-  }
+    })
 
-  reloadAccountData() {
-    return this.accountDataController.loadAccountData()
-  }
+    this.networkController.on('providerChanged', provider => {
+      _inpageClient.push({
+        action: 'providerChanged',
+        response: provider
+      })
+    })
 
-  getMamChannels() {
-    return this.mamController.getMamChannels()
-  }
+    _inpageClient.push({
+      action: 'providerChanged',
+      response: this.networkController.getCurrentNetwork().provider
+    })
 
-  registerMamChannel(channel) {
-    return this.mamController.registerMamChannel(channel)
-  }
-
-  lockWallet() {
-    return this.walletController.lockWallet()
-  }
-
-  setPopupSettings(settings) {
-    this.stateStorageController.set('popupSettings', settings, true)
-  }
-
-  getPopupSettings() {
-    return this.stateStorageController.get('popupSettings')
-  }
-
-  enableTransactionsAutoPromotion(time) {
-    return this.accountDataController.enableTransactionsAutoPromotion(time)
-  }
-
-  disableTransactionsAutoPromotion() {
-    return this.accountDataController.disableTransactionsAutoPromotion()
+    const account = this.walletController.getCurrentAccount()
+    if (this.connectorController.isConnected(_url.origin) && account) {
+      _inpageClient.push({
+        action: 'accountChanged',
+        response: account.data.latestAddress
+      })
+    }
   }
 }
 

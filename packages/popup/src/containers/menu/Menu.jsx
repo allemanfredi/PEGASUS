@@ -1,14 +1,12 @@
 import React, { Component } from 'react'
 import Utils from '@pegasus/utils/utils'
-import { popupMessanger } from '@pegasus/utils/messangers'
 import ReactTooltip from 'react-tooltip'
-import ChangeAvatar from '../changeAvatar/ChangeAvatar'
+import ChangeAvatar from './changeAvatar/ChangeAvatar'
 
 class Settings extends Component {
   constructor(props, context) {
     super(props, context)
 
-    this.updateData = this.updateData.bind(this)
     this.onClose = this.onClose.bind(this)
     this.handleClick = this.handleClick.bind(this)
     this.onChangeName = this.onChangeName.bind(this)
@@ -21,16 +19,6 @@ class Settings extends Component {
       showFullAddress: false,
       showChangeAvatar: false
     }
-  }
-
-  async componentWillMount() {
-    this.updateData()
-  }
-
-  async updateData() {
-    let accounts = await popupMessanger.getAllAccounts()
-    accounts = accounts.filter(account => !account.current)
-    this.setState({ accounts })
   }
 
   async onClose() {
@@ -52,7 +40,7 @@ class Settings extends Component {
     const newName = e.target.value
     this.setState({ editedName: newName })
 
-    await popupMessanger.updateNameAccount(this.props.account, newName)
+    await this.props.background.updateNameAccount(newName)
   }
 
   render() {
@@ -60,6 +48,7 @@ class Settings extends Component {
       <div className="modal mt-6">
         {this.state.showChangeAvatar ? (
           <ChangeAvatar
+            background={this.props.background}
             account={this.props.account}
             onClose={() => this.setState({ showChangeAvatar: false })}
           />

@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { popupMessanger } from '@pegasus/utils/messangers'
 import Loader from '../../components/loader/Loader'
 import Utils from '@pegasus/utils/utils'
 import { composeAPI } from '@iota/core'
@@ -44,9 +43,9 @@ class Restore extends Component {
       seed: this.state.seed.split()
     }
 
-    const isRestored = await popupMessanger.restoreWallet(
-      account,
-      this.state.psw
+    const isRestored = await this.props.background.restoreWallet(
+      this.state.psw,
+      account
     )
 
     if (!isRestored) {
@@ -66,7 +65,9 @@ class Restore extends Component {
 
     this.setState({ shake: false })
 
-    const canAccess = await popupMessanger.comparePassword(this.state.psw)
+    const canAccess = await this.props.background.comparePassword(
+      this.state.psw
+    )
     if (canAccess) this.setState({ passwordIsValid: true })
     else this.setState({ shake: true })
   }

@@ -3,7 +3,7 @@
 import configs from '@pegasus/utils/options'
 import { Store } from 'rxjs-observable-store'
 import logger from '@pegasus/utils/logger'
-import { encrypt, decrypt } from 'browser-protector'
+import { encrypt, decrypt } from '../lib/browser-protector'
 import ExtensionStore from '@pegasus/utils/extension-store'
 import { APP_STATE } from '@pegasus/utils/states'
 
@@ -25,7 +25,10 @@ class PegasusGlobalState {
       }
     }
     this.state = 0
-    this.accounts = []
+    this.accounts = {
+      selected: {},
+      all: []
+    }
     this.mamChannels = {}
     this.data = null
   }
@@ -35,14 +38,15 @@ class StateStorageController extends Store {
   constructor() {
     super(new PegasusGlobalState())
 
-    //NOTE: in order to keep a global state for the popup (for the future)
-    this.state$.subscribe(_state => {
-      //backgroundMessanger.changeGlobalState(_state)
-      //console.log(_state)
-    })
-
     this.unlocked = false
     this.storage = new ExtensionStore()
+
+    /*chrome.storage.local.clear(function() {
+      var error = chrome.runtime.lastError
+      if (error) {
+        console.error(error)
+      }
+    })*/
 
     this._init()
   }
@@ -146,7 +150,10 @@ class StateStorageController extends Store {
       accounts: [],
       mamChannels: {},
       data: {
-        accounts: [],
+        accounts: {
+          selected: {},
+          all: []
+        },
         mamChannels: {}
       }
     })

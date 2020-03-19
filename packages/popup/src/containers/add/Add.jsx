@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
-import { popupMessanger } from '@pegasus/utils/messangers'
 import Spinner from '../../components/spinner/Spinner'
 import Name from '../init/name/Name'
 import GenerateSeed from '../init/generateSeed/GenerateSeed'
 import Avatar from '../init/avatar/Avatar'
 import Export from '../init/export/Export'
+import { generateSeed } from '@pegasus/utils/seed-generation'
 
 class Add extends Component {
   constructor(props, context) {
@@ -29,7 +29,7 @@ class Add extends Component {
   }
 
   async componentDidMount() {
-    const seed = await popupMessanger.generateSeed()
+    const seed = generateSeed(81)
     this.setState({ seed })
   }
 
@@ -40,7 +40,7 @@ class Add extends Component {
 
   async goOn() {
     if (this.state.indexInitialization === 0) {
-      const nameAlreadyExixts = await popupMessanger.isAccountNameAlreadyExists(
+      const nameAlreadyExixts = await this.props.background.isAccountNameAlreadyExists(
         this.state.name
       )
       if (nameAlreadyExixts) {
@@ -62,7 +62,7 @@ class Add extends Component {
         avatar: this.state.selectedAvatar,
         seed: this.state.seed
       }
-      const isCreated = await popupMessanger.addAccount(account, true)
+      const isCreated = await this.props.background.addAccount(account, true)
       if (!isCreated) {
         this.props.setNotification({
           type: 'danger',
@@ -101,7 +101,7 @@ class Add extends Component {
       this.setState({ randomLetters: this.state.randomLetters - 1 })
     }
 
-    const letter = await popupMessanger.generateSeed(1)
+    const letter = generateSeed(1)
     this.setState(state => {
       const seed = state.seed
       seed[index] = letter[0]

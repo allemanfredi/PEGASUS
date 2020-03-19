@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { popupMessanger } from '@pegasus/utils/messangers'
 import Input from '../../components/input/Input'
 
 class Login extends Component {
@@ -20,7 +19,7 @@ class Login extends Component {
 
     this.setState({ shake: false })
 
-    const canAccess = await popupMessanger.unlockWallet(this.state.psw)
+    const canAccess = await this.props.background.unlockWallet(this.state.psw)
     if (canAccess) {
       this.props.onSuccess()
     } else {

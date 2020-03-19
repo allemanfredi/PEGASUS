@@ -1,6 +1,6 @@
 import { composeAPI } from '@iota/core'
 import { APP_STATE } from '@pegasus/utils/states'
-import { backgroundMessanger } from '@pegasus/utils/messangers'
+
 import extensionizer from 'extensionizer'
 import logger from '@pegasus/utils/logger'
 
@@ -55,10 +55,10 @@ class CustomizatorController {
 
   async pushRequest(_request) {
     logger.log(
-      `(CustomizatorController) New request ${_request.uuid} - ${_request.method} from tab: ${_request.website.origin}`
+      `(CustomizatorController) New request ${_request.uuid} - ${_request.method} from ${_request.website.origin}`
     )
 
-    const { method, uuid, resolve, data, website } = _request
+    const { method, uuid, args, push, website } = _request
 
     let connection = this.connectorController.getConnection(website.origin)
     let isPopupAlreadyOpened = false
@@ -105,8 +105,8 @@ class CustomizatorController {
           connection,
           method,
           uuid,
-          resolve,
-          data,
+          push,
+          args,
           needUserInteraction: requestsWithUserInteraction.includes(method)
         },
         ...this.requests
@@ -130,8 +130,8 @@ class CustomizatorController {
             connection,
             method,
             uuid,
-            resolve,
-            data,
+            push,
+            args,
             needUserInteraction: true
           },
           ...this.requests
@@ -142,67 +142,67 @@ class CustomizatorController {
           text: this.requests.length.toString()
         })
 
-        backgroundMessanger.setRequests(this.requests)
+        //this.setRequests(this.requests)
       } else {
-        const res = await this.execute({ method, uuid, resolve, data })
-        this._removeRequest({ method, uuid, resolve, data })
+        const res = await this.execute(_request)
 
-        resolve({
-          data: res.success ? res.data : res.error,
+        _request.push({
+          response: res.response,
           success: res.success,
           uuid
         })
+
+        this.removeRequest(_request)
       }
     }
   }
 
   async executeRequest(_request) {
-    //needed because request handler remove resolve/reject
     const request = this.requests.find(request =>
       _request.uuid ? request.uuid === _request.uuid : false
     )
 
+    //request from popup request = null since it was put directly
     if (_request.connection.enabled && !request) {
       const res = await this.execute(_request)
 
       logger.log(
-        `(CustomizatorController) Executed request ${_request.uuid} - ${_request.method} to execute from popup`
+        `(CustomizatorController) Executed request ${_request.method} from popup`
       )
       return res
-    }
-
-    if (_request.connection.enabled && request.resolve) {
+    } else if (_request.connection.enabled && request.push) {
       const res = await this.execute(_request)
 
-      request.resolve({
-        data: res.success ? res.data : res.error,
+      request.push({
+        response: res.response,
         success: res.success,
         uuid: _request.uuid
       })
 
-      this._removeRequest(_request)
+      this.removeRequest(_request)
 
       logger.log(
-        `(CustomizatorController) Executed request ${_request.uuid} - ${_request.method} to execute from tab`
+        `(CustomizatorController) Executed request ${_request.uuid} - ${_request.method} from tab`
       )
 
       if (this.requests.length === 0) {
         this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
+        this.popupController.closePopup()
       }
 
       return res
-    } else if (!_request.connection.enabled && request.resolve) {
+    } else if (!_request.connection.enabled && request.push) {
       logger.log(
         `(CustomizatorController) Rejecting request ${_request.uuid} - ${_request.method} because of no granted permission`
       )
 
-      request.resolve({
-        data: 'No granted permissions',
+      request.push({
+        response: 'No granted permissions',
         success: false,
         uuid: _request.uuid
       })
 
-      this._removeRequest(_request)
+      this.removeRequest(_request)
 
       if (this.requests.length === 0) {
         this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
@@ -212,68 +212,65 @@ class CustomizatorController {
   }
 
   async confirmRequest(_request) {
-    //needed because request handler remove resolve/reject
     const request = this.requests.find(
       request => request.uuid === _request.uuid
     )
 
-    const { uuid, resolve } = request
-
-    const res = await this.execute(request)
-
-    if (res.tryAgain) return
+    const res = await this.execute(_request)
 
     if (this.requests.length === 1) {
       logger.log(`(CustomizatorController) Last request to execute`)
       this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
     }
 
-    this._removeRequest(request)
+    this.removeRequest(_request)
 
     if (this.requests.length === 0) {
       this.popupController.closePopup()
-      backgroundMessanger.setAppState(APP_STATE.WALLET_UNLOCKED)
+      this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
     } else {
-      backgroundMessanger.setRequests(this.requests)
+      //this.setRequests(this.requests)
+      //this.walletController.setState(APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION)
     }
 
-    resolve({
-      data: res.success ? res.data : res.error,
+    request.push({
       success: res.success,
-      uuid
+      response: res.response,
+      uuid: _request.uuid
     })
+
+    return res
   }
 
   rejectRequest(_request) {
-    //needed because request handler remove resolve/reject
     const request = this.requests.find(
       request => request.uuid === _request.uuid
     )
 
     logger.log(
-      `(CustomizatorController) Rejecting (singular) request ${request.uuid} - ${request.method}`
+      `(CustomizatorController) Rejecting (singular) request ${_request.uuid} - ${_request.method}`
     )
 
-    request.resolve({
-      data: 'Request has been rejected by the user',
+    request.push({
+      response: 'Request has been rejected by the user',
       success: false,
-      uuid: request.uuid
+      uuid: _request.uuid
     })
 
-    this._removeRequest(request)
+    this.removeRequest(_request)
 
     if (this.requests.length === 0) {
       this.popupController.closePopup()
-      backgroundMessanger.setAppState(APP_STATE.WALLET_UNLOCKED)
+      this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
     } else {
-      backgroundMessanger.setRequests(this.requests)
+      //this.setRequests(this.requests)
     }
   }
 
   rejectRequests() {
     this.requests.forEach(request => {
-      request.resolve({
-        data: 'Request has been rejected by the user',
+      request.push({
+        response: 'Request has been rejected by the user',
         success: false,
         uuid: request.uuid
       })
@@ -282,31 +279,31 @@ class CustomizatorController {
         `(CustomizatorController) Rejecting (All) request ${request.uuid} - ${request.method}`
       )
 
-      this._removeRequest(request)
+      this.removeRequest(request)
     })
     this.requests = []
     this.popupController.closePopup()
-    backgroundMessanger.setAppState(APP_STATE.WALLET_UNLOCKED)
+    this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
   }
 
   async execute(_request) {
-    const { method, data } = _request
+    const { method, args } = _request
 
     const network = this.networkController.getCurrentNetwork()
     const iota = composeAPI({ provider: network.provider })
 
     if (method !== 'prepareTransfers' && iota[method]) {
       return new Promise(resolve => {
-        iota[method](...data.args)
-          .then(data =>
+        iota[method](...args)
+          .then(response =>
             resolve({
-              data,
+              response,
               success: true
             })
           )
           .catch(err =>
             resolve({
-              data: err,
+              response: err,
               success: false
             })
           )
@@ -315,13 +312,13 @@ class CustomizatorController {
 
     switch (method) {
       case 'prepareTransfers': {
-        return this.transferController.confirmTransfers(...data.args)
+        return this.transferController.confirmTransfers(...args)
       }
       case 'getCurrentAccount': {
         const account = this.walletController.getCurrentAccount()
         return new Promise(resolve =>
           resolve({
-            data: account.data.latestAddress,
+            response: account.data.latestAddress,
             success: true
           })
         )
@@ -330,50 +327,50 @@ class CustomizatorController {
         const network = this.networkController.getCurrentNetwork()
         return new Promise(resolve =>
           resolve({
-            data: network.provider,
+            response: network.provider,
             success: true
           })
         )
       }
       case 'mam_init': {
-        const res = this.mamController.init(...data.args)
+        const res = this.mamController.init(...args)
         return new Promise(resolve => resolve(res))
       }
       case 'mam_changeMode': {
-        const res = this.mamController.changeMode(...data.args)
+        const res = this.mamController.changeMode(...args)
         return new Promise(resolve => resolve(res))
       }
       case 'mam_getRoot': {
-        const res = this.mamController.getRoot(...data.args)
+        const res = this.mamController.getRoot(...args)
         return new Promise(resolve => resolve(res))
       }
       case 'mam_create': {
-        const res = this.mamController.create(...data.args)
+        const res = this.mamController.create(...args)
         return new Promise(resolve => resolve(res))
       }
       case 'mam_decode': {
-        const res = this.mamController.decode(...data.args)
+        const res = this.mamController.decode(...args)
         return new Promise(resolve => resolve(res))
       }
       case 'mam_attach': {
-        return this.mamController.attach(...data.args)
+        return this.mamController.attach(...args)
       }
       case 'mam_fetch': {
-        return this.mamController.fetch(...data.args)
+        return this.mamController.fetch(...args)
       }
       case 'mam_fetchSingle': {
-        return this.mamController.fetchSingle(...data.args)
+        return this.mamController.fetchSingle(...args)
       }
       default: {
         return {
-          error: 'Method Not Found',
+          response: 'Method Not Found',
           success: false
         }
       }
     }
   }
 
-  _removeRequest(_request) {
+  removeRequest(_request) {
     logger.log(
       `(CustomizatorController) Removing request ${_request.uuid} - ${_request.method}`
     )

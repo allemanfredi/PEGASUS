@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import ReactJson from 'react-json-view'
-import { popupMessanger } from '@pegasus/utils/messangers'
+
 import Utils from '@pegasus/utils/utils'
 import Alert from '../../../components/alert/Alert'
 import Picklist from '../../../components/picklist/Picklist'
@@ -24,15 +24,6 @@ class MamExplorer extends Component {
       alertText: '',
       alertType: ''
     }
-  }
-
-  async componentWillMount() {
-    this.props.duplex.on('newMamData', data =>
-      this.setState({
-        opened: [...this.state.opened, false],
-        data: [...this.state.data, data]
-      })
-    )
   }
 
   onClickDetail(index) {
@@ -65,9 +56,15 @@ class MamExplorer extends Component {
     const options = {
       root: this.state.root,
       mode: this.state.mode,
-      sideKey: this.state.sideKey !== '' ? this.state.sideKey : null
+      sideKey: this.state.sideKey !== '' ? this.state.sideKey : null,
+      cb: data => {
+        this.setState({
+          opened: [...this.state.opened, false],
+          data: [...this.state.data, data]
+        })
+      }
     }
-    popupMessanger.startFetchMam(options)
+    this.props.background.fetchFromPopup(options)
   }
 
   render() {

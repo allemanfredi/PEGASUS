@@ -1,4 +1,3 @@
-import { backgroundMessanger } from '@pegasus/utils/messangers'
 import { APP_STATE } from '@pegasus/utils/states'
 import { composeAPI } from '@iota/core'
 import { extractJson } from '@iota/extract-json'
@@ -31,7 +30,7 @@ class AccountDataController {
   startHandle() {
     const account = this.walletController.getCurrentAccount()
 
-    if (account) backgroundMessanger.setAccount(account)
+    //if (account) background.setAccount(account)
 
     if (this.accountDataHandler) {
       return
@@ -94,11 +93,10 @@ class AccountDataController {
 
     this.walletController.updateTransactionsAccount(transactionsWithReattachSet)
 
-    const updatedAccount = this.walletController.updateDataAccount(
-      updatedData,
-      network
-    )
-    backgroundMessanger.setAccount(updatedAccount)
+    this.walletController.updateDataAccount(updatedData, network)
+
+    return true
+    //background.setAccount(updatedAccount)
   }
 
   async retrieveAccountData(_seed, _network, _currentAccount) {

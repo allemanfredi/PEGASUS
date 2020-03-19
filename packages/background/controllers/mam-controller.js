@@ -1,7 +1,6 @@
 import Mam from '@iota/mam/lib/mam.web.min.js'
 import { trytesToAscii } from '@iota/converter'
 import Utils from '@pegasus/utils/utils'
-import { backgroundMessanger } from '@pegasus/utils/messangers'
 
 class MamController {
   constructor(options) {
@@ -47,7 +46,7 @@ class MamController {
 
     return {
       success: true,
-      data: state
+      response: state
     }
   }
 
@@ -60,7 +59,7 @@ class MamController {
     if (!mamChannels[currentAccount.id]['owner'][id]) {
       return {
         success: false,
-        error: 'Channel Not Found'
+        response: 'Channel Not Found'
       }
     }
 
@@ -93,7 +92,7 @@ class MamController {
 
     return {
       success: true,
-      data: stateToReturn
+      response: stateToReturn
     }
   }
 
@@ -106,7 +105,7 @@ class MamController {
     if (!mamChannels[currentAccount.id]['owner'][id]) {
       return {
         success: false,
-        error: 'Channel Not Found'
+        response: 'Channel Not Found'
       }
     }
 
@@ -117,7 +116,7 @@ class MamController {
 
     return {
       success: true,
-      data: root
+      response: root
     }
   }
 
@@ -130,14 +129,14 @@ class MamController {
     if (!mamChannels[currentAccount.id]) {
       return {
         success: false,
-        error: 'Channel Not Found'
+        response: 'Channel Not Found'
       }
     }
 
     if (!mamChannels[currentAccount.id]['owner'][id]) {
       return {
         success: false,
-        error: 'Channel Not Found'
+        response: 'Channel Not Found'
       }
     }
 
@@ -157,7 +156,7 @@ class MamController {
 
     return {
       success: true,
-      data: mamMessage
+      response: mamMessage
     }
   }
 
@@ -173,7 +172,7 @@ class MamController {
       this.stateStorageController.set('mamChannels', mamChannels)
       return {
         success: false,
-        error: 'Channel Not Found'
+        response: 'Channel Not Found'
       }
     }
 
@@ -208,7 +207,7 @@ class MamController {
 
     return {
       success: true,
-      data: state
+      response: state
     }
   }
 
@@ -217,16 +216,16 @@ class MamController {
       const network = this.networkController.getCurrentNetwork()
       Mam.init(network.provider)
       Mam.attach(_payload, _root, _depth, _minWeightMagnitude, _tag)
-        .then(data =>
+        .then(response =>
           resolve({
             success: true,
-            data
+            response
           })
         )
         .catch(error =>
           resolve({
             success: false,
-            error: error.message
+            response: error.message
           })
         )
     })
@@ -263,7 +262,7 @@ class MamController {
         if (!sidekey) {
           resolve({
             success: false,
-            data: `Sidekey Not Found for ${_root}`
+            response: `Sidekey Not Found for ${_root}`
           })
           return
         }
@@ -275,8 +274,9 @@ class MamController {
         sidekey,
         e => {
           if (_options.reply) {
-            backgroundMessanger.sendToContentScript('mam_onFetch', {
-              data: e,
+            _options.push({
+              method: 'mam_onFetch',
+              response: e,
               uuid: _options.uuid
             })
           }
@@ -286,7 +286,7 @@ class MamController {
 
       resolve({
         success: true,
-        data: packets
+        response: packets
       })
     })
   }
@@ -392,11 +392,15 @@ class MamController {
     return foundRoot
   }
 
-  fetchFromPopup(_provider, _root, _mode, _sidekey, _callback) {
+  fetchFromPopup(_options) {
+    const network = this.networkController.getCurrentNetwork()
+
+    const { root, mode, _sidekey, cb } = _options
+
     try {
-      Mam.init(_provider)
-      Mam.fetch(_root, _mode, _sidekey, event => {
-        _callback(JSON.parse(trytesToAscii(event)))
+      Mam.init(network.provider)
+      Mam.fetch(root, mode, _sidekey, event => {
+        cb(JSON.parse(trytesToAscii(event)))
       })
     } catch (error) {
       console.log('MAM fetch error', error)

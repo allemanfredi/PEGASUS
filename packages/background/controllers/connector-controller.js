@@ -1,4 +1,3 @@
-import { backgroundMessanger } from '@pegasus/utils/messangers'
 import { APP_STATE } from '@pegasus/utils/states'
 import logger from '@pegasus/utils/logger'
 
@@ -16,6 +15,10 @@ class ConnectorController {
 
   setNetworkController(_networkController) {
     this.networkController = _networkController
+  }
+
+  setCustomizatorController(_customizatorController) {
+    this.customizatorController = _customizatorController
   }
 
   getConnection(_origin) {
@@ -37,16 +40,18 @@ class ConnectorController {
     return this.connectionRequest
   }
 
-  updateConnection(_connection) {
-    this.connections[_connection.website.origin] = _connection
+  isConnected(_origin) {
+    return this.connections[_origin] && this.connections[_origin].enabled
+      ? true
+      : false
   }
 
-  connect(_uuid, _resolve, _website) {
+  connect(_uuid, _push, _website) {
     this.connectionRequest = {
       website: _website,
       requestToConnect: true,
       enabled: false,
-      resolve: _resolve,
+      push: _push,
       uuid: _uuid
     }
 
@@ -57,17 +62,20 @@ class ConnectorController {
     this.walletController.setState(
       APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
     )
+
+    this.popupController.openPopup()
   }
 
-  completeConnection(_requests) {
+  completeConnection() {
+    const requests = this.customizatorController.getRequests()
+
     logger.log(
       `(ConnectorController) Completing connection with ${this.connectionRequest.website.origin}`
     )
 
-    const account = this.walletController.getCurrentAccount()
-    if (this.connectionRequest.resolve) {
-      this.connectionRequest.resolve({
-        data: true,
+    if (this.connectionRequest.push) {
+      this.connectionRequest.push({
+        response: true,
         success: true,
         uuid: this.connectionRequest.uuid
       })
@@ -81,36 +89,47 @@ class ConnectorController {
       }
     )
 
-    _requests.forEach(request => {
+    const requestWithUserInteraction = requests.filter(
+      request => request.needUserInteraction
+    )
+
+    requests.forEach(request => {
       if (
         request.connection.website.origin ===
         this.connectionRequest.website.origin
       ) {
         request.connection.requestToConnect = false
         request.connection.enabled = true
+
+        //execute only request without user interaction
+        if (!request.needUserInteraction)
+          this.customizatorController.executeRequest(request)
       }
     })
 
-    if (_requests.length === 0) {
+    if (requestWithUserInteraction.length === 0)
       this.popupController.closePopup()
-    }
 
     this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
 
     this.connectionRequest = null
 
-    backgroundMessanger.setSelectedAccount(account.data.latestAddress)
-    return _requests
+    const account = this.walletController.getCurrentAccount()
+    this.walletController.emit('accountChanged', account.data.latestAddress)
+
+    return true
   }
 
-  rejectConnection(_requests) {
+  rejectConnection() {
+    const requests = this.customizatorController.getRequests()
+
     logger.log(
       `(ConnectorController) Rejecting connection with ${this.connectionRequest.website.origin}`
     )
 
-    if (this.connectionRequest.resolve) {
-      this.connectionRequest.resolve({
-        data: false,
+    if (this.connectionRequest.push) {
+      this.connectionRequest.push({
+        response: false,
         success: true,
         uuid: this.connectionRequest.uuid
       })
@@ -124,13 +143,12 @@ class ConnectorController {
 
     this.popupController.closePopup()
 
-    _requests.forEach(request => {
+    requests.forEach(request => {
       if (
         request.connection.website.origin ===
         this.connectionRequest.website.origin
       ) {
-        request.connection.requestToConnect = false
-        request.connection.enabled = false
+        this.customizatorController.removeRequest(request)
       }
     })
 
@@ -138,7 +156,7 @@ class ConnectorController {
 
     this.connectionRequest = null
 
-    return _requests
+    return true
   }
 
   estabilishConnection(website) {

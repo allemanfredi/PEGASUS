@@ -1,12 +1,14 @@
-import { backgroundMessanger } from '@pegasus/utils/messangers'
 import { APP_STATE, STATE_NAME } from '@pegasus/utils/states'
 import Utils from '@pegasus/utils/utils'
 import { composeAPI } from '@iota/core'
 import logger from '@pegasus/utils/logger'
 import options from '@pegasus/utils/options'
+import { EventEmitter } from 'eventemitter3'
 
-class WalletController {
+class WalletController extends EventEmitter {
   constructor(options) {
+    super()
+
     const {
       stateStorageController,
       networkController,
@@ -56,6 +58,8 @@ class WalletController {
       this.accountDataController.startHandle()
       this.sessionController.startSession()
 
+      this.setState(APP_STATE.WALLET_UNLOCKED)
+
       logger.log(`(WalletController) Wallet initialized`)
       return true
     } catch (err) {
@@ -68,19 +72,18 @@ class WalletController {
 
   async unlockWallet(_password) {
     if (await this.loginPasswordController.comparePassword(_password)) {
+      this.sessionController.startSession()
+
       this.loginPasswordController.setPassword(_password)
 
       await this.stateStorageController.unlock(_password)
-      this.sessionController.startSession()
       this.accountDataController.startHandle()
 
       this.setState(APP_STATE.WALLET_UNLOCKED)
 
       const account = this.getCurrentAccount()
-      const network = this.networkController.getCurrentNetwork()
 
-      backgroundMessanger.setSelectedProvider(network.provider)
-      backgroundMessanger.setAccount(account)
+      this.emit('accountChanged', account.data.latestAddress)
 
       logger.log(
         `(WalletController) Wallet unlocked with account: ${account.name}`
@@ -98,27 +101,35 @@ class WalletController {
     this.sessionController.deleteSession()
     this.accountDataController.stopHandle()
 
-    backgroundMessanger.setAccount(null)
-    backgroundMessanger.setSelectedAccount(null)
-
     logger.log(`(WalletController) Wallet succesfully locked`)
     return true
   }
 
-  async restoreWallet(_account, _password) {
-    if (!(await this.unlockWallet(_password)))
-      throw new Error('Invalid Password')
+  async restoreWallet(_password, _account) {
+    if (!(await this.loginPasswordController.comparePassword(_password)))
+      return false
 
     try {
+      this.setState(APP_STATE.WALLET_RESTORE)
+
+      this.sessionController.startSession()
+      this.loginPasswordController.setPassword(_password)
+      this.accountDataController.startHandle()
+
       await this.stateStorageController.reset()
       this.networkController.setCurrentNetwork(options.networks[0])
 
       const isAdded = await this.addAccount(_account, true)
-      if (!isAdded) return false
+      if (!isAdded) {
+        return false
+      }
 
       logger.log(
         `(WalletController) Wallet restored with account: ${_account.name}`
       )
+
+      this.setState(APP_STATE.WALLET_UNLOCKED)
+
       return true
     } catch (err) {
       logger.error(
@@ -136,7 +147,6 @@ class WalletController {
       `(WalletController) State updated: ${STATE_NAME[_state.toString()]}`
     )
     this.stateStorageController.set('state', _state)
-    backgroundMessanger.setAppState(_state)
   }
 
   getState() {
@@ -153,28 +163,18 @@ class WalletController {
     const account = this.getCurrentAccount()
     if (!account) return false
 
-    return account.seed //Utils.aes256decrypt(account.seed, key)
+    return account.seed
   }
 
   isAccountNameAlreadyExists(_name) {
     const accounts = this.stateStorageController.get('accounts')
-    const alreadyExists = accounts.filter(account => account.name === _name)
-    if (alreadyExists.length > 0) {
-      return true
-    } else {
-      return false
-    }
+    const alreadyExists = accounts.all.find(account => account.name === _name)
+    return alreadyExists ? true : false
   }
 
   async addAccount(_account, _isCurrent) {
     try {
-      if (_isCurrent) {
-        const accounts = this.stateStorageController.get('accounts')
-        accounts.forEach(user => {
-          user.current = false
-        })
-        this.stateStorageController.set('accounts', accounts)
-      }
+      const accounts = this.stateStorageController.get('accounts')
 
       const network = this.networkController.getCurrentNetwork()
       const iota = composeAPI({ provider: network.provider })
@@ -205,29 +205,34 @@ class WalletController {
         transactions
       )
 
+      const id = Utils.sha256(_account.name)
+
       const accountToAdd = {
         name: _account.name,
         avatar: _account.avatar,
         seed,
         transactions: transactionsWithReattachSet,
         data: accountData,
-        current: Boolean(_isCurrent),
-        id: Utils.sha256(_account.name)
+        id
       }
 
-      const accounts = this.stateStorageController.get('accounts')
-
-      const alreadyExists = accounts.find(
-        account => account.id === accountToAdd.id
-      )
-      if (alreadyExists) {
+      const alreadyExist = accounts.all.find(account => account.id === id)
+      if (alreadyExist) {
         return false
       }
 
-      accounts.push(accountToAdd)
+      if (_isCurrent) accounts.selected = accountToAdd
+
+      accounts.all.push(accountToAdd)
+
       this.stateStorageController.set('accounts', accounts)
 
-      backgroundMessanger.setAccount(accountToAdd)
+      this.emit('accountChanged', accountToAdd.data.latestAddress)
+
+      //in order to write on storage the first time
+      const password = this.loginPasswordController.getPassword()
+      await this.stateStorageController.lock()
+      await this.stateStorageController.unlock(password)
 
       logger.log(`(WalletController) Account added : ${accountToAdd.name}`)
 
@@ -244,149 +249,93 @@ class WalletController {
     if (this.getState() < APP_STATE.WALLET_UNLOCKED) return
 
     const accounts = this.stateStorageController.get('accounts')
-    if (accounts.length === 0) return null
+    if (!accounts.selected) return null
 
-    for (let account of accounts) {
-      if (account.current) {
-        return account
-      }
-    }
+    return accounts.selected
   }
 
-  setCurrentAccount(_currentAccount) {
-    let currentsAccount = this.stateStorageController.get('accounts')
-    currentsAccount.forEach(account => {
-      account.current = false
-    })
-    this.stateStorageController.set('accounts', currentsAccount)
-
+  //all following methods updates data on the CURRENT account
+  setCurrentAccount(_account) {
     const accounts = this.stateStorageController.get('accounts')
-    accounts.forEach(account => {
-      if (account.id === _currentAccount.id) {
-        account.current = true
-        backgroundMessanger.setAccount(account)
 
-        logger.log(`(WalletController) Set current account : ${account.name}`)
-        backgroundMessanger.setSelectedAccount(account.data.latestAddress)
-      }
-    })
+    //seed not exposed outside of the popup
+    _account.seed = accounts.selected.seed
+    accounts.selected = _account
+
     this.stateStorageController.set('accounts', accounts)
+
+    this.emit('accountChanged', _account.data.latestAddress)
+
+    logger.log(`(WalletController) Set current account : ${_account.name}`)
+    return true
   }
 
-  updateDataAccount(_updatedData) {
+  updateDataAccount(_data) {
     const accounts = this.stateStorageController.get('accounts')
-    let updatedAccount = {}
-    accounts.forEach(account => {
-      if (account.current) {
-        account.data = _updatedData
-        updatedAccount = account
-
-        logger.log(`(WalletController) Update account data for ${account.name}`)
-      }
-    })
 
     this.stateStorageController.set('accounts', accounts)
-    return updatedAccount
+    logger.log(`(WalletController) Data updated for ${accounts.selected.name}`)
+    return true
   }
 
   updateTransactionsAccount(_transactions) {
     const accounts = this.stateStorageController.get('accounts')
-
-    let updatedAccount = {}
-    accounts.forEach(account => {
-      if (account.current) {
-        account.transactions = _transactions
-        updatedAccount = account
-
-        logger.log(`(WalletController) Update transactions for ${account.name}`)
-      }
-    })
-
+    accounts.selected.transactions = _transactions
     this.stateStorageController.set('accounts', accounts)
-    return updatedAccount
-  }
-
-  updateNameAccount(_current, _newName) {
-    const accounts = this.stateStorageController.get('accounts')
-    for (let account of accounts) {
-      if (account.name === _newName) {
-        return false
-      }
-    }
-
-    let updatedAccount = {}
-    accounts.forEach(account => {
-      if (account.id === _current.id) {
-        logger.log(
-          `(WalletController) Update name for ${account.name} with new one: ${_newName}`
-        )
-
-        account.name = _newName
-        account.id = Utils.sha256(_newName)
-        updatedAccount = account
-      }
-    })
-
-    this.stateStorageController.set('accounts', accounts)
-    backgroundMessanger.setAccount(updatedAccount)
-
+    logger.log(
+      `(WalletController) transactions updated for ${accounts.selected.name}`
+    )
     return true
   }
 
-  updateAvatarAccount(_current, _avatar) {
+  updateNameAccount(_name) {
     const accounts = this.stateStorageController.get('accounts')
-    let updatedAccount = {}
-    accounts.forEach(account => {
-      if (account.id === _current.id) {
-        account['avatar'] = _avatar
-        updatedAccount = account
-
-        logger.log(`(WalletController) Update avatar for ${account.name}`)
-      }
-    })
-
+    accounts.selected.name = _name
     this.stateStorageController.set('accounts', accounts)
-    backgroundMessanger.setAccount(updatedAccount)
+    logger.log(`(WalletController) Name updated for ${accounts.selected.name}`)
+    return true
   }
 
-  async deleteAccount(_account) {
-    let accounts = this.stateStorageController.get('accounts')
+  updateAvatarAccount(_avatar) {
+    const accounts = this.stateStorageController.get('accounts')
+    accounts.selected.avatar = _avatar
+    this.stateStorageController.set('accounts', accounts)
+    logger.log(
+      `(WalletController) Avatar updated for ${accounts.selected.name}`
+    )
+    return true
+  }
 
-    if (accounts.length === 1) {
+  deleteAccount(_account) {
+    const accounts = this.stateStorageController.get('accounts')
+
+    if (accounts.all.length === 1) {
       return false
     }
 
-    accounts = accounts.filter(account => account.id !== _account.id)
-
-    accounts.forEach(account => {
-      account.current = false
-    })
+    accounts.all = accounts.all.filter(account => account.id !== _account.id)
 
     logger.log(`(WalletController) Deleted account ${_account.name}`)
 
-    accounts[0].current = true
+    accounts.selected = accounts.all[0]
     this.stateStorageController.set('accounts', accounts)
-    backgroundMessanger.setAccount(accounts[0])
 
-    //injection
-    backgroundMessanger.setSelectedAccount(accounts[0].data.latestAddress)
+    this.emit('accountChanged', accounts.selected.data.latestAddress)
 
     return true
   }
 
   getAllAccounts() {
-    const accounts = []
-
-    this.stateStorageController.get('accounts').forEach(account => {
-      accounts.push(account)
-    })
-    return accounts
+    const accounts = this.stateStorageController.get('accounts')
+    return accounts.all
   }
 
-  generateSeed(_length = 81) {
-    const bytes = Utils.randomBytes(_length, 27)
-    const seed = bytes.map(byte => Utils.byteToChar(byte))
-    return seed
+  setPopupSettings(_settings) {
+    this.stateStorageController.set('popupSettings', _settings, true)
+  }
+
+  getPopupSettings() {
+    return this.stateStorageController.get('popupSettings')
   }
 }
 

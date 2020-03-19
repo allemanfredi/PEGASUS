@@ -1,5 +1,5 @@
 import React from 'react'
-import { popupMessanger } from '@pegasus/utils/messangers'
+
 import Input from '../../components/input/Input'
 
 class Unlock extends React.Component {
@@ -18,7 +18,9 @@ class Unlock extends React.Component {
     e.preventDefault()
     this.setState({ shake: false })
 
-    const canUnlock = await popupMessanger.comparePassword(this.state.password)
+    const canUnlock = await this.props.background.comparePassword(
+      this.state.password
+    )
     if (canUnlock) {
       this.props.onUnlock(this.state.password)
     } else this.setState({ shake: true })

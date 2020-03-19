@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { popupMessanger } from '@pegasus/utils/messangers'
 import Unlock from '../../unlock/Unlock'
 
 class ExportSeedText extends Component {
@@ -15,7 +14,7 @@ class ExportSeedText extends Component {
   }
 
   async getSeed(password) {
-    const seed = await popupMessanger.unlockSeed(password)
+    const seed = await this.props.background.unlockSeed(password)
     this.setState({
       seed
     })
@@ -31,13 +30,14 @@ class ExportSeedText extends Component {
 
     this.props.setNotification({
       type: 'success',
-      text: 'Copied!'
+      text: 'Copied!',
+      position: 'under-bar'
     })
   }
 
   render() {
     return !this.state.seed ? (
-      <Unlock onUnlock={this.getSeed} />
+      <Unlock background={this.props.background} onUnlock={this.getSeed} />
     ) : (
       <div className="container">
         <div className="row mt-3 mb-3">

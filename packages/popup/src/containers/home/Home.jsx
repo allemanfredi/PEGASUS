@@ -12,7 +12,6 @@ import Loader from '../../components/loader/Loader'
 import Navbar from '../../components/navbar/Navbar'
 import Alert from '../../components/alert/Alert'
 import Settings from '../settings/Settings'
-import { popupMessanger } from '@pegasus/utils/messangers'
 import Utils from '@pegasus/utils/utils'
 import ReactTooltip from 'react-tooltip'
 
@@ -69,19 +68,11 @@ class Home extends Component {
     }
   }
 
-  async componentWillMount() {
-    this.props.duplex.on('setAccount', () =>
-      this.setState({
-        isLoading: false
-      })
-    )
-  }
-
   async onReload() {
     this.setState({
       isLoading: true
     })
-    popupMessanger.reloadAccountData()
+    this.props.background.loadAccountData()
   }
 
   async onDeleteAccount() {
@@ -127,7 +118,9 @@ class Home extends Component {
 
     switch (this.state.actionToConfirm) {
       case 'deleteAccount': {
-        const isDeleted = await popupMessanger.deleteAccount(this.props.account)
+        const isDeleted = await this.props.background.deleteAccount(
+          this.props.account
+        )
         if (!isDeleted) {
           this.props.setNotification({
             type: 'danger',
@@ -144,7 +137,7 @@ class Home extends Component {
         break
       }
       case 'deleteNetwork': {
-        popupMessanger.deleteCurrentNetwork()
+        await this.props.background.deleteCurrentNetwork()
         this.props.setNotification({
           type: 'success',
           text: 'Network Deleted Succesfully!',
@@ -233,9 +226,9 @@ class Home extends Component {
     })
   }
 
-  onLogout() {
+  async onLogout() {
     this.props.onLogout()
-    popupMessanger.lockWallet()
+    await this.props.background.lockWallet()
   }
 
   onMam() {
@@ -308,6 +301,7 @@ class Home extends Component {
                 network={this.props.network}
                 show={this.state.showMenu}
                 account={this.props.account}
+                background={this.props.background}
                 onSwitchAccount={this.onSwitchAccount}
                 onShowMap={this.onClickMap}
                 onLogout={this.onLogout}
@@ -321,7 +315,7 @@ class Home extends Component {
             {this.state.showSend ? (
               <Send
                 account={this.props.account}
-                duplex={this.props.duplex}
+                background={this.props.background}
                 network={this.props.network}
                 setNotification={this.props.setNotification}
                 onBack={this.onBack}
@@ -344,6 +338,7 @@ class Home extends Component {
             )}
             {this.state.showAdd ? (
               <Add
+                background={this.props.background}
                 network={this.props.network}
                 setNotification={this.props.setNotification}
                 onBack={this.onBack}
@@ -353,6 +348,7 @@ class Home extends Component {
             )}
             {this.state.showNetwork ? (
               <Network
+                background={this.props.background}
                 setNotification={this.props.setNotification}
                 onBack={this.onBack}
               />
@@ -364,6 +360,7 @@ class Home extends Component {
                 ref={this.exportSeed}
                 account={this.props.account}
                 network={this.props.network}
+                background={this.props.background}
                 setNotification={this.props.setNotification}
                 onChangeCanGoBack={value => this.setState({ canGoBack: value })}
                 onBack={this.onBack}
@@ -374,6 +371,7 @@ class Home extends Component {
             {this.state.showImportSeed ? (
               <ImportSeed
                 setNotification={this.props.setNotification}
+                background={this.props.background}
                 account={this.props.account}
                 network={this.props.network}
                 onBack={this.onBack}
@@ -385,7 +383,7 @@ class Home extends Component {
               <Mam
                 ref={this.mam}
                 account={this.props.account}
-                duplex={this.props.duplex}
+                background={this.props.background}
                 changeNavbarText={navbarText => this.setState({ navbarText })}
                 onBack={this.onBack}
                 onChangeCanGoBack={value => this.setState({ canGoBack: value })}
@@ -397,6 +395,7 @@ class Home extends Component {
               <Settings
                 ref={this.settings}
                 setNotification={this.props.setNotification}
+                background={this.props.background}
                 changeNavbarText={navbarText => this.setState({ navbarText })}
                 onBack={this.onBack}
                 onChangeCanGoBack={value => this.setState({ canGoBack: value })}
@@ -463,6 +462,7 @@ class Home extends Component {
                 <Transactions
                   account={this.props.account}
                   network={this.props.network}
+                  background={this.props.background}
                   isLoading={this.state.isLoading}
                   setNotification={this.props.setNotification}
                   onReload={this.onReload}

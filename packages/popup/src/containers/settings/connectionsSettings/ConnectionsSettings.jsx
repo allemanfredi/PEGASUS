@@ -1,5 +1,4 @@
 import React from 'react'
-import { popupMessanger } from '@pegasus/utils/messangers'
 import Input from '../../../components/input/Input'
 import Utils from '@pegasus/utils/utils'
 import Url from 'url-parse'
@@ -18,7 +17,7 @@ class ConnectionsSettings extends React.Component {
   }
 
   async componentWillMount() {
-    const connections = await popupMessanger.getConnections()
+    const connections = await this.props.background.getConnections()
     if (!connections) return
 
     this.setState({ connections })
@@ -37,7 +36,7 @@ class ConnectionsSettings extends React.Component {
 
     const url = new Url(this.state.website)
 
-    const account = popupMessanger.getCurrentAccount()
+    const account = this.props.background.getCurrentAccount()
 
     const connection = {
       requestToConnect: false,
@@ -51,7 +50,7 @@ class ConnectionsSettings extends React.Component {
       }
     }
 
-    const isAdded = await popupMessanger.addConnection(connection)
+    const isAdded = await this.props.background.addConnection(connection)
     if (!isAdded) {
       this.props.setNotification({
         type: 'danger',
@@ -61,14 +60,14 @@ class ConnectionsSettings extends React.Component {
       return
     }
 
-    const connections = await popupMessanger.getConnections()
+    const connections = await this.props.background.getConnections()
     this.setState({
       connections
     })
   }
 
   async removeConnection(connection) {
-    const isRemoved = await popupMessanger.removeConnection(connection)
+    const isRemoved = await this.props.background.removeConnection(connection)
     if (isRemoved) {
       this.props.setNotification({
         type: 'success',
@@ -76,7 +75,7 @@ class ConnectionsSettings extends React.Component {
         position: 'under-bar'
       })
 
-      const connections = await popupMessanger.getConnections()
+      const connections = await this.props.background.getConnections()
       this.setState({
         connections
       })

@@ -2,37 +2,6 @@ import crypto from 'crypto'
 import { addChecksum, isValidChecksum } from '@iota/checksum'
 
 const Utils = {
-  requestHandler(target) {
-    return new Proxy(target, {
-      get(target, prop) {
-        if (!Reflect.has(target, prop))
-          throw new Error(`Object does not have property '${prop}'`)
-
-        if (typeof target[prop] !== 'function' || prop === 'on')
-          return Reflect.get(target, prop)
-
-        return (...args) => {
-          if (!args.length) args[0] = {}
-
-          const [firstArg] = args
-
-          const {
-            resolve = () => {},
-            reject = ex => console.error(ex),
-            data
-          } = firstArg
-
-          if (typeof firstArg !== 'object' || !('data' in firstArg))
-            return target[prop].call(target, ...args)
-
-          Promise.resolve(target[prop].call(target, data))
-            .then(resolve)
-            .catch(reject)
-        }
-      }
-    })
-  },
-
   injectPromise(func, ...args) {
     return new Promise((resolve, reject) => {
       func(...args)
@@ -50,27 +19,6 @@ const Utils = {
       .createHash('sha256')
       .update(text)
       .digest('hex')
-  },
-
-  randomBytes(size, max) {
-    if (size !== parseInt(size, 10) || size < 0) return false
-
-    const bytes = crypto.randomBytes(size)
-
-    for (let i = 0; i < bytes.length; i++) {
-      while (bytes[i] >= 256 - (256 % max))
-        bytes[i] = this.randomBytes(1, max)[0]
-    }
-
-    return Array.from(bytes)
-  },
-
-  byteToChar(trit) {
-    return '9ABCDEFGHIJKLMNOPQRSTUVWXYZ'.charAt(trit % 27)
-  },
-
-  charToByte(char) {
-    return '9ABCDEFGHIJKLMNOPQRSTUVWXYZ'.indexOf(char.toUpperCase())
   },
 
   timestampToDate(timestamp) {
@@ -92,20 +40,6 @@ const Utils = {
     return `${hours}:${minutes.substr(-2)}:${seconds.substr(
       -2
     )} - ${tomonth}/${todate}/${toyear}`
-  },
-
-  aes256encrypt(text, key) {
-    const cipher = crypto.createCipher('aes-256-ctr', key)
-    let crypted = cipher.update(text, 'utf8', 'hex')
-    crypted += cipher.final('hex')
-    return crypted
-  },
-
-  aes256decrypt(text, key) {
-    const decipher = crypto.createDecipher('aes-256-ctr', key)
-    let dec = decipher.update(text, 'hex', 'utf8')
-    dec += decipher.final('utf8')
-    return dec
   },
 
   iotaReducer(amount) {

@@ -1,6 +1,4 @@
 import React, { Component } from 'react'
-import Duplex from '@pegasus/utils/duplex'
-import { popupMessanger } from '@pegasus/utils/messangers'
 import Header from './header/Header'
 import Main from './main/Main'
 import { APP_STATE } from '@pegasus/utils/states'
@@ -13,10 +11,9 @@ class App extends Component {
     this.main = React.createRef()
     this.header = React.createRef()
 
-    this.onHandleLogin = this.onHandleLogin.bind(this)
     this.onShowHeader = this.onShowHeader.bind(this)
     this.onHandleNetworkChanging = this.onHandleNetworkChanging.bind(this)
-    this.bindDuplexRequests = this.bindDuplexRequests.bind(this)
+    this.bindStateUpdate = this.bindStateUpdate.bind(this)
     this.onAddCustomNetwork = this.onAddCustomNetwork.bind(this)
 
     this.state = {
@@ -24,20 +21,18 @@ class App extends Component {
       network: {},
       networks: [],
       account: {},
-      showHeader: false
+      showHeader: false,
+      appState: 0
     }
-
-    this.duplex = new Duplex.Popup()
   }
 
   async componentWillMount() {
-    popupMessanger.init(this.duplex)
-    this.bindDuplexRequests()
+    this.bindStateUpdate()
 
     //check if the current network has been already set, if no => set to testnet (options[0])
-    const network = await popupMessanger.getCurrentNetwork()
-    const networks = await popupMessanger.getAllNetworks()
-    const account = await popupMessanger.getCurrentAccount()
+    const network = await this.props.background.getCurrentNetwork()
+    const networks = await this.props.background.getAllNetworks()
+    const account = await this.props.background.getCurrentAccount()
 
     this.setState(() => {
       return account
@@ -53,30 +48,54 @@ class App extends Component {
     })
   }
 
-  onHandleLogin(value) {
-    this.setState({ isLogged: value })
-  }
-
   onShowHeader(value) {
     this.setState({ showHeader: value })
   }
 
   onHandleNetworkChanging(network) {
-    popupMessanger.setCurrentNetwork(network)
+    this.props.background.setCurrentNetwork(network)
   }
 
   async onAddCustomNetwork() {
-    const state = await popupMessanger.getState()
+    const state = await this.props.background.getState()
     if (state >= APP_STATE.WALLET_UNLOCKED) this.main.current.addCustomNetwork()
   }
 
-  bindDuplexRequests() {
-    this.duplex.on('setTransfers', transfers =>
-      this.main.current.changeTransfers(transfers)
-    )
-    this.duplex.on('setAccount', account => this.setState({ account }))
-    this.duplex.on('setNetworks', networks => this.setState({ networks }))
-    this.duplex.on('setNetwork', network => this.setState({ network }))
+  bindStateUpdate() {
+    this.props.background.on('update', backgroundState => {
+      const { state, accounts, selectedNetwork, networks } = backgroundState
+
+      if (
+        state > APP_STATE.WALLET_LOCKED &&
+        state !== APP_STATE.WALLET_RESTORE
+      ) {
+        if (accounts.selected && Object.keys(accounts.selected).length > 0) {
+          this.setState({ account: accounts.selected })
+        }
+      }
+
+      if (
+        state >= APP_STATE.WALLET_LOCKED ||
+        state === APP_STATE.WALLET_RESTORE
+      )
+        this.setState({ showHeader: true })
+      else this.setState({ showHeader: false })
+
+      if (
+        state === APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION ||
+        state === APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
+      )
+        this.setState({ showHeader: false })
+
+      this.setState({
+        network: selectedNetwork,
+        networks: networks,
+        appState:
+          state !== APP_STATE.WALLET_RESTORE
+            ? backgroundState.state
+            : this.state.appState
+      })
+    })
   }
 
   render() {
@@ -88,23 +107,26 @@ class App extends Component {
               ref={this.header}
               account={this.state.account}
               network={this.state.network}
+              background={this.props.background}
               networks={this.state.networks}
-              isLogged={this.state.isLogged}
+              appState={this.state.appState}
               changeNetwork={this.onHandleNetworkChanging}
               addCustomNetwork={this.onAddCustomNetwork}
             />
           ) : (
             ''
           )}
-          <Notifications duplex={this.duplex}>
-            <Main
-              showHeader={this.onShowHeader}
-              ref={this.main}
-              network={this.state.network}
-              account={this.state.account}
-              duplex={this.duplex}
-            />
-          </Notifications>
+          {
+            <Notifications background={this.props.background}>
+              <Main
+                showHeader={this.onShowHeader}
+                ref={this.main}
+                network={this.state.network}
+                account={this.state.account}
+                background={this.props.background}
+              />
+            </Notifications>
+          }
         </div>
       </div>
     )

@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import Utils from '@pegasus/utils/utils'
 import { composeAPI } from '@iota/core'
-import { popupMessanger } from '@pegasus/utils/messangers'
 import Input from '../../components/input/Input'
 
 class Network extends Component {
@@ -64,8 +63,8 @@ class Network extends Component {
       default: false
     }
 
-    await popupMessanger.addNetwork(network)
-    await popupMessanger.setCurrentNetwork(network)
+    await this.props.background.addNetwork(network)
+    await this.props.background.setCurrentNetwork(network)
 
     this.props.onBack()
   }
