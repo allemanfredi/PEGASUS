@@ -88,10 +88,10 @@ class PegasusInpageClient extends EventEmitter {
           this.emit('accountChanged', response)
           break
         }
-        /*case 'mam_onFetch': {
+        case 'mam_onFetch': {
           if (this._mamFetches[uuid]) this._mamFetches[uuid](data)
           break
-        }*/
+        }
         default: {
           if (success) this._calls[uuid].resolve(response)
           else this._calls[uuid].reject(response)

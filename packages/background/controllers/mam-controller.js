@@ -59,7 +59,7 @@ class MamController {
     if (!mamChannels[currentAccount.id]['owner'][id]) {
       return {
         success: false,
-        error: 'Channel Not Found'
+        response: 'Channel Not Found'
       }
     }
 
@@ -105,7 +105,7 @@ class MamController {
     if (!mamChannels[currentAccount.id]['owner'][id]) {
       return {
         success: false,
-        error: 'Channel Not Found'
+        response: 'Channel Not Found'
       }
     }
 
@@ -129,14 +129,14 @@ class MamController {
     if (!mamChannels[currentAccount.id]) {
       return {
         success: false,
-        error: 'Channel Not Found'
+        response: 'Channel Not Found'
       }
     }
 
     if (!mamChannels[currentAccount.id]['owner'][id]) {
       return {
         success: false,
-        error: 'Channel Not Found'
+        response: 'Channel Not Found'
       }
     }
 
@@ -172,7 +172,7 @@ class MamController {
       this.stateStorageController.set('mamChannels', mamChannels)
       return {
         success: false,
-        error: 'Channel Not Found'
+        response: 'Channel Not Found'
       }
     }
 
@@ -274,7 +274,8 @@ class MamController {
         sidekey,
         e => {
           if (_options.reply) {
-            background.sendToContentScript('mam_onFetch', {
+            _options.push({
+              method: 'mam_onFetch',
               response: e,
               uuid: _options.uuid
             })

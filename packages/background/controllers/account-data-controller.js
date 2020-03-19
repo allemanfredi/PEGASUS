@@ -56,7 +56,6 @@ class AccountDataController {
     const seed = this.walletController.getCurrentSeed()
     const network = this.networkController.getCurrentNetwork()
     let account = this.walletController.getCurrentAccount()
-    console.log(seed, account)
     const { transactions, newData } = await this.retrieveAccountData(
       seed,
       network,

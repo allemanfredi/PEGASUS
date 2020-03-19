@@ -20,8 +20,11 @@ import { composeAPI } from '@iota/core'
 import Dnode from 'dnode/browser'
 import nodeify from 'nodeify'
 import { mapStateForPopup } from './lib/global-state-mapper'
-
-const forbiddenRequests = ['getAccountData', 'getNewAddress', 'getInputs']
+import {
+  MAM_REQUESTS,
+  FORBIDDEN_REQUESTS,
+  ADDITIONAL_METHODS
+} from './lib/constants'
 
 class PegasusEngine {
   constructor() {
@@ -186,27 +189,35 @@ class PegasusEngine {
    * @param {Object} _request
    */
   handle(_request) {
-    const { method, args, uuid, push, website } = _request
+    const { method, uuid, push, website } = _request
 
     const iota = composeAPI()
-    if (iota[_request.method] && !forbiddenRequests.includes(_request.method)) {
+    if (
+      iota[_request.method] &&
+      !FORBIDDEN_REQUESTS.includes(_request.method)
+    ) {
       this.customizatorController.pushRequest(_request)
       return
     }
 
-    switch (method) {
-      case 'connect': {
-        this.connectorController.connect(uuid, push, website)
-        break
-      }
-      default: {
-        push({
-          success: 'false',
-          data: 'Method Not Available',
-          uuid
-        })
-      }
+    if (
+      MAM_REQUESTS.includes(_request.method) ||
+      ADDITIONAL_METHODS.includes(_request.method)
+    ) {
+      this.customizatorController.pushRequest(_request)
+      return
     }
+
+    if (method === 'connect') {
+      this.connectorController.connect(uuid, push, website)
+      return
+    }
+
+    push({
+      success: 'false',
+      response: 'Method Not Available',
+      uuid
+    })
   }
 
   /**

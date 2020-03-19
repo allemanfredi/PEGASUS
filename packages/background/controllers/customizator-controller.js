@@ -218,8 +218,6 @@ class CustomizatorController {
 
     const res = await this.execute(_request)
 
-    if (res.tryAgain) return res
-
     if (this.requests.length === 1) {
       logger.log(`(CustomizatorController) Last request to execute`)
       this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
@@ -235,7 +233,11 @@ class CustomizatorController {
       //this.walletController.setState(APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION)
     }
 
-    request.push(res)
+    request.push({
+      success: res.success,
+      response: res.response,
+      uuid: _request.uuid
+    })
 
     return res
   }

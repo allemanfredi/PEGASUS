@@ -61,7 +61,6 @@ class TransferController {
 
             resolve({
               success: false,
-              tryAgain: true,
               response: error.message
             })
           })
@@ -71,7 +70,6 @@ class TransferController {
         )
         resolve({
           success: false,
-          tryAgain: true,
           response: error.message
         })
       }
