@@ -36,7 +36,7 @@ class ConnectorController {
     )
   }
 
-  getConnectionRequest(_connection) {
+  getConnectionRequest() {
     return this.connectionRequest
   }
 
@@ -188,10 +188,6 @@ class ConnectorController {
     }
 
     return null
-  }
-
-  setConnectionRequest(_connection) {
-    this.connectionRequest = _connection
   }
 
   getConnections() {
