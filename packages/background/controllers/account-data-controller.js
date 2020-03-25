@@ -28,10 +28,6 @@ class AccountDataController {
   }
 
   startHandle() {
-    const account = this.walletController.getCurrentAccount()
-
-    //if (account) background.setAccount(account)
-
     if (this.accountDataHandler) {
       return
     }

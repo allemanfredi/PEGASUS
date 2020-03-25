@@ -97,7 +97,7 @@ The functions __`subscribe`__ and __`listen`__ within __`mam.client.js`__ are no
 
 &nbsp;
 
-## How mam.client.js injection works
+## How mam.client.js injection works [experimental]
 
 The idea is to generate and store the seed encrypted with the login password (which defines the ownership of a channel) inside Pegasus without ever exposing it outside of it. This mechanism is based on a small modification to the state object: instead of returning it containing the seed, a state object containing the hash of this seed is returned, in order to maintain a correspondence with the channel for future actions. Same principle for the sidekey (in case a channel is of restricted type).
 The value corresponding to the sidekey of the channel inside the state object no longer contains the value of the sidekey, but contains the value of the hash of that key and this key is stored within Pegasus encrypted with the login password.
