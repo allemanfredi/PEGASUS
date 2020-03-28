@@ -225,7 +225,6 @@ class PegasusEngine {
    */
   getApi() {
     return {
-      isWalletSetup: cb => cb(this.walletController.isWalletSetup()),
       initWallet: (password, account, cb) =>
         nodeify(this.walletController.initWallet(password, account), cb),
       lockWallet: cb => nodeify(this.walletController.lockWallet(), cb),
@@ -258,6 +257,7 @@ class PegasusEngine {
       //login password controller
       comparePassword: (password, cb) =>
         nodeify(this.loginPasswordController.comparePassword(password), cb),
+      isUnlocked: cb => cb(this.loginPasswordController.isUnlocked()),
 
       //session controller
       checkSession: cb => cb(this.sessionController.checkSession()),

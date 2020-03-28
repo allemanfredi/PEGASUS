@@ -69,7 +69,11 @@ class App extends Component {
         state > APP_STATE.WALLET_LOCKED &&
         state !== APP_STATE.WALLET_RESTORE
       ) {
-        if (accounts.selected && Object.keys(accounts.selected).length > 0) {
+        if (
+          accounts &&
+          accounts.selected &&
+          Object.keys(accounts.selected).length > 0
+        ) {
           this.setState({ account: accounts.selected })
         }
       }

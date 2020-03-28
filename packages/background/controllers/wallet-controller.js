@@ -249,7 +249,7 @@ class WalletController extends EventEmitter {
     if (this.getState() < APP_STATE.WALLET_UNLOCKED) return
 
     const accounts = this.stateStorageController.get('accounts')
-    if (!accounts.selected) return null
+    if (!accounts || !accounts.selected) return null
 
     return accounts.selected
   }

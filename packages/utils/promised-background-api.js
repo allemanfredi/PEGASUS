@@ -1,12 +1,5 @@
 const buildPromisedBackgroundApi = _backgroundConnection => {
   return {
-    isWalletSetup: () =>
-      new Promise((resolve, reject) =>
-        _backgroundConnection.isWalletSetup((res, err) =>
-          err ? reject(err) : resolve(res)
-        )
-      ),
-
     unlockWallet: password =>
       new Promise((resolve, reject) =>
         _backgroundConnection.unlockWallet(password, (err, res) => {
@@ -47,6 +40,13 @@ const buildPromisedBackgroundApi = _backgroundConnection => {
         _backgroundConnection.comparePassword(password, (err, res) => {
           err ? reject(err) : resolve(res)
         })
+      ),
+
+    isUnlocked: () =>
+      new Promise((resolve, reject) =>
+        _backgroundConnection.isUnlocked((res, err) =>
+          err ? reject(err) : resolve(res)
+        )
       ),
 
     setCurrentNetwork: network =>

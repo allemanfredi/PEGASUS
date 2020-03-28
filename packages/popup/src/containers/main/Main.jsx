@@ -48,6 +48,15 @@ class Main extends Component {
     if (state === APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION)
       this.props.showHeader(false)
 
+    //connect with locked wallet
+    if (
+      state === APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION &&
+      !(await this.props.background.isUnlocked())
+    ) {
+      this.setState({ appState: APP_STATE.WALLET_LOCKED })
+      return
+    }
+
     const connection = await this.props.background.getConnectionRequest()
     if (
       connection &&

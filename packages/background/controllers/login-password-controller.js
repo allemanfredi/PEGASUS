@@ -40,6 +40,10 @@ class LoginPasswordController {
     })
   }
 
+  isUnlocked() {
+    return this.password ? true : false
+  }
+
   getPassword() {
     return this.password
   }
