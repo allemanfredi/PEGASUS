@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import Utils from '@pegasus/utils/utils'
 import AccountSelection from './accountSelection/AccountSelection'
 import { APP_STATE } from '@pegasus/utils/states'
 
