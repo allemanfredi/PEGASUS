@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import Input from '../../components/input/Input'
+import Spinner from '../../components/spinner/Spinner'
 
 class Login extends Component {
   constructor(props, context) {
@@ -10,7 +11,8 @@ class Login extends Component {
     this.state = {
       psw: '',
       error: '',
-      shake: false
+      shake: false,
+      isLocking: false
     }
   }
 
@@ -19,11 +21,16 @@ class Login extends Component {
 
     this.setState({ shake: false })
 
+    this.setState({ isLocking: true })
     const canAccess = await this.props.background.unlockWallet(this.state.psw)
     if (canAccess) {
+      this.setState({ isLocking: false })
       this.props.onSuccess()
     } else {
-      this.setState({ shake: true })
+      this.setState({
+        isLocking: false,
+        shake: true
+      })
     }
   }
 
@@ -64,14 +71,18 @@ class Login extends Component {
         </div>
         <div className="row mt-3">
           <div className="col-12 text-center">
-            <button
-              disabled={!this.state.psw.length > 0}
-              onClick={this.clickLogin}
-              type="submit"
-              className="btn btn-blue text-bold btn-big"
-            >
-              Login
-            </button>
+            {!this.state.isLocking ? (
+              <button
+                disabled={!this.state.psw.length > 0}
+                onClick={this.clickLogin}
+                type="submit"
+                className="btn btn-blue text-bold btn-big"
+              >
+                Login
+              </button>
+            ) : (
+              <Spinner size={'medium'} />
+            )}
           </div>
         </div>
         <div className="row mt-1">

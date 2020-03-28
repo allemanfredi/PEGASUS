@@ -575,6 +575,11 @@ input#inp-edit {
     height: 50px;
 }
 
+.spinner.medium {
+    width: 20px;
+    height: 20px;
+}
+
 .spinner div {
     box-sizing: border-box;
     display: block;
@@ -590,6 +595,10 @@ input#inp-edit {
 .spinner.big div {
     width: 50px;
     height: 50px;
+}
+.spinner.medium div {
+    width: 30px;
+    height: 30px;
 }
 
 .spinner div:nth-child(1) {
