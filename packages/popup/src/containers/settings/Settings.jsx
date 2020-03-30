@@ -2,6 +2,7 @@ import React from 'react'
 import TransactionsSettings from './transactionsSettings/TransactionsSettings'
 import ConnectionsSettings from './connectionsSettings/ConnectionsSettings'
 import SecuritySettings from './securitySettings/SecuritySettings'
+import GeneralsSettings from './generalsSettings/GeneralsSettings'
 
 const settings = [
   {
@@ -15,13 +16,18 @@ const settings = [
   {
     title: 'Security',
     description: 'Secure your wallet at your convenience'
+  },
+  {
+    title: 'Generals',
+    description: 'Currency conversion'
   }
 ]
 
 const options = {
   0: 'Connections',
   1: 'Transactions',
-  2: 'Security'
+  2: 'Security',
+  3: 'Generals'
 }
 
 class Settings extends React.Component {
@@ -31,7 +37,7 @@ class Settings extends React.Component {
     this.goBack = this.goBack.bind(this)
 
     this.state = {
-      show: [false, false, false]
+      show: [false, false, false, false]
     }
   }
 
@@ -56,7 +62,7 @@ class Settings extends React.Component {
                       this.props.changeNavbarText(options[index])
                       this.props.onChangeCanGoBack(null)
                       this.setState(() => {
-                        const show = [false, false]
+                        const show = [false, false, false, false]
                         show[index] = true
                         return {
                           show
@@ -99,6 +105,12 @@ class Settings extends React.Component {
         ) : null}
         {this.state.show[2] ? (
           <SecuritySettings
+            background={this.props.background}
+            setNotification={this.props.setNotification}
+          />
+        ) : null}
+        {this.state.show[3] ? (
+          <GeneralsSettings
             background={this.props.background}
             setNotification={this.props.setNotification}
           />

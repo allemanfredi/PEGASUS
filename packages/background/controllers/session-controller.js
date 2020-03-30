@@ -2,7 +2,6 @@ import { APP_STATE } from '@pegasus/utils/states'
 import logger from '@pegasus/utils/logger'
 
 const SESSION_TIME_CHECK = 30000
-const MAX_TIME_INACTIVE = 3.6e6 // 1 hour
 
 class SessionController {
   constructor(options) {
@@ -72,10 +71,6 @@ class SessionController {
 
       // NOTE: if auto locking is enabled check the session
       if (autoLocking.enabled) {
-        logger.log(
-          `(SessionController) Auto locking is enabled with time: ${autoLocking.time} minutes, checking...`
-        )
-
         if (currentTime - this.session > autoLocking.time * 60 * 1000) {
           if (currentState >= APP_STATE.WALLET_UNLOCKED) {
             this.walletController.lockWallet()
@@ -86,8 +81,6 @@ class SessionController {
           return
         }
       }
-    } else {
-      this.password = false
     }
   }
 

@@ -280,9 +280,8 @@ const buildPromisedBackgroundApi = _backgroundConnection => {
 
     disableTransactionsAutoPromotion: () =>
       new Promise((resolve, reject) =>
-        _backgroundConnection.disableTransactionsAutoPromotion(
-          time,
-          (res, err) => (err ? reject(err) : resolve(res))
+        _backgroundConnection.disableTransactionsAutoPromotion((res, err) =>
+          err ? reject(err) : resolve(res)
         )
       ),
 

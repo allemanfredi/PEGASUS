@@ -2,12 +2,38 @@ import configs from '@pegasus/utils/options'
 
 const DEFAULT_LOCKING_TIME = 60 //60 minutes
 
+const availablesCurrencies = [
+  {
+    value: 'USD',
+    symbol: '$'
+  },
+  {
+    value: 'EUR',
+    symbol: '€'
+  },
+  {
+    value: 'GBP',
+    symbol: '£'
+  },
+  {
+    value: 'CHF',
+    symbol: 'Fr.'
+  }
+]
+
+/**
+ * Default class that implements the global state
+ */
 export class PegasusGlobalState {
   constructor() {
     this.hpsw = null
     this.selectedNetwork = configs.networks[0]
     this.networks = configs.networks
     this.popupSettings = {
+      currencies: {
+        selected: availablesCurrencies[0],
+        all: availablesCurrencies
+      },
       autoPromotion: {
         emabled: false,
         time: 0
@@ -32,8 +58,15 @@ export class PegasusGlobalState {
   }
 }
 
+/**
+ * object used when user reset the wallet
+ */
 export const resetState = {
   popupSettings: {
+    currencies: {
+      selected: availablesCurrencies[0],
+      all: availablesCurrencies
+    },
     autoPromotion: {
       emabled: false,
       time: 0

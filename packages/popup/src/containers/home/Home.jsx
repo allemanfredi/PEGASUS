@@ -14,6 +14,7 @@ import Alert from '../../components/alert/Alert'
 import Settings from '../settings/Settings'
 import Utils from '@pegasus/utils/utils'
 import ReactTooltip from 'react-tooltip'
+import { getPrice } from '@pegasus/utils/prices'
 
 class Home extends Component {
   constructor(props, context) {
@@ -64,15 +65,37 @@ class Home extends Component {
       isLoading: false,
       canGoBack: true,
       isCopiedToClipboard: false,
-      navbarText: ''
+      navbarText: '',
+      iotaPrice: false,
+      popupSettings: null
     }
+  }
+
+  async componentWillMount() {
+    const iotaPrice = await getPrice()
+    this.setState({ iotaPrice })
+
+    const popupSettings = await this.props.background.getPopupSettings()
+    this.setState({ popupSettings })
+
+    this.props.background.on('update', backgroundState => {
+      const { popupSettings } = backgroundState
+      this.setState({ popupSettings })
+    })
   }
 
   async onReload() {
     this.setState({
       isLoading: true
     })
+
     this.props.background.loadAccountData()
+
+    setTimeout(() => {
+      this.setState({
+        isLoading: false
+      })
+    }, 7000)
   }
 
   async onDeleteAccount() {
@@ -415,8 +438,8 @@ class Home extends Component {
             )}
             {this.state.showHome ? (
               <div className="container">
-                <div className="row mt-3 mb-2">
-                  <div className="col-4 text-left">
+                <div className="row mt-2 mb-2">
+                  <div className="col-4 text-left my-auto">
                     <img
                       src="./material/logo/iota-logo.png"
                       height="40"
@@ -450,13 +473,37 @@ class Home extends Component {
                     )}
                   </div>
                   <div className="col-4 text-right text-black text-lg my-auto">
-                    {Utils.iotaReducer(
-                      this.props.account.data.balance[this.props.network.type]
-                        ? this.props.account.data.balance[
+                    <div className="row">
+                      <div className="col-12">
+                        {Utils.iotaReducer(
+                          this.props.account.data.balance[
                             this.props.network.type
                           ]
-                        : 0
-                    )}
+                            ? this.props.account.data.balance[
+                                this.props.network.type
+                              ]
+                            : 0
+                        )}
+                      </div>
+                      <div className="col-12 text-sm text-gray">
+                        {this.props.account.data.balance[
+                          this.props.network.type
+                        ] &&
+                        this.state.iotaPrice &&
+                        this.state.popupSettings
+                          ? (
+                              (this.props.account.data.balance[
+                                this.props.network.type
+                              ] *
+                                this.state.iotaPrice[
+                                  this.state.popupSettings.currencies.selected.value.toLowerCase()
+                                ]) /
+                              1000000
+                            ).toFixed(2) +
+                            this.state.popupSettings.currencies.selected.symbol
+                          : '-'}
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <Transactions
@@ -467,7 +514,7 @@ class Home extends Component {
                   setNotification={this.props.setNotification}
                   onReload={this.onReload}
                 />
-                <div className="row mt-3">
+                <div className="row mt-2">
                   <div className="col-6 text-center">
                     <button
                       onClick={this.onClickReceive}

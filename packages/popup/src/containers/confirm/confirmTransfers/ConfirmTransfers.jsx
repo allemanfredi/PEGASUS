@@ -74,7 +74,7 @@ class ConfirmTransfers extends Component {
           ''
         )}
         <hr className="mt-1 mb-1" />
-        <div className={this.props.error ? 'row mt-4' : 'row mt-12'}>
+        <div className={this.props.error ? 'row mt-4' : 'row mt-13'}>
           <div className="col-6 pr-5 pl-5">
             <button
               onClick={() => this.props.onReject(this.props.transfer)}

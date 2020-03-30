@@ -11,6 +11,7 @@
     "@iota/extract-json": "^1.0.0-beta.8",
     "@iota/http-client": "^1.0.0-beta.8",
     "argon2-browser": "^1.13.0",
+    "axios": "^0.19.2",
     "browserify-unibabel": "^3.0.0",
     "eventemitter3": "^3.1.0",
     "extensionizer": "^1.0.1"
