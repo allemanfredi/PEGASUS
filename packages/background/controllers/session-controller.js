@@ -67,17 +67,25 @@ class SessionController {
     if (this.session) {
       const date = new Date()
       const currentTime = date.getTime()
-      if (currentTime - this.session > MAX_TIME_INACTIVE) {
-        if (currentState >= APP_STATE.WALLET_UNLOCKED) {
-          this.walletController.lockWallet()
-          logger.log(
-            `(SessionController) Session expired... Locking the wallet`
-          )
+
+      const { autoLocking } = this.walletController.getPopupSettings()
+
+      // NOTE: if auto locking is enabled check the session
+      if (autoLocking.enabled) {
+        logger.log(
+          `(SessionController) Auto locking is enabled with time: ${autoLocking.time} minutes, checking...`
+        )
+
+        if (currentTime - this.session > autoLocking.time * 60 * 1000) {
+          if (currentState >= APP_STATE.WALLET_UNLOCKED) {
+            this.walletController.lockWallet()
+            logger.log(
+              `(SessionController) Session expired... Locking the wallet`
+            )
+          }
+          return
         }
-        return
       }
-      logger.log(`(SessionController) Session still valid`)
-      return
     } else {
       this.password = false
     }

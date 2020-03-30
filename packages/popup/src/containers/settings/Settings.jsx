@@ -1,6 +1,7 @@
 import React from 'react'
 import TransactionsSettings from './transactionsSettings/TransactionsSettings'
 import ConnectionsSettings from './connectionsSettings/ConnectionsSettings'
+import SecuritySettings from './securitySettings/SecuritySettings'
 
 const settings = [
   {
@@ -10,12 +11,17 @@ const settings = [
   {
     title: 'Transactions',
     description: 'Manage transactions settings'
+  },
+  {
+    title: 'Security',
+    description: 'Secure your wallet at your convenience'
   }
 ]
 
 const options = {
   0: 'Connections',
-  1: 'Transactions'
+  1: 'Transactions',
+  2: 'Security'
 }
 
 class Settings extends React.Component {
@@ -25,7 +31,7 @@ class Settings extends React.Component {
     this.goBack = this.goBack.bind(this)
 
     this.state = {
-      show: [false, false]
+      show: [false, false, false]
     }
   }
 
@@ -87,6 +93,12 @@ class Settings extends React.Component {
         ) : null}
         {this.state.show[1] ? (
           <TransactionsSettings
+            background={this.props.background}
+            setNotification={this.props.setNotification}
+          />
+        ) : null}
+        {this.state.show[2] ? (
+          <SecuritySettings
             background={this.props.background}
             setNotification={this.props.setNotification}
           />

@@ -220,7 +220,7 @@ class WalletController extends EventEmitter {
       if (alreadyExist) {
         return false
       }
-     
+
       if (_isCurrent) accounts.selected = accountToAdd
 
       accounts.all.push(accountToAdd)

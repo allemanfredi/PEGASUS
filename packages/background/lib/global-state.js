@@ -1,6 +1,6 @@
 import configs from '@pegasus/utils/options'
 
-const DEFAULT_LOCKING_TIME = 3.6e6 // 1 hour
+const DEFAULT_LOCKING_TIME = 60 //60 minutes
 
 export class PegasusGlobalState {
   constructor() {
