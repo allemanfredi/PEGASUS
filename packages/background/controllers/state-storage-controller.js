@@ -1,38 +1,11 @@
 // class used to encrypt the content of wallet data in order to make more difficult the decryption of the seed since is encrypted togheter with other data (ex name, address ecc)
 // options, state, password hash and session(timestamp for checking the last login) are not encrypted
-import configs from '@pegasus/utils/options'
 import { Store } from 'rxjs-observable-store'
 import logger from '@pegasus/utils/logger'
 import { encrypt, decrypt } from '../lib/browser-protector'
 import ExtensionStore from '@pegasus/utils/extension-store'
 import { APP_STATE } from '@pegasus/utils/states'
-
-//NOTE: init state
-class PegasusGlobalState {
-  constructor() {
-    this.hpsw = null
-    this.selectedNetwork = configs.networks[0]
-    this.networks = configs.networks
-    this.popupSettings = {
-      autoPromotion: {
-        emabled: false,
-        time: 0
-      },
-      filters: {
-        hide0Txs: false,
-        hidePendingTxs: false,
-        hideReattachedTxs: false
-      }
-    }
-    this.state = 0
-    this.accounts = {
-      selected: {},
-      all: []
-    }
-    this.mamChannels = {}
-    this.data = null
-  }
-}
+import { PegasusGlobalState, resetState } from '../lib/global-state'
 
 class StateStorageController extends Store {
   constructor() {
@@ -133,29 +106,9 @@ class StateStorageController extends Store {
   }
 
   async reset() {
-    //keep the psw
     this.setState({
       ...this.state,
-      popupSettings: {
-        autoPromotion: {
-          emabled: false,
-          time: 0
-        },
-        filters: {
-          hide0Txs: false,
-          hidePendingTxs: false,
-          hideReattachedTxs: false
-        }
-      },
-      accounts: [],
-      mamChannels: {},
-      data: {
-        accounts: {
-          selected: {},
-          all: []
-        },
-        mamChannels: {}
-      }
+      ...resetState
     })
 
     await this._writeToStorage()
