@@ -3,7 +3,7 @@ import { composeAPI } from '@iota/core'
 import { extractJson } from '@iota/extract-json'
 import logger from '@pegasus/utils/logger'
 
-const ACCOUNT_RELOAD_TIME = 100000
+const ACCOUNT_RELOAD_TIME = 300000
 
 class AccountDataController {
   constructor(options) {
