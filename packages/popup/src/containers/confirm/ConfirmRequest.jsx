@@ -12,7 +12,6 @@ class ConfirmRequest extends Component {
     this.reject = this.reject.bind(this)
     this.rejectAll = this.rejectAll.bind(this)
     this.confirm = this.confirm.bind(this)
-    this.getRequests = this.getRequests.bind(this)
 
     this.state = {
       requests: [],
@@ -21,20 +20,20 @@ class ConfirmRequest extends Component {
     }
   }
 
-  async getRequests() {
-    const executableRequests = await this.props.background.getExecutableRequests()
-    const requests = executableRequests.filter(
-      request => request.needUserInteraction
-    )
-    this.setState({ requests })
-  }
-
   async componentWillMount() {
+    this.props.background.on('update', backgroundState => {
+      const { requests } = backgroundState
+
+      const executableRequests = requests.filter(
+        request => request.needUserInteraction && request.connection.enabled
+      )
+
+      this.setState({ requests: executableRequests })
+    })
+
     await this.props.background.setState(
       APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION
     )
-
-    await this.getRequests()
   }
 
   async confirm(request) {
@@ -45,8 +44,10 @@ class ConfirmRequest extends Component {
     const { response, success } = await this.props.background.confirmRequest(
       request
     )
+
+    this.setState({ isLoading: false })
+
     if (success) {
-      this.props.onHideTop(false)
       this.props.onBack()
       this.props.setNotification({
         type: 'success',
@@ -56,14 +57,10 @@ class ConfirmRequest extends Component {
     } else {
       this.setState({ error: response })
     }
-    this.setState({ isLoading: false })
-
-    await this.getRequests()
   }
 
   async reject(request) {
     await this.props.background.rejectRequest(request)
-    await this.getRequests()
   }
 
   rejectAll() {

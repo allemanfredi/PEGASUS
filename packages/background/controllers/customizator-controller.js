@@ -16,6 +16,7 @@ class CustomizatorController {
       popupController,
       networkController,
       mamController,
+      stateStorageController,
       updateBadge
     } = options
 
@@ -24,7 +25,8 @@ class CustomizatorController {
     this.popupController = popupController
     this.networkController = networkController
     this.mamController = mamController
-    
+    this.stateStorageController = stateStorageController
+
     this.updateBadge = updateBadge
 
     this.requests = []
@@ -50,13 +52,8 @@ class CustomizatorController {
     return this.requests
   }
 
-  getExecutableRequests(_origin, _tabId) {
-    return this.requests.filter(
-      request =>
-        request.connection.enabled &&
-        request.connection.website.origin === _origin &&
-        request.connection.website.tabId === _tabId
-    )
+  getExecutableRequests() {
+    return this.requests.filter(request => request.connection.enabled)
   }
 
   async pushRequest(_request) {
@@ -155,6 +152,8 @@ class CustomizatorController {
         this.removeRequest(_request)
       }
     }
+
+    this.stateStorageController.set('requests', this.requests)
   }
 
   async executeRequest(_request) {
@@ -380,6 +379,8 @@ class CustomizatorController {
     )
 
     this.updateBadge()
+
+    this.stateStorageController.set('requests', this.requests)
   }
 }
 

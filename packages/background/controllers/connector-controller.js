@@ -37,7 +37,9 @@ class ConnectorController {
       this.connectionRequests[_connection.website.origin] = {}
     }
 
-    this.connectionRequests[_connection.website.origin][_connection.website.tabId] = _connection
+    this.connectionRequests[_connection.website.origin][
+      _connection.website.tabId
+    ] = _connection
 
     this.stateStorageController.set(
       'connectionRequests',
@@ -58,7 +60,10 @@ class ConnectorController {
       delete this.connectionRequests[_origin]
 
     this.updateBadge()
-    this.stateStorageController.set('connectionRequests', normalizeConnectionRequests(this.connectionRequests))
+    this.stateStorageController.set(
+      'connectionRequests',
+      normalizeConnectionRequests(this.connectionRequests)
+    )
   }
 
   getConnectionRequests() {
@@ -108,7 +113,7 @@ class ConnectorController {
       }
     )
 
-    // NOTE: connections enabling checks refer only to origin
+    // NOTE: tabId not nedeed to check if a connection with an origin is enabled
     delete this.connections[_origin].tabId
 
     const requestWithUserInteraction = requests.filter(
@@ -124,7 +129,6 @@ class ConnectorController {
           this.customizatorController.executeRequest(request)
       }
     })
-
 
     this.removeConnectionRequest(_origin, _tabId)
 

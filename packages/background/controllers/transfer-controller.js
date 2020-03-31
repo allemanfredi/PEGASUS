@@ -56,21 +56,21 @@ class TransferController {
           })
           .catch(error => {
             logger.error(
-              `(TransferController) Account during account transfer : ${error.message}`
+              `(TransferController) Account during account transfer : ${error}`
             )
 
             resolve({
               success: false,
-              response: error.message
+              response: error
             })
           })
       } catch (error) {
         logger.error(
-          `(TransferController) Account during account transfer : ${error.message}`
+          `(TransferController) Error during account transfer : ${error}`
         )
         resolve({
           success: false,
-          response: error.message
+          response: error
         })
       }
     })

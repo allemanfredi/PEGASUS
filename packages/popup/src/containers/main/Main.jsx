@@ -58,10 +58,7 @@ class Main extends Component {
     }
 
     const connectionRequests = await this.props.background.getConnectionRequests()
-    if (
-      Object.keys(connectionRequests).length > 0 &&
-      state > APP_STATE.WALLET_LOCKED
-    ) {
+    if (connectionRequests.length > 0 && state > APP_STATE.WALLET_LOCKED) {
       this.props.background.setState(
         APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
       )
@@ -69,14 +66,7 @@ class Main extends Component {
       this.props.showHeader(false)
     }
 
-    let executableRequests = []
-    for (let connection of connectionRequests) {
-      const app = await this.props.background.getExecutableRequests(
-        connection.website.origin,
-        connection.website.tabId
-      )
-      executableRequests = [...app, ...executableRequests]
-    }
+    const executableRequests = await this.props.background.getExecutableRequests()
 
     if (
       connectionRequests.length === 0 &&
@@ -115,14 +105,7 @@ class Main extends Component {
       this.props.showHeader(false)
     }
 
-    let executableRequests = []
-    for (let connection of connectionRequests) {
-      const app = await this.props.background.getExecutableRequests(
-        connection.website.origin,
-        connection.website.tabId
-      )
-      executableRequests = [...app, ...executableRequests]
-    }
+    const executableRequests = await this.props.background.getExecutableRequests()
 
     const requestsWithNoUserInteraction = executableRequests.filter(
       request => !request.needUserInteraction
@@ -166,17 +149,13 @@ class Main extends Component {
       return
     }
 
-    const executableRequests = await this.props.background.getExecutableRequests(
-      _origin,
-      _tabId
-    )
+    const executableRequests = await this.props.background.getExecutableRequests()
 
-    // for example getNodeInfo
+    // for example prepareTransfers
     const requestsWithUserInteraction = executableRequests.filter(
       request => request.needUserInteraction
     )
 
-    // if there are requests  like for example prepareTransfers
     if (requestsWithUserInteraction.length > 0) {
       this.props.showHeader(false)
       this.setState({
@@ -196,16 +175,9 @@ class Main extends Component {
     await this.props.background.rejectConnectionRequest(_origin, _tabId)
 
     const connectionRequests = await this.props.background.getConnectionRequests()
-    let mixedConnections = []
-    for (let originConnections of Object.values(connectionRequests)) {
-      for (let connection of Object.values(originConnections)) {
-        mixedConnections.push(connection)
-      }
-    }
-    if (mixedConnections.length === 0) {
+    if (connectionRequests.length === 0) {
       this.props.showHeader(true)
     }
-    //await this.props.background.rejectRequests()
   }
 
   bindDuplexRequests() {
@@ -224,14 +196,10 @@ class Main extends Component {
 
   onSuccessFromInit() {
     this.props.showHeader(true)
-    /*this.setState({ appState: APP_STATE.WALLET_UNLOCKED })
-    this.props.background.setState(APP_STATE.WALLET_UNLOCKED)*/
   }
 
   onSuccessFromRestore() {
     this.props.showHeader(true)
-    /*this.setState({ appState: APP_STATE.WALLET_UNLOCKED })
-    this.props.background.setState(APP_STATE.WALLET_UNLOCKED)*/
   }
 
   onLogout() {

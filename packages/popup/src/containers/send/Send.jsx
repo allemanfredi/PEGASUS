@@ -85,7 +85,6 @@ class Send extends Component {
     const { response, success } = await this.props.background.executeRequest(
       this.state.transfer
     )
-    console.log(response, success)
     if (success) {
       this.props.onHideTop(false)
       this.props.onBack()

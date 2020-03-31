@@ -15,6 +15,4 @@ const normalizeConnectionRequests = _connectionRequests => {
   return normalizedConnections
 }
 
-export {
-  normalizeConnectionRequests
-}
+export { normalizeConnectionRequests }

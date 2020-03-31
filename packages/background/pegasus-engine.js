@@ -50,6 +50,7 @@ class PegasusEngine {
       popupController: this.popupController,
       connectorController: this.connectorController,
       mamController: this.mamController,
+      stateStorageController: this.stateStorageController,
       updateBadge: this.updateBadge.bind(this)
     })
 
@@ -283,8 +284,8 @@ class PegasusEngine {
       executeRequest: (request, cb) =>
         nodeify(this.customizatorController.executeRequest(request), cb),
       getRequests: cb => cb(this.customizatorController.getRequests()),
-      getExecutableRequests: (origin, tabId, cb) =>
-        cb(this.customizatorController.getExecutableRequests(origin, tabId)),
+      getExecutableRequests: cb =>
+        cb(this.customizatorController.getExecutableRequests()),
       rejectRequest: (request, cb) =>
         cb(this.customizatorController.rejectRequest(request)),
       rejectRequests: cb => cb(this.customizatorController.rejectRequests()),
