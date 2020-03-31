@@ -242,7 +242,8 @@ class WalletController extends EventEmitter {
     const accounts = this.stateStorageController.get('accounts')
 
     //seed not exposed outside of the popup
-    _account.seed = accounts.selected.seed
+    const account = accounts.all.find(acc => acc.id === _account.id)
+    _account.seed = account.seed
     accounts.selected = _account
 
     this.stateStorageController.set('accounts', accounts)
@@ -255,7 +256,13 @@ class WalletController extends EventEmitter {
 
   updateDataAccount(_data) {
     const accounts = this.stateStorageController.get('accounts')
+    
+    accounts.all.forEach(account => {
+      if (account.id === accounts.selected.id)
+        account.data = _data
+    })
     accounts.selected.data = _data
+
     this.stateStorageController.set('accounts', accounts)
     logger.log(`(WalletController) Data updated for ${accounts.selected.name}`)
     return true
@@ -263,7 +270,13 @@ class WalletController extends EventEmitter {
 
   updateNameAccount(_name) {
     const accounts = this.stateStorageController.get('accounts')
+    
+    accounts.all.forEach(account => {
+      if (account.id === accounts.selected.id)
+        account.name = _name
+    })
     accounts.selected.name = _name
+
     this.stateStorageController.set('accounts', accounts)
     logger.log(`(WalletController) Name updated for ${accounts.selected.name}`)
     return true
@@ -271,7 +284,13 @@ class WalletController extends EventEmitter {
 
   updateAvatarAccount(_avatar) {
     const accounts = this.stateStorageController.get('accounts')
+
+    accounts.all.forEach(account => {
+      if (account.id === accounts.selected.id)
+        account.avatar = _avatar
+    })
     accounts.selected.avatar = _avatar
+
     this.stateStorageController.set('accounts', accounts)
     logger.log(
       `(WalletController) Avatar updated for ${accounts.selected.name}`

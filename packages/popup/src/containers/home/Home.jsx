@@ -85,17 +85,14 @@ class Home extends Component {
   }
 
   async onReload() {
-    this.setState({
-      isLoading: true
-    })
+    this.setState({ isLoading: true })
 
-    this.props.background.loadAccountData()
-
-    setTimeout(() => {
-      this.setState({
-        isLoading: false
-      })
-    }, 7000)
+    try {
+      await this.props.background.loadAccountData()
+      this.setState({ isLoading: false })
+    } catch (err) {
+      this.setState({ isLoading: false })
+    }    
   }
 
   async onDeleteAccount() {
