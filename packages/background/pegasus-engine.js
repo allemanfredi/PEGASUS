@@ -147,6 +147,8 @@ class PegasusEngine {
     const inpageClientStream = createEngineStream(this, website)
 
     pump(outStream, inpageClientStream, outStream, err => {
+      // NOTE: if connection with this website is not enabled it will be removed when user closes the page
+      this.connectorController.removePendingConnection(url.origin)
       if (err) {
         logger.error(err)
       }

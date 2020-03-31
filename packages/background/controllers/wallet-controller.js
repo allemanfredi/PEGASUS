@@ -256,10 +256,9 @@ class WalletController extends EventEmitter {
 
   updateDataAccount(_data) {
     const accounts = this.stateStorageController.get('accounts')
-    
+
     accounts.all.forEach(account => {
-      if (account.id === accounts.selected.id)
-        account.data = _data
+      if (account.id === accounts.selected.id) account.data = _data
     })
     accounts.selected.data = _data
 
@@ -270,10 +269,9 @@ class WalletController extends EventEmitter {
 
   updateNameAccount(_name) {
     const accounts = this.stateStorageController.get('accounts')
-    
+
     accounts.all.forEach(account => {
-      if (account.id === accounts.selected.id)
-        account.name = _name
+      if (account.id === accounts.selected.id) account.name = _name
     })
     accounts.selected.name = _name
 
@@ -286,8 +284,7 @@ class WalletController extends EventEmitter {
     const accounts = this.stateStorageController.get('accounts')
 
     accounts.all.forEach(account => {
-      if (account.id === accounts.selected.id)
-        account.avatar = _avatar
+      if (account.id === accounts.selected.id) account.avatar = _avatar
     })
     accounts.selected.avatar = _avatar
 

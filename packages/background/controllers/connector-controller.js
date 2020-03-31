@@ -191,8 +191,18 @@ class ConnectorController {
   }
 
   removeConnection(_origin) {
-    logger.log(`(ConnectorController) Remove connection with ${_origin}`)
+    logger.log(`(ConnectorController) Removing connection with ${_origin}`)
     delete this.connections[_origin]
+    return true
+  }
+
+  removePendingConnection(_origin) {
+    if (this.connections[_origin] && !this.connections[_origin].enabled) {
+      logger.log(
+        `(ConnectorController) Removing pending connection with ${_origin}`
+      )
+      delete this.connections[_origin]
+    }
     return true
   }
 

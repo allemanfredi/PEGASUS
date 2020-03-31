@@ -92,7 +92,7 @@ class Home extends Component {
       this.setState({ isLoading: false })
     } catch (err) {
       this.setState({ isLoading: false })
-    }    
+    }
   }
 
   async onDeleteAccount() {
