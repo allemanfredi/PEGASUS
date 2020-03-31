@@ -128,7 +128,7 @@ class Network extends Component {
             </label>
           </div>
         </div>
-        <div className="row mt-9">
+        <div className="row mt-8">
           <div className="col-12 text-center">
             <button
               disabled={

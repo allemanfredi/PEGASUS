@@ -45,13 +45,13 @@ class Header extends Component {
     return (
       <React.Fragment>
         <header>
-          <div className="row pt-2 pb-2 pl-1 pr-1">
+          <div className="row pt-2 pb-2 pl-2 pr-2">
             <div className="col-3 my-auto">
               <img
                 className="border-radius-50"
                 src="./material/logo/pegasus-64.png"
-                height="35"
-                width="35"
+                height="40"
+                width="40"
                 alt="pegasus logo"
               />
             </div>
@@ -60,7 +60,7 @@ class Header extends Component {
                 <div className="col-10 text-center text-xs my-auto">
                   {this.props.network.name}
                 </div>
-                <div className="col-2">
+                <div className="col-2 text-dark-gray">
                   <div
                     onClick={prevState =>
                       this.setState({ showNetworks: !prevState.showNetworks })
@@ -80,7 +80,7 @@ class Header extends Component {
             Object.keys(this.props.account).length > 0 ? (
               <div className="col-3 my-auto text-right">
                 <img
-                  className="border-radius-50 border-darkblue cursor-pointer"
+                  className="border-radius-50 box-shadow cursor-pointer"
                   src={`./material/profiles/${
                     this.props.account.avatar ? this.props.account.avatar : 1
                   }.svg`}

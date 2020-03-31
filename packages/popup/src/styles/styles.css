@@ -545,6 +545,10 @@ input#inp-edit {
     background-color: gray;
 }
 
+.box-shadow {
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+}
+
 /* SPINNER */
 .spinner {
     display: inline-block;
@@ -655,8 +659,8 @@ header{
 }
 
 .container-selection{
-    border: 2px solid darkblue;
-    border-radius: 12px;
+    border: 3px solid #b3b3b3;
+    border-radius: 20px;
     margin-top: 17px;
     margin-bottom: 10px;
 }

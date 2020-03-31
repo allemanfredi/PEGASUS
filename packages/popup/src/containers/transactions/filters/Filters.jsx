@@ -30,7 +30,7 @@ class Filters extends React.Component {
         className="container-filters container"
       >
         <div
-          className="row mt-05 cursor-pointer text-bold"
+          className="row mt-05 cursor-pointer"
           onClick={() => this.props.onFilter('hide0Txs')}
         >
           <div
@@ -46,7 +46,7 @@ class Filters extends React.Component {
           </div>
         </div>
         <div
-          className="row mt-05 cursor-pointer text-bold"
+          className="row mt-05 cursor-pointer"
           onClick={() => this.props.onFilter('hidePendingTxs')}
         >
           <div
@@ -59,7 +59,7 @@ class Filters extends React.Component {
           >
             <span className="fa fa-check" />
           </div>
-          <div className="col-10 text-white text-xxs text-right my-auto text-bold">
+          <div className="col-10 text-white text-xxs text-right my-auto">
             hide pending transactions
           </div>
         </div>
@@ -77,7 +77,7 @@ class Filters extends React.Component {
           >
             <span className="fa fa-check" />
           </div>
-          <div className="col-10 text-white text-xxs text-right pl-0 my-auto text-bold">
+          <div className="col-10 text-white text-xxs text-right pl-0 my-auto">
             hide reattached transactions
           </div>
         </div>
