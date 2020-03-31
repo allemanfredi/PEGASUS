@@ -67,7 +67,9 @@ class ConnectionsSettings extends React.Component {
   }
 
   async removeConnection(connection) {
-    const isRemoved = await this.props.background.removeConnection(connection)
+    const isRemoved = await this.props.background.removeConnection(
+      connection.website.origin
+    )
     if (isRemoved) {
       this.props.setNotification({
         type: 'success',

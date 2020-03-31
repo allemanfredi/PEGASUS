@@ -135,11 +135,7 @@ class ConnectorController {
       })
     }
 
-    this.removeConnection({
-      website: this.connectionRequest.website,
-      requestToConnect: false,
-      enabled: false
-    })
+    this.removeConnection(this.connectionRequest.website.origin)
 
     this.popupController.closePopup()
 
@@ -194,11 +190,9 @@ class ConnectorController {
     return this.connections
   }
 
-  removeConnection(_connectionToRemove) {
-    logger.log(
-      `(ConnectorController) Remove connection with ${_connectionToRemove.website.origin}`
-    )
-    delete this.connections[_connectionToRemove.website.origin]
+  removeConnection(_origin) {
+    logger.log(`(ConnectorController) Remove connection with ${_origin}`)
+    delete this.connections[_origin]
     return true
   }
 

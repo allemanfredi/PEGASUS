@@ -313,9 +313,9 @@ const buildPromisedBackgroundApi = _backgroundConnection => {
         )
       ),
 
-    removeConnection: connection =>
+    removeConnection: origin =>
       new Promise((resolve, reject) =>
-        _backgroundConnection.removeConnection(connection, (res, err) =>
+        _backgroundConnection.removeConnection(origin, (res, err) =>
           err ? reject(err) : resolve(res)
         )
       ),

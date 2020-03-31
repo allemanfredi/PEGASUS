@@ -295,8 +295,8 @@ class PegasusEngine {
         cb(this.connectorController.completeConnection()),
       rejectConnection: cb => cb(this.connectorController.rejectConnection()),
       getConnections: cb => cb(this.connectorController.getConnections()),
-      removeConnection: (connection, cb) =>
-        cb(this.connectorController.removeConnection(connection)),
+      removeConnection: (origin, cb) =>
+        cb(this.connectorController.removeConnection(origin)),
       addConnection: (connection, cb) =>
         cb(this.connectorController.addConnection(connection)),
       getConnectionRequest: cb =>
