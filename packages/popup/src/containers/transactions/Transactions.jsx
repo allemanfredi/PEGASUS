@@ -83,7 +83,7 @@ class Transactions extends Component {
   //keep open the opened cards
   handleShowDetails() {
     const opened = this.state.opened
-    this.props.account.transactions.forEach(transaction => {
+    this.props.account.data.transactions.forEach(transaction => {
       if (!opened[`${transaction.bundle}-${transaction.timestamp}`]) {
         opened[`${transaction.bundle}-${transaction.timestamp}`] = false
       } else opened[`${transaction.bundle}-${transaction.timestamp}`] = true
@@ -151,8 +151,8 @@ class Transactions extends Component {
         </div>
         <hr />
         <div className="transaction-list">
-          {this.props.account.transactions.length > 0 ? (
-            this.props.account.transactions
+          {this.props.account.data.transactions.length > 0 ? (
+            this.props.account.data.transactions
               .filter(
                 transaction =>
                   transaction.network.type === this.props.network.type

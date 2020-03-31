@@ -17,7 +17,7 @@ const Loader = props => {
       </div>
       <div className="row mt-3">
         <div className="col-12 mt-4 text-center">
-          <Spinner size="big"/>
+          <Spinner size="big" />
         </div>
       </div>
     </div>

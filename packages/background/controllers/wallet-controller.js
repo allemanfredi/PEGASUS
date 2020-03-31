@@ -177,33 +177,17 @@ class WalletController extends EventEmitter {
       const accounts = this.stateStorageController.get('accounts')
 
       const network = this.networkController.getCurrentNetwork()
-      const iota = composeAPI({ provider: network.provider })
       const seed = _account.seed.toString().replace(/,/g, '')
 
-      let accountData = await iota.getAccountData(seed, {
-        start: 0,
-        security: 2
-      })
-
-      const balance = accountData.balance
-      accountData.balance =
-        network.type === 'mainnet'
-          ? {
-              mainnet: balance,
-              testnet: 0
-            }
-          : {
-              mainnet: 0,
-              testnet: balance
-            }
-
-      const transactions = await this.accountDataController.mapTransactions(
-        accountData,
+      // NOTE: transaction mapping
+      const accountData = await this.accountDataController.retrieveAccountData(
+        seed,
         network
       )
       const transactionsWithReattachSet = this.accountDataController.setTransactionsReattach(
-        transactions
+        accountData.transactions
       )
+      accountData.transactions = transactionsWithReattachSet
 
       const id = Utils.sha256(_account.name)
 
@@ -211,7 +195,6 @@ class WalletController extends EventEmitter {
         name: _account.name,
         avatar: _account.avatar,
         seed,
-        transactions: transactionsWithReattachSet,
         data: accountData,
         id
       }
@@ -272,19 +255,9 @@ class WalletController extends EventEmitter {
 
   updateDataAccount(_data) {
     const accounts = this.stateStorageController.get('accounts')
-
+    accounts.selected.data = _data
     this.stateStorageController.set('accounts', accounts)
     logger.log(`(WalletController) Data updated for ${accounts.selected.name}`)
-    return true
-  }
-
-  updateTransactionsAccount(_transactions) {
-    const accounts = this.stateStorageController.get('accounts')
-    accounts.selected.transactions = _transactions
-    this.stateStorageController.set('accounts', accounts)
-    logger.log(
-      `(WalletController) transactions updated for ${accounts.selected.name}`
-    )
     return true
   }
 

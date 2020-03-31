@@ -51,18 +51,15 @@ class AccountDataController {
 
     const seed = this.walletController.getCurrentSeed()
     const network = this.networkController.getCurrentNetwork()
-    let account = this.walletController.getCurrentAccount()
-    const { transactions, newData } = await this.retrieveAccountData(
-      seed,
-      network,
-      account
-    )
+    const account = this.walletController.getCurrentAccount()
+    const data = await this.retrieveAccountData(seed, network, account)
 
     //show notification
     const transactionsJustConfirmed = this.getTransactionsJustConfirmed(
       account,
-      transactions
+      data.transactions
     )
+
     transactionsJustConfirmed.forEach(transaction => {
       this.notificationsController.showNotification(
         'Transaction Confirmed',
@@ -71,49 +68,45 @@ class AccountDataController {
       )
     })
 
-    account = this.updateAccountTransactionsPersistence(account, transactions)
-    const newTransactions = this.getNewTransactionsFromAll(
-      account,
-      transactions
-    )
-
-    const totalTransactions = [...newTransactions, ...account.transactions]
-
     const transactionsWithReattachSet = this.setTransactionsReattach(
-      totalTransactions
+      data.transactions
     )
 
-    const updatedData = Object.assign({}, newData, {
+    const updatedData = Object.assign({}, data, {
       transactions: transactionsWithReattachSet
     })
 
-    this.walletController.updateTransactionsAccount(transactionsWithReattachSet)
-
-    this.walletController.updateDataAccount(updatedData, network)
+    this.walletController.updateDataAccount(updatedData)
 
     return true
-    //background.setAccount(updatedAccount)
   }
 
   async retrieveAccountData(_seed, _network, _currentAccount) {
     const iota = composeAPI({ provider: _network.provider })
-    const data = await iota.getAccountData(_seed, { start: 0, security: 2 })
+    let data = await iota.getAccountData(_seed, { start: 0, security: 2 })
     const transactions = await this.mapTransactions(data, _network)
-    const newData = this.mapBalance(data, _network, _currentAccount)
-    return { transactions, newData }
+    data = this.mapBalance(data, _network, _currentAccount)
+
+    delete data.transfers
+    delete data.inputs
+    data.transactions = [...transactions, ..._currentAccount.data.transactions]
+
+    return data
   }
 
   mapBalance(_data, _network, _currentAccount) {
-    _data.balance =
+    _data.balance = Object.assign(
+      {},
       _network.type === 'mainnet'
         ? {
             mainnet: _data.balance,
-            testnet: _currentAccount.data.balance.testnet
+            testnet: _currentAccount ? _currentAccount.data.balance.testnet : 0
           }
         : {
-            mainnet: _currentAccount.data.balance.mainnet,
+            mainnet: _currentAccount ? _currentAccount.data.balance.mainnet : 0,
             testnet: _data.balance
           }
+    )
     return _data
   }
 
@@ -184,21 +177,10 @@ class AccountDataController {
     return [...validated, ...notValidatedCorrect]
   }
 
-  updateAccountTransactionsPersistence(_account, _transactions) {
-    for (let tx of _transactions) {
-      for (let tx2 of _account.transactions) {
-        if (tx.bundle === tx2.bundle && tx.status !== tx2.status) {
-          tx2.status = tx.status
-        }
-      }
-    }
-    return _account
-  }
-
   getTransactionsJustConfirmed(_account, _transactions) {
     const transactionsJustConfirmed = []
     for (let tx of _transactions) {
-      for (let tx2 of _account.transactions) {
+      for (let tx2 of _account.data.transactions) {
         if (
           tx.bundle === tx2.bundle &&
           tx.status !== tx2.status &&
@@ -209,22 +191,6 @@ class AccountDataController {
       }
     }
     return transactionsJustConfirmed
-  }
-
-  getNewTransactionsFromAll(_account, _transactions) {
-    const newTxs = []
-    for (let txToCheck of _transactions) {
-      let isNew = true
-      for (let tx of _account.transactions) {
-        if (tx.bundle === txToCheck.bundle) {
-          isNew = false
-        }
-      }
-      if (isNew) {
-        newTxs.push(txToCheck)
-      }
-    }
-    return newTxs
   }
 
   setTransactionsReattach(_transactions) {
