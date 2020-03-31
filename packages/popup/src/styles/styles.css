@@ -27,8 +27,18 @@
 }
 
 .app.chrome{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
     width: 380px;
     height: 600px;
+}
+
+@media screen and (min-width: 381px) {
+    .app.chrome {
+      box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+      margin-top: 10px;
+    }
 }
 
 /*CONTAINERS*/
@@ -155,6 +165,16 @@
     margin-right: 5px;
     animation-name: accounts-selection-appear;
     animation-duration: 0.3s;
+}
+
+.container-loader {
+    background: #fff;
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    margin: 0 -50% 0 0;
+    -webkit-transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);
 }
 
 @keyframes accounts-selection-appear {
@@ -525,43 +545,7 @@ input#inp-edit {
     background-color: gray;
 }
 
-/*LOADER*/
-.lds-ring {
-    display: inline-block;
-    position: relative;
-    width: 64px;
-    height: 64px;
-}
-.lds-ring div {
-    box-sizing: border-box;
-    display: block;
-    position: absolute;
-    width: 80px;
-    height: 80px;
-    margin: 6px;
-    border: 6px solid darkblue;
-    border-radius: 50%;
-    animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-    border-color: darkblue transparent transparent transparent;
-}
-.lds-ring div:nth-child(1) {
-    animation-delay: -0.45s;
-}
-.lds-ring div:nth-child(2) {
-    animation-delay: -0.3s;
-}
-.lds-ring div:nth-child(3) {
-    animation-delay: -0.15s;
-}
-@keyframes lds-ring {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-}
-
+/* SPINNER */
 .spinner {
     display: inline-block;
     position: relative;
@@ -571,8 +555,8 @@ input#inp-edit {
 }
 
 .spinner.big {
-    width: 50px;
-    height: 50px;
+    width: 45px;
+    height: 45px;
 }
 
 .spinner.medium {
@@ -593,9 +577,14 @@ input#inp-edit {
 }
 
 .spinner.big div {
-    width: 50px;
-    height: 50px;
+    width: 45px;
+    height: 45px;
+    border: 5px solid darkblue;
+    border-radius: 50%;
+    animation: spinner 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    border-color: darkblue transparent transparent transparent;
 }
+
 .spinner.medium div {
     width: 30px;
     height: 30px;

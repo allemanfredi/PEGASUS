@@ -1,22 +1,27 @@
-import React, { Component } from 'react'
+import React from 'react'
+import Spinner from '../spinner/Spinner'
 
-export default class Loader extends Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {}
-  }
-
-  render() {
-    return (
-      <div className="container-center-absolute">
-        <div className="lds-ring">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
+const Loader = props => {
+  return (
+    <div className="container">
+      <div className="row mt-8">
+        <div className="col-12 text-center">
+          <img
+            className="border-radius-50"
+            src="./material/logo/pegasus-256.png"
+            height="130"
+            width="130"
+            alt="pegasus logo"
+          />
         </div>
       </div>
-    )
-  }
+      <div className="row mt-3">
+        <div className="col-12 mt-4 text-center">
+          <Spinner size="big"/>
+        </div>
+      </div>
+    </div>
+  )
 }
+
+export default Loader
