@@ -3,13 +3,13 @@
   "main": "index.js",
   "author": "allemanfredi <alle.manfredi@gmail.com>",
   "private": true,
-  "version": "0.7.1",
+  "version": "0.7.2",
   "scripts": {
     "build": "webpack --config ../../webpack.config.js --colors -o ../../dist/injection.js",
     "lint": "npx eslint . --fix"
   },
   "dependencies": {
-    "@pegasus/utils": "^0.7.1",
+    "@pegasus/utils": "^0.7.2",
     "extension-port-stream": "^1.0.0",
     "extensionizer": "^1.0.1",
     "obj-multiplex": "^1.0.0",
