@@ -89,7 +89,13 @@ class AccountDataController {
 
     delete data.transfers
     delete data.inputs
-    data.transactions = [...transactions, ..._currentAccount.data.transactions]
+
+    const mixedTransactions = [...transactions, ..._currentAccount.data.transactions]
+    data.transactions = mixedTransactions.filter((transaction, index) => {
+      return index === mixedTransactions.findIndex(obj => {
+        return obj.bundle === transaction.bundle && obj.timestamp === transaction.timestamp
+      })
+    })
 
     return data
   }
