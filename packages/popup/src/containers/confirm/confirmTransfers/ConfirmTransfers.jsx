@@ -63,7 +63,7 @@ class ConfirmTransfers extends Component {
           })}
         </div>
         {this.props.error ? (
-          <div className="row mt-2">
+          <div className="row mt-4">
             <div className="col-12 text-xs">
               <div class="alert alert-danger" role="alert">
                 {this.props.error}
@@ -73,9 +73,9 @@ class ConfirmTransfers extends Component {
         ) : (
           ''
         )}
-        <hr className="mt-1 mb-1" />
-        <div className={this.props.error ? 'row mt-4' : 'row mt-13'}>
-          <div className="col-6 pr-5 pl-5">
+        <hr className={this.props.error ? 'row' : 'row mt-10 mb-1'} />
+        <div className={'row mt-2'}>
+          <div className="col-6 pr-2">
             <button
               onClick={() => this.props.onReject(this.props.transfer)}
               className="btn btn-border-blue text-sm text-bold btn-big"
@@ -83,7 +83,7 @@ class ConfirmTransfers extends Component {
               Reject
             </button>
           </div>
-          <div className="col-6 pr-5 pl-5">
+          <div className="col-6 pl-2">
             <button
               onClick={() => this.props.onConfirm(this.props.transfer)}
               className="btn btn-blue text-sm text-bold btn-big"

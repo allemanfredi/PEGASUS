@@ -280,7 +280,6 @@ class CustomizatorController {
 
       this.removeRequest(request)
     })
-    this.requests = []
     this.popupController.closePopup()
     this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
   }

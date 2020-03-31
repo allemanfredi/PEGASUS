@@ -386,6 +386,7 @@ class PegasusEngine {
     extensionizer.browserAction.setBadgeText({
       text: sum ? sum.toString() : ''
     })
+    extensionizer.browserAction.setBadgeBackgroundColor({ color: 'darkblue' })
   }
 }
 

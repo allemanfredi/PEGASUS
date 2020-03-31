@@ -3,6 +3,7 @@ import ConfirmTransfers from './confirmTransfers/ConfirmTransfers'
 import ConfirmCreateMamChannel from './confirmCreateMamChannel/ConfirmCreateMamChannel'
 import ConfirmChangeModeMamChannel from './confirmChangeModeMamChannel/ConfirmChangeModeMamChannel'
 import Loader from '../../components/loader/Loader'
+import RequestsCounter from './requestsCounter/RequestsCounter'
 import { APP_STATE } from '@pegasus/utils/states'
 
 class ConfirmRequest extends Component {
@@ -63,8 +64,8 @@ class ConfirmRequest extends Component {
     await this.props.background.rejectRequest(request)
   }
 
-  rejectAll() {
-    this.props.background.rejectRequests()
+  async rejectAll() {
+    await this.props.background.rejectRequests()
   }
 
   render() {
@@ -74,34 +75,43 @@ class ConfirmRequest extends Component {
       switch (request.method) {
         case 'prepareTransfers':
           return (
-            <ConfirmTransfers
-              isLoading={this.state.isLoading}
-              error={this.state.error}
-              transfer={request}
-              background={this.props.background}
-              onConfirm={this.confirm}
-              onReject={this.reject}
-            />
+            <React.Fragment>
+              <ConfirmTransfers
+                isLoading={this.state.isLoading}
+                error={this.state.error}
+                transfer={request}
+                background={this.props.background}
+                onConfirm={this.confirm}
+                onReject={this.reject}
+              />
+               <RequestsCounter requests={this.state.requests}/>
+            </React.Fragment>
           )
 
         case 'mam_init':
           return (
-            <ConfirmCreateMamChannel
-              request={request}
-              onConfirm={this.confirm}
-              onReject={this.reject}
-            />
+            <React.Fragment>
+              <ConfirmCreateMamChannel
+                request={request}
+                onConfirm={this.confirm}
+                onReject={this.reject}
+              />
+              <RequestsCounter requests={this.state.requests}/>
+            </React.Fragment>
           )
         case 'mam_changeMode':
           return (
-            <ConfirmChangeModeMamChannel
-              from={request.args[0].channel.mode}
-              to={request.args[1]}
-              sidekey={request.args[2] ? request.args[2] : null}
-              request={request}
-              onConfirm={this.confirm}
-              onReject={this.reject}
-            />
+            <React.Fragment>
+              <ConfirmChangeModeMamChannel
+                from={request.args[0].channel.mode}
+                to={request.args[1]}
+                sidekey={request.args[2] ? request.args[2] : null}
+                request={request}
+                onConfirm={this.confirm}
+                onReject={this.reject}
+              />
+               <RequestsCounter requests={this.state.requests}/>
+            </React.Fragment>
           )
         default:
           return null

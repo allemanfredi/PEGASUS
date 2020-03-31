@@ -68,8 +68,8 @@ class ConfirmChangeModeMamChannel extends Component {
 
         <hr className="mt-3 mb-2" />
 
-        <div className="row mt-5">
-          <div className="col-6 pl-5 pr-5">
+        <div className="row mt-3">
+          <div className="col-6 pr-2">
             <button
               onClick={() => this.props.onReject(this.props.request)}
               className="btn btn-border-blue text-sm text-bold btn-big"
@@ -77,7 +77,7 @@ class ConfirmChangeModeMamChannel extends Component {
               Reject
             </button>
           </div>
-          <div className="col-6 pl-5 pr-5">
+          <div className="col-6 pl-2">
             <button
               onClick={() => this.props.onConfirm(this.props.request)}
               className="btn btn-blue text-sm text-bold btn-big"
