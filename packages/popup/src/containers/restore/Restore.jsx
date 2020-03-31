@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import Loader from '../../components/loader/Loader'
 import Utils from '@pegasus/utils/utils'
-import { composeAPI } from '@iota/core'
 
 class Restore extends Component {
   constructor(props, context) {

@@ -145,6 +145,7 @@ export default class Navbar extends Component {
                       : ''
                   }
                   target="_blank"
+                  rel="noopener noreferrer"
                 >
                   View on explorer
                 </a>

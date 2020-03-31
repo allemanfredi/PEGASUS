@@ -1,7 +1,5 @@
 import { composeAPI } from '@iota/core'
 import { APP_STATE } from '@pegasus/utils/states'
-
-import extensionizer from 'extensionizer'
 import logger from '@pegasus/utils/logger'
 
 const requestsWithUserInteraction = [
@@ -17,7 +15,8 @@ class CustomizatorController {
       walletController,
       popupController,
       networkController,
-      mamController
+      mamController,
+      updateBadge
     } = options
 
     this.connectorController = connectorController
@@ -25,6 +24,8 @@ class CustomizatorController {
     this.popupController = popupController
     this.networkController = networkController
     this.mamController = mamController
+    
+    this.updateBadge = updateBadge
 
     this.requests = []
   }
@@ -49,8 +50,13 @@ class CustomizatorController {
     return this.requests
   }
 
-  getExecutableRequests() {
-    return this.requests.filter(request => request.connection.enabled)
+  getExecutableRequests(_origin, _tabId) {
+    return this.requests.filter(
+      request =>
+        request.connection.enabled &&
+        request.connection.website.origin === _origin &&
+        request.connection.website.tabId === _tabId
+    )
   }
 
   async pushRequest(_request) {
@@ -75,7 +81,7 @@ class CustomizatorController {
     }
 
     if (!connection.requestToConnect && !connection.enabled) {
-      this.connectorController.setConnectionRequest(
+      this.connectorController.pushConnectionRequest(
         Object.assign({}, connection, {
           requestToConnect: true
         })
@@ -116,9 +122,7 @@ class CustomizatorController {
         this.walletController.setState(APP_STATE.WALLET_LOCKED)
       }
 
-      extensionizer.browserAction.setBadgeText({
-        text: this.requests.length.toString()
-      })
+      this.updateBadge()
     } else if (connection.enabled && state >= APP_STATE.WALLET_UNLOCKED) {
       if (requestsWithUserInteraction.includes(method)) {
         logger.log(
@@ -138,11 +142,7 @@ class CustomizatorController {
         ]
         this.popupController.openPopup()
 
-        extensionizer.browserAction.setBadgeText({
-          text: this.requests.length.toString()
-        })
-
-        //this.setRequests(this.requests)
+        this.updateBadge()
       } else {
         const res = await this.execute(_request)
 
@@ -379,9 +379,7 @@ class CustomizatorController {
       request => request.uuid !== _request.uuid
     )
 
-    extensionizer.browserAction.setBadgeText({
-      text: this.requests.length !== 0 ? this.requests.length.toString() : ''
-    })
+    this.updateBadge()
   }
 }
 

@@ -1,12 +1,17 @@
 import { APP_STATE } from '@pegasus/utils/states'
 import logger from '@pegasus/utils/logger'
+import { normalizeConnectionRequests } from '../lib/connection-requests'
 
 class ConnectorController {
   constructor(configs) {
-    const { popupController } = configs
+    const { popupController, stateStorageController, updateBadge } = configs
 
     this.popupController = popupController
+    this.stateStorageController = stateStorageController
     this.connections = {}
+    this.connectionRequests = {}
+
+    this.updateBadge = updateBadge
   }
 
   setWalletController(_walletController) {
@@ -21,42 +26,56 @@ class ConnectorController {
     this.customizatorController = _customizatorController
   }
 
-  getConnection(_origin) {
-    return this.connections[_origin]
-  }
-
-  async pushConnection(_connection) {
-    this.connections[_connection.website.origin] = _connection
-  }
-
-  setConnectionRequest(_connection) {
-    this.connectionRequest = _connection
-    this.walletController.setState(
-      APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
-    )
-  }
-
-  getConnectionRequest() {
-    return this.connectionRequest
-  }
-
   isConnected(_origin) {
     return this.connections[_origin] && this.connections[_origin].enabled
       ? true
       : false
   }
 
+  pushConnectionRequest(_connection) {
+    if (!this.connectionRequests[_connection.website.origin]) {
+      this.connectionRequests[_connection.website.origin] = {}
+    }
+
+    this.connectionRequests[_connection.website.origin][_connection.website.tabId] = _connection
+
+    this.stateStorageController.set(
+      'connectionRequests',
+      normalizeConnectionRequests(this.connectionRequests)
+    )
+
+    this.updateBadge()
+
+    this.walletController.setState(
+      APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
+    )
+  }
+
+  removeConnectionRequest(_origin, _tabId) {
+    delete this.connectionRequests[_origin][_tabId]
+
+    if (Object.values(this.connectionRequests[_origin]).length === 0)
+      delete this.connectionRequests[_origin]
+
+    this.updateBadge()
+    this.stateStorageController.set('connectionRequests', normalizeConnectionRequests(this.connectionRequests))
+  }
+
+  getConnectionRequests() {
+    return normalizeConnectionRequests(this.connectionRequests)
+  }
+
   connect(_uuid, _push, _website) {
-    this.connectionRequest = {
+    this.pushConnectionRequest({
       website: _website,
       requestToConnect: true,
       enabled: false,
       push: _push,
       uuid: _uuid
-    }
+    })
 
     logger.log(
-      `(ConnectorController) New _connect request with ${this.connectionRequest.website.origin}`
+      `(ConnectorController) New _connect request with ${_website.origin}`
     )
 
     this.walletController.setState(
@@ -66,53 +85,56 @@ class ConnectorController {
     this.popupController.openPopup()
   }
 
-  completeConnection() {
+  completeConnectionRequest(_origin, _tabId) {
     const requests = this.customizatorController.getRequests()
 
     logger.log(
-      `(ConnectorController) Completing connection with ${this.connectionRequest.website.origin}`
+      `(ConnectorController) Completing connection with ${_origin} - ${_tabId}`
     )
 
-    if (this.connectionRequest.push) {
-      this.connectionRequest.push({
+    if (this.connectionRequests[_origin][_tabId].push) {
+      this.connectionRequests[_origin][_tabId].push({
         response: true,
         success: true,
-        uuid: this.connectionRequest.uuid
+        uuid: this.connectionRequests[_origin][_tabId].uuid
       })
     }
 
-    this.connections[this.connectionRequest.website.origin] = Object.assign(
+    this.connections[_origin] = Object.assign(
       {},
-      this.connectionRequest,
+      this.connectionRequests[_origin][_tabId],
       {
         enabled: true
       }
     )
+
+    // NOTE: connections enabling checks refer only to origin
+    delete this.connections[_origin].tabId
 
     const requestWithUserInteraction = requests.filter(
       request => request.needUserInteraction
     )
 
     requests.forEach(request => {
-      if (
-        request.connection.website.origin ===
-        this.connectionRequest.website.origin
-      ) {
+      if (request.connection.website.origin === _origin) {
         request.connection.requestToConnect = false
         request.connection.enabled = true
 
-        //execute only request without user interaction
         if (!request.needUserInteraction)
           this.customizatorController.executeRequest(request)
       }
     })
 
-    if (requestWithUserInteraction.length === 0)
+
+    this.removeConnectionRequest(_origin, _tabId)
+
+    if (
+      requestWithUserInteraction.length === 0 &&
+      Object.values(this.connectionRequests).length === 0
+    ) {
       this.popupController.closePopup()
-
-    this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
-
-    this.connectionRequest = null
+      this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
+    }
 
     const account = this.walletController.getCurrentAccount()
     this.walletController.emit('accountChanged', account.data.latestAddress)
@@ -120,37 +142,33 @@ class ConnectorController {
     return true
   }
 
-  rejectConnection() {
+  rejectConnectionRequest(_origin, _tabId) {
     const requests = this.customizatorController.getRequests()
 
-    logger.log(
-      `(ConnectorController) Rejecting connection with ${this.connectionRequest.website.origin}`
-    )
+    logger.log(`(ConnectorController) Rejecting connection with ${_origin}`)
 
-    if (this.connectionRequest.push) {
-      this.connectionRequest.push({
+    // NOTE: if it's a connect request from tab
+    if (this.connectionRequests[_origin][_tabId].push) {
+      this.connectionRequests[_origin][_tabId].push({
         response: false,
         success: true,
-        uuid: this.connectionRequest.uuid
+        uuid: this.connectionRequests[_origin][_tabId].uuid
       })
     }
 
-    this.removeConnection(this.connectionRequest.website.origin)
-
-    this.popupController.closePopup()
-
     requests.forEach(request => {
-      if (
-        request.connection.website.origin ===
-        this.connectionRequest.website.origin
-      ) {
+      if (request.connection.website.origin === _origin) {
         this.customizatorController.removeRequest(request)
       }
     })
 
-    this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
+    this.removeConnectionRequest(_origin, _tabId)
+    this.removeConnection(_origin)
 
-    this.connectionRequest = null
+    if (Object.values(this.connectionRequests).length === 0) {
+      this.popupController.closePopup()
+      this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
+    }
 
     return true
   }
@@ -188,6 +206,10 @@ class ConnectorController {
 
   getConnections() {
     return this.connections
+  }
+
+  getConnection(_origin) {
+    return this.connections[_origin]
   }
 
   removeConnection(_origin) {

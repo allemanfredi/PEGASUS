@@ -20,6 +20,7 @@ import { composeAPI } from '@iota/core'
 import Dnode from 'dnode/browser'
 import nodeify from 'nodeify'
 import { mapStateForPopup } from './lib/global-state-mapper'
+import extensionizer from 'extensionizer'
 import {
   MAM_REQUESTS,
   FORBIDDEN_REQUESTS,
@@ -36,7 +37,9 @@ class PegasusEngine {
     this.notificationsController = new NotificationsController()
 
     this.connectorController = new ConnectorController({
-      popupController: this.popupController
+      stateStorageController: this.stateStorageController,
+      popupController: this.popupController,
+      updateBadge: this.updateBadge.bind(this)
     })
 
     this.mamController = new MamController({
@@ -46,9 +49,8 @@ class PegasusEngine {
     this.customizatorController = new CustomizatorController({
       popupController: this.popupController,
       connectorController: this.connectorController,
-      walletController: null, //DEFINED BELOW
-      networkController: null, //DEFINED BELOW
-      mamController: this.mamController
+      mamController: this.mamController,
+      updateBadge: this.updateBadge.bind(this)
     })
 
     this.networkController = new NetworkController({
@@ -141,7 +143,8 @@ class PegasusEngine {
       origin: url.origin,
       hostname: url.hostname,
       title: sender.tab.title,
-      favicon: sender.tab.favIconUrl
+      favicon: sender.tab.favIconUrl,
+      tabId: sender.tab.id
     }
 
     const inpageClientStream = createEngineStream(this, website)
@@ -177,8 +180,6 @@ class PegasusEngine {
       const { sendUpdate } = remote
 
       this.stateStorageController.state$.subscribe(_state => {
-        //console.log(_state)
-
         //remove seed before sending
         sendUpdate(mapStateForPopup(_state))
       })
@@ -282,8 +283,8 @@ class PegasusEngine {
       executeRequest: (request, cb) =>
         nodeify(this.customizatorController.executeRequest(request), cb),
       getRequests: cb => cb(this.customizatorController.getRequests()),
-      getExecutableRequests: cb =>
-        cb(this.customizatorController.getExecutableRequests()),
+      getExecutableRequests: (origin, tabId, cb) =>
+        cb(this.customizatorController.getExecutableRequests(origin, tabId)),
       rejectRequest: (request, cb) =>
         cb(this.customizatorController.rejectRequest(request)),
       rejectRequests: cb => cb(this.customizatorController.rejectRequests()),
@@ -291,18 +292,17 @@ class PegasusEngine {
         nodeify(this.customizatorController.confirmRequest(request), cb),
 
       //connector controller
-      pushConnection: (connection, cb) =>
-        cb(this.connectorController.pushConnection(connection)),
-      completeConnection: cb =>
-        cb(this.connectorController.completeConnection()),
-      rejectConnection: cb => cb(this.connectorController.rejectConnection()),
+      completeConnectionRequest: (origin, tabId, cb) =>
+        cb(this.connectorController.completeConnectionRequest(origin, tabId)),
+      rejectConnectionRequest: (origin, tabId, cb) =>
+        cb(this.connectorController.rejectConnectionRequest(origin, tabId)),
       getConnections: cb => cb(this.connectorController.getConnections()),
       removeConnection: (origin, cb) =>
         cb(this.connectorController.removeConnection(origin)),
       addConnection: (connection, cb) =>
         cb(this.connectorController.addConnection(connection)),
-      getConnectionRequest: cb =>
-        cb(this.connectorController.getConnectionRequest()),
+      getConnectionRequests: cb =>
+        cb(this.connectorController.getConnectionRequests()),
 
       //seed vault controller
       createSeedVault: (loginPassword, encryptionPassword, cb) =>
@@ -371,6 +371,20 @@ class PegasusEngine {
         response: account.data.latestAddress
       })
     }
+  }
+
+  /**
+   * function for updating the number of requests from tabs
+   */
+  updateBadge() {
+    const connectionRequests = this.connectorController.getConnectionRequests()
+    const requests = this.customizatorController.getRequests()
+
+    const sum = connectionRequests.length + requests.length
+
+    extensionizer.browserAction.setBadgeText({
+      text: sum ? sum.toString() : ''
+    })
   }
 }
 

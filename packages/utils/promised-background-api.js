@@ -210,9 +210,9 @@ const buildPromisedBackgroundApi = _backgroundConnection => {
         )
       ),
 
-    getExecutableRequests: () =>
+    getExecutableRequests: (origin, tabId) =>
       new Promise((resolve, reject) =>
-        _backgroundConnection.getExecutableRequests((res, err) =>
+        _backgroundConnection.getExecutableRequests(origin, tabId, (res, err) =>
           err ? reject(err) : resolve(res)
         )
       ),
@@ -285,23 +285,16 @@ const buildPromisedBackgroundApi = _backgroundConnection => {
         )
       ),
 
-    pushConnection: connection =>
+    completeConnectionRequest: (origin, tabId) =>
       new Promise((resolve, reject) =>
-        _backgroundConnection.pushConnection(connection, (res, err) =>
+        _backgroundConnection.completeConnectionRequest(origin, tabId, (res, err) =>
           err ? reject(err) : resolve(res)
         )
       ),
 
-    completeConnection: () =>
+    rejectConnectionRequest: (origin, tabId) =>
       new Promise((resolve, reject) =>
-        _backgroundConnection.completeConnection((res, err) =>
-          err ? reject(err) : resolve(res)
-        )
-      ),
-
-    rejectConnection: () =>
-      new Promise((resolve, reject) =>
-        _backgroundConnection.rejectConnection((res, err) =>
+        _backgroundConnection.rejectConnectionRequest(origin, tabId, (res, err) =>
           err ? reject(err) : resolve(res)
         )
       ),
@@ -327,9 +320,9 @@ const buildPromisedBackgroundApi = _backgroundConnection => {
         )
       ),
 
-    getConnectionRequest: () =>
+    getConnectionRequests: () =>
       new Promise((resolve, reject) =>
-        _backgroundConnection.getConnectionRequest((res, err) =>
+        _backgroundConnection.getConnectionRequests((res, err) =>
           err ? reject(err) : resolve(res)
         )
       )
