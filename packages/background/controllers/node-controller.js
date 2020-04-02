@@ -21,9 +21,9 @@ class NodeController {
 
   // NOTE following fx handles request from popup
   execute(_method, _args) {
-    switch(_method) {
+    switch (_method) {
       case 'transfer': {
-        return this.transfer(..._args) 
+        return this.transfer(..._args)
       }
       case 'prepareTransfers': {
         return this.prepareTransfers(..._args)
@@ -61,18 +61,19 @@ class NodeController {
     return this.getNodeApi().prepareTransfers(seed, transfersCopy, _options)
   }
 
-
   async transfer(_transfers, _options = []) {
     const network = this.networkController.getCurrentNetwork()
     const depth = 3
     const minWeightMagnitude = network.difficulty
 
     const trytes = await this.prepareTransfers(_transfers, _options)
-    const bundle = await this.getNodeApi().sendTrytes(trytes, depth, minWeightMagnitude)
-
-    logger.log(
-      `(NodeController) Transfer success : ${bundle[0].bundle}`
+    const bundle = await this.getNodeApi().sendTrytes(
+      trytes,
+      depth,
+      minWeightMagnitude
     )
+
+    logger.log(`(NodeController) Transfer success : ${bundle[0].bundle}`)
 
     return bundle
   }

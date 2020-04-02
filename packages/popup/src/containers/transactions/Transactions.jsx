@@ -28,18 +28,14 @@ class Transactions extends Component {
   }
 
   async promoteTransaction(hash) {
-
-    const {
-      success,
-      response
-    } = await this.props.background.executeRequest({
+    const { success, response } = await this.props.background.executeRequest({
       method: 'promoteTransaction',
       args: [hash, 3, 14],
       connection: {
         enabled: true
       }
     })
-    
+
     if (success) {
       this.props.setNotification({
         type: 'success',
@@ -56,10 +52,7 @@ class Transactions extends Component {
   }
 
   async replayBundle(hash) {
-    const {
-      success,
-      response
-    } = await this.props.background.executeRequest({
+    const { success, response } = await this.props.background.executeRequest({
       method: 'replayBundle',
       args: [hash, 3, 14],
       connection: {
@@ -169,8 +162,7 @@ class Transactions extends Component {
           {this.props.account.data.transactions.length > 0 ? (
             this.props.account.data.transactions
               .filter(
-                transaction =>
-                  transaction.network === this.props.network.type
+                transaction => transaction.network === this.props.network.type
               )
               .filter(transaction =>
                 this.state.settings.filters.hidePendingTxs

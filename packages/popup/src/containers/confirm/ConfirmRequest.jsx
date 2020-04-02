@@ -90,20 +90,20 @@ class ConfirmRequest extends Component {
           )
 
         case 'prepareTransfers':
-            return (
-              <React.Fragment>
-                <ConfirmTransfers
-                  title="Prepare Transfers"
-                  isLoading={this.state.isLoading}
-                  error={this.state.error}
-                  transfer={request}
-                  background={this.props.background}
-                  onConfirm={this.confirm}
-                  onReject={this.reject}
-                />
-                <RequestsCounter requests={this.state.requests} />
-              </React.Fragment>
-            )
+          return (
+            <React.Fragment>
+              <ConfirmTransfers
+                title="Prepare Transfers"
+                isLoading={this.state.isLoading}
+                error={this.state.error}
+                transfer={request}
+                background={this.props.background}
+                onConfirm={this.confirm}
+                onReject={this.reject}
+              />
+              <RequestsCounter requests={this.state.requests} />
+            </React.Fragment>
+          )
 
         case 'mam_init':
           return (

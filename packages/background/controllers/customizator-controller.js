@@ -290,14 +290,15 @@ class CustomizatorController {
     const iota = composeAPI()
     if (iota[method] || method === 'transfer') {
       return new Promise(resolve => {
-        this.nodeController.execute(method, args)
+        this.nodeController
+          .execute(method, args)
           .then(response =>
             resolve({
               response,
               success: true
             })
           )
-          .catch(err => 
+          .catch(err =>
             resolve({
               response: err.message,
               success: false
