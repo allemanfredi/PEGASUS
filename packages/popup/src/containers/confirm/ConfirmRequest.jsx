@@ -73,10 +73,11 @@ class ConfirmRequest extends Component {
 
     if (request) {
       switch (request.method) {
-        case 'prepareTransfers':
+        case 'transfer':
           return (
             <React.Fragment>
               <ConfirmTransfers
+                title="Confirm Transfer"
                 isLoading={this.state.isLoading}
                 error={this.state.error}
                 transfer={request}
@@ -87,6 +88,22 @@ class ConfirmRequest extends Component {
               <RequestsCounter requests={this.state.requests} />
             </React.Fragment>
           )
+
+        case 'prepareTransfers':
+            return (
+              <React.Fragment>
+                <ConfirmTransfers
+                  title="Prepare Transfers"
+                  isLoading={this.state.isLoading}
+                  error={this.state.error}
+                  transfer={request}
+                  background={this.props.background}
+                  onConfirm={this.confirm}
+                  onReject={this.reject}
+                />
+                <RequestsCounter requests={this.state.requests} />
+              </React.Fragment>
+            )
 
         case 'mam_init':
           return (

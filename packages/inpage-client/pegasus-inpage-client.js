@@ -156,6 +156,7 @@ class PegasusInpageClient extends EventEmitter {
 
     const additionalMethods = [
       'connect',
+      'transfer',
       'getCurrentAccount',
       'getCurrentProvider'
     ]

@@ -87,7 +87,7 @@ class AccountDataController {
       logger.log(`(AccountDataController) Loading account data terminated`)
     } catch (err) {
       logger.error(
-        `(AccountDataController) Error during loading account data: ${err.message}`
+        `(AccountDataController) Error during loading account data: ${err}`
       )
     }
     return true

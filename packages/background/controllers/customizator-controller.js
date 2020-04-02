@@ -5,7 +5,9 @@ import logger from '@pegasus/utils/logger'
 const requestsWithUserInteraction = [
   'mam_init',
   'mam_changeMode',
-  'prepareTransfers'
+  'prepareTransfers',
+  'sendTrytes',
+  'transfer'
 ]
 
 class CustomizatorController {
@@ -281,24 +283,23 @@ class CustomizatorController {
     this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
   }
 
-  async execute(_request) {
+  execute(_request) {
     const { method, args } = _request
 
-    const network = this.networkController.getCurrentNetwork()
-    const iota = composeAPI({ provider: network.provider })
-
-    if (method !== 'prepareTransfers' && iota[method]) {
+    // NOTE: if it's a request handling by the nodeController
+    const iota = composeAPI()
+    if (iota[method] || method === 'transfer') {
       return new Promise(resolve => {
-        iota[method](...args)
+        this.nodeController.execute(method, args)
           .then(response =>
             resolve({
               response,
               success: true
             })
           )
-          .catch(err =>
+          .catch(err => 
             resolve({
-              response: err,
+              response: err.message,
               success: false
             })
           )
@@ -306,9 +307,6 @@ class CustomizatorController {
     }
 
     switch (method) {
-      case 'prepareTransfers': {
-        return this.nodeController.confirmTransfers(...args)
-      }
       case 'getCurrentAccount': {
         const account = this.walletController.getCurrentAccount()
         return new Promise(resolve =>

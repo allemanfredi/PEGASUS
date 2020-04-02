@@ -67,7 +67,7 @@ class Send extends Component {
     this.setState({
       needConfirmation: true,
       transfer: {
-        method: 'prepareTransfers',
+        method: 'transfer',
         args: [transfer],
         connection: {
           enabled: true

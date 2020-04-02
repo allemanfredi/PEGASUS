@@ -3,7 +3,6 @@ import Utils from '@pegasus/utils/utils'
 import Details from './details/Details'
 import Spinner from '../../components/spinner/Spinner'
 import Filters from './filters/Filters'
-import { composeAPI } from '@iota/core'
 
 class Transactions extends Component {
   constructor(props, context) {
@@ -29,39 +28,55 @@ class Transactions extends Component {
   }
 
   async promoteTransaction(hash) {
-    try {
-      const network = await this.props.background.getCurrentNetwork()
-      const iota = composeAPI({ provider: network.provider })
-      await iota.promoteTransaction(hash, 3, 14)
 
+    const {
+      success,
+      response
+    } = await this.props.background.executeRequest({
+      method: 'promoteTransaction',
+      args: [hash, 3, 14],
+      connection: {
+        enabled: true
+      }
+    })
+    
+    if (success) {
       this.props.setNotification({
         type: 'success',
         text: 'Transaction promoted succesfully!',
         position: 'under-bar'
       })
-    } catch (err) {
+    } else {
       this.props.setNotification({
         type: 'danger',
-        text: err.message,
+        text: response,
         position: 'under-bar'
       })
     }
   }
 
   async replayBundle(hash) {
-    try {
-      const network = await this.props.background.getCurrentNetwork()
-      const iota = composeAPI({ provider: network.provider })
-      await iota.replayBundle(hash, 3, 14)
+    const {
+      success,
+      response
+    } = await this.props.background.executeRequest({
+      method: 'replayBundle',
+      args: [hash, 3, 14],
+      connection: {
+        enabled: true
+      }
+    })
+
+    if (success) {
       this.props.setNotification({
         type: 'success',
         text: 'Transaction reattached succesfully!',
         position: 'under-bar'
       })
-    } catch (err) {
+    } else {
       this.props.setNotification({
         type: 'danger',
-        text: err.message,
+        text: response,
         position: 'under-bar'
       })
     }
@@ -155,7 +170,7 @@ class Transactions extends Component {
             this.props.account.data.transactions
               .filter(
                 transaction =>
-                  transaction.network.type === this.props.network.type
+                  transaction.network === this.props.network.type
               )
               .filter(transaction =>
                 this.state.settings.filters.hidePendingTxs

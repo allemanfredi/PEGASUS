@@ -46,7 +46,7 @@ const mapTransactions = (_data, _network) => {
       status: transfer[0].persistence,
       bundle: transfer[0].bundle,
       transfer,
-      network: _network,
+      network: _network.type,
       message
     }
 

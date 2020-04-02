@@ -19,6 +19,21 @@ class NodeController {
     this.provider = null
   }
 
+  // NOTE following fx handles request from popup
+  execute(_method, _args) {
+    switch(_method) {
+      case 'transfer': {
+        return this.transfer(..._args) 
+      }
+      case 'prepareTransfers': {
+        return this.prepareTransfers(..._args)
+      }
+      default: {
+        return this.getNodeApi()[_method](..._args)
+      }
+    }
+  }
+
   getNodeApi(_provider) {
     const network = this.networkController.getCurrentNetwork()
     if (!this.provider || network.provider !== this.provider) {
@@ -33,66 +48,33 @@ class NodeController {
     return this.getNodeApi().getAccountData(_seed, { start: 0, security: 2 })
   }
 
-  confirmTransfers(_transfers) {
-    return new Promise(resolve => {
-      const network = this.networkController.getCurrentNetwork()
+  prepareTransfers(_transfers, _options = []) {
+    const seed = this.walletController.getCurrentSeed()
 
-      const seed = this.walletController.getCurrentSeed()
-
-      const depth = 3
-      const minWeightMagnitude = network.difficulty
-
-      const transfersCopy = Utils.copyObject(_transfers)
-
-      transfersCopy.forEach(t => {
-        t.value = parseInt(t.value)
-        t.tag = asciiToTrytes(JSON.stringify(t.tag))
-        t.message = asciiToTrytes(JSON.stringify(t.message))
-      })
-
-      try {
-        this.getNodeApi()
-          .prepareTransfers(seed, transfersCopy)
-          .then(trytes => {
-            return this.getNodeApi().sendTrytes(
-              trytes,
-              depth,
-              minWeightMagnitude
-            )
-          })
-          .then(bundle => {
-            logger.log(
-              `(NodeController) Transfer success : ${bundle[0].bundle}`
-            )
-
-            resolve({
-              success: true,
-              response: bundle
-            })
-          })
-          .catch(error => {
-
-            resolve({
-              success: false,
-              response: error.message
-            })
-
-            logger.error(
-              `(NodeController) Error during account transfer : ${error}`
-            )
-          })
-      } catch (error) {
-        
-        resolve({
-          success: false,
-          response: error.message
-        })
-
-        logger.error(
-          `(NodeController) Error during account transfer : ${error}`
-        )
-      }
+    const transfersCopy = Utils.copyObject(_transfers)
+    transfersCopy.forEach(t => {
+      t.value = parseInt(t.value)
+      t.tag = asciiToTrytes(JSON.stringify(t.tag))
+      t.message = asciiToTrytes(JSON.stringify(t.message))
     })
+
+    return this.getNodeApi().prepareTransfers(seed, transfersCopy, _options)
+  }
+
+
+  async transfer(_transfers, _options = []) {
+    const network = this.networkController.getCurrentNetwork()
+    const depth = 3
+    const minWeightMagnitude = network.difficulty
+
+    const trytes = await this.prepareTransfers(_transfers, _options)
+    const bundle = await this.getNodeApi().sendTrytes(trytes, depth, minWeightMagnitude)
+
+    logger.log(
+      `(NodeController) Transfer success : ${bundle[0].bundle}`
+    )
+
+    return bundle
   }
 
   async promoteTransactions() {
@@ -100,7 +82,7 @@ class NodeController {
     const account = this.walletController.getCurrentAccount()
 
     const tails = account.transactions
-      .filter(transaction => transaction.network.type === network.type)
+      .filter(transaction => transaction.network === network.type)
       .map(transaction => transaction.transfer[0].hash)
 
     const states = await this.getNodeApi().getLatestInclusion(tails)

@@ -21,7 +21,7 @@ class ConfirmTransfers extends Component {
             />
           </div>
           <div className="col-10 text-right text-blue text-md">
-            Confirm Transfer
+            {this.props.title}
           </div>
         </div>
 
