@@ -71,23 +71,26 @@ class NodeController {
             })
           })
           .catch(error => {
-            logger.error(
-              `(NodeController) Account during account transfer : ${error}`
-            )
 
             resolve({
               success: false,
-              response: error
+              response: error.message
             })
+
+            logger.error(
+              `(NodeController) Error during account transfer : ${error}`
+            )
           })
       } catch (error) {
+        
+        resolve({
+          success: false,
+          response: error.message
+        })
+
         logger.error(
           `(NodeController) Error during account transfer : ${error}`
         )
-        resolve({
-          success: false,
-          response: error
-        })
       }
     })
   }

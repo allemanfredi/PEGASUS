@@ -227,9 +227,6 @@ class CustomizatorController {
     if (this.requests.length === 0) {
       this.popupController.closePopup()
       this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
-    } else {
-      //this.setRequests(this.requests)
-      //this.walletController.setState(APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION)
     }
 
     request.push({
