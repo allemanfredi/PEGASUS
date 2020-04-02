@@ -97,7 +97,7 @@ class PegasusEngine {
 
     this.customizatorController.setWalletController(this.walletController)
     this.customizatorController.setNetworkController(this.networkController)
-    this.customizatorController.setTransferController(this.transferController)
+    this.customizatorController.setNodeController(this.nodeController)
     this.mamController.setNetworkController(this.networkController)
     this.mamController.setWalletController(this.walletController)
     this.connectorController.setWalletController(this.walletController)

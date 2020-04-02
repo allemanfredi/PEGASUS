@@ -40,8 +40,8 @@ class CustomizatorController {
     this.networkController = _networkController
   }
 
-  setTransferController(_networkController) {
-    this.transferController = _networkController
+  setNodeController(_networkController) {
+    this.nodeController = _networkController
   }
 
   setRequests(_requests) {
@@ -310,7 +310,7 @@ class CustomizatorController {
 
     switch (method) {
       case 'prepareTransfers': {
-        return this.transferController.confirmTransfers(...args)
+        return this.nodeController.confirmTransfers(...args)
       }
       case 'getCurrentAccount': {
         const account = this.walletController.getCurrentAccount()
