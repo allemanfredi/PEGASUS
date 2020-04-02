@@ -9,9 +9,9 @@ import NetworkController from './controllers/network-controller'
 import WalletController from './controllers/wallet-controller'
 import SessionsController from './controllers/session-controller'
 import PopupController from './controllers/popup-controller'
-import TransferController from './controllers/transfer-controller'
 import SeedVaultController from './controllers/seed-vault-controller'
 import LoginPasswordController from './controllers/login-password-controller'
+import NodeController from './controllers/node-controller'
 import { APP_STATE } from '@pegasus/utils/states'
 import logger from '@pegasus/utils/logger'
 import pump from 'pump'
@@ -70,11 +70,17 @@ class PegasusEngine {
       loginPasswordController: this.loginPasswordController
     })
 
+    this.nodeController = new NodeController({
+      walletController: this.walletController,
+      networkController: this.networkController,
+      stateStorageController: this.stateStorageController
+    })
+
     this.accountDataController = new AccountDataController({
       networkController: this.networkController,
       walletController: this.walletController,
       notificationsController: this.notificationsController,
-      stateStorageController: this.stateStorageController
+      nodeController: this.nodeController
     })
 
     this.sessionController = new SessionsController({
@@ -82,13 +88,6 @@ class PegasusEngine {
       stateStorageController: this.stateStorageController,
       customizatorController: this.customizatorController,
       loginPasswordController: this.loginPasswordController
-    })
-
-    this.transferController = new TransferController({
-      connectorController: this.connectorController,
-      walletController: this.walletController,
-      popupController: this.popupController,
-      networkController: this.networkController
     })
 
     this.seedVaultController = new SeedVaultController({
@@ -229,6 +228,7 @@ class PegasusEngine {
    */
   getApi() {
     return {
+      // wallet controller
       initWallet: (password, account, cb) =>
         nodeify(this.walletController.initWallet(password, account), cb),
       lockWallet: cb => nodeify(this.walletController.lockWallet(), cb),
@@ -258,16 +258,16 @@ class PegasusEngine {
         cb(this.walletController.setPopupSettings(settings)),
       getPopupSettings: cb => cb(this.walletController.getPopupSettings()),
 
-      //login password controller
+      // login password controller
       comparePassword: (password, cb) =>
         nodeify(this.loginPasswordController.comparePassword(password), cb),
       isUnlocked: cb => cb(this.loginPasswordController.isUnlocked()),
 
-      //session controller
+      // session controller
       checkSession: cb => cb(this.sessionController.checkSession()),
       deleteSession: cb => cb(this.sessionController.deleteSession()),
 
-      //network controller
+      // network controller
       setCurrentNetwork: (network, cb) =>
         cb(this.networkController.setCurrentNetwork(network)),
       getCurrentNetwork: cb => cb(this.networkController.getCurrentNetwork()),
@@ -277,10 +277,10 @@ class PegasusEngine {
       deleteCurrentNetwork: cb =>
         cb(this.networkController.deleteCurrentNetwork()),
 
-      //popup controller
+      // popup controller
       closePopup: cb => cb(this.popupController.closePopup()),
 
-      //customizator controller
+      // customizator controller
       executeRequest: (request, cb) =>
         nodeify(this.customizatorController.executeRequest(request), cb),
       getRequests: cb => cb(this.customizatorController.getRequests()),
@@ -292,7 +292,7 @@ class PegasusEngine {
       confirmRequest: (request, cb) =>
         nodeify(this.customizatorController.confirmRequest(request), cb),
 
-      //connector controller
+      // connector controller
       completeConnectionRequest: (origin, tabId, cb) =>
         cb(this.connectorController.completeConnectionRequest(origin, tabId)),
       rejectConnectionRequest: (origin, tabId, cb) =>
@@ -305,7 +305,7 @@ class PegasusEngine {
       getConnectionRequests: cb =>
         cb(this.connectorController.getConnectionRequests()),
 
-      //seed vault controller
+      // seed vault controller
       createSeedVault: (loginPassword, encryptionPassword, cb) =>
         nodeify(
           this.seedVaultController.createSeedVault(
@@ -315,22 +315,22 @@ class PegasusEngine {
           cb
         ),
 
-      //mam controller
+      // mam controller
       fetchFromPopup: (options, cb) =>
         cb(this.mamController.fetchFromPopup(options)),
       getMamChannels: cb => cb(this.mamController.getMamChannels()),
       registerMamChannel: (channel, cb) =>
         cb(this.mamController.registerMamChannel(channel)),
 
-      //accountData controller
+      // accountData controller
       loadAccountData: cb =>
         nodeify(this.accountDataController.loadAccountData(), cb),
 
+      // node controller
       enableTransactionsAutoPromotion: (time, cb) =>
-        cb(this.accountDataController.enableTransactionsAutoPromotion(time)),
-
+        cb(this.nodeController.enableTransactionsAutoPromotion(time)),
       disableTransactionsAutoPromotion: cb =>
-        cb(this.accountDataController.disableTransactionsAutoPromotion())
+        cb(this.nodeController.disableTransactionsAutoPromotion())
     }
   }
 

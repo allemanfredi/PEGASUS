@@ -84,7 +84,7 @@ class ConfirmRequest extends Component {
                 onConfirm={this.confirm}
                 onReject={this.reject}
               />
-               <RequestsCounter requests={this.state.requests}/>
+              <RequestsCounter requests={this.state.requests} />
             </React.Fragment>
           )
 
@@ -96,7 +96,7 @@ class ConfirmRequest extends Component {
                 onConfirm={this.confirm}
                 onReject={this.reject}
               />
-              <RequestsCounter requests={this.state.requests}/>
+              <RequestsCounter requests={this.state.requests} />
             </React.Fragment>
           )
         case 'mam_changeMode':
@@ -110,7 +110,7 @@ class ConfirmRequest extends Component {
                 onConfirm={this.confirm}
                 onReject={this.reject}
               />
-               <RequestsCounter requests={this.state.requests}/>
+              <RequestsCounter requests={this.state.requests} />
             </React.Fragment>
           )
         default:

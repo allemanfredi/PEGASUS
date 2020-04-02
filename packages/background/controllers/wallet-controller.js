@@ -1,9 +1,9 @@
 import { APP_STATE, STATE_NAME } from '@pegasus/utils/states'
 import Utils from '@pegasus/utils/utils'
-import { composeAPI } from '@iota/core'
 import logger from '@pegasus/utils/logger'
 import options from '@pegasus/utils/options'
 import { EventEmitter } from 'eventemitter3'
+import { setTransactionsReattach } from '../lib/account-data'
 
 class WalletController extends EventEmitter {
   constructor(options) {
@@ -176,15 +176,13 @@ class WalletController extends EventEmitter {
     try {
       const accounts = this.stateStorageController.get('accounts')
 
-      const network = this.networkController.getCurrentNetwork()
       const seed = _account.seed.toString().replace(/,/g, '')
 
       // NOTE: transaction mapping
       const accountData = await this.accountDataController.retrieveAccountData(
-        seed,
-        network
+        seed
       )
-      const transactionsWithReattachSet = this.accountDataController.setTransactionsReattach(
+      const transactionsWithReattachSet = setTransactionsReattach(
         accountData.transactions
       )
       accountData.transactions = transactionsWithReattachSet
@@ -221,9 +219,7 @@ class WalletController extends EventEmitter {
 
       return true
     } catch (error) {
-      logger.error(
-        `(WalletController) Account during account creation: ${error}`
-      )
+      logger.error(`(WalletController) Error during account creation: ${error}`)
       return false
     }
   }
