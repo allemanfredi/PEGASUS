@@ -315,12 +315,12 @@ class WalletController extends EventEmitter {
     return accounts.all
   }
 
-  setPopupSettings(_settings) {
-    this.stateStorageController.set('popupSettings', _settings, true)
+  setSettings(_settings) {
+    this.stateStorageController.set('settings', _settings, true)
   }
 
-  getPopupSettings() {
-    return this.stateStorageController.get('popupSettings')
+  getSettings() {
+    return this.stateStorageController.get('settings')
   }
 }
 

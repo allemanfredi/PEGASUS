@@ -21,7 +21,7 @@ class GeneralsSettings extends React.Component {
   }
 
   async componentWillMount() {
-    const settings = await this.props.background.getPopupSettings()
+    const settings = await this.props.background.getSettings()
     if (!settings) return
 
     this.setState({ settings })
@@ -34,7 +34,7 @@ class GeneralsSettings extends React.Component {
         curr => curr.value !== this.state.settings.currencies.selected.value
       )[index]
 
-      this.props.background.setPopupSettings(settings)
+      this.props.background.setSettings(settings)
 
       return {
         settings

@@ -123,10 +123,10 @@ class PegasusEngine {
       this.networkController.setCurrentNetwork(settings.networks[0])
     }
 
-    const popupSettings = this.walletController.getPopupSettings()
-    if (popupSettings.autoPromotion.enabled)
+    const settings = this.walletController.getSettings()
+    if (settings.autoPromotion.enabled)
       this.accountDataController.enableTransactionsAutoPromotion(
-        parseInt(popupSettings.autoPromotion.time * 1000 * 60)
+        parseInt(settings.autoPromotion.time * 1000 * 60)
       )
   }
 
@@ -254,9 +254,9 @@ class PegasusEngine {
         cb(this.walletController.deleteAccount(account)),
       getState: cb => cb(this.walletController.getState()),
       setState: (state, cb) => cb(this.walletController.setState(state)),
-      setPopupSettings: (settings, cb) =>
-        cb(this.walletController.setPopupSettings(settings)),
-      getPopupSettings: cb => cb(this.walletController.getPopupSettings()),
+      setSettings: (settings, cb) =>
+        cb(this.walletController.setSettings(settings)),
+      getSettings: cb => cb(this.walletController.getSettings()),
 
       // login password controller
       comparePassword: (password, cb) =>

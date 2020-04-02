@@ -67,7 +67,7 @@ class Home extends Component {
       isCopiedToClipboard: false,
       navbarText: '',
       iotaPrice: false,
-      popupSettings: null
+      settings: null
     }
   }
 
@@ -75,12 +75,12 @@ class Home extends Component {
     const iotaPrice = await getPrice()
     this.setState({ iotaPrice })
 
-    const popupSettings = await this.props.background.getPopupSettings()
-    this.setState({ popupSettings })
+    const settings = await this.props.background.getSettings()
+    this.setState({ settings })
 
     this.props.background.on('update', backgroundState => {
-      const { popupSettings } = backgroundState
-      this.setState({ popupSettings })
+      const { settings } = backgroundState
+      this.setState({ settings })
     })
   }
 
@@ -487,17 +487,17 @@ class Home extends Component {
                           this.props.network.type
                         ] &&
                         this.state.iotaPrice &&
-                        this.state.popupSettings
+                        this.state.settings
                           ? (
                               (this.props.account.data.balance[
                                 this.props.network.type
                               ] *
                                 this.state.iotaPrice[
-                                  this.state.popupSettings.currencies.selected.value.toLowerCase()
+                                  this.state.settings.currencies.selected.value.toLowerCase()
                                 ]) /
                               1000000
                             ).toFixed(2) +
-                            this.state.popupSettings.currencies.selected.symbol
+                            this.state.settings.currencies.selected.symbol
                           : '-'}
                       </div>
                     </div>

@@ -1,14 +1,7 @@
 import { composeAPI } from '@iota/core'
 import { APP_STATE } from '@pegasus/utils/states'
 import logger from '@pegasus/utils/logger'
-
-const requestsWithUserInteraction = [
-  'mam_init',
-  'mam_changeMode',
-  'prepareTransfers',
-  'sendTrytes',
-  'transfer'
-]
+import { REQUESTS_WITH_USER_INTERACTION } from '../lib/constants'
 
 class CustomizatorController {
   constructor(options) {
@@ -112,7 +105,7 @@ class CustomizatorController {
           uuid,
           push,
           args,
-          needUserInteraction: requestsWithUserInteraction.includes(method)
+          needUserInteraction: REQUESTS_WITH_USER_INTERACTION.includes(method)
         },
         ...this.requests
       ]
@@ -123,7 +116,7 @@ class CustomizatorController {
 
       this.updateBadge()
     } else if (connection.enabled && state >= APP_STATE.WALLET_UNLOCKED) {
-      if (requestsWithUserInteraction.includes(method)) {
+      if (REQUESTS_WITH_USER_INTERACTION.includes(method)) {
         logger.log(
           `(CustomizatorController) Pushing request ${uuid} - ${method} and asking for user permission`
         )

@@ -78,7 +78,7 @@ class Transactions extends Component {
   async componentWillMount() {
     this.handleShowDetails()
 
-    const settings = await this.props.background.getPopupSettings()
+    const settings = await this.props.background.getSettings()
     if (!settings) return
 
     this.setState({ settings })
@@ -115,7 +115,7 @@ class Transactions extends Component {
     const settings = this.state.settings
     settings.filters[filter] = !settings.filters[filter]
     this.setState({ settings })
-    this.props.background.setPopupSettings(settings)
+    this.props.background.setSettings(settings)
   }
 
   render() {

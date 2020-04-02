@@ -121,7 +121,7 @@ class StateStorageController extends Store {
     const savedState = {
       data: storedData['PEGASUS_DATA'], //still encrypted
       hpsw: storedData['PEGASUS_HPSW'],
-      popupSettings: storedData['PEGASUS_POPUP_SETTINGS'],
+      settings: storedData['PEGASUS_POPUP_SETTINGS'],
       selectedNetwork: storedData['PEGASUS_SELECTED_NETWORK'],
       networks: storedData['PEGASUS_NETWORKS'],
       state: APP_STATE.WALLET_LOCKED //in order to start from login
@@ -139,7 +139,7 @@ class StateStorageController extends Store {
       PEGASUS_SELECTED_NETWORK: this.state.selectedNetwork
     })
     await this.storage.set({ PEGASUS_NETWORKS: this.state.networks })
-    await this.storage.set({ PEGASUS_POPUP_SETTINGS: this.state.popupSettings })
+    await this.storage.set({ PEGASUS_POPUP_SETTINGS: this.state.settings })
 
     logger.log(`(StateStorageController) Written to storage`)
   }

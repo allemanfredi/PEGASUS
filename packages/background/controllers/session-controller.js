@@ -67,7 +67,7 @@ class SessionController {
       const date = new Date()
       const currentTime = date.getTime()
 
-      const { autoLocking } = this.walletController.getPopupSettings()
+      const { autoLocking } = this.walletController.getSettings()
 
       // NOTE: if auto locking is enabled check the session
       if (autoLocking.enabled) {

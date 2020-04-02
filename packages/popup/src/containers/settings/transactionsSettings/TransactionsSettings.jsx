@@ -20,7 +20,7 @@ class TransactionsSettings extends React.Component {
   }
 
   async componentWillMount() {
-    const settings = await this.props.background.getPopupSettings()
+    const settings = await this.props.background.getSettings()
     if (!settings) return
 
     this.setState({ settings })
@@ -28,7 +28,7 @@ class TransactionsSettings extends React.Component {
 
   handleChange(settings, action) {
     this.setState({ settings })
-    this.props.background.setPopupSettings(settings)
+    this.props.background.setSettings(settings)
 
     if (action === 'promote') {
       if (settings.autoPromotion.enabled && settings.autoPromotion.time > 0) {

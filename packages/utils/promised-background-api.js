@@ -140,16 +140,16 @@ const buildPromisedBackgroundApi = _backgroundConnection => {
         )
       ),
 
-    setPopupSettings: settings =>
+    setSettings: settings =>
       new Promise((resolve, reject) =>
-        _backgroundConnection.setPopupSettings(settings, (res, err) =>
+        _backgroundConnection.setSettings(settings, (res, err) =>
           err ? reject(err) : resolve(res)
         )
       ),
 
-    getPopupSettings: () =>
+    getSettings: () =>
       new Promise((resolve, reject) =>
-        _backgroundConnection.getPopupSettings((res, err) =>
+        _backgroundConnection.getSettings((res, err) =>
           err ? reject(err) : resolve(res)
         )
       ),

@@ -61,6 +61,8 @@ class NodeController {
     return this.getNodeApi().prepareTransfers(seed, transfersCopy, _options)
   }
 
+  //sendTrytes()
+
   async transfer(_transfers, _options = []) {
     const network = this.networkController.getCurrentNetwork()
     const depth = 3

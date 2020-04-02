@@ -29,7 +29,7 @@ export class PegasusGlobalState {
     this.hpsw = null
     this.selectedNetwork = configs.networks[0]
     this.networks = configs.networks
-    this.popupSettings = {
+    this.settings = {
       currencies: {
         selected: availablesCurrencies[0],
         all: availablesCurrencies
@@ -62,7 +62,7 @@ export class PegasusGlobalState {
  * object used when user reset the wallet
  */
 export const resetState = {
-  popupSettings: {
+  settings: {
     currencies: {
       selected: availablesCurrencies[0],
       all: availablesCurrencies
