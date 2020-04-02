@@ -58,10 +58,10 @@ class NodeController {
       t.message = asciiToTrytes(JSON.stringify(t.message))
     })
 
+    logger.log(`(NodeController) signing ...`)
+
     return this.getNodeApi().prepareTransfers(seed, transfersCopy, _options)
   }
-
-  //sendTrytes()
 
   async transfer(_transfers, _options = []) {
     const network = this.networkController.getCurrentNetwork()

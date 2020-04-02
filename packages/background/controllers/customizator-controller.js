@@ -151,20 +151,25 @@ class CustomizatorController {
     this.stateStorageController.set('requests', this.requests)
   }
 
+  async executeRequestFromPopup(_request) {
+    const res = await this.execute(_request)
+
+    logger.log(
+      `(CustomizatorController) Executed request ${_request.method} from popup`
+    )
+    return res
+  }
+
   async executeRequest(_request) {
     const request = this.requests.find(request =>
       _request.uuid ? request.uuid === _request.uuid : false
     )
 
-    //request from popup request = null since it was put directly
-    if (_request.connection.enabled && !request) {
-      const res = await this.execute(_request)
+    logger.log(
+      `(CustomizatorController) Executing request ${_request.uuid} - ${_request.method} from tab ...`
+    )
 
-      logger.log(
-        `(CustomizatorController) Executed request ${_request.method} from popup`
-      )
-      return res
-    } else if (_request.connection.enabled && request.push) {
+    if (_request.connection.enabled && request.push) {
       const res = await this.execute(_request)
 
       request.push({
@@ -176,7 +181,7 @@ class CustomizatorController {
       this.removeRequest(_request)
 
       logger.log(
-        `(CustomizatorController) Executed request ${_request.uuid} - ${_request.method} from tab`
+        `(CustomizatorController) Request ${_request.uuid} - ${_request.method} from tab executed`
       )
 
       if (this.requests.length === 0) {
