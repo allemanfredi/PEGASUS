@@ -44,14 +44,14 @@ class PopupController {
     })
   }
 
-  async closePopup() {
+  closePopup() {
     if (!this.popup) return
 
     extensionizer.windows.remove(this.popup.id)
     this.popup = false
   }
 
-  async updatePopup() {
+  updatePopup() {
     return new Promise(resolve => {
       if (typeof chrome !== 'undefined') {
         return extensionizer.windows.update(

@@ -41,7 +41,7 @@ class LoginPasswordController {
   }
 
   isUnlocked() {
-    return this.password ? true : false
+    return Boolean(this.password)
   }
 
   getPassword() {

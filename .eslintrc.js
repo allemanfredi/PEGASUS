@@ -23,7 +23,7 @@ module.exports = {
   },
   plugins: [
 		'react'
-	],
+  ],
   rules: {
     quotes: [2, 'single', { avoidEscape: true }],
     'prefer-promise-reject-errors': 1,
@@ -31,13 +31,13 @@ module.exports = {
     'no-extra-parens': [1, 'all'],
     'no-misleading-character-class': 1,
     'no-prototype-builtins': 1,
-    'no-async-promise-executor': 1,
+    'no-async-promise-executor': 0, // nedeed for mam controller
     'no-await-in-loop': 0, // should probably be on for perf dependent application
     'require-atomic-updates': 1,
     // best practices
     'accessor-pairs': 1,
     'array-callback-return': 0, // this best practice calls out the use of map over forEach
-    'complexity': [1, 5],
+    'complexity': [1, 15],
     'curly': [1, 'multi-or-nest', 'consistent'],
     'dot-location': [2, 'property'],
     'no-empty-function': 1,
@@ -62,7 +62,7 @@ module.exports = {
     'no-throw-literal': 2,
     'no-unmodified-loop-condition': 1,
     'no-useless-call': 1,
-    'no-useless-catch': 1,
+    'no-useless-catch': 0,
     'no-useless-concat': 2,
     'no-useless-escape': 2,
     'no-useless-return': 0,
@@ -74,6 +74,14 @@ module.exports = {
         "log"
       ]
     }],
+    'no-shadow': [1, {
+      'builtinGlobals': true,
+      'allow': [
+        'request',
+        'window'
+      ]
+    }],
+    'no-undef': 0,
     'require-await': 1,
     'vars-on-top': 2,
     'wrap-iife': [2, 'inside'],

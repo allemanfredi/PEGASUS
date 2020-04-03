@@ -32,9 +32,7 @@ class WalletController extends EventEmitter {
 
   isWalletSetup() {
     const state = this.getState()
-    if (state >= APP_STATE.WALLET_INITIALIZED) {
-      return true
-    }
+    if (state >= APP_STATE.WALLET_INITIALIZED) return true
 
     return false
   }
@@ -52,7 +50,7 @@ class WalletController extends EventEmitter {
 
       this.setState(APP_STATE.WALLET_INITIALIZED)
 
-      //in order to write on storage the first time
+      // in order to write on storage the first time
       await this.stateStorageController.lock()
       await this.stateStorageController.unlock(_password)
       this.accountDataController.startHandle()
@@ -60,7 +58,7 @@ class WalletController extends EventEmitter {
 
       this.setState(APP_STATE.WALLET_UNLOCKED)
 
-      logger.log(`(WalletController) Wallet initialized`)
+      logger.log('(WalletController) Wallet initialized')
       return true
     } catch (err) {
       logger.error(
@@ -101,7 +99,7 @@ class WalletController extends EventEmitter {
     this.sessionController.deleteSession()
     this.accountDataController.stopHandle()
 
-    logger.log(`(WalletController) Wallet succesfully locked`)
+    logger.log('(WalletController) Wallet succesfully locked')
     return true
   }
 
@@ -120,9 +118,7 @@ class WalletController extends EventEmitter {
       this.networkController.setCurrentNetwork(options.networks[0])
 
       const isAdded = await this.addAccount(_account, true)
-      if (!isAdded) {
-        return false
-      }
+      if (!isAdded) return false
 
       logger.log(
         `(WalletController) Wallet restored with account: ${_account.name}`
@@ -169,7 +165,7 @@ class WalletController extends EventEmitter {
   isAccountNameAlreadyExists(_name) {
     const accounts = this.stateStorageController.get('accounts')
     const alreadyExists = accounts.all.find(account => account.name === _name)
-    return alreadyExists ? true : false
+    return Boolean(alreadyExists)
   }
 
   async addAccount(_account, _isCurrent) {
@@ -198,9 +194,7 @@ class WalletController extends EventEmitter {
       }
 
       const alreadyExist = accounts.all.find(account => account.id === id)
-      if (alreadyExist) {
-        return false
-      }
+      if (alreadyExist) return false
 
       if (_isCurrent) accounts.selected = accountToAdd
 
@@ -210,7 +204,7 @@ class WalletController extends EventEmitter {
 
       this.emit('accountChanged', accountToAdd.data.latestAddress)
 
-      //in order to write on storage the first time
+      // in order to write on storage the first time
       const password = this.loginPasswordController.getPassword()
       await this.stateStorageController.lock()
       await this.stateStorageController.unlock(password)
@@ -233,11 +227,11 @@ class WalletController extends EventEmitter {
     return accounts.selected
   }
 
-  //all following methods updates data on the CURRENT account
+  // all following methods updates data on the CURRENT account
   setCurrentAccount(_account) {
     const accounts = this.stateStorageController.get('accounts')
 
-    //seed not exposed outside of the popup
+    // seed not exposed outside of the popup
     const account = accounts.all.find(acc => acc.id === _account.id)
     _account.seed = account.seed
     accounts.selected = _account
@@ -294,9 +288,7 @@ class WalletController extends EventEmitter {
   deleteAccount(_account) {
     const accounts = this.stateStorageController.get('accounts')
 
-    if (accounts.all.length === 1) {
-      return false
-    }
+    if (accounts.all.length === 1) return false
 
     accounts.all = accounts.all.filter(account => account.id !== _account.id)
 

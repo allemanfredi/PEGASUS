@@ -1,5 +1,13 @@
 import { extractJson } from '@iota/extract-json'
 
+const getMessage = _bundle => {
+  try {
+    return JSON.parse(extractJson(_bundle))
+  } catch (err) {
+    return null
+  }
+}
+
 const mapBalance = (_data, _network, _currentAccount) => {
   _data.balance = Object.assign(
     {},
@@ -14,6 +22,29 @@ const mapBalance = (_data, _network, _currentAccount) => {
         }
   )
   return _data
+}
+
+const removeInvalidTransactions = _transactions => {
+  const validated = _transactions.filter(transaction => transaction.status)
+  const notValidated = _transactions.filter(transaction => !transaction.status)
+
+  let notValidatedCorrect = []
+  let isInvalid = false
+
+  for (let txnv of notValidated) {
+    isInvalid = false
+
+    for (let txv of validated) {
+      if (txv.bundle === txnv.bundle) {
+        isInvalid = true
+        break
+      }
+    }
+
+    if (!isInvalid) notValidatedCorrect.push(txnv)
+  }
+
+  return [...validated, ...notValidatedCorrect]
 }
 
 const mapTransactions = (_data, _network) => {
@@ -34,7 +65,9 @@ const mapTransactions = (_data, _network) => {
     if (value < 0) {
       value = 0
       values = values.map(value => -value)
-      values.forEach(v => (value = value + v))
+      values.forEach(v => {
+        value = value + v
+      })
       value = -1 * value
     }
 
@@ -56,31 +89,6 @@ const mapTransactions = (_data, _network) => {
   return transactions
 }
 
-const removeInvalidTransactions = _transactions => {
-  const validated = _transactions.filter(transaction => transaction.status)
-  const notValidated = _transactions.filter(transaction => !transaction.status)
-
-  let notValidatedCorrect = []
-  let isInvalid = false
-
-  for (let txnv of notValidated) {
-    isInvalid = false
-
-    for (let txv of validated) {
-      if (txv.bundle === txnv.bundle) {
-        isInvalid = true
-        break
-      }
-    }
-
-    if (!isInvalid) {
-      notValidatedCorrect.push(txnv)
-    }
-  }
-
-  return [...validated, ...notValidatedCorrect]
-}
-
 const getTransactionsJustConfirmed = (_account, _transactions) => {
   const transactionsJustConfirmed = []
   for (let tx of _transactions) {
@@ -89,9 +97,8 @@ const getTransactionsJustConfirmed = (_account, _transactions) => {
         tx.bundle === tx2.bundle &&
         tx.status !== tx2.status &&
         tx.status === true
-      ) {
+      )
         transactionsJustConfirmed.push(tx)
-      }
     }
   }
   return transactionsJustConfirmed
@@ -100,21 +107,11 @@ const getTransactionsJustConfirmed = (_account, _transactions) => {
 const setTransactionsReattach = _transactions => {
   const doubleBoundles = []
   for (let transaction of _transactions) {
-    if (doubleBoundles.includes(transaction.bundle)) {
+    if (doubleBoundles.includes(transaction.bundle))
       transaction.isReattached = true
-    } else {
-      doubleBoundles.push(transaction.bundle)
-    }
+    else doubleBoundles.push(transaction.bundle)
   }
   return _transactions
-}
-
-const getMessage = _bundle => {
-  try {
-    return JSON.parse(extractJson(_bundle))
-  } catch (err) {
-    return null
-  }
 }
 
 export {

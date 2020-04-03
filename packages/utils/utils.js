@@ -96,7 +96,9 @@ const Utils = {
       'Y',
       'Z'
     ]
-    if (address.length !== 81 && address.length != 90) return false
+    if (address.length !== 81 && address.length !== 90) {
+      return false
+    }
     ;[...address].forEach(c => {
       if (values.indexOf(c) === -1) return false
     })
@@ -133,7 +135,9 @@ const Utils = {
       'Y',
       'Z'
     ]
-    if (seed.length !== 81) return false
+    if (seed.length !== 81) {
+      return false
+    }
     ;[...seed].forEach(c => {
       if (values.indexOf(c) === -1) return false
     })

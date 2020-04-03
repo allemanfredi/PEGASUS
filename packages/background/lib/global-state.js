@@ -1,6 +1,6 @@
 import configs from '@pegasus/utils/options'
 
-const DEFAULT_LOCKING_TIME = 60 //60 minutes
+const DEFAULT_LOCKING_TIME = 60 // 60 minutes
 
 const availablesCurrencies = [
   {
@@ -86,7 +86,7 @@ export const resetState = {
     all: []
   },
   mamChannels: {},
-  //used when enctyped
+  // used when enctyped
   data: {
     accounts: {
       selected: {},

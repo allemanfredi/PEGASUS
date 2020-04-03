@@ -16,9 +16,7 @@ const extensionPort = extension.runtime.connect({ name: 'popup' })
 const connectionStream = new PortStream(extensionPort)
 const mux = new ObjectMultiplex()
 pump(connectionStream, mux, connectionStream, err => {
-  if (err) {
-    console.error(err)
-  }
+  if (err) console.error(err)
 })
 
 const engineStream = mux.createStream('engine')
@@ -42,6 +40,6 @@ backgroundDnode.once('remote', async backgroundConnection => {
   )
 })
 
-/* I am aware that some things in this part are not the best, as I had started this project 
-without having any knowledge of react. when the ui will be redone practically everything 
+/* I am aware that some things in this part are not the best, as I had started this project
+without having any knowledge of react. when the ui will be redone practically everything
 will be canceled */

@@ -7,8 +7,6 @@ import pump from 'pump'
 
 const engine = new PegasusEngine()
 
-extension.runtime.onConnect.addListener(port => handleConnection(port))
-
 const handleConnection = port => {
   if (
     port.sender &&
@@ -19,9 +17,7 @@ const handleConnection = port => {
     const portStream = new PortStream(port)
     const mux = new ObjectMultiplex()
     pump(portStream, mux, portStream, err => {
-      if (err) {
-        logger.error(err)
-      }
+      if (err) logger.error(err)
     })
 
     // messages between inpage and background
@@ -37,12 +33,12 @@ const handleConnection = port => {
 
     const mux = new ObjectMultiplex()
     pump(portStream, mux, portStream, err => {
-      if (err) {
-        logger.error(err)
-      }
+      if (err) logger.error(err)
     })
 
     engine.setupEngineConnectionWithPopup(mux.createStream('engine'))
     return
   }
 }
+
+extension.runtime.onConnect.addListener(port => handleConnection(port))

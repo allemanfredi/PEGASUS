@@ -14,9 +14,7 @@ class LedgerController {
     this.iframe.contentWindow.postMessage(msg, '*')
     window.addEventListener('message', ({ origin, data }) => {
       if (origin !== this.origin) return false
-      if (data && data.action && data.action === `${msg.action}-reply`) {
-        cb(data)
-      }
+      if (data && data.action && data.action === `${msg.action}-reply`) cb(data)
     })
   }
 

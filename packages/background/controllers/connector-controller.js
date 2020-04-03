@@ -27,15 +27,14 @@ class ConnectorController {
   }
 
   isConnected(_origin) {
-    return this.connections[_origin] && this.connections[_origin].enabled
-      ? true
-      : false
+    return Boolean(
+      this.connections[_origin] && this.connections[_origin].enabled
+    )
   }
 
   pushConnectionRequest(_connection) {
-    if (!this.connectionRequests[_connection.website.origin]) {
+    if (!this.connectionRequests[_connection.website.origin])
       this.connectionRequests[_connection.website.origin] = {}
-    }
 
     this.connectionRequests[_connection.website.origin][
       _connection.website.tabId
@@ -161,9 +160,8 @@ class ConnectorController {
     }
 
     requests.forEach(request => {
-      if (request.connection.website.origin === _origin) {
+      if (request.connection.website.origin === _origin)
         this.customizatorController.removeRequest(request)
-      }
     })
 
     this.removeConnectionRequest(_origin, _tabId)

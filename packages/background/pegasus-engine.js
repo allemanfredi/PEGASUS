@@ -1,4 +1,4 @@
-import settings from '@pegasus/utils/options'
+import options from '@pegasus/utils/options'
 import AccountDataController from './controllers/account-data-controller'
 import CustomizatorController from './controllers/customizator-controller'
 import MamController from './controllers/mam-controller'
@@ -111,23 +111,22 @@ class PegasusEngine {
     /* E N D   C O N T R O L L E R S */
 
     const state = this.walletController.getState()
-    if (!this.walletController.isWalletSetup()) {
+    if (!this.walletController.isWalletSetup())
       this.walletController.setState(APP_STATE.WALLET_NOT_INITIALIZED)
-    }
 
     if (state === APP_STATE.WALLET_INITIALIZED)
       this.walletController.setState(APP_STATE.WALLET_LOCKED)
 
     const currentNetwork = this.networkController.getCurrentNetwork()
-    if (!currentNetwork) {
-      this.networkController.setCurrentNetwork(settings.networks[0])
-    }
+    if (!currentNetwork)
+      this.networkController.setCurrentNetwork(options.networks[0])
 
     const settings = this.walletController.getSettings()
-    if (settings.autoPromotion.enabled)
+    if (settings.autoPromotion.enabled) {
       this.accountDataController.enableTransactionsAutoPromotion(
         parseInt(settings.autoPromotion.time * 1000 * 60)
       )
+    }
   }
 
   /**
@@ -152,9 +151,7 @@ class PegasusEngine {
     pump(outStream, inpageClientStream, outStream, err => {
       // NOTE: if connection with this website is not enabled it will be removed when user closes the page
       this.connectorController.removePendingConnection(url.origin)
-      if (err) {
-        logger.error(err)
-      }
+      if (err) logger.error(err)
     })
 
     this.setupInpageClientDefaultValues(inpageClientStream, url)
@@ -172,15 +169,13 @@ class PegasusEngine {
     const dnode = Dnode(api)
 
     pump(outStream, dnode, outStream, err => {
-      if (err) {
-        logger.error(err)
-      }
+      if (err) logger.error(err)
     })
     dnode.on('remote', remote => {
       const { sendUpdate } = remote
 
       this.stateStorageController.state$.subscribe(_state => {
-        //remove seed before sending
+        // remove seed before sending
         sendUpdate(mapStateForPopup(_state))
       })
     })

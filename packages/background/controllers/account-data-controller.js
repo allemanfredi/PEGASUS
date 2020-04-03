@@ -29,15 +29,13 @@ class AccountDataController {
   stopHandle() {
     clearInterval(this.accountDataHandler)
 
-    logger.log(`(AccountDataController) Stop auto reloading account data`)
+    logger.log('(AccountDataController) Stop auto reloading account data')
   }
 
   startHandle() {
-    if (this.accountDataHandler) {
-      return
-    }
+    if (this.accountDataHandler) return
 
-    logger.log(`(AccountDataController) Start auto reloading account data`)
+    logger.log('(AccountDataController) Start auto reloading account data')
 
     this.accountDataHandler = setInterval(() => {
       const state = this.walletController.getState()
@@ -53,11 +51,9 @@ class AccountDataController {
   async loadAccountData() {
     try {
       const state = this.walletController.getState()
-      if (state < APP_STATE.WALLET_UNLOCKED) {
-        return
-      }
+      if (state < APP_STATE.WALLET_UNLOCKED) return
 
-      logger.log(`(AccountDataController) Loading account data...`)
+      logger.log('(AccountDataController) Loading account data...')
 
       const account = this.walletController.getCurrentAccount()
       const seed = account.seed
@@ -84,7 +80,7 @@ class AccountDataController {
 
       this.walletController.updateDataAccount(updatedData)
 
-      logger.log(`(AccountDataController) Loading account data terminated`)
+      logger.log('(AccountDataController) Loading account data terminated')
     } catch (err) {
       logger.error(
         `(AccountDataController) Error during loading account data: ${err}`

@@ -3,7 +3,7 @@
 import { Store } from 'rxjs-observable-store'
 import logger from '@pegasus/utils/logger'
 import { encrypt, decrypt } from '../lib/browser-protector'
-import ExtensionStore from '@pegasus/utils/extension-store'
+import ExtensionStore from '../lib/extension-store'
 import { APP_STATE } from '@pegasus/utils/states'
 import { PegasusGlobalState, resetState } from '../lib/global-state'
 
@@ -14,25 +14,23 @@ class StateStorageController extends Store {
     this.unlocked = false
     this.storage = new ExtensionStore()
 
-    /*chrome.storage.local.clear(function() {
+    /* chrome.storage.local.clear(function() {
       var error = chrome.runtime.lastError
       if (error) {
         console.error(error)
       }
-    })*/
+    }) */
 
     this._init()
   }
 
   async _init() {
     const data = await this._loadFromStorage()
-    if (data) {
-      this.setState(data)
-    }
+    if (data) this.setState(data)
   }
 
   isReady() {
-    return this.encryptionkey && this.unlocked ? true : false
+    return Boolean(this.encryptionkey && this.unlocked)
   }
 
   isInitialized() {
@@ -119,15 +117,15 @@ class StateStorageController extends Store {
     if (!storedData) return null
 
     const savedState = {
-      data: storedData['PEGASUS_DATA'], //still encrypted
+      data: storedData['PEGASUS_DATA'], // still encrypted
       hpsw: storedData['PEGASUS_HPSW'],
       settings: storedData['PEGASUS_POPUP_SETTINGS'],
       selectedNetwork: storedData['PEGASUS_SELECTED_NETWORK'],
       networks: storedData['PEGASUS_NETWORKS'],
-      state: APP_STATE.WALLET_LOCKED //in order to start from login
+      state: APP_STATE.WALLET_LOCKED // in order to start from login
     }
 
-    logger.log(`(StateStorageController) Loaded from storage`)
+    logger.log('(StateStorageController) Loaded from storage')
 
     return savedState
   }
@@ -141,7 +139,7 @@ class StateStorageController extends Store {
     await this.storage.set({ PEGASUS_NETWORKS: this.state.networks })
     await this.storage.set({ PEGASUS_POPUP_SETTINGS: this.state.settings })
 
-    logger.log(`(StateStorageController) Written to storage`)
+    logger.log('(StateStorageController) Written to storage')
   }
 }
 

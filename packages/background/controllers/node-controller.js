@@ -58,7 +58,7 @@ class NodeController {
       t.message = asciiToTrytes(JSON.stringify(t.message))
     })
 
-    logger.log(`(NodeController) signing ...`)
+    logger.log('(NodeController) signing ...')
 
     return this.getNodeApi().prepareTransfers(seed, transfersCopy, _options)
   }
@@ -114,7 +114,7 @@ class NodeController {
 
   disableTransactionsAutoPromotion() {
     clearInterval(this.transactionsAutoPromotionHandler)
-    logger.log(`(NodeController) Disabled transactions auto promotion`)
+    logger.log('(NodeController) Disabled transactions auto promotion')
   }
 }
 

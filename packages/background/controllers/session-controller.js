@@ -44,7 +44,7 @@ class SessionController {
       currentState !== APP_STATE.WALLET_RESTORE &&
       currentState !== APP_STATE.WALLET_NOT_INITIALIZED
     ) {
-      logger.log(`(SessionController) Wallet locked`)
+      logger.log('(SessionController) Wallet locked')
       return
     }
 
@@ -57,7 +57,7 @@ class SessionController {
       currentState === APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION
     ) {
       logger.log(
-        `(SessionController) found state = WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION with requests = 0 -> set to WALLET_UNLOCKED`
+        '(SessionController) found state = WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION with requests = 0 -> set to WALLET_UNLOCKED'
       )
       this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
       return
@@ -75,7 +75,7 @@ class SessionController {
           if (currentState >= APP_STATE.WALLET_UNLOCKED) {
             this.walletController.lockWallet()
             logger.log(
-              `(SessionController) Session expired... Locking the wallet`
+              '(SessionController) Session expired... Locking the wallet'
             )
           }
           return

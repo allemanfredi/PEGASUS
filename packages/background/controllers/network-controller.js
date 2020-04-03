@@ -58,11 +58,11 @@ class NetworkController extends EventEmitter {
       let networks = this.stateStorageController.get('networks')
       const currentNetwork = this.stateStorageController.get('selectedNetwork')
 
-      networks = configs.networks.filter(
+      networks = networks.filter(
         network => currentNetwork.name !== network.name
       )
 
-      const selectedNetwork = configs.networks[0]
+      const selectedNetwork = networks[0]
 
       this.stateStorageController.set('networks', networks)
       this.stateStorageController.set('selectedNetwork', selectedNetwork)

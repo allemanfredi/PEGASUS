@@ -90,9 +90,8 @@ class CustomizatorController {
     }
 
     if (state <= APP_STATE.WALLET_LOCKED || !connection.enabled) {
-      if (!popup && isPopupAlreadyOpened === false) {
+      if (!popup && isPopupAlreadyOpened === false)
         this.popupController.openPopup()
-      }
 
       logger.log(
         `(CustomizatorController) Pushing request ${uuid} - ${method} because of locked wallet`
@@ -110,9 +109,8 @@ class CustomizatorController {
         ...this.requests
       ]
 
-      if (state <= APP_STATE.WALLET_LOCKED) {
+      if (state <= APP_STATE.WALLET_LOCKED)
         this.walletController.setState(APP_STATE.WALLET_LOCKED)
-      }
 
       this.updateBadge()
     } else if (connection.enabled && state >= APP_STATE.WALLET_UNLOCKED) {
@@ -203,9 +201,8 @@ class CustomizatorController {
 
       this.removeRequest(_request)
 
-      if (this.requests.length === 0) {
+      if (this.requests.length === 0)
         this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
-      }
     }
     return
   }
@@ -218,7 +215,7 @@ class CustomizatorController {
     const res = await this.execute(_request)
 
     if (this.requests.length === 1) {
-      logger.log(`(CustomizatorController) Last request to execute`)
+      logger.log('(CustomizatorController) Last request to execute')
       this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
     }
 
@@ -259,7 +256,7 @@ class CustomizatorController {
       this.popupController.closePopup()
       this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
     } else {
-      //this.setRequests(this.requests)
+      // this.setRequests(this.requests)
     }
   }
 
