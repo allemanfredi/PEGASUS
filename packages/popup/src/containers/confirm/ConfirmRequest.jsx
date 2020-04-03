@@ -35,6 +35,13 @@ class ConfirmRequest extends Component {
     await this.props.background.setState(
       APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION
     )
+
+    const requests = await this.props.background.getExecutableRequests()
+    const executableRequests = requests.filter(
+      request => request.needUserInteraction && request.connection.enabled
+    )
+
+    this.setState({ requests: executableRequests }) 
   }
 
   async confirm(request) {

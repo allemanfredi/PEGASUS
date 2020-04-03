@@ -3,6 +3,12 @@ import extensionizer from 'extensionizer'
 class PopupController {
   constructor() {
     this.popup = false
+
+    extensionizer.runtime.onConnect.addListener(port => {
+      port.onDisconnect.addListener(() => {
+        this.popup = null
+      })
+    })
   }
 
   setPopup(_popup) {
