@@ -110,7 +110,9 @@ class Send extends Component {
       <ConfirmTransfers
         title="Confirm Transfer"
         account={this.props.account}
+        network={this.props.network}
         transfer={this.state.transfer}
+        canChangeAccount={false}
         onConfirm={this.confirmTransfer}
         onReject={this.rejectTransfer}
         background={this.props.background}

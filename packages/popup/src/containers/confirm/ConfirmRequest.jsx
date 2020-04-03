@@ -76,6 +76,7 @@ class ConfirmRequest extends Component {
                 isLoading={this.state.isLoading}
                 error={this.state.error}
                 transfer={request}
+                canChangeAccount={true}
                 background={this.props.background}
                 onConfirm={this.confirm}
                 onReject={this.reject}
@@ -94,6 +95,7 @@ class ConfirmRequest extends Component {
                 isLoading={this.state.isLoading}
                 error={this.state.error}
                 transfer={request}
+                canChangeAccount={false}
                 background={this.props.background}
                 isTrytes={true}
                 onConfirm={this.confirm}
@@ -113,6 +115,7 @@ class ConfirmRequest extends Component {
                 isLoading={this.state.isLoading}
                 error={this.state.error}
                 transfer={request}
+                canChangeAccount={true}
                 background={this.props.background}
                 onConfirm={this.confirm}
                 onReject={this.reject}

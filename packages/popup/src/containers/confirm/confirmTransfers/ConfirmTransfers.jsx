@@ -142,7 +142,7 @@ const ConfirmTransfers = props => {
           </div>
         </div>
       </div>
-      {isSelectingAccount && props.title !== 'sendTrytes' ? ( // NOTE not needed in sendTrytes since the bundle is already signed
+      {isSelectingAccount && props.canChangeAccount ? (
         <AccountSelection
           account={props.account}
           network={props.network}
