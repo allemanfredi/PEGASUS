@@ -3,7 +3,7 @@ import ConfirmTransfers from './confirmTransfers/ConfirmTransfers'
 import ConfirmCreateMamChannel from './confirmCreateMamChannel/ConfirmCreateMamChannel'
 import ConfirmChangeModeMamChannel from './confirmChangeModeMamChannel/ConfirmChangeModeMamChannel'
 import Loader from '../../components/loader/Loader'
-import RequestsCounter from './requestsCounter/RequestsCounter'
+import RequestsCounter from '../../components/requestsCounter/RequestsCounter'
 import { APP_STATE } from '@pegasus/utils/states'
 
 class ConfirmRequest extends Component {
@@ -48,14 +48,7 @@ class ConfirmRequest extends Component {
 
     this.setState({ isLoading: false })
 
-    if (success) {
-      this.props.onBack()
-      this.props.setNotification({
-        type: 'success',
-        text: 'Transfer was successful',
-        position: 'under-bar'
-      })
-    } else {
+    if (!success) {
       this.setState({ error: response })
     }
   }
@@ -78,10 +71,27 @@ class ConfirmRequest extends Component {
             <React.Fragment>
               <ConfirmTransfers
                 title="Confirm Transfer"
+                account={this.props.account}
                 isLoading={this.state.isLoading}
                 error={this.state.error}
                 transfer={request}
-                background={this.props.background}
+                onConfirm={this.confirm}
+                onReject={this.reject}
+              />
+              <RequestsCounter requests={this.state.requests} />
+            </React.Fragment>
+          )
+
+        case 'sendTrytes':
+          return (
+            <React.Fragment>
+              <ConfirmTransfers
+                title="Sending Trytes"
+                account={this.props.account}
+                isLoading={this.state.isLoading}
+                error={this.state.error}
+                transfer={request}
+                isTrytes={true}
                 onConfirm={this.confirm}
                 onReject={this.reject}
               />
@@ -94,10 +104,10 @@ class ConfirmRequest extends Component {
             <React.Fragment>
               <ConfirmTransfers
                 title="Prepare Transfers"
+                account={this.props.account}
                 isLoading={this.state.isLoading}
                 error={this.state.error}
                 transfer={request}
-                background={this.props.background}
                 onConfirm={this.confirm}
                 onReject={this.reject}
               />
@@ -109,6 +119,7 @@ class ConfirmRequest extends Component {
           return (
             <React.Fragment>
               <ConfirmCreateMamChannel
+                account={this.props.account}
                 request={request}
                 onConfirm={this.confirm}
                 onReject={this.reject}
@@ -120,6 +131,7 @@ class ConfirmRequest extends Component {
           return (
             <React.Fragment>
               <ConfirmChangeModeMamChannel
+                account={this.props.account}
                 from={request.args[0].channel.mode}
                 to={request.args[1]}
                 sidekey={request.args[2] ? request.args[2] : null}

@@ -1,114 +1,141 @@
-import React, { Component } from 'react'
+import React from 'react'
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
+import ReactJson from 'react-json-view'
 import Utils from '@pegasus/utils/utils'
 import Loader from '../../../components/loader/Loader'
+import RequestHeader from '../../../components/requestHeader/RequestHeader'
+import RequestAccountInfo from '../../../components/requestAccountInfo/RequestAccountInfo'
+import { asTransactionObject } from '@iota/transaction-converter/'
+import { extractJson } from '@iota/extract-json'
+import { trytesToAscii } from '@iota/converter'
+import { isTrytes } from '@iota/validators'
 
-class ConfirmTransfers extends Component {
-  constructor(props, context) {
-    super(props, context)
+const extractMessage = _bundle => {
+  try {
+    console.log(extractJson(_bundle))
+    return extractJson(_bundle)
+  } catch (err) {
+    console.log(err)
+    return null
   }
+}
 
-  render() {
-    return !this.props.isLoading ? (
-      <div className="container">
-        <div className="row mt-3">
-          <div className="col-2">
-            <img
-              className="border-radius-50"
-              src="./material/logo/pegasus-64.png"
-              height="50"
-              width="50"
-              alt="pegasus logo"
-            />
-          </div>
-          <div className="col-10 text-right text-blue text-md">
-            {this.props.title}
-          </div>
-        </div>
-
-        <hr className="mt-2 mb-2" />
-        <div class="container-confirm-transfers">
-          {this.props.transfer.args[0].map((singleTransfer, index) => {
-            return (
-              <React.Fragment>
-                {index > 0 ? <hr className="mt-1 mb-1" /> : ''}
-                <div className="row">
-                  <div className="col-12 text-left text-xs text-light">
-                    #{index}
-                  </div>
-                </div>
-                <div className="row">
-                  <div className="col-2 text-left text-xxs text-blue">To</div>
-                  <div className="col-10 text-right text-sm break-text font-weight-bold">
-                    {Utils.showAddress(singleTransfer.address, 10, 10)}
-                  </div>
-                </div>
-                <div className="row mt-2">
-                  <div className="col-2 text-left text-xxs text-blue">
-                    Message
-                  </div>
-                  <div className="col-10 text-right text-xs break-text">
-                    {singleTransfer.message ? singleTransfer.message : '-'}
-                  </div>
-                </div>
-                <div className="row mt-2">
-                  <div className="col-2 text-left text-xxs text-blue">
-                    Amount
-                  </div>
-                  <div className="col-10 text-right text-md break-text">
-                    {Utils.iotaReducer(singleTransfer.value)}
-                  </div>
-                </div>
-              </React.Fragment>
-            )
-          })}
-        </div>
-        {this.props.error ? (
-          <div className="row mt-4">
-            <div className="col-12 text-xs">
-              <div class="alert alert-danger" role="alert">
-                {this.props.error}
-              </div>
-            </div>
-          </div>
-        ) : (
-          ''
-        )}
-        <hr className={this.props.error ? 'row' : 'row mt-10 mb-1'} />
-        <div className={'row mt-2'}>
-          <div className="col-6 pr-2">
-            <button
-              onClick={() => this.props.onReject(this.props.transfer)}
-              className="btn btn-border-blue text-sm text-bold btn-big"
-            >
-              Reject
-            </button>
-          </div>
-          <div className="col-6 pl-2">
-            <button
-              onClick={() => this.props.onConfirm(this.props.transfer)}
-              className="btn btn-blue text-sm text-bold btn-big"
-            >
-              Confirm
-            </button>
-          </div>
-        </div>
-        {/*<div className="row mt-1">
-              <div className="col-12 text-center pr-5 pl-5">
-                <button onClick={() => this.props.onRejectAll()} type='submit' className='btn btn-border-blue text-bold btn-big'>
-                  Reject all
-                </button>
-              </div>
-            </div>
-            <div className="row mt-1">
-              <div className="col-12 text-center text-xxs text-blue">
-                {this.props.transfer} transfers
-                    </div>
-          </div>*/}
-      </div>
-    ) : (
-      <Loader />
+const ConfirmTransfers = props => {
+  let transfers = props.transfer.args[0]
+  let bundle = null
+  if (props.isTrytes) {
+    bundle = transfers.map(singleTransfer =>
+      asTransactionObject(singleTransfer)
     )
+    transfers = bundle
+      .filter(
+        singleTransfer =>
+          singleTransfer.currentIndex <= props.transfer.args[0].length - 4
+      )
+      .map(singleTransfer => {
+        return {
+          address: singleTransfer.address,
+          value: singleTransfer.value,
+          message: singleTransfer.message
+        }
+      })
   }
+
+  return !props.isLoading ? (
+    <div className="container">
+      <RequestHeader title={props.title} />
+      <hr className="mt-1 mb-1" />
+      <RequestAccountInfo account={props.account} />
+      <hr className="mt-1" />
+      <Tabs>
+        <TabList>
+          <Tab>Transfers</Tab>
+          {bundle ? <Tab>Bundle</Tab> : null}
+        </TabList>
+        <TabPanel>
+          <div class="container-confirm-transfers">
+            {transfers.map((singleTransfer, index) => {
+              return (
+                <React.Fragment>
+                  {index > 0 ? <hr className="mt-1 mb-1" /> : ''}
+                  <div className="row">
+                    <div className="col-12 text-left text-xs text-light">
+                      #{index}
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="col-2 text-left text-xxs text-blue">To</div>
+                    <div className="col-10 text-right text-sm break-text font-weight-bold">
+                      {Utils.showAddress(singleTransfer.address, 10, 10)}
+                    </div>
+                  </div>
+                  <div className="row mt-2">
+                    <div className="col-2 text-left text-xxs text-blue">
+                      Message
+                    </div>
+                    <div className="col-10 text-right text-xs break-text">
+                      {singleTransfer.message
+                        ? isTrytes(singleTransfer.message)
+                          ? trytesToAscii(singleTransfer.message)
+                          : singleTransfer.message
+                        : '-'}
+                    </div>
+                  </div>
+                  <div className="row mt-2">
+                    <div className="col-2 text-left text-xxs text-blue">
+                      Amount
+                    </div>
+                    <div className="col-10 text-right text-md break-text">
+                      {Utils.iotaReducer(singleTransfer.value)}
+                    </div>
+                  </div>
+                </React.Fragment>
+              )
+            })}
+          </div>
+        </TabPanel>
+
+        <TabPanel>
+          <div className="container-confirm-transfers">
+            <ReactJson src={bundle} />
+          </div>
+        </TabPanel>
+      </Tabs>
+
+      {props.error ? (
+        <div className="row">
+          <div className="col-12 text-xs">
+            <div class="alert alert-danger" role="alert">
+              {props.error}
+            </div>
+          </div>
+        </div>
+      ) : (
+        ''
+      )}
+      <hr className={props.error ? 'row mt-1' : 'row mt-4 mb-2'} />
+      <div className={'row mt-1'}>
+        <div className="col-6 pr-2">
+          <button
+            onClick={() => props.onReject(props.transfer)}
+            className="btn btn-border-blue text-sm text-bold btn-big"
+          >
+            Reject
+          </button>
+        </div>
+        <div className="col-6 pl-2">
+          <button
+            onClick={() => props.onConfirm(props.transfer)}
+            className="btn btn-blue text-sm text-bold btn-big"
+          >
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+  ) : (
+    <Loader />
+  )
 }
 
 export default ConfirmTransfers

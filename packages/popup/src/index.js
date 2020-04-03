@@ -10,6 +10,7 @@ import pump from 'pump'
 import buildPromisedBackgroundApi from '@pegasus/utils/promised-background-api'
 
 import './styles/styles.css'
+import 'react-tabs/style/react-tabs.css'
 
 const extensionPort = extension.runtime.connect({ name: 'popup' })
 const connectionStream = new PortStream(extensionPort)

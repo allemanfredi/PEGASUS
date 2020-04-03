@@ -271,7 +271,12 @@ class Main extends Component {
           />
         )
       case APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION:
-        return <ConfirmRequest background={this.props.background} />
+        return (
+          <ConfirmRequest
+            account={this.props.account}
+            background={this.props.background}
+          />
+        )
       case APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION:
         return (
           <Connector

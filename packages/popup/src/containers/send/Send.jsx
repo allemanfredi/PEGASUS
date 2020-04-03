@@ -68,10 +68,7 @@ class Send extends Component {
       needConfirmation: true,
       transfer: {
         method: 'transfer',
-        args: [transfer],
-        connection: {
-          enabled: true
-        }
+        args: [transfer]
       }
     })
     this.props.onHideTop(true)
@@ -112,6 +109,7 @@ class Send extends Component {
   render() {
     return this.state.needConfirmation ? (
       <ConfirmTransfers
+        title="Confirm Transfer"
         transfer={this.state.transfer}
         onConfirm={this.confirmTransfer}
         onReject={this.rejectTransfer}

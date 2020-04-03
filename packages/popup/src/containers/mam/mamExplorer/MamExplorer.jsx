@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import ReactJson from 'react-json-view'
-
 import Utils from '@pegasus/utils/utils'
 import Alert from '../../../components/alert/Alert'
 import Picklist from '../../../components/picklist/Picklist'

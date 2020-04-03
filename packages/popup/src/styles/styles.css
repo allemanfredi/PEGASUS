@@ -124,7 +124,7 @@
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
-    height: 280px;
+    height: 270px;
     padding-right: 5px;
     padding-left: 5px;
     padding-bottom: 5px;
@@ -1162,4 +1162,36 @@ textarea {
     to {
         top: 125px;
     }
+}
+
+
+/* REACT TABS */
+.react-tabs__tab-list {
+    border-bottom: 1px solid rgba(0,0,0,.1);;
+    margin: 0 0 10px;
+    padding: 0;
+  }
+  
+.react-tabs__tab {
+    border: 0px;
+    display: inline-block;
+    bottom: -1px;
+    position: relative;
+    list-style: none;
+    padding: 15px 12px;
+    cursor: pointer;
+    width: 175px;
+    font-size: 14px;
+    text-align: center;
+    color: #cacaca
+}
+  
+.react-tabs__tab--selected {
+    background: #fff;
+    color: darkblue;
+    border-bottom: 3px solid darkblue;
+}
+
+.alert {
+    margin-bottom: 0 !important
 }

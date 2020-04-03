@@ -5,7 +5,11 @@
   "author": "allemanfredi <alle.manfredi@gmail.com>",
   "private": true,
   "dependencies": {
+    "@iota/converter": "^1.0.0-beta.23",
     "@iota/core": "^1.0.0-beta.29",
+    "@iota/extract-json": "^1.0.0-beta.23",
+    "@iota/transaction-converter": "^1.0.0-beta.23",
+    "@iota/validators": "^1.0.0-beta.23",
     "animate.css": "^3.7.2",
     "babel-polyfill": "^6.26.0",
     "dnode": "^1.2.2",
@@ -22,6 +26,7 @@
     "react-router-dom": "^4.1.1",
     "react-scripts": "2.1.3",
     "react-switch": "^5.0.1",
+    "react-tabs": "^3.1.0",
     "react-tooltip": "^3.11.1",
     "url-parse": "^1.4.7"
   },

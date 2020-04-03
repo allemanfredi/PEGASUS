@@ -282,7 +282,10 @@ class PegasusEngine {
 
       // customizator controller
       executeRequest: (request, cb) =>
-        nodeify(this.customizatorController.executeRequestFromPopup(request), cb),
+        nodeify(
+          this.customizatorController.executeRequestFromPopup(request),
+          cb
+        ),
       getRequests: cb => cb(this.customizatorController.getRequests()),
       getExecutableRequests: cb =>
         cb(this.customizatorController.getExecutableRequests()),
