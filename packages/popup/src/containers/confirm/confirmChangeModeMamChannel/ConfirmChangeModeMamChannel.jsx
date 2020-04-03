@@ -1,12 +1,14 @@
 import React from 'react'
 import RequestHeader from '../../../components/requestHeader/RequestHeader'
+import RequestAccountInfo from '../../../components/requestAccountInfo/RequestAccountInfo'
 
 const ConfirmChangeModeMamChannel = props => {
   return (
     <div className="container">
-      <RequestHeader title="Confirm MAM operation" />
-
-      <hr className="mt-2 mb-2" />
+      <RequestHeader title="Change mode" />
+      <hr className="mt-1 mb-1" />
+      <RequestAccountInfo account={props.account} />
+      <hr className="mt-1" />
 
       <div className="row mt-4">
         <div className="col-12 text-center text-md text-blue">
@@ -43,9 +45,9 @@ const ConfirmChangeModeMamChannel = props => {
         </div>
       </div>
 
-      <hr className="mt-3 mb-2" />
+      <hr className="mt-2 mb-2" />
 
-      <div className="row mt-3">
+      <div className="row mt-2">
         <div className="col-6 pr-2">
           <button
             onClick={() => props.onReject(props.request)}

@@ -1,11 +1,14 @@
 import React from 'react'
 import RequestHeader from '../../../components/requestHeader/RequestHeader'
+import RequestAccountInfo from '../../../components/requestAccountInfo/RequestAccountInfo'
 
 const ConfirmCreateMamChannel = props => {
   return (
     <div className="container">
-      <RequestHeader title="Confirm MAM operation" />
-      <hr className="mt-2 mb-2" />
+      <RequestHeader title="Create MAM Channel" />
+      <hr className="mt-1 mb-1" />
+      <RequestAccountInfo account={props.account} />
+      <hr className="mt-1" />
 
       <div className="row mt-8">
         <div className="col-12 text-center text-md text-blue">
@@ -13,7 +16,7 @@ const ConfirmCreateMamChannel = props => {
         </div>
       </div>
 
-      <hr className="mt-24 mb-2" />
+      <hr className="mt-21 mb-2" />
 
       <div className="row mt-3">
         <div className="col-6 pr-2">
