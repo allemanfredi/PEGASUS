@@ -1,6 +1,6 @@
 // taken from here and changed logger: https://github.com/MetaMask/metamask-extension/blob/develop/app/scripts/lib/local-store.js
 import extension from 'extensionizer'
-import log from './logger'
+import log from '@pegasus/utils/logger'
 
 /**
  * Returns whether or not the given object contains no keys
