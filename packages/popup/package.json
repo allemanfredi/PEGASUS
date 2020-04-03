@@ -1,7 +1,7 @@
 {
   "name": "@pegasus/popup",
   "main": "index.js",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "author": "allemanfredi <alle.manfredi@gmail.com>",
   "private": true,
   "dependencies": {
