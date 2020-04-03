@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-
 import Utils from '@pegasus/utils/utils'
 import ConfirmTransfers from '../confirm/confirmTransfers/ConfirmTransfers'
 import Input from '../../components/input/Input'

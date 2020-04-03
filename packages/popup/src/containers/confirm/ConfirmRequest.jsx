@@ -72,9 +72,11 @@ class ConfirmRequest extends Component {
               <ConfirmTransfers
                 title="Confirm Transfer"
                 account={this.props.account}
+                network={this.props.network}
                 isLoading={this.state.isLoading}
                 error={this.state.error}
                 transfer={request}
+                background={this.props.background}
                 onConfirm={this.confirm}
                 onReject={this.reject}
               />
@@ -88,9 +90,11 @@ class ConfirmRequest extends Component {
               <ConfirmTransfers
                 title="Sending Trytes"
                 account={this.props.account}
+                network={this.props.network}
                 isLoading={this.state.isLoading}
                 error={this.state.error}
                 transfer={request}
+                background={this.props.background}
                 isTrytes={true}
                 onConfirm={this.confirm}
                 onReject={this.reject}
@@ -105,9 +109,11 @@ class ConfirmRequest extends Component {
               <ConfirmTransfers
                 title="Prepare Transfers"
                 account={this.props.account}
+                network={this.props.network}
                 isLoading={this.state.isLoading}
                 error={this.state.error}
                 transfer={request}
+                background={this.props.background}
                 onConfirm={this.confirm}
                 onReject={this.reject}
               />

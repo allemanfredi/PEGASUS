@@ -13,6 +13,7 @@ const RequestAccountInfo = props => {
           height="30"
           width="30"
           alt="avatar logo"
+          onClick={() => props.onChangeAccount()}
         />
       </div>
       <div className="col-4 text-center my-auto text-xs font-weight-bold">

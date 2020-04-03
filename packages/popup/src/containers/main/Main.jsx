@@ -274,6 +274,7 @@ class Main extends Component {
         return (
           <ConfirmRequest
             account={this.props.account}
+            network={this.props.network}
             background={this.props.background}
           />
         )
