@@ -110,6 +110,7 @@ class Send extends Component {
     return this.state.needConfirmation ? (
       <ConfirmTransfers
         title="Confirm Transfer"
+        account={this.props.account}
         transfer={this.state.transfer}
         onConfirm={this.confirmTransfer}
         onReject={this.rejectTransfer}
