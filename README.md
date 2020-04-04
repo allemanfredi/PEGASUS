@@ -74,17 +74,20 @@ In this way, if a user loses the access password (or if he forgets it), if he ha
 
 ```js
 if (window.iota) {
-    //grant permission
+    // grant permission
     const isConnected = await window.iota.connect()
 
-    //if user enabled
+    // if user enabled
     if (isConnected) {
 
         window.iota.on('providerChanged', provider => ...)
         window.iota.on('accountChanged', account => ...)
 
-        const bundle = await window.iota.core.prepareTransfers(transfers)
-        console.log(bundle)
+        const trytes = await window.iota.core.prepareTransfers(transfers)
+        const bundle = await window.iota.core.sendTrytes(trytes, depth, minWeightMagnitude)
+
+        // or
+        const bundle = await window.iota.tranfer(transfers)
     } 
 }
 ```
