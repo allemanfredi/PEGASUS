@@ -39,7 +39,7 @@ class PegasusInpageClient extends EventEmitter {
     const uuid = randomUUID()
 
     this.inpageStream.write({
-      name: 'inpageClient',
+      name: 'client',
       data: Object.assign({}, data, {
         uuid
       })

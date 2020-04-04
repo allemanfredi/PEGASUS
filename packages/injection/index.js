@@ -38,11 +38,11 @@ const setupStreams = () => {
     console.warn('Pegasus Background Multiplex Disconnected ', err || '')
   )
 
-  const pageChannel = pageMux.createStream('inpageClient')
-  const extensionChannel = extensionMux.createStream('inpageClient')
+  const pageChannel = pageMux.createStream('client')
+  const extensionChannel = extensionMux.createStream('client')
 
   pump(pageChannel, extensionChannel, pageChannel, err =>
-    console.warn('Pegasus traffic lost to inpageClient ', err || '')
+    console.warn('Pegasus traffic lost to client ', err || '')
   )
 }
 

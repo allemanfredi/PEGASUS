@@ -23,7 +23,7 @@ class ConnectorController {
   }
 
   setCustomizatorController(_customizatorController) {
-    this.customizatorController = _customizatorController
+    this.requestsController = _customizatorController
   }
 
   isConnected(_origin) {
@@ -33,11 +33,11 @@ class ConnectorController {
   }
 
   pushConnectionRequest(_connection) {
-    if (!this.connectionRequests[_connection.website.origin])
-      this.connectionRequests[_connection.website.origin] = {}
+    if (!this.connectionRequests[_connection.requestor.origin])
+      this.connectionRequests[_connection.requestor.origin] = {}
 
-    this.connectionRequests[_connection.website.origin][
-      _connection.website.tabId
+    this.connectionRequests[_connection.requestor.origin][
+      _connection.requestor.tabId
     ] = _connection
 
     this.stateStorageController.set(
@@ -69,9 +69,9 @@ class ConnectorController {
     return normalizeConnectionRequests(this.connectionRequests)
   }
 
-  connect(_uuid, _push, _website) {
+  connect(_uuid, _push, _requestor) {
     this.pushConnectionRequest({
-      website: _website,
+      requestor: _requestor,
       requestToConnect: true,
       enabled: false,
       push: _push,
@@ -79,7 +79,7 @@ class ConnectorController {
     })
 
     logger.log(
-      `(ConnectorController) New _connect request with ${_website.origin}`
+      `(ConnectorController) New _connect request with ${_requestor.origin}`
     )
 
     this.walletController.setState(
@@ -90,7 +90,7 @@ class ConnectorController {
   }
 
   completeConnectionRequest(_origin, _tabId) {
-    const requests = this.customizatorController.getRequests()
+    const requests = this.requestsController.getRequests()
 
     logger.log(
       `(ConnectorController) Completing connection with ${_origin} - ${_tabId}`
@@ -120,12 +120,12 @@ class ConnectorController {
     )
 
     requests.forEach(request => {
-      if (request.connection.website.origin === _origin) {
+      if (request.connection.requestor.origin === _origin) {
         request.connection.requestToConnect = false
         request.connection.enabled = true
 
         if (!request.needUserInteraction)
-          this.customizatorController.executeRequest(request)
+          this.requestsController.executeRequest(request)
       }
     })
 
@@ -146,7 +146,7 @@ class ConnectorController {
   }
 
   rejectConnectionRequest(_origin, _tabId) {
-    const requests = this.customizatorController.getRequests()
+    const requests = this.requestsController.getRequests()
 
     logger.log(`(ConnectorController) Rejecting connection with ${_origin}`)
 
@@ -160,8 +160,8 @@ class ConnectorController {
     }
 
     requests.forEach(request => {
-      if (request.connection.website.origin === _origin)
-        this.customizatorController.removeRequest(request)
+      if (request.connection.requestor.origin === _origin)
+        this.requestsController.removeRequest(request)
     })
 
     this.removeConnectionRequest(_origin, _tabId)
@@ -175,30 +175,30 @@ class ConnectorController {
     return true
   }
 
-  estabilishConnection(website) {
+  estabilishConnection(requestor) {
     const state = this.walletController.getState()
     if (state <= APP_STATE.WALLET_LOCKED) return
 
     logger.log(
-      `(ConnectorController) Estabilishing connection with ${website.origin}`
+      `(ConnectorController) Estabilishing connection with ${requestor.origin}`
     )
 
     const account = this.walletController.getCurrentAccount()
 
-    if (this.connections[website.origin]) {
+    if (this.connections[requestor.origin]) {
       if (
-        this.connections[website.origin].enabled &&
+        this.connections[requestor.origin].enabled &&
         state >= APP_STATE.WALLET_UNLOCKED
       ) {
         logger.log(
-          `(ConnectorController) Connection with ${website.origin} already enabled`
+          `(ConnectorController) Connection with ${requestor.origin} already enabled`
         )
         return account.data.latestAddress
       }
     }
 
-    this.connections[website.origin] = {
-      website,
+    this.connections[requestor.origin] = {
+      requestor,
       requestToConnect: false,
       enabled: false
     }
@@ -232,11 +232,11 @@ class ConnectorController {
 
   addConnection(_connection) {
     logger.log(
-      `(ConnectorController) Add connection with ${_connection.website.origin}`
+      `(ConnectorController) Add connection with ${_connection.requestor.origin}`
     )
-    if (this.connections[_connection.website.origin]) return false
+    if (this.connections[_connection.requestor.origin]) return false
 
-    this.connections[_connection.website.origin] = _connection
+    this.connections[_connection.requestor.origin] = _connection
     return true
   }
 }

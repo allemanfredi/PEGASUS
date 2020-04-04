@@ -3,12 +3,12 @@ import DuplexStream from 'readable-stream/duplex'
 
 /**
  *
- * Handle request from a specific website tab
+ * Handle request from a specific requestor tab
  *
  * @param {PegasusEngine} engine
- * @param {Object} website
+ * @param {Object} requestor
  */
-function createEngineStream(engine, website) {
+function createEngineStream(engine, requestor) {
   function read() {
     return false
   }
@@ -16,7 +16,7 @@ function createEngineStream(engine, website) {
   function write(request, encoding, cb) {
     engine.handle(
       Object.assign({}, request, {
-        website,
+        requestor,
         push: this.push.bind(this)
       })
     )

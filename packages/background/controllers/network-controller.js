@@ -5,10 +5,10 @@ class NetworkController extends EventEmitter {
   constructor(configs) {
     super()
 
-    const { stateStorageController, customizatorController } = configs
+    const { stateStorageController, requestsController } = configs
 
     this.stateStorageController = stateStorageController
-    this.customizatorController = customizatorController
+    this.requestsController = requestsController
   }
 
   setWalletController(_walletController) {

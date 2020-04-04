@@ -7,14 +7,14 @@ class SessionController {
   constructor(options) {
     const {
       walletController,
-      customizatorController,
+      requestsController,
       stateStorageController,
       loginPasswordController
     } = options
 
     this.walletController = walletController
     this.stateStorageController = stateStorageController
-    this.customizatorController = customizatorController
+    this.requestsController = requestsController
     this.loginPasswordController = loginPasswordController
 
     this.session = null
@@ -48,7 +48,7 @@ class SessionController {
       return
     }
 
-    const requests = this.customizatorController.getRequests()
+    const requests = this.requestsController.getRequests()
     const requestWitUserInteraction = requests.filter(
       request => request.needUserInteraction
     )

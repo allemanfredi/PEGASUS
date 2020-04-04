@@ -12,7 +12,7 @@ class ConnectionsSettings extends React.Component {
 
     this.state = {
       connections: {},
-      website: ''
+      requestor: ''
     }
   }
 
@@ -25,7 +25,7 @@ class ConnectionsSettings extends React.Component {
 
   async handleAddWebsite(e) {
     e.preventDefault()
-    if (!Utils.isURL(this.state.website)) {
+    if (!Utils.isURL(this.state.requestor)) {
       this.props.setNotification({
         type: 'danger',
         text: 'Invalid Website URL',
@@ -34,7 +34,7 @@ class ConnectionsSettings extends React.Component {
       return
     }
 
-    const url = new Url(this.state.website)
+    const url = new Url(this.state.requestor)
 
     const account = this.props.background.getCurrentAccount()
 
@@ -43,7 +43,7 @@ class ConnectionsSettings extends React.Component {
       connected: true,
       enabled: true,
       accountId: account.id,
-      website: {
+      requestor: {
         favicon: `${url.origin}/favicon.ico`,
         hostname: url.hostname,
         origin: url.origin
@@ -68,7 +68,7 @@ class ConnectionsSettings extends React.Component {
 
   async removeConnection(connection) {
     const isRemoved = await this.props.background.removeConnection(
-      connection.website.origin
+      connection.requestor.origin
     )
     if (isRemoved) {
       this.props.setNotification({
@@ -88,15 +88,17 @@ class ConnectionsSettings extends React.Component {
     return (
       <React.Fragment>
         <div className="row">
-          <div className="col-12 text-dark-gray mt-2 text-md">Add website</div>
+          <div className="col-12 text-dark-gray mt-2 text-md">
+            Add requestor
+          </div>
         </div>
         <div className="row mt-1">
           <div className="col-12">
             <Input
-              value={this.state.website}
-              onChange={e => this.setState({ website: e.target.value })}
-              label="website"
-              id="website-id"
+              value={this.state.requestor}
+              onChange={e => this.setState({ requestor: e.target.value })}
+              label="requestor"
+              id="requestor-id"
               type="text"
             />
           </div>
@@ -122,22 +124,22 @@ class ConnectionsSettings extends React.Component {
           .filter(connection => connection.enabled)
           .map(connection => {
             return (
-              <div key={connection.website.hostname} className="row mt-1">
+              <div key={connection.requestor.hostname} className="row mt-1">
                 <div className="col-3">
                   <img
                     className="border-radius-50"
                     src={
-                      connection.website.favicon
-                        ? connection.website.favicon
-                        : `${connection.website.hostname}/favicon.ico`
+                      connection.requestor.favicon
+                        ? connection.requestor.favicon
+                        : `${connection.requestor.hostname}/favicon.ico`
                     }
                     height="25"
                     width="25"
-                    alt="website logo"
+                    alt="requestor logo"
                   />
                 </div>
                 <div className="col-6 text-black text-xs text-center font-weight-bold my-auto">
-                  {connection.website.hostname}
+                  {connection.requestor.hostname}
                 </div>
                 <div className="col-3 my-auto text-right">
                   <i

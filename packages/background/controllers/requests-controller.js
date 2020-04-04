@@ -3,7 +3,7 @@ import { APP_STATE } from '@pegasus/utils/states'
 import logger from '@pegasus/utils/logger'
 import { REQUESTS_WITH_USER_INTERACTION } from '../lib/constants'
 
-class CustomizatorController {
+class RequestsController {
   constructor(options) {
     const {
       connectorController,
@@ -53,22 +53,21 @@ class CustomizatorController {
 
   async pushRequest(_request) {
     logger.log(
-      `(CustomizatorController) New request ${_request.uuid} - ${_request.method} from ${_request.website.origin}`
+      `(RequestsController) New request ${_request.uuid} - ${_request.method} from ${_request.requestor.origin}`
     )
 
-    const { method, uuid, args, push, website } = _request
+    const { method, uuid, args, push, requestor } = _request
 
-    let connection = this.connectorController.getConnection(website.origin)
-    let isPopupAlreadyOpened = false
+    let connection = this.connectorController.getConnection(requestor.origin)
 
-    const popup = this.popupController.getPopup()
     const state = this.walletController.getState()
 
+    // NOTE: connector disabled for internal requests
     if (!connection) {
       connection = {
         requestToConnect: false,
-        enabled: false,
-        website
+        enabled: _request.requestor.hostname === 'pegasus' ? true : false,
+        requestor
       }
     }
 
@@ -83,18 +82,14 @@ class CustomizatorController {
         APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
       )
 
-      if (!popup) {
-        this.popupController.openPopup()
-        isPopupAlreadyOpened = true
-      }
+      this.popupController.openPopup()
     }
 
     if (state <= APP_STATE.WALLET_LOCKED || !connection.enabled) {
-      if (!popup && isPopupAlreadyOpened === false)
-        this.popupController.openPopup()
+      this.popupController.openPopup()
 
       logger.log(
-        `(CustomizatorController) Pushing request ${uuid} - ${method} because of locked wallet`
+        `(RequestsController) Pushing request ${uuid} - ${method} because of locked wallet`
       )
 
       this.requests = [
@@ -116,7 +111,7 @@ class CustomizatorController {
     } else if (connection.enabled && state >= APP_STATE.WALLET_UNLOCKED) {
       if (REQUESTS_WITH_USER_INTERACTION.includes(method)) {
         logger.log(
-          `(CustomizatorController) Pushing request ${uuid} - ${method} and asking for user permission`
+          `(RequestsController) Pushing request ${uuid} - ${method} and asking for user permission`
         )
 
         this.requests = [
@@ -149,22 +144,13 @@ class CustomizatorController {
     this.stateStorageController.set('requests', this.requests)
   }
 
-  async executeRequestFromPopup(_request) {
-    const res = await this.execute(_request)
-
-    logger.log(
-      `(CustomizatorController) Executed request ${_request.method} from popup`
-    )
-    return res
-  }
-
   async executeRequest(_request) {
     const request = this.requests.find(request =>
       _request.uuid ? request.uuid === _request.uuid : false
     )
 
     logger.log(
-      `(CustomizatorController) Executing request ${_request.uuid} - ${_request.method} from tab ...`
+      `(RequestsController) Executing request ${_request.uuid} - ${_request.method} ...`
     )
 
     if (_request.connection.enabled && request.push) {
@@ -179,7 +165,7 @@ class CustomizatorController {
       this.removeRequest(_request)
 
       logger.log(
-        `(CustomizatorController) Request ${_request.uuid} - ${_request.method} from tab executed`
+        `(RequestsController) Request ${_request.uuid} - ${_request.method}  executed`
       )
 
       if (this.requests.length === 0) {
@@ -190,7 +176,7 @@ class CustomizatorController {
       return res
     } else if (!_request.connection.enabled && request.push) {
       logger.log(
-        `(CustomizatorController) Rejecting request ${_request.uuid} - ${_request.method} because of no granted permission`
+        `(RequestsController) Rejecting request ${_request.uuid} - ${_request.method} because of no granted permission`
       )
 
       request.push({
@@ -215,7 +201,7 @@ class CustomizatorController {
     const res = await this.execute(_request)
 
     if (this.requests.length === 1) {
-      logger.log('(CustomizatorController) Last request to execute')
+      logger.log('(RequestsController) Last request to execute')
       this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
     }
 
@@ -241,7 +227,7 @@ class CustomizatorController {
     )
 
     logger.log(
-      `(CustomizatorController) Rejecting (singular) request ${_request.uuid} - ${_request.method}`
+      `(RequestsController) Rejecting (singular) request ${_request.uuid} - ${_request.method}`
     )
 
     request.push({
@@ -269,7 +255,7 @@ class CustomizatorController {
       })
 
       logger.log(
-        `(CustomizatorController) Rejecting (All) request ${request.uuid} - ${request.method}`
+        `(RequestsController) Rejecting (All) request ${request.uuid} - ${request.method}`
       )
 
       this.removeRequest(request)
@@ -361,7 +347,7 @@ class CustomizatorController {
 
   removeRequest(_request) {
     logger.log(
-      `(CustomizatorController) Removing request ${_request.uuid} - ${_request.method}`
+      `(RequestsController) Removing request ${_request.uuid} - ${_request.method}`
     )
 
     this.requests = this.requests.filter(
@@ -374,4 +360,4 @@ class CustomizatorController {
   }
 }
 
-export default CustomizatorController
+export default RequestsController

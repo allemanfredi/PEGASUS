@@ -45,13 +45,13 @@ class Connector extends Component {
               <img
                 className="border-radius-50"
                 src={
-                  connection.website.favicon
-                    ? connection.website.favicon
-                    : `${connection.website.hostname}/favicon.ico`
+                  connection.requestor.favicon
+                    ? connection.requestor.favicon
+                    : `${connection.requestor.hostname}/favicon.ico`
                 }
                 height="64"
                 width="64"
-                alt="website logo"
+                alt="requestor logo"
               />
             </div>
             <div className="col-4 text-center my-auto">
@@ -76,7 +76,7 @@ class Connector extends Component {
           </div>
           <div className="row mt-05">
             <div className="col-4 text-center text-xxs text-bold">
-              {connection.website.title}
+              {connection.requestor.hostname}
             </div>
             <div className="col-4 text-center text-xxxs my-auto pl-0 pr-0 text-gray">
               wants to connect with
@@ -87,12 +87,13 @@ class Connector extends Component {
           </div>
           <div className="row mt-5">
             <div className="col-12 text-center text-md text-bold">
-              Are you sure you want to enable the connection with this website?
+              Are you sure you want to enable the connection with this
+              requestor?
             </div>
           </div>
           <div className="row mt-1">
             <div className="col-12 text-center text-xs text-gray">
-              allowing, the website will be able to safely interact with the
+              allowing, the requestor will be able to safely interact with the
               Wallet thanks to the Pegasus Connector!
             </div>
           </div>
@@ -101,8 +102,8 @@ class Connector extends Component {
               <button
                 onClick={() => {
                   this.props.onPermissionNotGranted(
-                    connection.website.origin,
-                    connection.website.tabId
+                    connection.requestor.origin,
+                    connection.requestor.tabId
                   )
                 }}
                 className="btn btn-border-blue text-sm text-bold btn-big"
@@ -114,8 +115,8 @@ class Connector extends Component {
               <button
                 onClick={() => {
                   this.props.onPermissionGranted(
-                    connection.website.origin,
-                    connection.website.tabId
+                    connection.requestor.origin,
+                    connection.requestor.tabId
                   )
                 }}
                 className="btn btn-blue text-sm text-bold btn-big"

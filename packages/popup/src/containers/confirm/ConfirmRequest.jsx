@@ -41,7 +41,7 @@ class ConfirmRequest extends Component {
       request => request.needUserInteraction && request.connection.enabled
     )
 
-    this.setState({ requests: executableRequests }) 
+    this.setState({ requests: executableRequests })
   }
 
   async confirm(request) {

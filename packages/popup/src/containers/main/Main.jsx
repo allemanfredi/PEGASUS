@@ -93,7 +93,7 @@ class Main extends Component {
     this.props.background.setState(APP_STATE.WALLET_UNLOCKED)
     this.setState({ appState: APP_STATE.WALLET_UNLOCKED })
 
-    // if there are requests of connecting a website
+    // if there are requests of connecting a requestor
     const connectionRequests = await this.props.background.getConnectionRequests()
     if (connectionRequests.length > 0) {
       this.props.background.setState(

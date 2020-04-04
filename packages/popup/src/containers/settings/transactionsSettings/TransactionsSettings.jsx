@@ -35,7 +35,10 @@ class TransactionsSettings extends React.Component {
         this.props.background.enableTransactionsAutoPromotion(
           this.state.settings.autoPromotion.time * 1000 * 60
         )
-      } else if (!settings.autoPromotion.enabled) {
+      } else if (
+        !settings.autoPromotion.enabled ||
+        settings.autoPromotion.time === 0
+      ) {
         this.props.background.disableTransactionsAutoPromotion()
       }
     }

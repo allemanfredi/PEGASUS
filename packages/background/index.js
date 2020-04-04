@@ -8,25 +8,6 @@ import pump from 'pump'
 const engine = new PegasusEngine()
 
 const handleConnection = port => {
-  if (
-    port.sender &&
-    port.sender.tab &&
-    port.sender.url &&
-    port.name !== 'popup'
-  ) {
-    const portStream = new PortStream(port)
-    const mux = new ObjectMultiplex()
-    pump(portStream, mux, portStream, err => {
-      if (err) logger.error(err)
-    })
-
-    // messages between inpage and background
-    engine.setupInpageClientConnection(
-      mux.createStream('inpageClient'),
-      port.sender
-    )
-  }
-
   if (port.name === 'popup') {
     const portStream = new PortStream(port)
     // communication with popup
@@ -36,8 +17,27 @@ const handleConnection = port => {
       if (err) logger.error(err)
     })
 
-    engine.setupEngineConnectionWithPopup(mux.createStream('engine'))
+    engine.setupTrustedConnection(
+      mux.createStream('engine'),
+      mux.createStream('client'),
+      port.sender
+    )
     return
+  }
+
+  if (port.sender && port.sender.tab && port.sender.url) {
+    const portStream = new PortStream(port)
+    const mux = new ObjectMultiplex()
+    pump(portStream, mux, portStream, err => {
+      if (err) logger.error(err)
+    })
+
+    // messages between inpage and background
+    engine.setupUntrustedConnection(
+      mux.createStream('client'),
+      port.sender,
+      false
+    )
   }
 }
 

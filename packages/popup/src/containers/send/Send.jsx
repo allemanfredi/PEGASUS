@@ -9,7 +9,6 @@ class Send extends Component {
     super(props, context)
 
     this.clickTransfer = this.clickTransfer.bind(this)
-    this.confirmTransfer = this.confirmTransfer.bind(this)
     this.rejectTransfer = this.rejectTransfer.bind(this)
     this.loadAccounts = this.loadAccounts.bind(this)
 
@@ -22,7 +21,6 @@ class Send extends Component {
       message: '',
       isLoading: false,
       error: null,
-      needConfirmation: false,
       isTransferingBetweenWalletAccounts: false,
       accounts: {}
     }
@@ -44,7 +42,7 @@ class Send extends Component {
     this.setState({ accounts })
   }
 
-  clickTransfer() {
+  async clickTransfer() {
     if (!Utils.isValidAddress(this.state.dstAddress)) {
       this.props.setNotification({
         type: 'danger',
@@ -63,22 +61,20 @@ class Send extends Component {
       }
     ]
 
-    this.setState({
-      needConfirmation: true,
-      transfer: {
-        method: 'transfer',
-        args: [transfer]
-      }
+    //this.props.onHideTop(true)
+
+    const { response, success } = await this.props.background.send({
+      method: 'transfer',
+      args: [transfer]
     })
-    this.props.onHideTop(true)
   }
 
-  async confirmTransfer() {
+  /*async confirmTransfer() {
     this.setState({
       isLoading: true,
       error: null
     })
-    const { response, success } = await this.props.background.executeRequest(
+    const { response, success } = await this.props.background.send(
       this.state.transfer
     )
     if (success) {
@@ -95,31 +91,17 @@ class Send extends Component {
     }
 
     this.setState({ isLoading: false })
-  }
+  }*/
 
   rejectTransfer() {
     this.props.onHideTop(false)
     this.setState({
-      needConfirmation: false,
       transfer: null
     })
   }
 
   render() {
-    return this.state.needConfirmation ? (
-      <ConfirmTransfers
-        title="Confirm Transfer"
-        account={this.props.account}
-        network={this.props.network}
-        transfer={this.state.transfer}
-        canChangeAccount={false}
-        onConfirm={this.confirmTransfer}
-        onReject={this.rejectTransfer}
-        background={this.props.background}
-        isLoading={this.state.isLoading}
-        error={this.state.error}
-      />
-    ) : (
+    return (
       <div className="container overflow-auto-475h">
         <div>
           <div className="row mt-2">

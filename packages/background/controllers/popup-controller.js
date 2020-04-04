@@ -1,28 +1,27 @@
 import extensionizer from 'extensionizer'
+import { Mutex } from 'async-mutex'
 
 class PopupController {
   constructor() {
-    this.popup = false
+    this.popup = null
 
-    extensionizer.runtime.onConnect.addListener(port => {
-      port.onDisconnect.addListener(() => {
-        this.popup = null
-      })
-    })
-  }
-
-  setPopup(_popup) {
-    this.popup = _popup
-  }
-
-  getPopup() {
-    return this.popup
+    this.mutex = new Mutex()
   }
 
   async openPopup() {
-    if (this.popup && this.popup.closed) this.popup = false
+    const release = await this.mutex.acquire()
+
+    if (this.popup && this.popup.closed) this.popup = null
 
     if (this.popup && (await this.updatePopup())) return
+
+    // NOTE: release mutex if user closes the popup
+    extensionizer.runtime.onConnect.addListener(port => {
+      port.onDisconnect.addListener(() => {
+        this.popup = null
+        release()
+      })
+    })
 
     if (typeof chrome !== 'undefined') {
       return extensionizer.windows.create(
@@ -36,6 +35,7 @@ class PopupController {
         },
         window => {
           this.popup = window
+          release()
         }
       )
     }
@@ -48,13 +48,14 @@ class PopupController {
       left: 25,
       top: 25
     })
+    release()
   }
 
   closePopup() {
     if (!this.popup) return
 
     extensionizer.windows.remove(this.popup.id)
-    this.popup = false
+    this.popup = null
   }
 
   updatePopup() {

@@ -1,6 +1,6 @@
 import options from '@pegasus/utils/options'
 import AccountDataController from './controllers/account-data-controller'
-import CustomizatorController from './controllers/customizator-controller'
+import RequestsController from './controllers/requests-controller'
 import MamController from './controllers/mam-controller'
 import StateStorageController from './controllers/state-storage-controller'
 import NotificationsController from './controllers/notifications-controller'
@@ -46,7 +46,7 @@ class PegasusEngine {
       stateStorageController: this.stateStorageController
     })
 
-    this.customizatorController = new CustomizatorController({
+    this.requestsController = new RequestsController({
       popupController: this.popupController,
       connectorController: this.connectorController,
       mamController: this.mamController,
@@ -56,7 +56,7 @@ class PegasusEngine {
 
     this.networkController = new NetworkController({
       stateStorageController: this.stateStorageController,
-      customizatorController: this.customizatorController
+      requestsController: this.requestsController
     })
 
     this.loginPasswordController = new LoginPasswordController({
@@ -86,7 +86,7 @@ class PegasusEngine {
     this.sessionController = new SessionsController({
       walletController: this.walletController,
       stateStorageController: this.stateStorageController,
-      customizatorController: this.customizatorController,
+      requestsController: this.requestsController,
       loginPasswordController: this.loginPasswordController
     })
 
@@ -95,9 +95,9 @@ class PegasusEngine {
       loginPasswordController: this.loginPasswordController
     })
 
-    this.customizatorController.setWalletController(this.walletController)
-    this.customizatorController.setNetworkController(this.networkController)
-    this.customizatorController.setNodeController(this.nodeController)
+    this.requestsController.setWalletController(this.walletController)
+    this.requestsController.setNetworkController(this.networkController)
+    this.requestsController.setNodeController(this.nodeController)
     this.mamController.setNetworkController(this.networkController)
     this.mamController.setWalletController(this.walletController)
     this.connectorController.setWalletController(this.walletController)
@@ -105,9 +105,7 @@ class PegasusEngine {
     this.connectorController.setNetworkController(this.networkController)
     this.networkController.setWalletController(this.walletController)
     this.walletController.setSessionController(this.sessionController)
-    this.connectorController.setCustomizatorController(
-      this.customizatorController
-    )
+    this.connectorController.setCustomizatorController(this.requestsController)
     /* E N D   C O N T R O L L E R S */
 
     const state = this.walletController.getState()
@@ -133,42 +131,47 @@ class PegasusEngine {
    * Create a connection between the inpageClient and the engine
    *
    * @param {Stream} outStream
-   * @param {Object} port
+   * @param {Object} sender
+   * @param {Bool} isInternal
    */
-  setupInpageClientConnection(outStream, sender) {
+  setupUntrustedConnection(outStream, sender, isInternal) {
     const url = new URL(sender.url)
 
-    const website = {
+    // tabId = 0 is the popup
+    const requestor = {
       origin: url.origin,
-      hostname: url.hostname,
-      title: sender.tab.title,
-      favicon: sender.tab.favIconUrl,
-      tabId: sender.tab.id
+      hostname: isInternal ? 'pegasus' : url.hostname,
+      favicon: sender.tab ? sender.tab.favIconUrl : '',
+      tabId: sender.tab ? sender.tab.id : 0
     }
 
-    const inpageClientStream = createEngineStream(this, website)
+    const inpageClientStream = createEngineStream(this, requestor)
 
     pump(outStream, inpageClientStream, outStream, err => {
-      // NOTE: if connection with this website is not enabled it will be removed when user closes the page
+      // NOTE: if connection with this requestor is not enabled it will be removed when user closes the page
       this.connectorController.removePendingConnection(url.origin)
       if (err) logger.error(err)
     })
 
     this.setupInpageClientDefaultValues(inpageClientStream, url)
 
-    this.connectorController.estabilishConnection(website)
+    this.connectorController.estabilishConnection(requestor)
   }
 
   /**
    * Create a connection with the popup by exposing the engine APIs
    *
-   * @param {Stream} outStream
+   * @param {Stream} engineOutStream
+   * @param {Stream} clientOutStream
+   * @param {Object} sender
    */
-  setupEngineConnectionWithPopup(outStream) {
+  setupTrustedConnection(engineOutStream, clientOutStream, sender) {
     const api = this.getApi()
     const dnode = Dnode(api)
 
-    pump(outStream, dnode, outStream, err => {
+    this.setupUntrustedConnection(clientOutStream, sender, true)
+
+    pump(engineOutStream, dnode, engineOutStream, err => {
       if (err) logger.error(err)
     })
     dnode.on('remote', remote => {
@@ -187,14 +190,14 @@ class PegasusEngine {
    * @param {Object} _request
    */
   handle(_request) {
-    const { method, uuid, push, website } = _request
+    const { method, uuid, push, requestor } = _request
 
     const iota = composeAPI()
     if (
       iota[_request.method] &&
       !FORBIDDEN_REQUESTS.includes(_request.method)
     ) {
-      this.customizatorController.pushRequest(_request)
+      this.requestsController.pushRequest(_request)
       return
     }
 
@@ -202,12 +205,12 @@ class PegasusEngine {
       MAM_REQUESTS.includes(_request.method) ||
       ADDITIONAL_METHODS.includes(_request.method)
     ) {
-      this.customizatorController.pushRequest(_request)
+      this.requestsController.pushRequest(_request)
       return
     }
 
     if (method === 'connect') {
-      this.connectorController.connect(uuid, push, website)
+      this.connectorController.connect(uuid, push, requestor)
       return
     }
 
@@ -276,19 +279,19 @@ class PegasusEngine {
       closePopup: cb => cb(this.popupController.closePopup()),
 
       // customizator controller
-      executeRequest: (request, cb) =>
+      /*executeRequest: (request, cb) =>
         nodeify(
-          this.customizatorController.executeRequestFromPopup(request),
+          this.requestsController.executeRequestFromPopup(request),
           cb
-        ),
-      getRequests: cb => cb(this.customizatorController.getRequests()),
+        ),*/
+      getRequests: cb => cb(this.requestsController.getRequests()),
       getExecutableRequests: cb =>
-        cb(this.customizatorController.getExecutableRequests()),
+        cb(this.requestsController.getExecutableRequests()),
       rejectRequest: (request, cb) =>
-        cb(this.customizatorController.rejectRequest(request)),
-      rejectRequests: cb => cb(this.customizatorController.rejectRequests()),
+        cb(this.requestsController.rejectRequest(request)),
+      rejectRequests: cb => cb(this.requestsController.rejectRequests()),
       confirmRequest: (request, cb) =>
-        nodeify(this.customizatorController.confirmRequest(request), cb),
+        nodeify(this.requestsController.confirmRequest(request), cb),
 
       // connector controller
       completeConnectionRequest: (origin, tabId, cb) =>
@@ -334,7 +337,7 @@ class PegasusEngine {
 
   /**
    * Send the current network provider to the inpageClient.
-   * Also check if the connection with a website is already enabled,
+   * Also check if the connection with a requestor is already enabled,
    * in that case the engine it will send the address of the current account to the inpageClient.
    * In addition listens for network/account changing in order to send to the inpageClient.
    *
@@ -377,7 +380,7 @@ class PegasusEngine {
    */
   updateBadge() {
     const connectionRequests = this.connectorController.getConnectionRequests()
-    const requests = this.customizatorController.getRequests()
+    const requests = this.requestsController.getRequests()
 
     const sum = connectionRequests.length + requests.length
 
