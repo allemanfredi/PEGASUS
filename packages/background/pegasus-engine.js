@@ -141,8 +141,8 @@ class PegasusEngine {
     const requestor = {
       origin: url.origin,
       hostname: isInternal ? 'pegasus' : url.hostname,
-      favicon: sender.tab ? sender.tab.favIconUrl : '',
-      tabId: sender.tab ? sender.tab.id : null
+      favicon: sender.tab && sender.tab.favIconUrl ? sender.tab.favIconUrl : '',
+      tabId: sender.tab && sender.tab.id ? sender.tab.id : null
     }
 
     const inpageClientStream = createEngineStream(this, requestor)
@@ -153,7 +153,9 @@ class PegasusEngine {
       if (err) logger.error(err)
     })
 
-    this.setupInpageClientDefaultValues(inpageClientStream, url)
+    // NOTE: disable account/provider notification for internal processes
+    if (!isInternal)
+      this.setupInpageClientDefaultValues(inpageClientStream, url)
 
     this.connectorController.estabilishConnection(requestor)
   }
@@ -279,11 +281,11 @@ class PegasusEngine {
       closePopup: cb => cb(this.popupController.closePopup()),
 
       // customizator controller
-      /*executeRequest: (request, cb) =>
+      /* executeRequest: (request, cb) =>
         nodeify(
           this.requestsController.executeRequestFromPopup(request),
           cb
-        ),*/
+        ), */
       getRequests: cb => cb(this.requestsController.getRequests()),
       getExecutableRequests: cb =>
         cb(this.requestsController.getExecutableRequests()),

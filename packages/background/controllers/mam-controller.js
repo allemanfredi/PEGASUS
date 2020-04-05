@@ -342,30 +342,26 @@ class MamController {
 
   _searchSidekeyIntoUserChannelsByRoot(_userMamChannels, _root) {
     let sidekey = null
-    for (let state of Object.values(_userMamChannels.owner)) {
+    for (let state of Object.values(_userMamChannels.owner))
       if (state.root === _root) sidekey = state.channel.side_key
-    }
 
     if (sidekey) return sidekey
 
-    for (let state of Object.values(_userMamChannels.subscriber)) {
+    for (let state of Object.values(_userMamChannels.subscriber))
       if (state.root === _root) sidekey = state.channel.side_key
-    }
 
     return sidekey
   }
 
   _searchRootIntoUserChannels(userMamChannels, _root) {
     let foundRoot = null
-    for (let state of Object.values(userMamChannels.owner)) {
+    for (let state of Object.values(userMamChannels.owner))
       if (state.root === _root) foundRoot = state.root
-    }
 
     if (foundRoot) return foundRoot
 
-    for (let state of Object.values(userMamChannels.subscriber)) {
+    for (let state of Object.values(userMamChannels.subscriber))
       if (state.root === _root) foundRoot = state.root
-    }
 
     return foundRoot
   }

@@ -182,7 +182,7 @@ class ConnectorController {
     // NOTE: connector not enabled for internal processes
     if (requestor.hostname === 'pegasus') {
       logger.log(
-        `(ConnectorController) Internal process asked to connect -> Connected`
+        '(ConnectorController) Internal process asked to connect -> Connected'
       )
       return
     }

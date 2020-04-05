@@ -60,15 +60,13 @@ class RequestsController {
 
     let connection = this.connectorController.getConnection(requestor.origin)
 
-    console.log(connection)
-
     const state = this.walletController.getState()
 
     // NOTE: connector disabled for internal requests
     if (!connection) {
       connection = {
         requestToConnect: false,
-        enabled: requestor.hostname === 'pegasus' ? true : false,
+        enabled: requestor.hostname === 'pegasus',
         requestor
       }
     }
@@ -83,16 +81,14 @@ class RequestsController {
       this.walletController.setState(
         APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
       )
-      
+
       // NOTE: not open popup if the real popup is already opened
-      if (requestor.tabId)
-        this.popupController.openPopup()
+      if (requestor.tabId) this.popupController.openPopup()
     }
 
     if (state <= APP_STATE.WALLET_LOCKED || !connection.enabled) {
       // NOTE: not open popup if the real popup is already opened
-      if (requestor.tabId)
-        this.popupController.openPopup()
+      if (requestor.tabId) this.popupController.openPopup()
 
       logger.log(
         `(RequestsController) Pushing request ${uuid} - ${method} because of locked wallet`
@@ -133,10 +129,11 @@ class RequestsController {
         ]
 
         // NOTE: not open popup if the real popup is already opened
-        if (requestor.tabId)
-          this.popupController.openPopup()
-        
-        this.walletController.setState(APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION)
+        if (requestor.tabId) this.popupController.openPopup()
+
+        this.walletController.setState(
+          APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION
+        )
 
         this.updateBadge()
       } else {

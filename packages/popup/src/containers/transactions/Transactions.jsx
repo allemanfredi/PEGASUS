@@ -28,12 +28,9 @@ class Transactions extends Component {
   }
 
   async promoteTransaction(hash) {
-    const { success, response } = await this.props.background.executeRequest({
+    const { success, response } = await this.props.background.send({
       method: 'promoteTransaction',
-      args: [hash, 3, 14],
-      connection: {
-        enabled: true
-      }
+      args: [hash, 3, 14]
     })
 
     if (success) {
@@ -52,12 +49,9 @@ class Transactions extends Component {
   }
 
   async replayBundle(hash) {
-    const { success, response } = await this.props.background.executeRequest({
+    const { success, response } = await this.props.background.send({
       method: 'replayBundle',
-      args: [hash, 3, 14],
-      connection: {
-        enabled: true
-      }
+      args: [hash, 3, 14]
     })
 
     if (success) {

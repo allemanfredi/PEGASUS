@@ -9,6 +9,7 @@ import extension from 'extensionizer'
 import pump from 'pump'
 import buildPromisedBackgroundApi from '@pegasus/utils/promised-background-api'
 import { v4 as uuidv4 } from 'uuid'
+import StreamProvider from '@pegasus/utils/stream-provider'
 
 import './styles/styles.css'
 import 'react-tabs/style/react-tabs.css'
@@ -20,9 +21,11 @@ pump(connectionStream, mux, connectionStream, err => {
   if (err) console.error(err)
 })
 
-const engineStream = mux.createStream('engine')
 const clientStream = mux.createStream('client')
+const providerStream = new StreamProvider()
+providerStream.pipe(clientStream).pipe(providerStream)
 
+const engineStream = mux.createStream('engine')
 const eventEmitter = new EventEmitter()
 const backgroundDnode = Dnode({
   sendUpdate: state => {
@@ -34,27 +37,14 @@ const backgroundDnode = Dnode({
 engineStream.pipe(backgroundDnode).pipe(engineStream)
 
 backgroundDnode.once('remote', async backgroundConnection => {
-  const calls = {}
-
   const background = {
     on: eventEmitter.on.bind(eventEmitter),
     send: data => {
-      const uuid = uuidv4()
-      clientStream.write(
-        Object.assign(
-          {},
-          {
-            uuid,
-            ...data
-          }
-        )
-      )
-
       return new Promise((resolve, reject) => {
-        calls[uuid] = {
-          resolve,
-          reject
-        }
+        providerStream.send(data, (err, res) => {
+          if (err) reject(err)
+          else resolve(res)
+        })
       })
     },
     ...buildPromisedBackgroundApi(backgroundConnection)

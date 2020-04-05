@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import Utils from '@pegasus/utils/utils'
-import ConfirmTransfers from '../confirm/confirmTransfers/ConfirmTransfers'
 import Input from '../../components/input/Input'
 import Picklist from '../../components/picklist/Picklist'
 
@@ -9,7 +8,6 @@ class Send extends Component {
     super(props, context)
 
     this.clickTransfer = this.clickTransfer.bind(this)
-    this.rejectTransfer = this.rejectTransfer.bind(this)
     this.loadAccounts = this.loadAccounts.bind(this)
 
     this.state = {
@@ -67,16 +65,7 @@ class Send extends Component {
       method: 'transfer',
       args: [transfer]
     })
-  }
 
-  /*async confirmTransfer() {
-    this.setState({
-      isLoading: true,
-      error: null
-    })
-    const { response, success } = await this.props.background.send(
-      this.state.transfer
-    )
     if (success) {
       this.props.onHideTop(false)
       this.props.onBack()
@@ -89,15 +78,6 @@ class Send extends Component {
       this.props.onHideTop(true)
       this.setState({ error: response })
     }
-
-    this.setState({ isLoading: false })
-  }*/
-
-  rejectTransfer() {
-    this.props.onHideTop(false)
-    this.setState({
-      transfer: null
-    })
   }
 
   render() {

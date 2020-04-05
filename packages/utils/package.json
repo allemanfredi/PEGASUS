@@ -14,7 +14,9 @@
     "axios": "^0.19.2",
     "browserify-unibabel": "^3.0.0",
     "eventemitter3": "^3.1.0",
-    "extensionizer": "^1.0.1"
+    "extensionizer": "^1.0.1",
+    "readable-stream": "^3.6.0",
+    "uuid": "^7.0.3"
   },
   "scripts": {
     "lint": "npx eslint . --fix"
