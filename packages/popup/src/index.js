@@ -8,7 +8,6 @@ import Dnode from 'dnode/browser'
 import extension from 'extensionizer'
 import pump from 'pump'
 import buildPromisedBackgroundApi from '@pegasus/utils/promised-background-api'
-import { v4 as uuidv4 } from 'uuid'
 import StreamProvider from '@pegasus/utils/stream-provider'
 
 import './styles/styles.css'

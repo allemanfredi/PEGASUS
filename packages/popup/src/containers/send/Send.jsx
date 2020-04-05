@@ -65,8 +65,23 @@ class Send extends Component {
       method: 'transfer',
       args: [transfer]
     })
+    console.log('ddddd', response)
 
-    if (success) {
+    if (!success) {
+      this.props.setNotification({
+        type: 'danger',
+        text: response,
+        position: 'under-bar'
+      })
+    } else {
+      this.props.setNotification({
+        type: 'success',
+        text: 'Transfer was successful',
+        position: 'under-bar'
+      })
+    }
+
+    /*if (success) {
       this.props.onHideTop(false)
       this.props.onBack()
       this.props.setNotification({
@@ -77,7 +92,7 @@ class Send extends Component {
     } else {
       this.props.onHideTop(true)
       this.setState({ error: response })
-    }
+    }*/
   }
 
   render() {

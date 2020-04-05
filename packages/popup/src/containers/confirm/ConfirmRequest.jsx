@@ -49,7 +49,8 @@ class ConfirmRequest extends Component {
       isLoading: true,
       error: null
     })
-    const { response, success } = await this.props.background.confirmRequest(
+
+    const { response, success } = await this.props.background.executeRequest(
       request
     )
 

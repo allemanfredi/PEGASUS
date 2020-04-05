@@ -258,25 +258,34 @@ class Main extends Component {
             onBack={this.onBack}
           />
         )
+      case APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION:
       case APP_STATE.WALLET_UNLOCKED:
         return (
-          <Home
-            ref={this.home}
-            account={this.props.account}
-            network={this.props.network}
-            background={this.props.background}
-            setNotification={this.props.setNotification}
-            onLogout={this.onLogout}
-            onShowHeader={show => this.props.showHeader(show)}
-          />
-        )
-      case APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION:
-        return (
-          <ConfirmRequest
-            account={this.props.account}
-            network={this.props.network}
-            background={this.props.background}
-          />
+          <React.Fragment>
+            <Home
+              hide={
+                this.state.appState ===
+                APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION
+                  ? true
+                  : false
+              }
+              ref={this.home}
+              account={this.props.account}
+              network={this.props.network}
+              background={this.props.background}
+              setNotification={this.props.setNotification}
+              onLogout={this.onLogout}
+              onShowHeader={show => this.props.showHeader(show)}
+            />
+            {this.state.appState ===
+            APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION ? (
+              <ConfirmRequest
+                account={this.props.account}
+                network={this.props.network}
+                background={this.props.background}
+              />
+            ) : null}
+          </React.Fragment>
         )
       case APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION:
         return (

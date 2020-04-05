@@ -4,7 +4,7 @@ import RequestAccountInfo from '../../../components/requestAccountInfo/RequestAc
 
 const ConfirmCreateMamChannel = props => {
   return (
-    <div className="container">
+    <div className="container-request">
       <RequestHeader title="Create MAM Channel" />
       <hr className="mt-1 mb-1" />
       <RequestAccountInfo account={props.account} />

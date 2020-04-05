@@ -175,38 +175,40 @@ class ConnectorController {
     return true
   }
 
-  estabilishConnection(requestor) {
-    const state = this.walletController.getState()
-    if (state <= APP_STATE.WALLET_LOCKED) return
-
+  estabilishConnection(_requestor) {
     // NOTE: connector not enabled for internal processes
-    if (requestor.hostname === 'pegasus') {
+    if (_requestor.hostname === 'pegasus') {
       logger.log(
         '(ConnectorController) Internal process asked to connect -> Connected'
       )
+      this.connections[_requestor.origin] = {
+        requestor: _requestor,
+        requestToConnect: false,
+        enabled: true
+      }
       return
     }
 
     logger.log(
-      `(ConnectorController) Estabilishing connection with ${requestor.origin}`
+      `(ConnectorController) Estabilishing connection with ${_requestor.origin}`
     )
 
     const account = this.walletController.getCurrentAccount()
 
-    if (this.connections[requestor.origin]) {
+    if (this.connections[_requestor.origin]) {
       if (
-        this.connections[requestor.origin].enabled &&
+        this.connections[_requestor.origin].enabled &&
         state >= APP_STATE.WALLET_UNLOCKED
       ) {
         logger.log(
-          `(ConnectorController) Connection with ${requestor.origin} already enabled`
+          `(ConnectorController) Connection with ${_requestor.origin} already enabled`
         )
         return account.data.latestAddress
       }
     }
 
-    this.connections[requestor.origin] = {
-      requestor,
+    this.connections[_requestor.origin] = {
+      requestor: _requestor,
       requestToConnect: false,
       enabled: false
     }

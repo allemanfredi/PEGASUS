@@ -4,7 +4,7 @@ import RequestAccountInfo from '../../../components/requestAccountInfo/RequestAc
 
 const ConfirmChangeModeMamChannel = props => {
   return (
-    <div className="container">
+    <div className="container-request">
       <RequestHeader title="Change mode" />
       <hr className="mt-1 mb-1" />
       <RequestAccountInfo account={props.account} />

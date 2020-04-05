@@ -153,15 +153,46 @@ class RequestsController {
   }
 
   async executeRequest(_request) {
+    const state = this.walletController.getState()
+    if (state <= APP_STATE.WALLET_LOCKED) return
+
     const request = this.requests.find(request =>
       _request.uuid ? request.uuid === _request.uuid : false
     )
+
+    /* NOTE:
+     *  if someone is able to get access to trusted connection (ex: popup) and execute a
+     *  a request directly, it MUST be rejected since has not passed through the connector
+     */
+    if (!request) {
+      logger.log(`(RequestsController) request ${_request.uuid} not found.`)
+      return
+    }
+
+    /*
+     * NOTE:
+     *  in order to prevent a possibility to change .enabled from external
+     *  and then submit an executeRequest
+     */
+    const origin = request.connection.requestor.origin
+    const connection = this.connectorController.getConnection(origin)
+    if (!connection) {
+      logger.log(
+        `(RequestsController) Impossible to execute a request with a not connected origin: ${origin}`
+      )
+      request.push({
+        response: `(RequestsController) Impossible to execute a request with a not connected origin: ${origin}`,
+        success: false,
+        uuid: _request.uuid
+      })
+      return
+    }
 
     logger.log(
       `(RequestsController) Executing request ${_request.uuid} - ${_request.method} ...`
     )
 
-    if (_request.connection.enabled && request.push) {
+    if (connection.enabled && request.push) {
       const res = await this.execute(_request)
 
       request.push({
@@ -181,8 +212,13 @@ class RequestsController {
         this.popupController.closePopup()
       }
 
+      /* NOTE:
+       *  "return res" used when request is executed from popup and
+       *  background.executeRequest need to know the result since a
+       *  request is executed from a view different than confirmRequest
+       */
       return res
-    } else if (!_request.connection.enabled && request.push) {
+    } else if (!connection.enabled && request.push) {
       logger.log(
         `(RequestsController) Rejecting request ${_request.uuid} - ${_request.method} because of no granted permission`
       )
@@ -199,34 +235,6 @@ class RequestsController {
         this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
     }
     return
-  }
-
-  async confirmRequest(_request) {
-    const request = this.requests.find(
-      request => request.uuid === _request.uuid
-    )
-
-    const res = await this.execute(_request)
-
-    if (this.requests.length === 1) {
-      logger.log('(RequestsController) Last request to execute')
-      this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
-    }
-
-    this.removeRequest(_request)
-
-    if (this.requests.length === 0) {
-      this.popupController.closePopup()
-      this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
-    }
-
-    request.push({
-      success: res.success,
-      response: res.response,
-      uuid: _request.uuid
-    })
-
-    return res
   }
 
   rejectRequest(_request) {

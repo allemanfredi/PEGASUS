@@ -46,7 +46,7 @@ const ConfirmTransfers = props => {
 
   return !props.isLoading ? (
     <React.Fragment>
-      <div className="container">
+      <div className="container-request">
         <RequestHeader title={props.title} />
         <hr className="mt-1 mb-1" />
         <RequestAccountInfo

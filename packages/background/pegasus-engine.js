@@ -292,8 +292,8 @@ class PegasusEngine {
       rejectRequest: (request, cb) =>
         cb(this.requestsController.rejectRequest(request)),
       rejectRequests: cb => cb(this.requestsController.rejectRequests()),
-      confirmRequest: (request, cb) =>
-        nodeify(this.requestsController.confirmRequest(request), cb),
+      executeRequest: (request, cb) =>
+        nodeify(this.requestsController.executeRequest(request), cb),
 
       // connector controller
       completeConnectionRequest: (origin, tabId, cb) =>

@@ -200,6 +200,29 @@
     }
 }
 
+.container-request, .container-loader {
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    position: absolute;
+    top: 0;
+    height: 0;
+    background: white;
+}
+
+.container-request-counter {
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 6px;
+}
+
 .modal {
     position: fixed;
     top: 0;

@@ -289,7 +289,7 @@ class Home extends Component {
 
   render() {
     return (
-      <div>
+      <div style={{ display: this.props.hide ? 'none' : '' }}>
         {this.state.showNavbar ? (
           <Navbar
             account={this.props.account}
