@@ -189,9 +189,9 @@ const buildPromisedBackgroundApi = _backgroundConnection => {
         )
       ),
 
-    executeRequest: request =>
+    confirmRequest: request =>
       new Promise((resolve, reject) =>
-        _backgroundConnection.executeRequest(request, (err, res) => {
+        _backgroundConnection.confirmRequest(request, (err, res) => {
           err ? reject(err) : resolve(res)
         })
       ),

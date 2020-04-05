@@ -121,7 +121,7 @@ class Main extends Component {
       requestsWithNoUserInteraction.length > 0
     ) {
       for (let request of requestsWithNoUserInteraction) {
-        this.props.background.executeRequest(request)
+        this.props.background.confirmRequest(request)
       }
     }
 

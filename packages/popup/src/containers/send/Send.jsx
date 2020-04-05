@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import Utils from '@pegasus/utils/utils'
 import Input from '../../components/input/Input'
 import Picklist from '../../components/picklist/Picklist'
+import { APP_STATE } from '@pegasus/utils/states'
 
 class Send extends Component {
   constructor(props, context) {
@@ -59,13 +60,10 @@ class Send extends Component {
       }
     ]
 
-    //this.props.onHideTop(true)
-
     const { response, success } = await this.props.background.send({
       method: 'transfer',
       args: [transfer]
     })
-    console.log('ddddd', response)
 
     if (!success) {
       this.props.setNotification({
@@ -80,19 +78,6 @@ class Send extends Component {
         position: 'under-bar'
       })
     }
-
-    /*if (success) {
-      this.props.onHideTop(false)
-      this.props.onBack()
-      this.props.setNotification({
-        type: 'success',
-        text: 'Transfer was successful',
-        position: 'under-bar'
-      })
-    } else {
-      this.props.onHideTop(true)
-      this.setState({ error: response })
-    }*/
   }
 
   render() {
@@ -205,10 +190,35 @@ class Send extends Component {
               />
             </div>
           </div>
-          <div className="row mt-11">
+
+          {this.state.value >
+          this.props.account.data.balance[this.props.network.type] ? (
+            <div className="row mt-4">
+              <div className="col-12 text-xs">
+                <div class="alert alert-danger" role="alert">
+                  Insufficent funds
+                </div>
+              </div>
+            </div>
+          ) : null}
+
+          <div
+            className={
+              this.state.value >
+              this.props.account.data.balance[this.props.network.type]
+                ? 'row mt-2'
+                : 'row mt-11'
+            }
+          >
             <div className="col-12 text-center">
               <button
-                disabled={this.state.dstAddress === '' ? true : false}
+                disabled={
+                  this.state.dstAddress === '' ||
+                  this.state.value >
+                    this.props.account.data.balance[this.props.network.type]
+                    ? true
+                    : false
+                }
                 onClick={this.clickTransfer}
                 className="btn btn-blue text-bold btn-big"
               >

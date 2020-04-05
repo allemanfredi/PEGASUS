@@ -125,7 +125,7 @@ class ConnectorController {
         request.connection.enabled = true
 
         if (!request.needUserInteraction)
-          this.requestsController.executeRequest(request)
+          this.requestsController.confirmRequest(request)
       }
     })
 

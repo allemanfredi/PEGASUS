@@ -152,7 +152,7 @@ class RequestsController {
     this.stateStorageController.set('requests', this.requests)
   }
 
-  async executeRequest(_request) {
+  async confirmRequest(_request) {
     const state = this.walletController.getState()
     if (state <= APP_STATE.WALLET_LOCKED) return
 
@@ -172,7 +172,7 @@ class RequestsController {
     /*
      * NOTE:
      *  in order to prevent a possibility to change .enabled from external
-     *  and then submit an executeRequest
+     *  and then submit an confirmRequest
      */
     const origin = request.connection.requestor.origin
     const connection = this.connectorController.getConnection(origin)
@@ -214,7 +214,7 @@ class RequestsController {
 
       /* NOTE:
        *  "return res" used when request is executed from popup and
-       *  background.executeRequest need to know the result since a
+       *  background.confirmRequest need to know the result since a
        *  request is executed from a view different than confirmRequest
        */
       return res

@@ -281,7 +281,7 @@ class PegasusEngine {
       closePopup: cb => cb(this.popupController.closePopup()),
 
       // customizator controller
-      /* executeRequest: (request, cb) =>
+      /* confirmRequest: (request, cb) =>
         nodeify(
           this.requestsController.executeRequestFromPopup(request),
           cb
@@ -292,8 +292,8 @@ class PegasusEngine {
       rejectRequest: (request, cb) =>
         cb(this.requestsController.rejectRequest(request)),
       rejectRequests: cb => cb(this.requestsController.rejectRequests()),
-      executeRequest: (request, cb) =>
-        nodeify(this.requestsController.executeRequest(request), cb),
+      confirmRequest: (request, cb) =>
+        nodeify(this.requestsController.confirmRequest(request), cb),
 
       // connector controller
       completeConnectionRequest: (origin, tabId, cb) =>
