@@ -51,7 +51,7 @@ class ImportSeed extends Component {
         true
       )
 
-      this.setState({ isLoading: false })
+      //this.setState({ isLoading: false })
 
       if (!isAdded) {
         this.props.setNotification({
