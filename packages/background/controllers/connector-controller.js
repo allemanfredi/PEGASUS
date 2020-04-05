@@ -194,6 +194,7 @@ class ConnectorController {
     )
 
     const account = this.walletController.getCurrentAccount()
+    const state = this.walletController.getState()
 
     if (this.connections[_requestor.origin]) {
       if (

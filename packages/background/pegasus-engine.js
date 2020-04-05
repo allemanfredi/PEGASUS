@@ -319,8 +319,7 @@ class PegasusEngine {
         ),
 
       // mam controller
-      fetchFromPopup: (options, cb) =>
-        cb(this.mamController.fetchFromPopup(options)),
+      fetchFromPopup: (opts, cb) => cb(this.mamController.fetchFromPopup(opts)),
       getMamChannels: cb => cb(this.mamController.getMamChannels()),
       registerMamChannel: (channel, cb) =>
         cb(this.mamController.registerMamChannel(channel)),

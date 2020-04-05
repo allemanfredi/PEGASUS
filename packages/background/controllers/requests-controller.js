@@ -82,14 +82,10 @@ class RequestsController {
         APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
       )
 
-      // NOTE: not open popup if the real popup is already opened
       if (requestor.tabId) this.popupController.openPopup()
     }
 
     if (state <= APP_STATE.WALLET_LOCKED || !connection.enabled) {
-      // NOTE: not open popup if the real popup is already opened
-      if (requestor.tabId) this.popupController.openPopup()
-
       logger.log(
         `(RequestsController) Pushing request ${uuid} - ${method} because of locked wallet`
       )
@@ -108,6 +104,15 @@ class RequestsController {
 
       if (state <= APP_STATE.WALLET_LOCKED)
         this.walletController.setState(APP_STATE.WALLET_LOCKED)
+
+      /* NOTE:
+       *  not open popup if the real popup is already opened or
+       *  the number of requests are greater than 1 in order
+       *  to don't acquire the popup mutex, that in case of multy reject
+       *  could be not released
+       */
+      if (requestor.tabId && this.requests.length === 1)
+        this.popupController.openPopup()
 
       this.updateBadge()
     } else if (connection.enabled && state >= APP_STATE.WALLET_UNLOCKED) {
@@ -128,8 +133,9 @@ class RequestsController {
           ...this.requests
         ]
 
-        // NOTE: not open popup if the real popup is already opened
-        if (requestor.tabId) this.popupController.openPopup()
+        // NOTE: same thing above
+        if (requestor.tabId && this.requests.length === 1)
+          this.popupController.openPopup()
 
         this.walletController.setState(
           APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION
@@ -257,8 +263,6 @@ class RequestsController {
     if (this.requests.length === 0) {
       this.popupController.closePopup()
       this.walletController.setState(APP_STATE.WALLET_UNLOCKED)
-    } else {
-      // this.setRequests(this.requests)
     }
   }
 
