@@ -121,7 +121,7 @@ class ConnectionsSettings extends React.Component {
         </div>
 
         {Object.values(this.state.connections)
-          .filter(connection => connection.enabled)
+          .filter(connection => connection.enabled && connection.requestor.hostname !== 'pegasus')
           .map(connection => {
             return (
               <div key={connection.requestor.hostname} className="row mt-1">
