@@ -280,12 +280,7 @@ class PegasusEngine {
       // popup controller
       closePopup: cb => cb(this.popupController.closePopup()),
 
-      // customizator controller
-      /* confirmRequest: (request, cb) =>
-        nodeify(
-          this.requestsController.executeRequestFromPopup(request),
-          cb
-        ), */
+      // requests controller
       getRequests: cb => cb(this.requestsController.getRequests()),
       getExecutableRequests: cb =>
         cb(this.requestsController.getExecutableRequests()),
