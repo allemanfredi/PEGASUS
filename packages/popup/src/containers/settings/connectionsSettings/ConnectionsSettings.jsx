@@ -89,7 +89,7 @@ class ConnectionsSettings extends React.Component {
       <React.Fragment>
         <div className="row">
           <div className="col-12 text-dark-gray mt-2 text-md">
-            Add requestor
+            Add website
           </div>
         </div>
         <div className="row mt-1">
