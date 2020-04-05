@@ -179,6 +179,14 @@ class ConnectorController {
     const state = this.walletController.getState()
     if (state <= APP_STATE.WALLET_LOCKED) return
 
+    // NOTE: connector not enabled for internal processes
+    if (requestor.hostname === 'pegasus') {
+      logger.log(
+        `(ConnectorController) Internal process asked to connect -> Connected`
+      )
+      return
+    }
+
     logger.log(
       `(ConnectorController) Estabilishing connection with ${requestor.origin}`
     )

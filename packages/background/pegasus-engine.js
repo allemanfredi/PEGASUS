@@ -142,7 +142,7 @@ class PegasusEngine {
       origin: url.origin,
       hostname: isInternal ? 'pegasus' : url.hostname,
       favicon: sender.tab ? sender.tab.favIconUrl : '',
-      tabId: sender.tab ? sender.tab.id : 0
+      tabId: sender.tab ? sender.tab.id : null
     }
 
     const inpageClientStream = createEngineStream(this, requestor)

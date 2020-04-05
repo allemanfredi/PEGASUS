@@ -60,6 +60,8 @@ class RequestsController {
 
     let connection = this.connectorController.getConnection(requestor.origin)
 
+    console.log(connection)
+
     const state = this.walletController.getState()
 
     // NOTE: connector disabled for internal requests
@@ -83,13 +85,13 @@ class RequestsController {
       )
       
       // NOTE: not open popup if the real popup is already opened
-      if (requestor.tabId !== 0)
+      if (requestor.tabId)
         this.popupController.openPopup()
     }
 
     if (state <= APP_STATE.WALLET_LOCKED || !connection.enabled) {
       // NOTE: not open popup if the real popup is already opened
-      if (requestor.tabId !== 0)
+      if (requestor.tabId)
         this.popupController.openPopup()
 
       logger.log(
@@ -131,7 +133,7 @@ class RequestsController {
         ]
 
         // NOTE: not open popup if the real popup is already opened
-        if (requestor.tabId !== 0)
+        if (requestor.tabId)
           this.popupController.openPopup()
         
         this.walletController.setState(APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION)
