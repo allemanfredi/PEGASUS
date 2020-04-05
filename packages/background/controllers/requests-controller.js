@@ -66,7 +66,7 @@ class RequestsController {
     if (!connection) {
       connection = {
         requestToConnect: false,
-        enabled: _request.requestor.hostname === 'pegasus' ? true : false,
+        enabled: requestor.hostname === 'pegasus' ? true : false,
         requestor
       }
     }
@@ -81,12 +81,16 @@ class RequestsController {
       this.walletController.setState(
         APP_STATE.WALLET_REQUEST_PERMISSION_OF_CONNECTION
       )
-
-      this.popupController.openPopup()
+      
+      // NOTE: not open popup if the real popup is already opened
+      if (requestor.tabId !== 0)
+        this.popupController.openPopup()
     }
 
     if (state <= APP_STATE.WALLET_LOCKED || !connection.enabled) {
-      this.popupController.openPopup()
+      // NOTE: not open popup if the real popup is already opened
+      if (requestor.tabId !== 0)
+        this.popupController.openPopup()
 
       logger.log(
         `(RequestsController) Pushing request ${uuid} - ${method} because of locked wallet`
@@ -125,7 +129,12 @@ class RequestsController {
           },
           ...this.requests
         ]
-        this.popupController.openPopup()
+
+        // NOTE: not open popup if the real popup is already opened
+        if (requestor.tabId !== 0)
+          this.popupController.openPopup()
+        
+        this.walletController.setState(APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION)
 
         this.updateBadge()
       } else {
