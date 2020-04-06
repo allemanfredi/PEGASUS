@@ -2,6 +2,7 @@ import { composeAPI } from '@iota/core'
 import { APP_STATE } from '@pegasus/utils/states'
 import logger from '@pegasus/utils/logger'
 import { REQUESTS_WITH_USER_INTERACTION } from '../lib/constants'
+import { addChecksum } from '@iota/checksum'
 
 class RequestsController {
   constructor(options) {
@@ -313,7 +314,7 @@ class RequestsController {
         const account = this.walletController.getCurrentAccount()
         return new Promise(resolve =>
           resolve({
-            response: account.data.latestAddress,
+            response: addChecksum(account.data.latestAddress),
             success: true
           })
         )

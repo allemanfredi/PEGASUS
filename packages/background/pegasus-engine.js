@@ -22,6 +22,7 @@ import nodeify from 'nodeify'
 import { mapStateForPopup } from './lib/global-state-mapper'
 import extensionizer from 'extensionizer'
 import { FORBIDDEN_REQUESTS, ADDITIONAL_METHODS } from './lib/constants'
+import { addChecksum } from '@iota/checksum'
 
 class PegasusEngine {
   constructor() {
@@ -333,7 +334,7 @@ class PegasusEngine {
       if (this.connectorController.isConnected(_url.origin)) {
         _inpageClient.push({
           action: 'accountChanged',
-          response: account
+          response: addChecksum(account)
         })
       }
     })
@@ -354,7 +355,7 @@ class PegasusEngine {
     if (this.connectorController.isConnected(_url.origin) && account) {
       _inpageClient.push({
         action: 'accountChanged',
-        response: account.data.latestAddress
+        response: addChecksum(account.data.latestAddress)
       })
     }
   }
