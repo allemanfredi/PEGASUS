@@ -4,8 +4,8 @@ export const FORBIDDEN_REQUESTS = [
   'getInputs'
 ]
 export const ADDITIONAL_METHODS = [
-  'getSelectedAccount',
-  'getSelectedProvider',
+  'getCurrentAccount',
+  'getCurrentProvider',
   'transfer'
 ]
 
