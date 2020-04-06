@@ -7,7 +7,7 @@ import {
 } from 'browserify-unibabel'
 
 const TIME = 9
-const MEMORY = 8192
+const MEMORY = 16384
 const HASH_LENGTH = 32
 const PARALLELISM = 2
 const SALT_LENGTH = 16

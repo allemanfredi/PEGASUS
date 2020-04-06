@@ -15,7 +15,7 @@ class LoginPasswordController {
       pass: _password,
       salt: crypto.randomBytes(16),
       time: 9,
-      mem: 8192,
+      mem: 16384,
       hashLen: 32,
       parallelism: 2,
       type: argon2.ArgonType.Argon2id,
