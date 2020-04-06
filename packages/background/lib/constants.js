@@ -10,8 +10,6 @@ export const ADDITIONAL_METHODS = [
 ]
 
 export const REQUESTS_WITH_USER_INTERACTION = [
-  'mam_init',
-  'mam_changeMode',
   'prepareTransfers',
   'sendTrytes',
   'transfer'
