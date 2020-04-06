@@ -78,7 +78,12 @@ const mapTransactions = (_data, _network) => {
       value,
       status: transfer[0].persistence,
       bundle: transfer[0].bundle,
-      transfer,
+      transfer: transfer.map(t => {
+        return {
+          value: t.value,
+          hash: t.hash,
+        }
+      }),
       network: _network.type,
       message
     }

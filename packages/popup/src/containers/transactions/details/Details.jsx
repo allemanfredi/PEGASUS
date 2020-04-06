@@ -29,7 +29,7 @@ class Details extends Component {
           </div>
           <div className="col-10 text-right text-xxs">
             <div className="text-no-overflow">
-              {this.props.details.transfer[0].bundle}
+              {this.props.details.bundle}
             </div>
           </div>
         </div>
@@ -60,7 +60,7 @@ class Details extends Component {
                 this.props.replayBundle(this.props.details.transfer[0].hash)
               }
               disabled={
-                this.props.details.transfer[0].persistence ? true : false
+                this.props.details.status ? true : false
               }
               className="btn btn-border-blue text-xs btn-small"
             >
@@ -75,7 +75,7 @@ class Details extends Component {
                 )
               }
               disabled={
-                this.props.details.transfer[0].persistence ? true : false
+                this.props.details.status ? true : false
               }
               className="btn btn-border-blue text-xs btn-small"
             >
