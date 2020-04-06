@@ -44,14 +44,12 @@ class StateStorageController extends Store {
     }
 
     const encryptedData = await encrypt(this.encryptionkey, {
-      accounts: this.state.accounts,
-      mamChannels: this.state.mamChannels
+      accounts: this.state.accounts
     })
 
     this.setState({
       ...this.state,
       accounts: [],
-      mamChannels: {},
       data: encryptedData
     })
 
@@ -81,12 +79,11 @@ class StateStorageController extends Store {
 
     const decryptedData = await decrypt(this.encryptionkey, this.state.data)
 
-    const { accounts, mamChannels } = decryptedData
+    const { accounts } = decryptedData
 
     this.setState({
       ...this.state,
       accounts,
-      mamChannels,
       data: null
     })
   }

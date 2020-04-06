@@ -53,7 +53,6 @@ export class PegasusGlobalState {
       selected: {},
       all: []
     }
-    this.mamChannels = {}
     this.data = null
   }
 }
@@ -85,13 +84,11 @@ export const resetState = {
     selected: {},
     all: []
   },
-  mamChannels: {},
   // used when enctyped
   data: {
     accounts: {
       selected: {},
       all: []
-    },
-    mamChannels: {}
+    }
   }
 }
