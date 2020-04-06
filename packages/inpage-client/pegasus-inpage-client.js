@@ -17,7 +17,6 @@ class PegasusInpageClient extends EventEmitter {
 
     this.inpageStream = inpageStream
 
-    this._mamFetches = {}
     this._calls = {}
 
     this.send = this.send.bind(this)
@@ -78,10 +77,6 @@ class PegasusInpageClient extends EventEmitter {
         case 'accountChanged': {
           this.selectedAccount = response
           this.emit('accountChanged', response)
-          break
-        }
-        case 'mam_onFetch': {
-          if (this._mamFetches[uuid]) this._mamFetches[uuid](data)
           break
         }
         default: {
