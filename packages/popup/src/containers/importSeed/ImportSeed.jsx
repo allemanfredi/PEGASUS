@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import Loader from '../../components/loader/Loader'
+import Spinner from '../../components/spinner/Spinner'
 import Input from '../../components/input/Input'
 import Utils from '@pegasus/utils/utils'
 
@@ -83,7 +83,20 @@ class ImportSeed extends Component {
     return (
       <React.Fragment>
         {this.state.isLoading ? (
-          <Loader />
+          <React.Fragment>
+            <div className="container">
+              <div className="row mt-5 mb-3">
+                <div className="col-12 text-center text-lg text-blue text-bold">
+                  I'm importing the account!
+                </div>
+              </div>
+              <div className="row mt-4">
+                <div className="col-12 text-center">
+                  <Spinner size={'big'} />
+                </div>
+              </div>
+            </div>
+          </React.Fragment>
         ) : (
           <div className="container">
             <div className="row mt-2 mb-3">

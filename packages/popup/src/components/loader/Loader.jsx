@@ -4,7 +4,7 @@ import Spinner from '../spinner/Spinner'
 const Loader = props => {
   return (
     <div className="container-loader">
-      <div className="row mt-15">
+      <div className="row mt-8">
         <div className="col-12 text-center">
           <img
             className="border-radius-50"
