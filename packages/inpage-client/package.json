@@ -19,7 +19,6 @@
     "@iota/unit-converter": "^1.0.0-beta.23",
     "@iota/validators": "^1.0.0-beta.23",
     "eventemitter3": "^4.0.0",
-    "mam.client.js": "iotaledger/mam.client.js",
     "post-message-stream": "^3.0.0",
     "pump": "^3.0.0"
   },

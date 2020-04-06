@@ -1,12 +1,8 @@
 import React, { Component } from 'react'
-import RegisterMamChannel from './registerMamChannel/RegisterMamChannel'
-import ShowChannelsList from './showChannelsList/ShowChannelsList'
 import MamExplorer from './mamExplorer/MamExplorer'
 
 const options = {
-  0: 'Register Channel',
-  1: 'Channels List',
-  2: 'MAM Explorer'
+  0: 'MAM Explorer'
 }
 
 class Mam extends Component {
@@ -32,16 +28,6 @@ class Mam extends Component {
 
   render() {
     const items = [
-      {
-        title: 'Register Channel',
-        description:
-          'It is possible to manually add a MAM Channel (as subscriber)'
-      },
-      {
-        title: 'Show Channels List',
-        description:
-          'Before you can export the seed you will need to enter the login password'
-      },
       {
         title: 'MAM Explorer',
         description: "Monitor what's going on on the MAM channels"
@@ -93,18 +79,6 @@ class Mam extends Component {
           </React.Fragment>
         ) : null}
         {this.state.show[0] ? (
-          <RegisterMamChannel
-            background={this.props.background}
-            onBack={() => this.props.onBack()}
-          />
-        ) : null}
-        {this.state.show[1] ? (
-          <ShowChannelsList
-            background={this.props.background}
-            onBack={() => this.props.onBack()}
-          />
-        ) : null}
-        {this.state.show[2] ? (
           <MamExplorer
             background={this.props.background}
             onBack={() => this.props.onBack()}

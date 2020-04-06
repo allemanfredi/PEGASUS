@@ -327,41 +327,6 @@ class RequestsController {
           })
         )
       }
-      case 'mam_init': {
-        const res = this.mamController.init(...args)
-        return new Promise(resolve => resolve(res))
-      }
-      case 'mam_changeMode': {
-        const res = this.mamController.changeMode(...args)
-        return new Promise(resolve => resolve(res))
-      }
-      case 'mam_getRoot': {
-        const res = this.mamController.getRoot(...args)
-        return new Promise(resolve => resolve(res))
-      }
-      case 'mam_create': {
-        const res = this.mamController.create(...args)
-        return new Promise(resolve => resolve(res))
-      }
-      case 'mam_decode': {
-        const res = this.mamController.decode(...args)
-        return new Promise(resolve => resolve(res))
-      }
-      case 'mam_attach': {
-        return this.mamController.attach(...args)
-      }
-      case 'mam_fetch': {
-        return this.mamController.fetch(...args)
-      }
-      case 'mam_fetchSingle': {
-        return this.mamController.fetchSingle(...args)
-      }
-      default: {
-        return {
-          response: 'Method Not Found',
-          success: false
-        }
-      }
     }
   }
 

@@ -88,9 +88,7 @@ class ConnectionsSettings extends React.Component {
     return (
       <React.Fragment>
         <div className="row">
-          <div className="col-12 text-dark-gray mt-2 text-md">
-            Add website
-          </div>
+          <div className="col-12 text-dark-gray mt-2 text-md">Add website</div>
         </div>
         <div className="row mt-1">
           <div className="col-12">
@@ -121,7 +119,10 @@ class ConnectionsSettings extends React.Component {
         </div>
 
         {Object.values(this.state.connections)
-          .filter(connection => connection.enabled && connection.requestor.hostname !== 'pegasus')
+          .filter(
+            connection =>
+              connection.enabled && connection.requestor.hostname !== 'pegasus'
+          )
           .map(connection => {
             return (
               <div key={connection.requestor.hostname} className="row mt-1">

@@ -7,12 +7,9 @@ import * as extractJson from '@iota/extract-json'
 import * as transaction from '@iota/transaction'
 import * as validators from '@iota/validators'
 import * as unitConverter from '@iota/unit-converter'
-import Mam from '@iota/mam/lib/mam.web.min.js'
 import Utils from '@pegasus/utils/utils'
 import randomUUID from 'uuid/v4'
 import EventEmitter from 'eventemitter3'
-/* import ObjectMultiplex from 'obj-multiplex'
-import pump from 'pump' */
 
 class PegasusInpageClient extends EventEmitter {
   constructor(inpageStream) {
@@ -28,11 +25,6 @@ class PegasusInpageClient extends EventEmitter {
     this._bindListener()
 
     this._init()
-
-    /* const mux = (this.mux = new ObjectMultiplex())
-    pump(this.inpageStream, mux, this.inpageStream, e =>
-      console.log('Pegasus inpage client disconnected', e)
-    ) */
   }
 
   send(data = {}) {
@@ -109,40 +101,6 @@ class PegasusInpageClient extends EventEmitter {
       core[method] = (...args) => this._handleInjectedRequest(args, method)
     })
 
-    const mam = {}
-    Object.keys(Mam).forEach(method => {
-      mam[method] = (...args) =>
-        Utils.injectPromise(this.send, {
-          method: 'mam_' + method,
-          args
-        })
-    })
-
-    mam.fetch = (...args) => {
-      const uuid = randomUUID()
-
-      const isFunction = Utils.isFunction(args[2])
-      if (isFunction) {
-        this._mamFetches[uuid] = args[2]
-        args[2] = {
-          uuid,
-          reply: true
-        }
-      } else {
-        const limit = args[2]
-        args[2] = {
-          uuid,
-          reply: false
-        }
-        args.push(limit)
-      }
-
-      return Utils.injectPromise(this.send, {
-        method: 'mam_fetch',
-        args
-      })
-    }
-
     this.bundle = bundle
     this.bundleValidator = bundleValidator
     this.checksum = checksum
@@ -152,7 +110,6 @@ class PegasusInpageClient extends EventEmitter {
     this.transaction = transaction
     this.unitConverter = unitConverter
     this.validators = validators
-    this.mam = mam
 
     const additionalMethods = [
       'connect',

@@ -21,11 +21,7 @@ import Dnode from 'dnode/browser'
 import nodeify from 'nodeify'
 import { mapStateForPopup } from './lib/global-state-mapper'
 import extensionizer from 'extensionizer'
-import {
-  MAM_REQUESTS,
-  FORBIDDEN_REQUESTS,
-  ADDITIONAL_METHODS
-} from './lib/constants'
+import { FORBIDDEN_REQUESTS, ADDITIONAL_METHODS } from './lib/constants'
 
 class PegasusEngine {
   constructor() {
@@ -42,10 +38,6 @@ class PegasusEngine {
       updateBadge: this.updateBadge.bind(this)
     })
 
-    this.mamController = new MamController({
-      stateStorageController: this.stateStorageController
-    })
-
     this.requestsController = new RequestsController({
       popupController: this.popupController,
       connectorController: this.connectorController,
@@ -57,6 +49,10 @@ class PegasusEngine {
     this.networkController = new NetworkController({
       stateStorageController: this.stateStorageController,
       requestsController: this.requestsController
+    })
+
+    this.mamController = new MamController({
+      networkController: this.networkController
     })
 
     this.loginPasswordController = new LoginPasswordController({
@@ -98,8 +94,6 @@ class PegasusEngine {
     this.requestsController.setWalletController(this.walletController)
     this.requestsController.setNetworkController(this.networkController)
     this.requestsController.setNodeController(this.nodeController)
-    this.mamController.setNetworkController(this.networkController)
-    this.mamController.setWalletController(this.walletController)
     this.connectorController.setWalletController(this.walletController)
     this.walletController.setAccountDataController(this.accountDataController)
     this.connectorController.setNetworkController(this.networkController)
@@ -203,10 +197,7 @@ class PegasusEngine {
       return
     }
 
-    if (
-      MAM_REQUESTS.includes(_request.method) ||
-      ADDITIONAL_METHODS.includes(_request.method)
-    ) {
+    if (ADDITIONAL_METHODS.includes(_request.method)) {
       this.requestsController.pushRequest(_request)
       return
     }
@@ -314,10 +305,7 @@ class PegasusEngine {
         ),
 
       // mam controller
-      fetchFromPopup: (opts, cb) => cb(this.mamController.fetchFromPopup(opts)),
-      getMamChannels: cb => cb(this.mamController.getMamChannels()),
-      registerMamChannel: (channel, cb) =>
-        cb(this.mamController.registerMamChannel(channel)),
+      fetchFromPopup: (opts, cb) => cb(this.mamController.fetch(opts)),
 
       // accountData controller
       loadAccountData: cb =>

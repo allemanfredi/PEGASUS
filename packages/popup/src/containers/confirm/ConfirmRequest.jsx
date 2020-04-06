@@ -1,7 +1,5 @@
 import React, { Component } from 'react'
 import ConfirmTransfers from './confirmTransfers/ConfirmTransfers'
-import ConfirmCreateMamChannel from './confirmCreateMamChannel/ConfirmCreateMamChannel'
-import ConfirmChangeModeMamChannel from './confirmChangeModeMamChannel/ConfirmChangeModeMamChannel'
 import Loader from '../../components/loader/Loader'
 import RequestsCounter from '../../components/requestsCounter/RequestsCounter'
 import { APP_STATE } from '@pegasus/utils/states'
@@ -119,34 +117,6 @@ class ConfirmRequest extends Component {
                 transfer={request}
                 canChangeAccount={true}
                 background={this.props.background}
-                onConfirm={this.confirm}
-                onReject={this.reject}
-              />
-              <RequestsCounter requests={this.state.requests} />
-            </React.Fragment>
-          )
-
-        case 'mam_init':
-          return (
-            <React.Fragment>
-              <ConfirmCreateMamChannel
-                account={this.props.account}
-                request={request}
-                onConfirm={this.confirm}
-                onReject={this.reject}
-              />
-              <RequestsCounter requests={this.state.requests} />
-            </React.Fragment>
-          )
-        case 'mam_changeMode':
-          return (
-            <React.Fragment>
-              <ConfirmChangeModeMamChannel
-                account={this.props.account}
-                from={request.args[0].channel.mode}
-                to={request.args[1]}
-                sidekey={request.args[2] ? request.args[2] : null}
-                request={request}
                 onConfirm={this.confirm}
                 onReject={this.reject}
               />
