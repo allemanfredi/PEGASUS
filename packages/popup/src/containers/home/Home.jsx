@@ -488,7 +488,8 @@ class Home extends Component {
                           this.props.network.type
                         ] &&
                         this.state.iotaPrice &&
-                        this.state.settings
+                        this.state.settings &&
+                        this.props.network.type === 'mainnet'
                           ? (
                               (this.props.account.data.balance[
                                 this.props.network.type
@@ -499,7 +500,7 @@ class Home extends Component {
                               1000000
                             ).toFixed(2) +
                             this.state.settings.currencies.selected.symbol
-                          : '-'}
+                          : null }
                       </div>
                     </div>
                   </div>
