@@ -19,7 +19,7 @@ import createEngineStream from './lib/engine-stream'
 import { composeAPI } from '@iota/core'
 import Dnode from 'dnode/browser'
 import nodeify from 'nodeify'
-import { mapStateForPopup } from './lib/global-state-mapper'
+import { removeSeedsFromState, removeSeed } from './lib/seed-removers'
 import extensionizer from 'extensionizer'
 import { FORBIDDEN_REQUESTS, ADDITIONAL_METHODS } from './lib/constants'
 import { addChecksum } from '@iota/checksum'
@@ -176,7 +176,7 @@ class PegasusEngine {
 
       this.stateStorageController.state$.subscribe(_state => {
         // remove seed before sending
-        sendUpdate(mapStateForPopup(_state))
+        sendUpdate(removeSeedsFromState(_state))
       })
     })
   }
@@ -234,8 +234,8 @@ class PegasusEngine {
         nodeify(this.walletController.addAccount(account, isCurrent), cb),
       isAccountNameAlreadyExists: (name, cb) =>
         cb(this.walletController.isAccountNameAlreadyExists(name)),
-      getCurrentAccount: cb => cb(this.walletController.getCurrentAccount()),
-      getAllAccounts: cb => cb(this.walletController.getAllAccounts()),
+      getCurrentAccount: cb => cb(removeSeed(this.walletController.getCurrentAccount())),
+      getAllAccounts: cb => cb(removeSeed(this.walletController.getAllAccounts())),
       setCurrentAccount: (account, cb) =>
         cb(this.walletController.setCurrentAccount(account)),
       updateNameAccount: (name, cb) =>

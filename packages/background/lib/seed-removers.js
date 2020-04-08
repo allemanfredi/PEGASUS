@@ -5,7 +5,7 @@
  *
  * @param {Object} _state
  */
-const mapStateForPopup = _state => {
+const removeSeedsFromState = _state => {
   const mappedState = JSON.parse(JSON.stringify(_state))
 
   if (mappedState.accounts && mappedState.accounts.selected) {
@@ -16,4 +16,19 @@ const mapStateForPopup = _state => {
   return mappedState
 }
 
-export { mapStateForPopup }
+const removeSeed = _obj => {
+  if (!_obj)
+    return
+  
+  const mappedObj = JSON.parse(JSON.stringify(_obj))
+  if (Array.isArray(_obj))
+    return mappedObj.map(mo => {
+      delete mo.seed
+      return mo
+    })
+  
+  delete mappedObj.seed
+  return mappedObj
+}
+
+export { removeSeedsFromState, removeSeed }
