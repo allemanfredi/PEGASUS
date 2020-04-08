@@ -225,6 +225,13 @@
     margin-bottom: 6px;
 }
 
+@media screen and (min-width: 381px) {
+    .container-request-counter{
+        position: initial;
+        margin-top: 570px;
+    }
+}
+
 .modal {
     position: fixed;
     top: 0;
