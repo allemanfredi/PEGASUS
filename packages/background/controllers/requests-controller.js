@@ -106,13 +106,7 @@ class RequestsController {
       if (state <= APP_STATE.WALLET_LOCKED)
         this.walletController.setState(APP_STATE.WALLET_LOCKED)
 
-      /* NOTE:
-       *  not open popup if the real popup is already opened or
-       *  the number of requests are greater than 1 in order
-       *  to don't acquire the popup mutex, that in case of multy reject
-       *  could be not released
-       */
-      if (requestor.tabId && this.requests.length === 1)
+      if (requestor.tabId)
         this.popupController.openPopup()
 
       this.updateBadge()
@@ -134,8 +128,7 @@ class RequestsController {
           ...this.requests
         ]
 
-        // NOTE: same thing above
-        if (requestor.tabId && this.requests.length === 1)
+        if (requestor.tabId)
           this.popupController.openPopup()
 
         this.walletController.setState(
