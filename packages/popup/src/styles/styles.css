@@ -211,6 +211,7 @@
     height: 0;
     background: white;
     z-index: 1000000;
+    width: 380px;
 }
 
 .container-request-counter {
@@ -222,7 +223,6 @@
     position: absolute;
     bottom: 0;
     margin-bottom: 6px;
-    width: 380px;
 }
 
 .modal {
