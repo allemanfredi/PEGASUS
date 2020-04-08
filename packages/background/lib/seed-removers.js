@@ -16,6 +16,13 @@ const removeSeedsFromState = _state => {
   return mappedState
 }
 
+/**
+ *
+ * function used to remove seeds from current/all account/s
+ * before returning getCurrentAccount and getAllAccount api result
+ *
+ * @param {Object} _state
+ */
 const removeSeed = _obj => {
   if (!_obj)
     return
