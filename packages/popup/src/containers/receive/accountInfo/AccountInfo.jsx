@@ -18,13 +18,13 @@ const AccountInfo = props => {
   }
 
   return (
-    <div className="container">
+    <React.Fragment>
       <div className="row mt-5">
         <div className="col-12 text-center">
           <QRCode value={Utils.checksummed(props.account.data.latestAddress)} />
         </div>
       </div>
-      <div className="row mt-3 justify-content-center">
+      <div className="row mt-5 justify-content-center">
         <div className="col-10 text-center text-xs break-text border-light-gray pt-1 pb-1">
           {Utils.checksummed(props.account.data.latestAddress)}
         </div>
@@ -39,7 +39,7 @@ const AccountInfo = props => {
           </button>
         </div>
       </div>
-    </div>
+    </React.Fragment>
   )
 }
 
