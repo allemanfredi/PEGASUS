@@ -81,7 +81,7 @@ const mapTransactions = (_data, _network) => {
       transfer: transfer.map(t => {
         return {
           value: t.value,
-          hash: t.hash,
+          hash: t.hash
         }
       }),
       network: _network.type,

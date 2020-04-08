@@ -45,8 +45,8 @@ class ExportSeedVault extends Component {
             }
           />
         ) : (
-          <div className="container">
-            <div className="row mt-3 mb-3">
+          <React.Fragment>
+            <div className="row mt-2 mb-3">
               <div className="col-12 text-center text-lg text-blue text-bold">
                 Choose a password to protect you Vault
               </div>
@@ -96,7 +96,7 @@ class ExportSeedVault extends Component {
                 </button>
               </div>
             </div>
-          </div>
+          </React.Fragment>
         )}
       </React.Fragment>
     )

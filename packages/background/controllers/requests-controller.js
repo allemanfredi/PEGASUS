@@ -106,8 +106,7 @@ class RequestsController {
       if (state <= APP_STATE.WALLET_LOCKED)
         this.walletController.setState(APP_STATE.WALLET_LOCKED)
 
-      if (requestor.tabId)
-        this.popupController.openPopup()
+      if (requestor.tabId) this.popupController.openPopup()
 
       this.updateBadge()
     } else if (connection.enabled && state >= APP_STATE.WALLET_UNLOCKED) {
@@ -128,8 +127,7 @@ class RequestsController {
           ...this.requests
         ]
 
-        if (requestor.tabId)
-          this.popupController.openPopup()
+        if (requestor.tabId) this.popupController.openPopup()
 
         this.walletController.setState(
           APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION

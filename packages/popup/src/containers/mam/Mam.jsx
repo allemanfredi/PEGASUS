@@ -1,9 +1,7 @@
 import React, { Component } from 'react'
 import MamExplorer from './mamExplorer/MamExplorer'
-
-const options = {
-  0: 'MAM Explorer'
-}
+import OptionsSelector from '../../components/optionsSelector/OptionsSelector'
+import { MAM_TEXT } from '../../texts'
 
 class Mam extends Component {
   constructor(props, context) {
@@ -12,7 +10,6 @@ class Mam extends Component {
     this.goBack = this.goBack.bind(this)
 
     this.state = {
-      showRegisterChannel: false,
       show: [false, false, false],
       error: null
     }
@@ -23,60 +20,27 @@ class Mam extends Component {
       show: [false, false, false]
     })
     this.props.onChangeCanGoBack(true)
-    this.props.changeNavbarText('Settings')
+    this.props.changeNavbarText('MAM')
   }
 
   render() {
-    const items = [
-      {
-        title: 'MAM Explorer',
-        description: "Monitor what's going on on the MAM channels"
-      }
-    ]
     return (
       <div className="container overflow-auto-475h">
         {!this.state.show.includes(true) ? (
-          <React.Fragment>
-            {items.map((item, index) => {
-              return (
-                <React.Fragment>
-                  <div
-                    className="row cursor-pointer"
-                    onClick={() => {
-                      if (!this.state.showRegisterChannel)
-                        this.props.onChangeCanGoBack(null)
-
-                      this.props.changeNavbarText(options[index])
-                      this.setState(() => {
-                        const show = [false, false, false]
-                        show[index] = true
-                        return {
-                          show
-                        }
-                      })
-                    }}
-                  >
-                    <div className="col-9 mt-2">
-                      <div className="row">
-                        <div className="col-12 text-dark-gray font-weight-bold text-md">
-                          {item.title}
-                        </div>
-                      </div>
-                      <div className="row">
-                        <div className="col-12 text-gray text-xs mb-1">
-                          {item.description}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-3 my-auto text-right">
-                      <img src="./material/img/right.png" height="50" />
-                    </div>
-                  </div>
-                  <hr className="mt-2" />
-                </React.Fragment>
-              )
-            })}
-          </React.Fragment>
+          <OptionsSelector
+            items={MAM_TEXT.items}
+            onClick={({ text, index }) => {
+              this.props.changeNavbarText(text)
+              this.props.onChangeCanGoBack(null)
+              this.setState(() => {
+                const show = [false, false, false]
+                show[index] = true
+                return {
+                  show
+                }
+              })
+            }}
+          />
         ) : null}
         {this.state.show[0] ? (
           <MamExplorer

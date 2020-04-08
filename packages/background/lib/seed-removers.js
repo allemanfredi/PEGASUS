@@ -24,16 +24,15 @@ const removeSeedsFromState = _state => {
  * @param {Object} _state
  */
 const removeSeed = _obj => {
-  if (!_obj)
-    return
-  
+  if (!_obj) return
+
   const mappedObj = JSON.parse(JSON.stringify(_obj))
   if (Array.isArray(_obj))
     return mappedObj.map(mo => {
       delete mo.seed
       return mo
     })
-  
+
   delete mappedObj.seed
   return mappedObj
 }

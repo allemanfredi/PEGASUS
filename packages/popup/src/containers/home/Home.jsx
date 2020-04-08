@@ -23,6 +23,7 @@ class Home extends Component {
     this.mam = React.createRef()
     this.exportSeed = React.createRef()
     this.settings = React.createRef()
+    this.receive = React.createRef()
 
     this.onClickSend = this.onClickSend.bind(this)
     this.onClickMenu = this.onClickMenu.bind(this)
@@ -195,6 +196,7 @@ class Home extends Component {
       if (this.mam.current) this.mam.current.goBack()
       if (this.exportSeed.current) this.exportSeed.current.goBack()
       if (this.settings.current) this.settings.current.goBack()
+      if (this.receive.current) this.receive.current.goBack()
       return
     }
 
@@ -350,9 +352,13 @@ class Home extends Component {
             )}
             {this.state.showReceive ? (
               <Receive
+                ref={this.receive}
                 account={this.props.account}
                 network={this.state.network}
                 setNotification={this.props.setNotification}
+                changeNavbarText={navbarText => this.setState({ navbarText })}
+                onBack={this.onBack}
+                onChangeCanGoBack={value => this.setState({ canGoBack: value })}
               />
             ) : (
               ''
@@ -383,8 +389,9 @@ class Home extends Component {
                 network={this.props.network}
                 background={this.props.background}
                 setNotification={this.props.setNotification}
-                onChangeCanGoBack={value => this.setState({ canGoBack: value })}
+                changeNavbarText={navbarText => this.setState({ navbarText })}
                 onBack={this.onBack}
+                onChangeCanGoBack={value => this.setState({ canGoBack: value })}
               />
             ) : (
               ''
@@ -500,7 +507,7 @@ class Home extends Component {
                               1000000
                             ).toFixed(2) +
                             this.state.settings.currencies.selected.symbol
-                          : null }
+                          : null}
                       </div>
                     </div>
                   </div>

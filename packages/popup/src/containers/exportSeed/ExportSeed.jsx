@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import ExportSeedText from './exportSeedText/ExportSeedText'
 import ExportSeedVault from './exportSeedVault/ExportSeedVault'
+import OptionsSelector from '../../components/optionsSelector/OptionsSelector'
+import { EXPORT_SEED_TEXT } from '../../texts'
 
 class ExportSeed extends Component {
   constructor(props, context) {
@@ -9,96 +11,47 @@ class ExportSeed extends Component {
     this.goBack = this.goBack.bind(this)
 
     this.state = {
-      showExportSeedVault: false,
-      showExportSeedText: false
+      show: [false, false]
     }
   }
 
   goBack() {
     this.setState({
-      showExportSeedVault: false,
-      showExportSeedText: false
+      show: [false, false]
     })
     this.props.onChangeCanGoBack(true)
   }
 
   render() {
     return (
-      <React.Fragment>
-        {!this.state.showExportSeedVault && !this.state.showExportSeedText ? (
-          <div className="container">
-            <div
-              className="row cursor-pointer"
-              onClick={() => {
-                if (!this.state.showExportSeedVault)
-                  this.props.onChangeCanGoBack(null)
-                this.setState({
-                  showExportSeedVault: !this.state.showExportSeedVault
-                })
-              }}
-            >
-              <div className="col-9 mt-2">
-                <div className="row">
-                  <div className="col-12 text-dark-gray font-weight-bold text-md">
-                    Export SeedVault
-                  </div>
-                </div>
-                <div className="row">
-                  <div className="col-12 text-gray text-xs mb-1">
-                    Before to export the seed vault you will need to enter the
-                    password to encrypt the exported seed
-                  </div>
-                </div>
-              </div>
-              <div className="col-3 my-auto text-right">
-                <img src="./material/img/right.png" height="50" />
-              </div>
-            </div>
-
-            <hr className="mt-1" />
-
-            <div
-              className="row cursor-pointer"
-              onClick={() => {
-                if (!this.state.showExportSeedText)
-                  this.props.onChangeCanGoBack(null)
-                this.setState({
-                  showExportSeedText: !this.state.showExportSeedText
-                })
-              }}
-            >
-              <div className="col-9 mt-2">
-                <div className="row">
-                  <div className="col-12 text-dark-gray font-weight-bold text-md">
-                    Export as Text
-                  </div>
-                </div>
-                <div className="row">
-                  <div className="col-12 text-gray text-xs mb-1">
-                    Before you can export the seed you will need to enter the
-                    login password
-                  </div>
-                </div>
-              </div>
-              <div className="col-3 my-auto text-right">
-                <img src="./material/img/right.png" height="50" />
-              </div>
-            </div>
-
-            <hr className="mt-2 mb-2" />
-          </div>
+      <div className="container overflow-auto-475h">
+        {!this.state.show.includes(true) ? (
+          <OptionsSelector
+            items={EXPORT_SEED_TEXT.items}
+            onClick={({ text, index }) => {
+              this.props.changeNavbarText(text)
+              this.props.onChangeCanGoBack(null)
+              this.setState(() => {
+                const show = [false, false]
+                show[index] = true
+                return {
+                  show
+                }
+              })
+            }}
+          />
         ) : null}
-        {this.state.showExportSeedText ? (
+         {this.state.show[0] ? (
+          <ExportSeedVault background={this.props.background} />
+        ) : null}
+        {this.state.show[1] ? (
           <ExportSeedText
             account={this.props.account}
             background={this.props.background}
             setNotification={this.props.setNotification}
           />
         ) : null}
-        {this.state.showExportSeedVault ? (
-          <ExportSeedVault background={this.props.background} />
-        ) : null}
-      </React.Fragment>
+      </div>
     )
   }
 }

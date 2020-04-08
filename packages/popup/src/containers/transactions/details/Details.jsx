@@ -28,9 +28,7 @@ class Details extends Component {
             bundle:
           </div>
           <div className="col-10 text-right text-xxs">
-            <div className="text-no-overflow">
-              {this.props.details.bundle}
-            </div>
+            <div className="text-no-overflow">{this.props.details.bundle}</div>
           </div>
         </div>
         <div className="mt-1">
@@ -59,9 +57,7 @@ class Details extends Component {
               onClick={() =>
                 this.props.replayBundle(this.props.details.transfer[0].hash)
               }
-              disabled={
-                this.props.details.status ? true : false
-              }
+              disabled={this.props.details.status ? true : false}
               className="btn btn-border-blue text-xs btn-small"
             >
               Reattach <span className="fa fa-link"></span>
@@ -74,9 +70,7 @@ class Details extends Component {
                   this.props.details.transfer[0].hash
                 )
               }
-              disabled={
-                this.props.details.status ? true : false
-              }
+              disabled={this.props.details.status ? true : false}
               className="btn btn-border-blue text-xs btn-small"
             >
               Promote <span className="fa fa-repeat"></span>

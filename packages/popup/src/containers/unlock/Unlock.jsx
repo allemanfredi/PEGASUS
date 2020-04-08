@@ -28,7 +28,7 @@ class Unlock extends React.Component {
 
   render() {
     return (
-      <div className={this.state.shake ? 'container shake' : 'container'}>
+      <div className={this.state.shake ? ' shake' : ''}>
         <div className="row mt-3 mb-3">
           <div className="col-12 text-center text-lg text-blue text-bold">
             Insert your password to export the seed

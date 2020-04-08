@@ -39,8 +39,8 @@ class ExportSeedText extends Component {
     return !this.state.seed ? (
       <Unlock background={this.props.background} onUnlock={this.getSeed} />
     ) : (
-      <div className="container">
-        <div className="row mt-3 mb-3">
+      <React.Fragment>
+        <div className="row mt-2 mb-3">
           <div className="col-12 text-center text-lg text-blue text-bold">
             Please keep it as safely as possible!
           </div>
@@ -61,7 +61,7 @@ class ExportSeedText extends Component {
             </button>
           </div>
         </div>
-      </div>
+      </React.Fragment>
     )
   }
 }

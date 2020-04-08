@@ -1,57 +1,52 @@
-import React, { Component } from 'react'
-import QRCode from 'qrcode.react'
-import Utils from '@pegasus/utils/utils'
+import React from 'react'
+import AccountInfo from './accountInfo/AccountInfo'
+import OptionsSelector from '../../components/optionsSelector/OptionsSelector'
+import { RECEIVE_TEXT } from '../../texts'
 
-class Receive extends Component {
+class Receive extends React.Component {
   constructor(props, context) {
     super(props, context)
 
-    this.copyToClipboard = this.copyToClipboard.bind(this)
+    this.goBack = this.goBack.bind(this)
 
-    this.state = {}
+    this.state = {
+      show: [false, false]
+    }
   }
 
-  copyToClipboard(e) {
-    const textField = document.createElement('textarea')
-    textField.innerText = Utils.checksummed(
-      this.props.account.data.latestAddress
-    )
-    document.body.appendChild(textField)
-    textField.select()
-    document.execCommand('copy')
-    textField.remove()
-    this.props.setNotification({
-      type: 'success',
-      text: 'Copied!',
-      position: 'under-bar'
+  goBack() {
+    this.setState({
+      show: [false, false]
     })
+    this.props.onChangeCanGoBack(true)
+    this.props.changeNavbarText('Receive')
   }
 
   render() {
     return (
-      <div className="container">
-        <div className="row mt-5">
-          <div className="col-12 text-center">
-            <QRCode
-              value={Utils.checksummed(this.props.account.data.latestAddress)}
-            />
-          </div>
-        </div>
-        <div className="row mt-5 justify-content-center">
-          <div className="col-10 text-center text-xs break-text border-light-gray pt-1 pb-1">
-            {Utils.checksummed(this.props.account.data.latestAddress)}
-          </div>
-        </div>
-        <div className="row mt-10">
-          <div className="col-12">
-            <button
-              onClick={this.copyToClipboard}
-              className="btn btn-blue text-bold btn-big"
-            >
-              <span className="fa fa-clipboard"></span> Copy to clipboard
-            </button>
-          </div>
-        </div>
+      <div className="container overflow-auto-475h">
+        {!this.state.show.includes(true) ? (
+          <OptionsSelector
+            items={RECEIVE_TEXT.items}
+            onClick={({ text, index }) => {
+              this.props.changeNavbarText(text)
+              this.props.onChangeCanGoBack(null)
+              this.setState(() => {
+                const show = [false, false]
+                show[index] = true
+                return {
+                  show
+                }
+              })
+            }}
+          />
+        ) : null}
+        {this.state.show[0] ? (
+          <AccountInfo
+            account={this.props.account}
+            setNotification={this.props.setNotification}
+          />
+        ) : null}
       </div>
     )
   }

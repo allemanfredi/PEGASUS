@@ -234,8 +234,10 @@ class PegasusEngine {
         nodeify(this.walletController.addAccount(account, isCurrent), cb),
       isAccountNameAlreadyExists: (name, cb) =>
         cb(this.walletController.isAccountNameAlreadyExists(name)),
-      getCurrentAccount: cb => cb(removeSeed(this.walletController.getCurrentAccount())),
-      getAllAccounts: cb => cb(removeSeed(this.walletController.getAllAccounts())),
+      getCurrentAccount: cb =>
+        cb(removeSeed(this.walletController.getCurrentAccount())),
+      getAllAccounts: cb =>
+        cb(removeSeed(this.walletController.getAllAccounts())),
       setCurrentAccount: (account, cb) =>
         cb(this.walletController.setCurrentAccount(account)),
       updateNameAccount: (name, cb) =>
