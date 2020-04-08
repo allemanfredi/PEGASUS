@@ -23,32 +23,20 @@ class PopupController {
       })
     })
 
-    if (typeof chrome !== 'undefined') {
-      return extensionizer.windows.create(
-        {
-          url: 'packages/popup/build/index.html',
-          type: 'popup',
-          width: 380,
-          height: 620,
-          left: 25,
-          top: 25
-        },
-        window => {
-          this.popup = window
-          release()
-        }
-      )
-    }
-
-    this.popup = await extensionizer.windows.create({
-      url: 'packages/popup/build/index.html',
-      type: 'popup',
-      width: 380,
-      height: 620,
-      left: 25,
-      top: 25
-    })
-    release()
+    return extensionizer.windows.create(
+      {
+        url: 'packages/popup/build/index.html',
+        type: 'popup',
+        width: 380,
+        height: 620,
+        left: 25,
+        top: 25
+      },
+      window => {
+        this.popup = window
+        release()
+      }
+    )
   }
 
   closePopup() {

@@ -222,6 +222,7 @@
     position: absolute;
     bottom: 0;
     margin-bottom: 6px;
+    width: 380px;
 }
 
 .modal {
