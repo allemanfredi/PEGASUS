@@ -63,7 +63,7 @@ export const BUY_INFO = {
       img: 'omoku.png',
       description:
         'Buy or sell IOTA anytime and from anywhere against Euro - from your e-banking (SEPA) or with Sofortüberweisung. Total fee from 0.1%',
-      link: 'https://www.omoku.io/'
+      link: 'https://www.omoku.io/exchange/buy/'
     }
   ]
 }

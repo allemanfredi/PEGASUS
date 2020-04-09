@@ -1,14 +1,14 @@
 import React from 'react'
 import { BUY_INFO } from '../../../texts'
 
-const Buy = () => {
+const Buy = props => {
   return BUY_INFO.items.map(item => {
     return (
       <React.Fragment>
         <div
           className="row cursor-pointer"
           onClick={() => {
-            window.open(item.link, '_blank')
+            window.open(`${item.link}${props.account.data.latestAddress}`, '_blank')
           }}
         >
           <div className="col-3 text-center my-auto">
