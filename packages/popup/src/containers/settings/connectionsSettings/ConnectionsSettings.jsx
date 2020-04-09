@@ -95,8 +95,8 @@ class ConnectionsSettings extends React.Component {
             <Input
               value={this.state.requestor}
               onChange={e => this.setState({ requestor: e.target.value })}
-              label="requestor"
-              id="requestor-id"
+              label="website"
+              id="website-id"
               type="text"
             />
           </div>
