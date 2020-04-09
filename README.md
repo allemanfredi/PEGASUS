@@ -87,7 +87,7 @@ if (window.iota) {
         const bundle = await window.iota.core.sendTrytes(trytes, depth, minWeightMagnitude)
 
         // or
-        const bundle = await window.iota.tranfer(transfers)
+        const bundle = await window.iota.transfer(transfers)
     } 
 }
 ```
