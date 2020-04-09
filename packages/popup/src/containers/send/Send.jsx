@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import Utils from '@pegasus/utils/utils'
 import Input from '../../components/input/Input'
 import Picklist from '../../components/picklist/Picklist'
-import { APP_STATE } from '@pegasus/utils/states'
 
 class Send extends Component {
   constructor(props, context) {

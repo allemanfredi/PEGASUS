@@ -19,7 +19,7 @@ import createEngineStream from './lib/engine-stream'
 import { composeAPI } from '@iota/core'
 import Dnode from 'dnode/browser'
 import nodeify from 'nodeify'
-import { removeSeedsFromState, removeSeed } from './lib/seed-removers'
+import { returnOnlyPublicConfigs, removeSeed } from './lib/removers'
 import extensionizer from 'extensionizer'
 import { FORBIDDEN_REQUESTS, ADDITIONAL_METHODS } from './lib/constants'
 import { addChecksum } from '@iota/checksum'
@@ -176,7 +176,7 @@ class PegasusEngine {
 
       this.stateStorageController.state$.subscribe(_state => {
         // remove seed before sending
-        sendUpdate(removeSeedsFromState(_state))
+        sendUpdate(returnOnlyPublicConfigs(_state))
       })
     })
   }

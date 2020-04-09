@@ -33,6 +33,10 @@ export const RECEIVE_TEXT = {
     {
       title: 'Account Info',
       description: 'View your address'
+    },
+    {
+      title: 'Buy',
+      description: 'View all possible options to buy IOTA'
     }
   ]
 }
@@ -48,6 +52,18 @@ export const EXPORT_SEED_TEXT = {
       title: 'Export as Text',
       description:
         'Before you can export the seed you will need to enter the login password'
+    }
+  ]
+}
+
+export const BUY_INFO = {
+  items: [
+    {
+      name: 'Omoku',
+      img: 'omoku.png',
+      description:
+        'Buy or sell IOTA anytime and from anywhere against Euro - from your e-banking (SEPA) or with Sofortüberweisung. Total fee from 0.1%',
+      link: 'https://www.omoku.io/'
     }
   ]
 }

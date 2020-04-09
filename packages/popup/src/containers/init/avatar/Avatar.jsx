@@ -33,6 +33,7 @@ const Avatar = props => {
                   src={`./material/profiles/${number}.svg`}
                   height="60"
                   width="60"
+                  alt={`av-${number} logo`}
                 />
               </div>
             )

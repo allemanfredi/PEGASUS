@@ -2,6 +2,7 @@ import Utils from '@pegasus/utils/utils'
 import { composeAPI } from '@iota/core'
 import { asciiToTrytes } from '@iota/converter'
 import logger from '@pegasus/utils/logger'
+import { APP_STATE } from '@pegasus/utils/states'
 
 class NodeController {
   constructor(options) {
@@ -84,7 +85,7 @@ class NodeController {
     const network = this.networkController.getCurrentNetwork()
     const account = this.walletController.getCurrentAccount()
 
-    const tails = account.transactions
+    const tails = account.data.transactions
       .filter(transaction => transaction.network === network.type)
       .map(transaction => transaction.transfer[0].hash)
 
@@ -103,7 +104,8 @@ class NodeController {
   enableTransactionsAutoPromotion(_time) {
     this.transactionsAutoPromotionHandler = setInterval(
       () => {
-        if (this.stateStorageController.isReady()) this.promoteTransactions()
+        const state = this.walletController.getState()
+        if (state > APP_STATE.WALLET_LOCKED) this.promoteTransactions()
       },
       _time > 3 ? _time : 3
     )
@@ -113,8 +115,10 @@ class NodeController {
   }
 
   disableTransactionsAutoPromotion() {
-    clearInterval(this.transactionsAutoPromotionHandler)
-    logger.log('(NodeController) Disabled transactions auto promotion')
+    if (this.transactionsAutoPromotionHandler) {
+      clearInterval(this.transactionsAutoPromotionHandler)
+      logger.log('(NodeController) Disabled transactions auto promotion')
+    }
   }
 }
 

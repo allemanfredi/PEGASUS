@@ -28,7 +28,6 @@ class TransactionsSettings extends React.Component {
 
   handleChange(settings, action) {
     this.setState({ settings })
-    this.props.background.setSettings(settings)
 
     if (action === 'promote') {
       if (settings.autoPromotion.enabled && settings.autoPromotion.time > 0) {
@@ -39,9 +38,12 @@ class TransactionsSettings extends React.Component {
         !settings.autoPromotion.enabled ||
         settings.autoPromotion.time === 0
       ) {
+        if (settings.autoPromotion.time > 3) settings.autoPromotion.time = 0
         this.props.background.disableTransactionsAutoPromotion()
       }
     }
+
+    this.props.background.setSettings(settings)
   }
 
   render() {

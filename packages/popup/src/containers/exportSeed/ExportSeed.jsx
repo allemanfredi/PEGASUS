@@ -41,7 +41,7 @@ class ExportSeed extends Component {
             }}
           />
         ) : null}
-         {this.state.show[0] ? (
+        {this.state.show[0] ? (
           <ExportSeedVault background={this.props.background} />
         ) : null}
         {this.state.show[1] ? (

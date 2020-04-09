@@ -339,7 +339,6 @@ class Home extends Component {
                 account={this.props.account}
                 network={this.props.network}
                 background={this.props.background}
-                network={this.props.network}
                 setNotification={this.props.setNotification}
                 onBack={this.onBack}
                 onHideTop={show => {

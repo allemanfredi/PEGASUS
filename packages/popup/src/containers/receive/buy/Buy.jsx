@@ -1,22 +1,28 @@
 import React from 'react'
+import { BUY_INFO } from '../../../texts'
 
-const OptionsSelector = props => {
-  return props.items.map((item, index) => {
+const Buy = () => {
+  return BUY_INFO.items.map(item => {
     return (
       <React.Fragment>
         <div
           className="row cursor-pointer"
           onClick={() => {
-            props.onClick({
-              text: item.title,
-              index
-            })
+            window.open(item.link, '_blank')
           }}
         >
-          <div className={'col-9 ' + (index === 0 ? 'mt-2' : 'mt-1')}>
+          <div className="col-3 text-center my-auto">
+            <img
+              src={`./material/img/${item.img}`}
+              height="70"
+              width="70"
+              alt={`${item.img} logo`}
+            />
+          </div>
+          <div className="col-9 mt-2 pl-0">
             <div className="row">
               <div className="col-12 text-dark-gray font-weight-bold text-md">
-                {item.title}
+                {item.name}
               </div>
             </div>
             <div className="row">
@@ -25,18 +31,11 @@ const OptionsSelector = props => {
               </div>
             </div>
           </div>
-          <div className="col-3 my-auto text-right">
-            <img
-              src="./material/img/right.png"
-              height="50"
-              alt={'arrow right logo'}
-            />
-          </div>
         </div>
-        <hr className="mt-1 mb-1" />
+        <hr className="mt-1" />
       </React.Fragment>
     )
   })
 }
 
-export default OptionsSelector
+export default Buy

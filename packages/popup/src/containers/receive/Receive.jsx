@@ -1,5 +1,6 @@
 import React from 'react'
 import AccountInfo from './accountInfo/AccountInfo'
+import Buy from './buy/Buy'
 import OptionsSelector from '../../components/optionsSelector/OptionsSelector'
 import { RECEIVE_TEXT } from '../../texts'
 
@@ -47,6 +48,7 @@ class Receive extends React.Component {
             setNotification={this.props.setNotification}
           />
         ) : null}
+        {this.state.show[1] ? <Buy /> : null}
       </div>
     )
   }

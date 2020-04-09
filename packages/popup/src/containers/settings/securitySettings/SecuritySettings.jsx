@@ -12,10 +12,10 @@ class SecuritySettings extends React.Component {
     this.state = {
       settings: {
         autoLocking: {
-          enabled: false,
-          time: 0
+          enabled: false
         }
-      }
+      },
+      time: 0
     }
   }
 
@@ -23,11 +23,21 @@ class SecuritySettings extends React.Component {
     const settings = await this.props.background.getSettings()
     if (!settings) return
 
-    this.setState({ settings })
+    this.setState({
+      settings,
+      time: settings.autoLocking.time
+    })
   }
 
   handleChange(settings) {
-    this.setState({ settings })
+    if (!settings.autoLocking.enabled) {
+      settings.autoLocking.time = 0
+      this.setState({ time: 0, settings })
+    } else if (settings.autoLocking.enabled && this.state.time >= 5) {
+      settings.autoLocking.time = this.state.time
+      this.setState({ settings })
+    }
+
     this.props.background.setSettings(settings)
   }
 
@@ -50,11 +60,8 @@ class SecuritySettings extends React.Component {
                 this.handleChange({
                   ...this.state.settings,
                   autoLocking: {
-                    enabled:
-                      this.state.settings.autoLocking.time > 0
-                        ? !this.state.settings.autoLocking.enabled
-                        : false,
-                    time: this.state.settings.autoLocking.time
+                    enabled: !this.state.settings.autoLocking.enabled,
+                    time: this.state.time
                   }
                 })
               }}
@@ -73,23 +80,47 @@ class SecuritySettings extends React.Component {
         <div className="row mt-05">
           <div className="col-12">
             <Input
-              value={this.state.settings.autoLocking.time}
-              onChange={e =>
-                this.handleChange({
-                  ...this.state.settings,
-                  autoLocking: {
-                    enabled:
-                      e.target.value > 0
-                        ? this.state.settings.autoLocking.enabled
-                        : false,
-                    time: e.target.value
-                  }
-                })
-              }
+              value={this.state.time}
+              onChange={e => {
+                this.setState({ time: parseInt(e.target.value) })
+                if (e.target.value < 5) {
+                  this.setState({
+                    ...this.state.settings,
+                    autoLocking: {
+                      enabled: false,
+                      time: 0
+                    }
+                  })
+                  this.props.background.setSettings({
+                    ...this.state.settings,
+                    autoLocking: {
+                      enabled: false,
+                      time: 0
+                    }
+                  })
+                }
+                if (
+                  this.state.settings.autoLocking.enabled &&
+                  e.target.value >= 5
+                ) {
+                  this.props.background.setSettings({
+                    ...this.state.settings,
+                    autoLocking: {
+                      enabled: true,
+                      time: parseInt(e.target.value)
+                    }
+                  })
+                }
+              }}
               label="minutes"
               id="auto-prom-sec"
               type="number"
             />
+          </div>
+        </div>
+        <div className="row mt-05">
+          <div className="col-12 text-xxxs text-gray">
+            (Must be greater than 4 minutes)
           </div>
         </div>
         <hr className="mt-1 mb-1" />

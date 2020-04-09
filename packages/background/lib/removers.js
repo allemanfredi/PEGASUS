@@ -5,13 +5,16 @@
  *
  * @param {Object} _state
  */
-const removeSeedsFromState = _state => {
+const returnOnlyPublicConfigs = _state => {
   const mappedState = JSON.parse(JSON.stringify(_state))
 
   if (mappedState.accounts && mappedState.accounts.selected) {
     mappedState.accounts.all.forEach(account => delete account.seed)
     delete mappedState.accounts.selected.seed
   }
+
+  delete mappedState.hpsw
+  delete mappedState.data
 
   return mappedState
 }
@@ -37,4 +40,4 @@ const removeSeed = _obj => {
   return mappedObj
 }
 
-export { removeSeedsFromState, removeSeed }
+export { returnOnlyPublicConfigs, removeSeed }

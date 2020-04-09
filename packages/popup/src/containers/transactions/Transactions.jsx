@@ -190,10 +190,10 @@ class Transactions extends Component {
                           }
                         >
                           {transaction.status ? 'confirmed ' : 'pending'}
-                          <a className="text-green">
+                          <span className="text-green">
                             <br />
                             {transaction.isReattached ? 'reattached ' : ''}
-                          </a>
+                          </span>
                         </div>
                       </div>
                       <div className="col-4 text-right">
@@ -213,12 +213,13 @@ class Transactions extends Component {
                             transaction.bundle
                           }
                           target="_blank"
+                          rel="noopener noreferrer"
                         >
                           View on the explorer
                         </a>
                       </div>
                       <div className="col-6 text-right text-xxs text-underline">
-                        <a
+                        <span
                           className="cursor-pointer"
                           onClick={() => this.clickShowDetails(transaction)}
                         >
@@ -232,7 +233,7 @@ class Transactions extends Component {
                                 : 'fa fa-eye-slash'
                             }
                           ></i>
-                        </a>
+                        </span>
                       </div>
                     </div>
                     {this.state.opened[
