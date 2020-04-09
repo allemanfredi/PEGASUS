@@ -6,11 +6,12 @@ By installing and using Pegasus you will accept the terms of use described withi
 ## Password and Seed security
 
 When you create an account within Pegasus, you will be responsible for keeping your own account secret, which is a string of 81 characters. Pegasus encrypts this data with a password you provide which will never be sent outside Pegasus. You also agree on:
+
 * you will never choose a password already used outside Pegasus
 * you will never disclose the choosen password
 * you will never disclose the seed/s generated within Pegasus
 
-You agree that in case of password loss it will no longer be possible to access Pegasus and access to the stored seeds.
+You agree that in case of password loss it will no longer be possible to access Pegasus and access to the stored seeds and hence your IOTA tokens. You also agree that Pegasus is not responsbile for transferring, safeguarding or mantaining your seeds. In case you will lose them, Pegasus wil not be responsible for such loss. If you lose, mishandle or have stolen associated the seeds, you acknowledge that you may not be able to access to your IOTA tokens, and that Pegasus is not responsible for such loss.
 
 ## Links
 
@@ -18,3 +19,5 @@ Within Pegasus it's possible to find links to external website. Since Pegasus ha
 
 * Pegasus will not be responsible for any loss or damage caused by the use of such websites
 * Pegasus will not be resposible for the availability of such websites
+
+## Security

@@ -42,7 +42,6 @@ class Header extends Component {
   }
 
   render() {
-    console.log(this.props.account, this.props.appState)
     return (
       <React.Fragment>
         <header>

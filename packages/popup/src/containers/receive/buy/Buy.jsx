@@ -8,7 +8,10 @@ const Buy = props => {
         <div
           className="row cursor-pointer"
           onClick={() => {
-            window.open(`${item.link}${props.account.data.latestAddress}`, '_blank')
+            window.open(
+              `${item.link}${props.account.data.latestAddress}`,
+              '_blank'
+            )
           }}
         >
           <div className="col-3 text-center my-auto">

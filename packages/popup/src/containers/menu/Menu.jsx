@@ -30,6 +30,14 @@ class Settings extends Component {
   }
 
   handleClick(e) {
+    if (
+      this.ref &&
+      !this.ref.contains(e.target) &&
+      !this.state.showChangeAvatar
+    ) {
+      this.onClose()
+    }
+
     if (!this.edit.contains(e.target)) {
       this.setState({ showEdit: false })
     }
@@ -45,7 +53,7 @@ class Settings extends Component {
 
   render() {
     return (
-      <div className="modal mt-6">
+      <div className="modal mt-6" onClick={this.handleClick}>
         {this.state.showChangeAvatar ? (
           <ChangeAvatar
             background={this.props.background}
@@ -54,6 +62,7 @@ class Settings extends Component {
           />
         ) : null}
         <div
+          ref={ref => (this.ref = ref)}
           onClick={this.handleClick}
           id="sidebar-wrapper"
           className={

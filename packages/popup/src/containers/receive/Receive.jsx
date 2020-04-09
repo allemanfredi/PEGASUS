@@ -48,7 +48,7 @@ class Receive extends React.Component {
             setNotification={this.props.setNotification}
           />
         ) : null}
-        {this.state.show[1] ? <Buy account={this.props.account}/> : null}
+        {this.state.show[1] ? <Buy account={this.props.account} /> : null}
       </div>
     )
   }
