@@ -19,7 +19,7 @@ const Buy = () => {
               alt={`${item.img} logo`}
             />
           </div>
-          <div className="col-9 mt-2 pl-0">
+          <div className="col-9 mt-2 pl-1">
             <div className="row">
               <div className="col-12 text-dark-gray font-weight-bold text-md">
                 {item.name}

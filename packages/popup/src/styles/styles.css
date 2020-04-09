@@ -32,6 +32,7 @@
     margin-right: auto;
     width: 380px;
     height: 600px;
+    position: relative;
 }
 
 @media screen and (min-width: 381px) {
@@ -240,6 +241,12 @@
     height: 100%;
     display: block;
     background: rgba(0,0,0,.6);
+}
+
+@media screen and (min-width: 381px) {
+    .modal {
+        position: absolute;
+    }
 }
 
 /*INPUT*/
@@ -828,9 +835,10 @@ header{
     left: 250px;
     width: 250px;
     max-height: 550px;
+    padding-top: 10px;
     height: 550px;
     background: white;
-    position: fixed;
+    position: absolute;
     overflow-y: scroll;
     z-index: 1000;
     transition: all 0.4s ease 0s; 
@@ -1129,14 +1137,6 @@ textarea {
     height: 16px;
     background: white;
     border: 1px solid #ddd;
-}
-  
-.checkbox:hover + label:before {
-    background: darkblue;
-}
-    
-.checkbox:focus + label:before {
-    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.12);
 }
   
 .checkbox:checked + label:before {

@@ -519,22 +519,24 @@ class Home extends Component {
                   setNotification={this.props.setNotification}
                   onReload={this.onReload}
                 />
-                <div className="row mt-2">
-                  <div className="col-6 text-center">
-                    <button
-                      onClick={this.onClickReceive}
-                      className="btn btn-border-blue btn-big"
-                    >
-                      Receive
-                    </button>
-                  </div>
-                  <div className="col-6 text-center">
-                    <button
-                      onClick={this.onClickSend}
-                      className="btn btn-border-blue btn-big"
-                    >
-                      Send
-                    </button>
+                <div className="container-buttons-home">
+                  <div className="row mt-2">
+                    <div className="col-6 text-center">
+                      <button
+                        onClick={this.onClickReceive}
+                        className="btn btn-border-blue btn-big"
+                      >
+                        Receive
+                      </button>
+                    </div>
+                    <div className="col-6 text-center">
+                      <button
+                        onClick={this.onClickSend}
+                        className="btn btn-border-blue btn-big"
+                      >
+                        Send
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

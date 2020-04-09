@@ -29,22 +29,16 @@ class App extends Component {
   async componentWillMount() {
     this.bindStateUpdate()
 
-    //check if the current network has been already set, if no => set to testnet (options[0])
     const network = await this.props.background.getCurrentNetwork()
     const networks = await this.props.background.getAllNetworks()
     const account = await this.props.background.getCurrentAccount()
+    const appState = await this.props.background.getState()
 
-    this.setState(() => {
-      return account
-        ? {
-            network,
-            networks,
-            account
-          }
-        : {
-            network,
-            networks
-          }
+    this.setState({
+      network,
+      networks,
+      account: account ? account : null,
+      appState
     })
   }
 
@@ -95,9 +89,7 @@ class App extends Component {
         network: selectedNetwork,
         networks: networks,
         appState:
-          state !== APP_STATE.WALLET_RESTORE
-            ? backgroundState.state
-            : this.state.appState
+          state !== APP_STATE.WALLET_RESTORE ? state : this.state.appState
       })
     })
   }

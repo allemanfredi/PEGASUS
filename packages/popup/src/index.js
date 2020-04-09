@@ -9,6 +9,8 @@ import extension from 'extensionizer'
 import pump from 'pump'
 import buildPromisedBackgroundApi from '@pegasus/utils/promised-background-api'
 import StreamProvider from '@pegasus/utils/stream-provider'
+import { APP_STATE } from '@pegasus/utils/states'
+import queryString from 'query-string'
 
 import './styles/styles.css'
 import 'react-tabs/style/react-tabs.css'
@@ -49,6 +51,12 @@ backgroundDnode.once('remote', async backgroundConnection => {
     ...buildPromisedBackgroundApi(backgroundConnection)
   }
 
+  // NOTE: if wallet is not initialized, the init process must be done within a tab
+  const params = queryString.parse(window.location.search)
+  const state = await background.getState()
+  if (state === APP_STATE.WALLET_NOT_INITIALIZED && !params['intab'])
+    extension.tabs.create({ url: window.location.href + '?intab=true' })
+
   ReactDOM.render(
     <App background={background} />,
     document.getElementById('root')
@@ -56,5 +64,4 @@ backgroundDnode.once('remote', async backgroundConnection => {
 })
 
 /* I am aware that some things in this part are not the best, as I had started this project
-without having any knowledge of react. when the ui will be redone practically everything
-will be canceled */
+without having any knowledge of react. the ui will be refactored*/

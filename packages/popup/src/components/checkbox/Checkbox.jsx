@@ -11,7 +11,17 @@ const CheckBox = props => {
         checked={props.checked}
         onChange={e => props.onChange(e)}
       />
-      <label for={props.id}>{props.text}</label>
+      <label for={props.id}>
+        {props.text}
+        {props.link ? (
+          <a href={props.link.src} target="blank" rel="noopener noreferrer">
+            {' '}
+            {props.link.text}
+          </a>
+        ) : (
+          ''
+        )}
+      </label>
     </React.Fragment>
   )
 }
