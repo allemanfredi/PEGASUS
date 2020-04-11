@@ -34,7 +34,9 @@ class SeedVaultController {
         mem: memory,
         time: iterations,
         hashLen: length,
-        parallelism
+        parallelism,
+        type,
+        version
       })
 
       return hash.hash
