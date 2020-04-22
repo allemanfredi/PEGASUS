@@ -19,10 +19,10 @@
     "build:core": "lerna run build --ignore @pegasus/popup",
     "update-version": "lerna publish --skip-git --skip-npm --force-publish '*'",
     "lint": "lerna run lint",
-    "init": "npm i && lerna bootstrap",
+    "init": "yarn install && lerna bootstrap",
     "bootstrap": "lerna bootstrap",
     "format": "prettier --config ./.prettierrc --write  \"./packages/**/*.+(js|jsx|json|)\"",
-    "build:zip": "npm run build && npx bestzip chrome-extension.zip dist manifest.json packages/popup/build packages/popup/static"
+    "build:zip": "yarn run build && npx bestzip chrome-extension.zip dist manifest.json packages/popup/build packages/popup/static"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",

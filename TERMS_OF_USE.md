@@ -19,5 +19,3 @@ Within Pegasus it's possible to find links to external website. Since Pegasus ha
 
 * Pegasus will not be responsible for any loss or damage caused by the use of such websites
 * Pegasus will not be resposible for the availability of such websites
-
-## Security
