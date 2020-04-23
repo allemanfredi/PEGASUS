@@ -3,7 +3,7 @@
   "main": "index.js",
   "author": "allemanfredi <alle.manfredi@gmail.com>",
   "private": true,
-  "version": "0.9.1",
+  "version": "0.10.0",
   "scripts": {
     "build": "webpack --config ../../webpack.config.js --progress --colors -o ../../dist/inpage-client.js",
     "lint": "npx eslint . --fix"
