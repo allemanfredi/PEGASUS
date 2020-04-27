@@ -9,6 +9,14 @@ const options = {
       default: true
     },
     {
+      name: 'nodes.comnet.thetangle.org',
+      provider: 'https://nodes.comnet.thetangle.org:443',
+      link: 'https://comnet.thetangle.org/',
+      type: 'testnet',
+      difficulty: 10,
+      default: true
+    },
+    {
       name: 'nodes.devnet.iota.org',
       provider: 'https://nodes.devnet.iota.org',
       link: 'https://devnet.thetangle.org/',
