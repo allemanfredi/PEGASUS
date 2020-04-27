@@ -14,3 +14,6 @@ export const REQUESTS_WITH_USER_INTERACTION = [
   'sendTrytes',
   'transfer'
 ]
+
+export const CONNECT = 'connect'
+export const WEBSITE_METADATA = 'websiteMetadata'

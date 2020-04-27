@@ -10,6 +10,7 @@ class ConnectorController {
     this.stateStorageController = stateStorageController
     this.connections = {}
     this.connectionRequests = {}
+    this.websiteMetadata = {}
 
     this.updateBadge = updateBadge
   }
@@ -26,19 +27,39 @@ class ConnectorController {
     this.requestsController = _customizatorController
   }
 
+  /**
+   *
+   * Check if a given origin is connected
+   *
+   * @param {String} _origin
+   */
   isConnected(_origin) {
     return Boolean(
       this.connections[_origin] && this.connections[_origin].enabled
     )
   }
 
+  /**
+   *
+   * Adds a pending connection used by RequestsController
+   * whem user try to call a function from the content script
+   * without having estabilished the connection
+   *
+   * @param {Object} _connection
+   */
   pushConnectionRequest(_connection) {
-    if (!this.connectionRequests[_connection.requestor.origin])
-      this.connectionRequests[_connection.requestor.origin] = {}
+    const { requestor } = _connection
 
-    this.connectionRequests[_connection.requestor.origin][
-      _connection.requestor.tabId
-    ] = _connection
+    if (!this.connectionRequests[requestor.origin])
+      this.connectionRequests[requestor.origin] = {}
+
+    this.connectionRequests[requestor.origin][requestor.tabId] = _connection
+
+    //NOTE: attach metadata
+    this.connectionRequests[requestor.origin][requestor.tabId].requestor = {
+      ...this.connectionRequests[requestor.origin][requestor.tabId].requestor,
+      ...this.websiteMetadata[requestor.origin]
+    }
 
     this.stateStorageController.set(
       'connectionRequests',
@@ -52,23 +73,38 @@ class ConnectorController {
     )
   }
 
-  removeConnectionRequest(_origin, _tabId) {
-    delete this.connectionRequests[_origin][_tabId]
-
-    if (Object.values(this.connectionRequests[_origin]).length === 0)
-      delete this.connectionRequests[_origin]
-
-    this.updateBadge()
-    this.stateStorageController.set(
-      'connectionRequests',
-      normalizeConnectionRequests(this.connectionRequests)
-    )
+  /**
+   * Get all website connections
+   */
+  getConnections() {
+    return this.connections
   }
 
+  /**
+   *
+   * Get a connection given the origin
+   *
+   * @param {String} _origin
+   */
+  getConnection(_origin) {
+    return this.connections[_origin]
+  }
+
+  /**
+   * Get all pending connection to be confirmed
+   */
   getConnectionRequests() {
     return normalizeConnectionRequests(this.connectionRequests)
   }
 
+  /**
+   *
+   * Function called directly from the content script with .connect
+   *
+   * @param {String} _uuid
+   * @param {Function} _push
+   * @param {Object} _requestor
+   */
   connect(_uuid, _push, _requestor) {
     this.pushConnectionRequest({
       requestor: _requestor,
@@ -89,6 +125,14 @@ class ConnectorController {
     this.popupController.openPopup()
   }
 
+  /**
+   *
+   * Complete a connection after the user confirmation
+   * in the popup
+   *
+   * @param {String} _origin
+   * @param {Number} _tabId
+   */
   completeConnectionRequest(_origin, _tabId) {
     const requests = this.requestsController.getRequests()
 
@@ -145,6 +189,13 @@ class ConnectorController {
     return true
   }
 
+  /**
+   *
+   * Rejects a pending connection from the popup
+   *
+   * @param {String} _origin
+   * @param {Integer} _tabId
+   */
   rejectConnectionRequest(_origin, _tabId) {
     const requests = this.requestsController.getRequests()
 
@@ -175,6 +226,12 @@ class ConnectorController {
     return true
   }
 
+  /**
+   *
+   * Function used to estabilish a connection with a website,
+   *
+   * @param {Object} _requestor
+   */
   estabilishConnection(_requestor) {
     // NOTE: connector not enabled for internal processes
     if (_requestor.hostname === 'pegasus') {
@@ -217,30 +274,62 @@ class ConnectorController {
     return null
   }
 
-  getConnections() {
-    return this.connections
-  }
-
-  getConnection(_origin) {
-    return this.connections[_origin]
-  }
-
+  /**
+   *
+   * Remove an estabilished connection with a website
+   *
+   * @param {String} _origin
+   */
   removeConnection(_origin) {
     logger.log(`(ConnectorController) Removing connection with ${_origin}`)
     delete this.connections[_origin]
     return true
   }
 
+  /**
+   *
+   * Remove a pending connection with a website and its relative
+   * website metadata
+   *
+   * @param {String} _origin
+   */
   removePendingConnection(_origin) {
     if (this.connections[_origin] && !this.connections[_origin].enabled) {
       logger.log(
         `(ConnectorController) Removing pending connection with ${_origin}`
       )
       delete this.connections[_origin]
+      delete this.websiteMetadata[_origin]
     }
     return true
   }
 
+  /**
+   *
+   * Remove a pending connection and update the badge
+   *
+   * @param {String} _origin
+   * @param {Number} _tabId
+   */
+  removeConnectionRequest(_origin, _tabId) {
+    delete this.connectionRequests[_origin][_tabId]
+
+    if (Object.values(this.connectionRequests[_origin]).length === 0)
+      delete this.connectionRequests[_origin]
+
+    this.updateBadge()
+    this.stateStorageController.set(
+      'connectionRequests',
+      normalizeConnectionRequests(this.connectionRequests)
+    )
+  }
+
+  /**
+   *
+   * Add a connection with a website
+   *
+   * @param {Object} _connection
+   */
   addConnection(_connection) {
     logger.log(
       `(ConnectorController) Add connection with ${_connection.requestor.origin}`
@@ -249,6 +338,24 @@ class ConnectorController {
 
     this.connections[_connection.requestor.origin] = _connection
     return true
+  }
+
+  /**
+   *
+   * Attach metadata to pending and estabilished connection
+   *
+   * @param {String} _origin
+   * @param {Object} _metadata
+   */
+  attachMetadata(_origin, _metadata) {
+    this.websiteMetadata[_origin] = _metadata
+
+    if (this.connections[_origin]) {
+      this.connections[_origin].requestor = {
+        ...this.connections[_origin].requestor,
+        ..._metadata
+      }
+    }
   }
 }
 

@@ -130,8 +130,8 @@ class ConnectionsSettings extends React.Component {
                   <img
                     className="border-radius-50"
                     src={
-                      connection.requestor.favicon
-                        ? connection.requestor.favicon
+                      connection.requestor.icon
+                        ? connection.requestor.icon
                         : `${connection.requestor.hostname}/favicon.ico`
                     }
                     height="25"

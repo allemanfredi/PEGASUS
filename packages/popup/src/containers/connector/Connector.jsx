@@ -45,8 +45,8 @@ class Connector extends Component {
               <img
                 className="border-radius-50"
                 src={
-                  connection.requestor.favicon
-                    ? connection.requestor.favicon
+                  connection.requestor.icon
+                    ? connection.requestor.icon
                     : `${connection.requestor.hostname}/favicon.ico`
                 }
                 height="64"
@@ -76,7 +76,7 @@ class Connector extends Component {
           </div>
           <div className="row mt-05">
             <div className="col-4 text-center text-xxs text-bold">
-              {connection.requestor.hostname}
+              {connection.requestor.name}
             </div>
             <div className="col-4 text-center text-xxxs my-auto pl-0 pr-0 text-gray">
               wants to connect with

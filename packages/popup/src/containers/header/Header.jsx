@@ -77,6 +77,7 @@ class Header extends Component {
               </div>
             </div>
             {this.props.appState > APP_STATE.WALLET_LOCKED &&
+            this.props.account &&
             Object.keys(this.props.account).length > 0 ? (
               <div className="col-3 my-auto text-right">
                 <img

@@ -10,6 +10,7 @@ import * as unitConverter from '@iota/unit-converter'
 import Utils from '@pegasus/utils/utils'
 import randomUUID from 'uuid/v4'
 import EventEmitter from 'eventemitter3'
+import { getWebsiteMetadata } from './website-metadata'
 
 class PegasusInpageClient extends EventEmitter {
   constructor(inpageStream) {
@@ -24,8 +25,23 @@ class PegasusInpageClient extends EventEmitter {
     this._bindListener()
 
     this._init()
+
+    // NOTE: send website metadata to the background
+    window.addEventListener('load', async () => {
+      const metadata = await getWebsiteMetadata()
+      this.send({
+        method: 'websiteMetadata',
+        args: metadata
+      })
+    })
   }
 
+  /**
+   *
+   * Send a request to the background
+   *
+   * @param {Object} data
+   */
   send(data = {}) {
     const uuid = randomUUID()
 
@@ -44,6 +60,14 @@ class PegasusInpageClient extends EventEmitter {
     })
   }
 
+  /**
+   *
+   * Create the requests to send to the background
+   *
+   * @param {Object} args
+   * @param {String} method
+   * @param {String} prefix
+   */
   _handleInjectedRequest(args, method, prefix = '') {
     const cb = args[args.length - 1] ? args[args.length - 1] : null
 
@@ -64,6 +88,9 @@ class PegasusInpageClient extends EventEmitter {
     }
   }
 
+  /**
+   * Wait for results from background
+   */
   _bindListener() {
     this.inpageStream.on('data', ({ data }) => {
       const { response, uuid, action, success } = data
@@ -90,6 +117,9 @@ class PegasusInpageClient extends EventEmitter {
     })
   }
 
+  /**
+   * Create window.iota
+   */
   _init() {
     const core = composeAPI()
     Object.keys(core).forEach(method => {
@@ -120,16 +150,6 @@ class PegasusInpageClient extends EventEmitter {
     delete core.getAccountData
     delete core.getInputs
     delete core.getNewAddress
-  }
-
-  getFavicon() {
-    let favicon = document.querySelector('head > link[rel="shortcut icon"]')
-    if (favicon) return favicon.href
-
-    favicon = Array.from(
-      document.querySelectorAll('head > link[rel="icon"]')
-    ).find(fi => Boolean(fi.href))
-    if (favicon) return favicon.href
   }
 }
 

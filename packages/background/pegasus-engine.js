@@ -21,7 +21,12 @@ import Dnode from 'dnode/browser'
 import nodeify from 'nodeify'
 import { returnOnlyPublicConfigs, removeSeed } from './lib/removers'
 import extensionizer from 'extensionizer'
-import { FORBIDDEN_REQUESTS, ADDITIONAL_METHODS } from './lib/constants'
+import {
+  FORBIDDEN_REQUESTS,
+  ADDITIONAL_METHODS,
+  CONNECT,
+  WEBSITE_METADATA
+} from './lib/constants'
 import { addChecksum } from '@iota/checksum'
 
 class PegasusEngine {
@@ -136,7 +141,6 @@ class PegasusEngine {
     const requestor = {
       origin: url.origin,
       hostname: isInternal ? 'pegasus' : url.hostname,
-      favicon: sender.tab && sender.tab.favIconUrl ? sender.tab.favIconUrl : '',
       tabId: sender.tab && sender.tab.id ? sender.tab.id : null
     }
 
@@ -187,7 +191,7 @@ class PegasusEngine {
    * @param {Object} _request
    */
   handle(_request) {
-    const { method, uuid, push, requestor } = _request
+    const { method, uuid, push, requestor, args } = _request
 
     const iota = composeAPI()
     if (
@@ -203,7 +207,12 @@ class PegasusEngine {
       return
     }
 
-    if (method === 'connect') {
+    if (method === WEBSITE_METADATA) {
+      this.connectorController.attachMetadata(requestor.origin, args)
+      return
+    }
+
+    if (method === CONNECT) {
       this.connectorController.connect(uuid, push, requestor)
       return
     }
