@@ -44,7 +44,7 @@ class ConnectionsSettings extends React.Component {
       enabled: true,
       accountId: account.id,
       requestor: {
-        favicon: `${url.origin}/favicon.ico`,
+        icon: `${url.origin}/favicon.ico`,
         hostname: url.hostname,
         origin: url.origin
       }

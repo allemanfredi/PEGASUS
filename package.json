@@ -22,7 +22,7 @@
     "init": "yarn install && lerna bootstrap",
     "bootstrap": "lerna bootstrap",
     "format": "prettier --config ./.prettierrc --write  \"./packages/**/*.+(js|jsx|json|)\"",
-    "build:zip": "yarn run build && npx bestzip chrome-extension.zip dist manifest.json packages/popup/build packages/popup/static"
+    "build:zip": "yarn run build && npx bestzip pegasus.zip dist manifest.json packages/popup/build packages/popup/static"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",
