@@ -29,7 +29,7 @@
     "url-parse": "^1.4.7"
   },
   "scripts": {
-    "build": "webpack --config ../../webpack.config.js  --colors -o ../../dist/background.js",
+    "build": "webpack --mode production --config ../../webpack.config.js  --colors -o ../../dist/background.js",
     "lint": "npx eslint . --fix"
   },
   "devDependencies": {

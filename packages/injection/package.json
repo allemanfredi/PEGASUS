@@ -5,7 +5,7 @@
   "private": true,
   "version": "0.10.0",
   "scripts": {
-    "build": "webpack --config ../../webpack.config.js --colors -o ../../dist/injection.js",
+    "build": "webpack --mode production --config ../../webpack.config.js --colors -o ../../dist/injection.js",
     "lint": "npx eslint . --fix"
   },
   "dependencies": {

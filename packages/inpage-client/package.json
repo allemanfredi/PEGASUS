@@ -5,7 +5,7 @@
   "private": true,
   "version": "0.10.0",
   "scripts": {
-    "build": "webpack --config ../../webpack.config.js --progress --colors -o ../../dist/inpage-client.js",
+    "build": "webpack --mode production --config ../../webpack.config.js --progress --colors -o ../../dist/inpage-client.js",
     "lint": "npx eslint . --fix"
   },
   "dependencies": {

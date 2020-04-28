@@ -17,6 +17,7 @@ yarn-debug.log*
 yarn-error.log*
 promo
 package-lock.json
+yarn.lock
 lerna-debug.log
 
 # Extension
