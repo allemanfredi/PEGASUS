@@ -27,13 +27,17 @@ class PegasusInpageClient extends EventEmitter {
     this._init()
 
     // NOTE: send website metadata to the background
-    window.addEventListener('load', async () => {
-      const metadata = await getWebsiteMetadata()
-      this.send({
-        method: 'websiteMetadata',
-        args: metadata
-      })
-    })
+    window.addEventListener(
+      'load',
+      async () => {
+        const metadata = await getWebsiteMetadata()
+        this.send({
+          method: 'websiteMetadata',
+          args: metadata
+        })
+      },
+      { once: true }
+    )
   }
 
   /**
