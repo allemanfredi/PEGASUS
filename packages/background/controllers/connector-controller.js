@@ -348,6 +348,8 @@ class ConnectorController {
    * @param {Object} _metadata
    */
   attachMetadata(_origin, _metadata) {
+    logger.log(`(ConnectorController) Attacching ${_origin} metadata`)
+
     this.websiteMetadata[_origin] = _metadata
 
     if (this.connections[_origin]) {
