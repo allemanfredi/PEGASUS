@@ -9,7 +9,7 @@ const options = {
       default: true
     },
     {
-      name: 'nodes.comnet.thetangle.org',
+      name: 'comnet.thetangle.org',
       provider: 'https://nodes.comnet.thetangle.org:443',
       link: 'https://comnet.thetangle.org/',
       type: 'testnet',
