@@ -62,7 +62,6 @@ export default class Navbar extends Component {
   }
 
   render() {
-    console.log(this.props)
     return (
       <div ref={ref => (this.wrapperRef = ref)} className="bg-darkblue">
         <div className="row text-center ">
