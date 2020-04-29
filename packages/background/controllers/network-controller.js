@@ -38,9 +38,13 @@ class NetworkController extends EventEmitter {
   }
 
   addNetwork(_network) {
-    // TODO check that the name does not exists
     try {
       const networks = this.stateStorageController.get('networks')
+
+      const alreadyExists = networks.find(
+        network => network.name === _network.name
+      )
+      if (alreadyExists) return false
 
       networks.push(_network)
       this.stateStorageController.set('networks', networks)
@@ -48,6 +52,8 @@ class NetworkController extends EventEmitter {
       this.emit('providerChanged', _network.provider)
 
       logger.log(`(NetworkController) New provider added ${_network.provider}`)
+
+      return true
     } catch (err) {
       throw new Error(err)
     }
