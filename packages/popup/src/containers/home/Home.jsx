@@ -476,7 +476,7 @@ class Home extends Component {
                       6
                     )}
                   </div>
-                  <div className="col-4 text-right text-black text-lg my-auto">
+                  <div className="col-4 text-right text-black my-auto" style={{ fontSize: 30 }}>
                     <div className="row">
                       <div className="col-12">
                         {Utils.iotaReducer(
