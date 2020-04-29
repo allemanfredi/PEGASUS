@@ -6,6 +6,7 @@ import { encrypt, decrypt } from '../lib/browser-protector'
 import ExtensionStore from '../lib/extension-store'
 import { APP_STATE } from '@pegasus/utils/states'
 import { PegasusGlobalState, resetState } from '../lib/global-state'
+import options from '@pegasus/utils/options'
 
 class StateStorageController extends Store {
   constructor() {
@@ -112,6 +113,16 @@ class StateStorageController extends Store {
   async _loadFromStorage() {
     const storedData = await this.storage.get()
     if (!storedData) return null
+
+    // NOTE: adds comnet support into previous versions <= 0.10.0 (will be removed in 0.12.0)
+    const comnet = options.networks[1]
+    const comnetExists = storedData['PEGASUS_NETWORKS'].find(
+      _network => _network.name === comnet.name && _network.default
+    )
+
+    if (!comnetExists) {
+      storedData['PEGASUS_NETWORKS'].splice(1, 0, comnet)
+    }
 
     const savedState = {
       data: storedData['PEGASUS_DATA'], // still encrypted
