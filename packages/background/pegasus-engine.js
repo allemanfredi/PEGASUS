@@ -112,8 +112,9 @@ class PegasusEngine {
     if (!this.walletController.isWalletSetup())
       this.walletController.setState(APP_STATE.WALLET_NOT_INITIALIZED)
 
-    if (state === APP_STATE.WALLET_INITIALIZED)
+    if (state === APP_STATE.WALLET_INITIALIZED) {
       this.walletController.setState(APP_STATE.WALLET_LOCKED)
+    }
 
     const currentNetwork = this.networkController.getCurrentNetwork()
     if (!currentNetwork)
