@@ -47,9 +47,9 @@ const getWebsiteIcon = async _window => {
     return icon.href
   }
 
-  icon = Array.from(
-    document.querySelectorAll('head > link[rel="icon"]')
-  ).find(_icon => Boolean(_icon.href))
+  icon = Array.from(document.querySelectorAll('head > link[rel="icon"]')).find(
+    _icon => Boolean(_icon.href)
+  )
   if (icon && (await resourceExists(icon.href))) {
     return icon.href
   }
