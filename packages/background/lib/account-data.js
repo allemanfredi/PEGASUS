@@ -13,12 +13,12 @@ const mapBalance = (_data, _network, _currentAccount) => {
     {},
     _network.type === 'mainnet'
       ? {
-          mainnet: _data.balance,
+          mainnet: _data.balance.mainnet,
           testnet: _currentAccount ? _currentAccount.data.balance.testnet : 0
         }
       : {
           mainnet: _currentAccount ? _currentAccount.data.balance.mainnet : 0,
-          testnet: _data.balance
+          testnet: _data.balance.testnet
         }
   )
   return _data
@@ -94,17 +94,30 @@ const mapTransactions = (_data, _network) => {
   return transactions
 }
 
-const getTransactionsJustConfirmed = (_account, _transactions) => {
+const getNewPendingIncomingTransactions = (
+  _previousTransactions,
+  _transactions
+) => {
+  const pendingTransactions = []
+  for (let tx of _transactions) {
+    // if not exists and is not confirmed
+    const exists = _previousTransactions.find(_ptx => _ptx.bundle === tx.bundle)
+    if (!exists) pendingTransactions.push(tx)
+  }
+  return pendingTransactions.filter(_ptx => !_ptx.status && _ptx.value > 0)
+}
+
+const getNewConfirmedTransactions = (_previousTransactions, _transactions) => {
   const transactionsJustConfirmed = []
   for (let tx of _transactions) {
-    for (let tx2 of _account.data.transactions) {
-      if (
-        tx.bundle === tx2.bundle &&
-        tx.status !== tx2.status &&
+    // if exists and has mutated from pending to confirmed
+    const exists = _previousTransactions.find(
+      _ptx =>
+        _ptx.bundle === tx.bundle &&
+        _ptx.status !== tx.status &&
         tx.status === true
-      )
-        transactionsJustConfirmed.push(tx)
-    }
+    )
+    if (exists) transactionsJustConfirmed.push(tx)
   }
   return transactionsJustConfirmed
 }
@@ -123,7 +136,8 @@ export {
   mapBalance,
   mapTransactions,
   removeInvalidTransactions,
-  getTransactionsJustConfirmed,
+  getNewPendingIncomingTransactions,
+  getNewConfirmedTransactions,
   setTransactionsReattach,
   getMessage
 }

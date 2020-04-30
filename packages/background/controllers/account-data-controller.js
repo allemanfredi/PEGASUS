@@ -3,24 +3,26 @@ import logger from '@pegasus/utils/logger'
 import {
   mapBalance,
   mapTransactions,
-  getTransactionsJustConfirmed,
+  getNewPendingIncomingTransactions,
+  getNewConfirmedTransactions,
   setTransactionsReattach
 } from '../lib/account-data'
+import Utils from '@pegasus/utils/utils'
 
-const ACCOUNT_RELOAD_TIME = 300000
+const ACCOUNT_RELOAD_TIME = 90000
 
 class AccountDataController {
   constructor(options) {
     const {
       networkController,
       walletController,
-      notificationsController,
-      nodeController
+      nodeController,
+      showNotification
     } = options
 
     this.networkController = networkController
     this.walletController = walletController
-    this.notificationsController = notificationsController
+    this.showNotification = showNotification
     this.nodeController = nodeController
 
     this.accountDataHandler = null
@@ -56,21 +58,37 @@ class AccountDataController {
       logger.log('(AccountDataController) Loading account data...')
 
       const account = this.walletController.getCurrentAccount()
+      const previousTransactions = account.data.transactions
+
       const seed = account.seed
       const data = await this.retrieveAccountData(seed, account)
 
-      // NOTE: show notification
-      const transactionsJustConfirmed = getTransactionsJustConfirmed(
-        account,
+      const network = this.networkController.getCurrentNetwork()
+
+      // get ONLY incoming pending transactions
+      const pendingTransactions = getNewPendingIncomingTransactions(
+        previousTransactions,
+        data.transactions
+      )
+      pendingTransactions.forEach(_transaction => {
+        this.showNotification(
+          'New Pending Transaction',
+          Utils.showAddress(_transaction.bundle, 15, 12),
+          network.link + 'bundle/' + _transaction.bundle
+        )
+      })
+
+      // get incoming and outcoming transactions just confirmed
+      const confirmedTransactions = getNewConfirmedTransactions(
+        previousTransactions,
         data.transactions
       )
 
-      const network = this.networkController.getCurrentNetwork()
-      transactionsJustConfirmed.forEach(transaction => {
-        this.notificationsController.showNotification(
+      confirmedTransactions.forEach(_transaction => {
+        this.showNotification(
           'Transaction Confirmed',
-          transaction.bundle,
-          network.link + 'bundle/' + transaction.bundle
+          Utils.showAddress(_transaction.bundle, 15, 12),
+          network.link + 'bundle/' + _transaction.bundle
         )
       })
 
@@ -97,6 +115,7 @@ class AccountDataController {
 
     delete data.transfers
     delete data.inputs
+    delete data.addresses
 
     if (_currentAccount) {
       const mixedTransactions = [

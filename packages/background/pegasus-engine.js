@@ -3,7 +3,6 @@ import AccountDataController from './controllers/account-data-controller'
 import RequestsController from './controllers/requests-controller'
 import MamController from './controllers/mam-controller'
 import StateStorageController from './controllers/state-storage-controller'
-import NotificationsController from './controllers/notifications-controller'
 import ConnectorController from './controllers/connector-controller'
 import NetworkController from './controllers/network-controller'
 import WalletController from './controllers/wallet-controller'
@@ -36,7 +35,6 @@ class PegasusEngine {
     /* C O N T R O L L E R S */
     this.popupController = new PopupController()
     this.stateStorageController = new StateStorageController()
-    this.notificationsController = new NotificationsController()
 
     this.connectorController = new ConnectorController({
       stateStorageController: this.stateStorageController,
@@ -81,8 +79,8 @@ class PegasusEngine {
     this.accountDataController = new AccountDataController({
       networkController: this.networkController,
       walletController: this.walletController,
-      notificationsController: this.notificationsController,
-      nodeController: this.nodeController
+      nodeController: this.nodeController,
+      showNotification: this.showNotification.bind(this)
     })
 
     this.sessionController = new SessionsController({
@@ -126,6 +124,8 @@ class PegasusEngine {
         parseInt(settings.autoPromotion.time * 1000 * 60)
       )
     }
+
+    this.internalConnections = 0
   }
 
   /**
@@ -173,8 +173,11 @@ class PegasusEngine {
 
     this.setupUntrustedConnection(clientOutStream, sender, true)
 
+    this.internalConnections += 1
+
     pump(engineOutStream, dnode, engineOutStream, err => {
       if (err) logger.error(err)
+      this.internalConnections -= 1
     })
     dnode.on('remote', remote => {
       const { sendUpdate } = remote
@@ -373,6 +376,7 @@ class PegasusEngine {
   }
 
   /**
+   *
    * function for updating the number of requests from tabs
    */
   updateBadge() {
@@ -385,6 +389,33 @@ class PegasusEngine {
       text: sum ? sum.toString() : ''
     })
     extensionizer.browserAction.setBadgeBackgroundColor({ color: 'darkblue' })
+  }
+
+  /**
+   *
+   * Function used to make appear notifications to the user
+   * only when the popup is not opened
+   *
+   * @param {String} _title
+   * @param {String} _message
+   * @param {String} _url
+   */
+  showNotification(_title, _message, _url) {
+    if (this.internalConnections === 0) {
+      extensionizer.notifications.create(_url, {
+        type: 'basic',
+        title: _title,
+        iconUrl: extensionizer.extension.getURL('images/pegasus-64.png'),
+        message: _message
+      })
+
+      const viewOnBrowser = _url => {
+        if (_url.startsWith('https')) extensionizer.tabs.create({ url: _url })
+      }
+
+      if (!extensionizer.notifications.onClicked.hasListener(viewOnBrowser))
+        extensionizer.notifications.onClicked.addListener(viewOnBrowser)
+    }
   }
 }
 
