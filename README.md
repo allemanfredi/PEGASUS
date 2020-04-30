@@ -3,6 +3,8 @@
 # PEGASUS
  Pegasus is a chrome extension that implements a wallet for the IOTA cryptocurrency. In addition, Pegasus injects the iotajs library allowing developers to interact with IOTA Tangle without paying attention on how to keep the seed safe.
 
+### :exclamation: In version next to 0.10.0 there could be breaking changes!
+
 &nbsp;
 
 ***
