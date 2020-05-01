@@ -1,7 +1,7 @@
 // part of this code is taken from here https://github.com/iotaledger/iota.js/blob/next/packages/account/src/account.ts#L397
 import EventEmitter3 from 'eventemitter3'
 import { composeAPI } from '@iota/core'
-import { bundleToWalletTransaction, findUsedAddresses } from './account-data'
+import { bundleToWalletTransaction } from './account-data'
 
 /**
  * Class used to rapresent an account within Pegasus

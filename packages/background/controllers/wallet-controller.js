@@ -479,6 +479,8 @@ class WalletController extends EventEmitter {
     accounts.selected = accounts.all[0]
     this.stateStorageController.set('accounts', accounts)
 
+    this.selectedAccount.setData(accounts.seed, accounts.data)
+
     const network = this.networkController.getCurrentNetwork()
     this.emit(
       'accountChanged',
