@@ -26,7 +26,6 @@ class PegasusAccount extends EventEmitter3 {
     this.emittedIncludedWithdrawals = {}
     this.emittedPendingWithdrawals = {}
 
-    //RXVZXEFEHCFOLUDZLRTABWVPYGHJXSDICUPNXAAGMJMMLOEQPZIFRXWLRNJ9CSFBMQZCPSMJGGCKBZAMCBIOEEXXLB
     this.api = composeAPI({ provider })
   }
   
@@ -46,12 +45,22 @@ class PegasusAccount extends EventEmitter3 {
       index: this.index,
       addresses: this.addresses,
       latestAddress: this.addresses[this.addresses.length - 1],
+      balance: await this.getBalance(),
       transactions: this.walletTransactions,
       emittedIncludedDeposits: this.emittedIncludedDeposits,
       emittedPendingDeposits: this.emittedPendingDeposits,
       emittedIncludedWithdrawals: this.emittedIncludedWithdrawals,
       emittedPendingWithdrawals: this.emittedPendingWithdrawals
     }
+  }
+  
+  /**
+   * 
+   * Get account balance
+   */
+  async getBalance() {
+    const { balances } = await this.api.getBalances(this.addresses, 100)
+    return balances.reduce((acc, b) => (acc += b), 0)
   }
 
   /**
