@@ -3,9 +3,9 @@ import Utils from '@pegasus/utils/utils'
 import logger from '@pegasus/utils/logger'
 import options from '@pegasus/utils/options'
 import { EventEmitter } from 'eventemitter3'
-import { setTransactionsReattach } from '../lib/account-data'
 import PegasusAccount from '../lib/pegasus-account'
 import { NETWORK_TYPES } from '../lib/constants'
+import { removeSeed } from '../lib/removers'
 
 class WalletController extends EventEmitter {
   constructor(options) {
@@ -38,6 +38,11 @@ class WalletController extends EventEmitter {
     this.sessionController = _sessionController
   }
 
+  /**
+   * 
+   * Function used to check if pegasus
+   * has been initialized
+   */
   isWalletSetup() {
     const state = this.getState()
     if (state >= APP_STATE.WALLET_INITIALIZED) return true
@@ -45,6 +50,14 @@ class WalletController extends EventEmitter {
     return false
   }
 
+  /**
+   * 
+   * Init the wallet given a password and the 
+   * first account
+   * 
+   * @param {String} _password 
+   * @param {Object} _account 
+   */
   async initWallet(_password, _account) {
     try {
       this.stateStorageController.init(_password)
@@ -61,7 +74,8 @@ class WalletController extends EventEmitter {
       // in order to write on storage the first time
       await this.stateStorageController.lock()
       await this.stateStorageController.unlock(_password)
-      //this.accountDataController.startHandle()
+
+      this.selectedAccount.startFetch()
       this.sessionController.startSession()
 
       this.setState(APP_STATE.WALLET_UNLOCKED)
@@ -76,6 +90,12 @@ class WalletController extends EventEmitter {
     }
   }
 
+  /**
+   * 
+   * Unlock the wallet by providing a password
+   * 
+   * @param {String} _password 
+   */
   async unlockWallet(_password) {
     if (await this.loginPasswordController.comparePassword(_password)) {
       this.sessionController.startSession()
@@ -83,7 +103,6 @@ class WalletController extends EventEmitter {
       this.loginPasswordController.setPassword(_password)
 
       await this.stateStorageController.unlock(_password)
-      //this.accountDataController.startHandle()
 
       this.setState(APP_STATE.WALLET_UNLOCKED)
 
@@ -105,12 +124,15 @@ class WalletController extends EventEmitter {
     return false
   }
 
+  /**
+   * 
+   * Lock the wallet
+   */
   async lockWallet() {
     this.loginPasswordController.setPassword(null)
     this.setState(APP_STATE.WALLET_LOCKED)
     await this.stateStorageController.lock()
     this.sessionController.deleteSession()
-    //this.accountDataController.stopHandle()
     this.selectedAccount.stopFetch()
 
     if (this.selectedAccount) {
@@ -122,6 +144,16 @@ class WalletController extends EventEmitter {
     return true
   }
 
+  /**
+   * 
+   * Restore the wallet given a password which 
+   * will be compared with the one stored within pegasus.
+   * If match, a new account will be created and the previous
+   * data will be deleted
+   * 
+   * @param {String} _password 
+   * @param {Object} _account 
+   */
   async restoreWallet(_password, _account) {
     if (!(await this.loginPasswordController.comparePassword(_password)))
       return false
@@ -131,7 +163,6 @@ class WalletController extends EventEmitter {
 
       this.sessionController.startSession()
       this.loginPasswordController.setPassword(_password)
-      //this.accountDataController.startHandle()
       this.selectedAccount.startFetch()
 
       await this.stateStorageController.reset()
@@ -155,6 +186,12 @@ class WalletController extends EventEmitter {
     }
   }
 
+  /**
+   * 
+   * Set a the wallet state
+   * 
+   * @param {Integer} _state
+   */
   setState(_state) {
     const currentState = this.getState('state')
     if (currentState === _state) return
@@ -165,16 +202,32 @@ class WalletController extends EventEmitter {
     this.stateStorageController.set('state', _state)
   }
 
+  /**
+   * 
+   * Get the wallet state
+   */
   getState() {
     return parseInt(this.stateStorageController.get('state'))
   }
 
+  /**
+   * 
+   * Function to access to the current seed.
+   * Only if the password match will be possible to 
+   * access it. (API exposed)
+   * 
+   * @param {String} _password
+   */
   async unlockSeed(_password) {
     if (await this.loginPasswordController.comparePassword(_password))
       return this.getCurrentSeed()
     return false
   }
 
+  /**
+   * 
+   * Internal function (not API exposed) to get the current seed
+   */
   getCurrentSeed() {
     const account = this.getCurrentAccount()
     if (!account) return false
@@ -182,12 +235,26 @@ class WalletController extends EventEmitter {
     return account.seed
   }
 
+  /**
+   * 
+   * Function to check if a wallet name already exists
+   * 
+   * @param {String} _name
+   */
   isAccountNameAlreadyExists(_name) {
     const accounts = this.stateStorageController.get('accounts')
     const alreadyExists = accounts.all.find(account => account.name === _name)
     return Boolean(alreadyExists)
   }
 
+
+  /**
+   * 
+   * Add an account within Pegaus
+   * 
+   * @param {Object} _account 
+   * @param {Boolean} _isCurrent 
+   */
   async addAccount(_account, _isCurrent) {
     try {
       const accounts = this.stateStorageController.get('accounts')
@@ -260,8 +327,6 @@ class WalletController extends EventEmitter {
 
       console.log(networkedData)
 
-      this.selectedAccount.startFetch()
-
       const accountToAdd = {
         name: _account.name,
         avatar: _account.avatar,
@@ -297,6 +362,12 @@ class WalletController extends EventEmitter {
     }
   }
 
+  /**
+   * 
+   * Function to get the current account only
+   * if the wallet is unlocked
+   * 
+   */
   getCurrentAccount() {
     if (this.getState() < APP_STATE.WALLET_UNLOCKED) return
 
@@ -306,7 +377,12 @@ class WalletController extends EventEmitter {
     return accounts.selected
   }
 
-  // all following methods updates data on the CURRENT account
+  /**
+   * 
+   * Set the current wallet account
+   * 
+   * @param {Object} _account 
+   */
   setCurrentAccount(_account) {
     const accounts = this.stateStorageController.get('accounts')
 
@@ -325,6 +401,12 @@ class WalletController extends EventEmitter {
     return true
   }
 
+  /**
+   * 
+   * Update current account data
+   * 
+   * @param {Object} _data
+   */
   updateDataAccount(_data) {
     const accounts = this.stateStorageController.get('accounts')
     const network = this.networkController.getCurrentNetwork()
@@ -340,6 +422,12 @@ class WalletController extends EventEmitter {
     return true
   }
 
+  /**
+   * 
+   * Update current account name
+   * 
+   * @param {String} _name 
+   */
   updateNameAccount(_name) {
     const accounts = this.stateStorageController.get('accounts')
 
@@ -353,6 +441,12 @@ class WalletController extends EventEmitter {
     return true
   }
 
+  /**
+   * 
+   * Update current account avatar
+   * 
+   * @param {Integer} _avatar 
+   */
   updateAvatarAccount(_avatar) {
     const accounts = this.stateStorageController.get('accounts')
 
@@ -368,6 +462,12 @@ class WalletController extends EventEmitter {
     return true
   }
 
+  /**
+   * 
+   * Delete an account from the wallet 
+   * 
+   * @param {Object} _account 
+   */
   deleteAccount(_account) {
     const accounts = this.stateStorageController.get('accounts')
 
@@ -389,15 +489,28 @@ class WalletController extends EventEmitter {
     return true
   }
 
+  /**
+   * 
+   */
   getAllAccounts() {
     const accounts = this.stateStorageController.get('accounts')
-    return accounts.all
+    return accounts.all.map(_account => removeSeed(_account))
   }
 
+  /**
+   * 
+   * Set popup settings
+   * 
+   * @param {Object} _settings 
+   */
   setSettings(_settings) {
     this.stateStorageController.set('settings', _settings, true)
   }
 
+  /**
+   * 
+   * Get poup settings
+   */
   getSettings() {
     return this.stateStorageController.get('settings')
   }
