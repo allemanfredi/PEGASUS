@@ -491,6 +491,9 @@ class WalletController extends EventEmitter {
 
   /**
    * 
+   * Get all accounts removing the seed from
+   * the object since it's possible that this function
+   * is called from an internalConnection (ex: popup)
    */
   getAllAccounts() {
     const accounts = this.stateStorageController.get('accounts')
