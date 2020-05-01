@@ -81,59 +81,66 @@ class PegasusAccount extends EventEmitter3 {
    *
    */
   async fetch(_withEmit = false) {
-    if (this.addresses.length === 0) {
-      await this.generateNewAddress(true)
+    try {
+      if (this.addresses.length === 0) {
+        await this.generateNewAddress(true)
+      }
+
+      const bundles = await this.api.getBundlesFromAddresses(
+        this.addresses,
+        true
+      )
+      bundles
+        .filter(
+          _bundle =>
+            (this.emittedIncludedDeposits[_bundle[0].hash] !== true &&
+              _bundle[0].persistence === true) ||
+            (this.emittedPendingDeposits[_bundle[0].hash] !== true &&
+              _bundle[0].persistence === false)
+        )
+        .filter(
+          _bundle =>
+            _bundle.findIndex(
+              _tx => this.addresses.indexOf(_tx.address) > -1 && _tx.value > 0
+            ) > -1
+        )
+        .forEach(_bundle =>
+          _bundle
+            .filter(
+              _tx => this.addresses.indexOf(_tx.address) > -1 && _tx.value > 0
+            )
+            .forEach(_tx => {
+              this._processNewBundle(_bundle, _withEmit, true)
+            })
+        )
+      bundles
+        .filter(
+          _bundle =>
+            (this.emittedIncludedWithdrawals[_bundle[0].hash] !== true &&
+              _bundle[0].persistence === true) ||
+            (this.emittedPendingWithdrawals[_bundle[0].hash] !== true &&
+              _bundle[0].persistence === false)
+        )
+        .filter(
+          _bundle =>
+            _bundle.findIndex(
+              _tx => this.addresses.indexOf(_tx.address) > -1 && _tx.value < 0
+            ) > -1
+        )
+        .forEach(_bundle =>
+          _bundle
+            .filter(
+              _tx => this.addresses.indexOf(_tx.address) > -1 && _tx.value < 0
+            )
+            .forEach(_tx => {
+              this._processNewBundle(_bundle, _withEmit, false)
+            })
+        )
+
+      return this.getData()
+    } catch (err) {
+      throw new Error(err.message)
     }
-
-    const bundles = await this.api.getBundlesFromAddresses(this.addresses, true)
-    bundles
-      .filter(
-        _bundle =>
-          (this.emittedIncludedDeposits[_bundle[0].hash] !== true &&
-            _bundle[0].persistence === true) ||
-          (this.emittedPendingDeposits[_bundle[0].hash] !== true &&
-            _bundle[0].persistence === false)
-      )
-      .filter(
-        _bundle =>
-          _bundle.findIndex(
-            _tx => this.addresses.indexOf(_tx.address) > -1 && _tx.value > 0
-          ) > -1
-      )
-      .forEach(_bundle =>
-        _bundle
-          .filter(
-            _tx => this.addresses.indexOf(_tx.address) > -1 && _tx.value > 0
-          )
-          .forEach(_tx => {
-            this._processNewBundle(_bundle, _withEmit, true)
-          })
-      )
-    bundles
-      .filter(
-        _bundle =>
-          (this.emittedIncludedWithdrawals[_bundle[0].hash] !== true &&
-            _bundle[0].persistence === true) ||
-          (this.emittedPendingWithdrawals[_bundle[0].hash] !== true &&
-            _bundle[0].persistence === false)
-      )
-      .filter(
-        _bundle =>
-          _bundle.findIndex(
-            _tx => this.addresses.indexOf(_tx.address) > -1 && _tx.value < 0
-          ) > -1
-      )
-      .forEach(_bundle =>
-        _bundle
-          .filter(
-            _tx => this.addresses.indexOf(_tx.address) > -1 && _tx.value < 0
-          )
-          .forEach(_tx => {
-            this._processNewBundle(_bundle, _withEmit, false)
-          })
-      )
-
-    return this.getData()
   }
 
   /**
@@ -200,13 +207,13 @@ class PegasusAccount extends EventEmitter3 {
 
   /**
    *
-   * Set a new seed
+   * Set a new seed and reset everything
    *
    * @param {String} _seed
    */
   setSeed(_seed) {
     this.seed = _seed
-    this.index = 0
+    this._reset()
   }
 
   /**
@@ -215,7 +222,6 @@ class PegasusAccount extends EventEmitter3 {
    */
   stopFetch() {
     clearInterval(this.interval)
-    console.log('pegasusAccount stopFetch')
   }
 
   /**
@@ -224,7 +230,6 @@ class PegasusAccount extends EventEmitter3 {
    */
   setProvider(_provider) {
     this.api = composeAPI({ provider: _provider })
-    console.log('pegasusAccount setprovider')
   }
 
   /**
@@ -243,17 +248,31 @@ class PegasusAccount extends EventEmitter3 {
       })
       this.index = addresses.length
       this.addresses = addresses
-      return
+      return addresses
     }
 
     const address = await this.api.getNewAddress(this.seed, {
       index: this.index
     })
     if (!this.addresses.includes(address)) {
-      this.index += 1
       this.addresses.push(address)
+      this.index = this.addresses.length
     }
     return address
+  }
+
+  /**
+   *
+   * Reset all account data
+   */
+  _reset() {
+    this.addresses = []
+    this.transactions = []
+    this.index = 0
+    this.emittedIncludedDeposits = {}
+    this.emittedPendingDeposits = {}
+    this.emittedIncludedWithdrawals = {}
+    this.emittedPendingWithdrawals = {}
   }
 }
 
