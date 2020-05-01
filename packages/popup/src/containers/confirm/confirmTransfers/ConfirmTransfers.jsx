@@ -51,6 +51,7 @@ const ConfirmTransfers = props => {
         <hr className="mt-1 mb-1" />
         <RequestAccountInfo
           account={props.account}
+          network={props.network}
           onChangeAccount={() => setIsSelectingAccount(true)}
         />
         <hr className="mt-1" />

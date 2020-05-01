@@ -129,7 +129,7 @@ class Send extends Component {
                     onSelect={index =>
                       this.setState({
                         dstAddress: Utils.checksummed(
-                          this.state.accounts[index].data.latestAddress
+                          this.state.accounts[index].data[this.props.network.type].latestAddress
                         )
                       })
                     }

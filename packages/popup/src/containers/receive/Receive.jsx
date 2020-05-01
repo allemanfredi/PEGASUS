@@ -28,7 +28,9 @@ class Receive extends React.Component {
       <div className="container overflow-auto-475h">
         {!this.state.show.includes(true) ? (
           <OptionsSelector
-            items={RECEIVE_TEXT.items.filter(_item => _item.networks.includes(this.props.network.type))}
+            items={RECEIVE_TEXT.items.filter(_item =>
+              _item.networks.includes(this.props.network.type)
+            )}
             onClick={({ text, index }) => {
               this.props.changeNavbarText(text)
               this.props.onChangeCanGoBack(null)
