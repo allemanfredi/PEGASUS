@@ -183,13 +183,17 @@ class PegasusAccount extends EventEmitter3 {
     if (_bundle[0].persistence) await this.generateNewAddress()
 
     if (_incoming) {
-      this.emittedIncludedDeposits[_bundle[0].hash] = _bundle[0].persistence
-        ? true
-        : false // from iota.js is true i don't know why
+      if (_bundle[0].persistence) {
+        this.emittedIncludedDeposits[_bundle[0].hash] = true
+      } else {
+        this.emittedPendingDeposits[_bundle[0].hash] = true
+      }
     } else {
-      this.emittedIncludedWithdrawals[_bundle[0].hash] = _bundle[0].persistence
-        ? true
-        : false // from iota.js is true i don't know why
+      if (_bundle[0].persistence) {
+        this.emittedIncludedWithdrawals[_bundle[0].hash] = true
+      } else {
+        this.emittedPendingWithdrawals[_bundle[0].hash] = true
+      }
     }
 
     if (_withEmit) {

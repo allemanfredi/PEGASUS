@@ -34,7 +34,8 @@ class WalletController extends EventEmitter {
      *  in case of provider changing, a new selected account must be created.
      *  It's important to _removeAccountListeners before each account initialization
      *  in order to remove the previouse listeners and avoiding data overwritting
-     */ 
+     */
+
     this.networkController.on('providerChanged', _provider => {
       if (this.getState() > APP_STATE.WALLET_LOCKED) {
         const account = this.getCurrentAccount()
@@ -331,7 +332,7 @@ class WalletController extends EventEmitter {
       const seed = _account.seed.toString().replace(/,/g, '')
       const network = this.networkController.getCurrentNetwork()
 
-      // reset selectedAccount with new seed and current 
+      // reset selectedAccount with new seed and current
       this._removeAccountListeners()
       this.selectedAccount.clear()
       this.selectedAccount = new PegasusAccount({
