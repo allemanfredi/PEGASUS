@@ -5,7 +5,9 @@ import Utils from '@pegasus/utils/utils'
 const AccountInfo = props => {
   const copyToClipboard = () => {
     const textField = document.createElement('textarea')
-    textField.innerText = Utils.checksummed(props.account.data.latestAddress)
+    textField.innerText = Utils.checksummed(
+      props.account.data[props.network.type].latestAddress
+    )
     document.body.appendChild(textField)
     textField.select()
     document.execCommand('copy')
@@ -21,12 +23,18 @@ const AccountInfo = props => {
     <React.Fragment>
       <div className="row mt-5">
         <div className="col-12 text-center">
-          <QRCode value={Utils.checksummed(props.account.data.latestAddress)} />
+          <QRCode
+            value={Utils.checksummed(
+              props.account.data[props.network.type].latestAddress
+            )}
+          />
         </div>
       </div>
       <div className="row mt-5 justify-content-center">
         <div className="col-10 text-center text-xs break-text border-light-gray pt-1 pb-1">
-          {Utils.checksummed(props.account.data.latestAddress)}
+          {Utils.checksummed(
+            props.account.data[props.network.type].latestAddress
+          )}
         </div>
       </div>
       <div className="row mt-9">

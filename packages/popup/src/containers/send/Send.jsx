@@ -113,7 +113,8 @@ class Send extends Component {
                                 <div className="col-12 text-xxxs">
                                   {Utils.showAddress(
                                     Utils.checksummed(
-                                      account.data.latestAddress
+                                      account.data[this.props.network.type]
+                                        .latestAddress
                                     ),
                                     18,
                                     23
@@ -191,7 +192,7 @@ class Send extends Component {
           </div>
 
           {this.state.value >
-          this.props.account.data.balance[this.props.network.type] ? (
+          this.props.account.data[this.props.network.type].balance ? (
             <div className="row mt-4">
               <div className="col-12 text-xs">
                 <div class="alert alert-danger" role="alert">
@@ -204,7 +205,7 @@ class Send extends Component {
           <div
             className={
               this.state.value >
-              this.props.account.data.balance[this.props.network.type]
+              this.props.account.data[this.props.network.type].balance
                 ? 'row mt-2'
                 : 'row mt-11'
             }
@@ -214,7 +215,7 @@ class Send extends Component {
                 disabled={
                   this.state.dstAddress === '' ||
                   this.state.value >
-                    this.props.account.data.balance[this.props.network.type]
+                    this.props.account.data[this.props.network.type].balance
                     ? true
                     : false
                 }

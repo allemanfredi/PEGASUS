@@ -33,7 +33,6 @@ class Home extends Component {
     this.onAddAccount = this.onAddAccount.bind(this)
     this.onLogout = this.onLogout.bind(this)
     this.onDeleteAccount = this.onDeleteAccount.bind(this)
-    this.onReload = this.onReload.bind(this)
     this.onConfirm = this.onConfirm.bind(this)
     this.onExportSeed = this.onExportSeed.bind(this)
     this.onImportSeed = this.onImportSeed.bind(this)
@@ -83,17 +82,6 @@ class Home extends Component {
       const { settings } = backgroundState
       this.setState({ settings })
     })
-  }
-
-  async onReload() {
-    this.setState({ isLoading: true })
-
-    try {
-      await this.props.background.loadAccountData()
-      this.setState({ isLoading: false })
-    } catch (err) {
-      this.setState({ isLoading: false })
-    }
   }
 
   async onDeleteAccount() {
@@ -353,7 +341,7 @@ class Home extends Component {
               <Receive
                 ref={this.receive}
                 account={this.props.account}
-                network={this.state.network}
+                network={this.props.network}
                 setNotification={this.props.setNotification}
                 changeNavbarText={navbarText => this.setState({ navbarText })}
                 onBack={this.onBack}
@@ -454,7 +442,10 @@ class Home extends Component {
                   <div
                     onClick={() => {
                       this.copyToClipboard(
-                        Utils.checksummed(this.props.account.data.latestAddress)
+                        Utils.checksummed(
+                          this.props.account.data[this.props.network.type]
+                            .latestAddress
+                        )
                       )
                     }}
                     className="col-4 my-auto text-center text-xs font-weight-bold cursor-pointer pt-3 pb-3 gray-on-hover-with-border-radius"
@@ -471,7 +462,10 @@ class Home extends Component {
                   >
                     <ReactTooltip />
                     {Utils.showAddress(
-                      Utils.checksummed(this.props.account.data.latestAddress),
+                      Utils.checksummed(
+                        this.props.account.data[this.props.network.type]
+                          .latestAddress
+                      ),
                       4,
                       6
                     )}
@@ -483,26 +477,22 @@ class Home extends Component {
                     <div className="row">
                       <div className="col-12">
                         {Utils.iotaReducer(
-                          this.props.account.data.balance[
-                            this.props.network.type
-                          ]
-                            ? this.props.account.data.balance[
-                                this.props.network.type
-                              ]
+                          this.props.account.data[this.props.network.type]
+                            .balance
+                            ? this.props.account.data[this.props.network.type]
+                                .balance
                             : 0
                         )}
                       </div>
                       <div className="col-12 text-sm text-gray">
-                        {this.props.account.data.balance[
-                          this.props.network.type
-                        ] &&
+                        {this.props.account.data[this.props.network.type]
+                          .balance &&
                         this.state.iotaPrice &&
                         this.state.settings &&
                         this.props.network.type === 'mainnet'
                           ? (
-                              (this.props.account.data.balance[
-                                this.props.network.type
-                              ] *
+                              (this.props.account.data[this.props.network.type]
+                                .balance *
                                 this.state.iotaPrice[
                                   this.state.settings.currencies.selected.value.toLowerCase()
                                 ]) /
@@ -520,7 +510,6 @@ class Home extends Component {
                   background={this.props.background}
                   isLoading={this.state.isLoading}
                   setNotification={this.props.setNotification}
-                  onReload={this.onReload}
                 />
                 <div className="container-buttons-home">
                   <div className="row mt-2">

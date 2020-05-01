@@ -9,7 +9,9 @@ const Buy = props => {
           className="row cursor-pointer"
           onClick={() => {
             window.open(
-              `${item.link}${props.account.data.latestAddress}`,
+              `${item.link}${
+                props.account.data[props.network.type].latestAddress
+              }`,
               '_blank'
             )
           }}

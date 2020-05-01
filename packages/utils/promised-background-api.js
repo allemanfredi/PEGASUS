@@ -256,13 +256,6 @@ const buildPromisedBackgroundApi = _backgroundConnection => {
         )
       ),
 
-    loadAccountData: () =>
-      new Promise((resolve, reject) =>
-        _backgroundConnection.loadAccountData((err, res) => {
-          err ? reject(err) : resolve(res)
-        })
-      ),
-
     enableTransactionsAutoPromotion: time =>
       new Promise((resolve, reject) =>
         _backgroundConnection.enableTransactionsAutoPromotion(

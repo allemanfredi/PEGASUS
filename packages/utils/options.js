@@ -12,7 +12,7 @@ const options = {
       name: 'comnet.thetangle.org',
       provider: 'https://nodes.comnet.thetangle.org:443',
       link: 'https://comnet.thetangle.org/',
-      type: 'testnet',
+      type: 'comnet',
       difficulty: 10,
       default: true
     },
@@ -20,7 +20,7 @@ const options = {
       name: 'nodes.devnet.iota.org',
       provider: 'https://nodes.devnet.iota.org',
       link: 'https://devnet.thetangle.org/',
-      type: 'testnet',
+      type: 'devnet',
       difficulty: 9,
       default: true
     },

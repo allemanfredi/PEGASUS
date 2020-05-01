@@ -15,23 +15,86 @@ class WalletController extends EventEmitter {
       stateStorageController,
       networkController,
       connectorController,
-      loginPasswordController
+      loginPasswordController,
+      showNotification
     } = options
 
     this.stateStorageController = stateStorageController
     this.networkController = networkController
     this.connectorController = connectorController
     this.loginPasswordController = loginPasswordController
-
-    this.networkController.on('providerChanged', _provider => {
-      if (this.getState() > APP_STATE.WALLET_LOCKED)
-        this.selectedAccount.setProvider(_provider)
-    })
+    this.showNotification = showNotification
 
     this.selectedAccount = new PegasusAccount({
       provider: this.networkController.getCurrentNetwork().provider
     })
-    this.selectedAccount.on('data', e => console.log('djdndhdhdbddatatdt'))
+
+    // NOTE: in case of provider changig, a new selected account must be created
+    // with the data corresponding to this network type
+    this.networkController.on('providerChanged', _provider => {
+      if (this.getState() > APP_STATE.WALLET_LOCKED) {
+        const account = this.getCurrentAccount()
+        const network = this.networkController.getCurrentNetwork()
+
+        this._removeAccountListeners()
+        this.selectedAccount.clear()
+        this.selectedAccount = new PegasusAccount({
+          provider: network.provider
+        })
+        this._bindAccountListeners()
+        this.selectedAccount.setData(account.seed, account.data[network.type])
+        this.selectedAccount.startFetch()
+      }
+    })
+  }
+
+  /**
+   *
+   * Remove listeners
+   */
+  _removeAccountListeners() {
+    logger.log('(WalletController) Removing account listeners...')
+    this.selectedAccount.removeAllListeners()
+  }
+
+  /**
+   *
+   * Add listeners for the current selected account
+   */
+  _bindAccountListeners() {
+    logger.log('(WalletController) Binding account listeners...')
+
+    // NOTE: binding selected account listener
+    this.selectedAccount.on('data', _data => this.updateDataAccount(_data))
+
+    this.selectedAccount.on('pendingDeposit', _bundle =>
+      this._handleAccountEvent('New Pending Deposit', _bundle)
+    )
+    this.selectedAccount.on('includedDeposit', _bundle =>
+      this._handleAccountEvent('Deposit has been included', _bundle)
+    )
+    this.selectedAccount.on('pendingWithdrawal', _bundle =>
+      this._handleAccountEvent('New Pending Deposit', _bundle)
+    )
+    this.selectedAccount.on('includedWithdrawal', _bundle =>
+      this._handleAccountEvent('New Pending Deposit', _bundle)
+    )
+  }
+
+  /**
+   *
+   * Show notification each deposit/withdrawal
+   *
+   * @param {String} _msg
+   * @param {String} _bundle
+   */
+  _handleAccountEvent(_msg, _bundle) {
+    const network = this.networkController.getCurrentNetwork()
+    this.showNotification(
+      _msg,
+      Utils.showAddress(_bundle, 15, 12),
+      network.link + 'bundle/' + _bundle
+    )
   }
 
   setSessionController(_sessionController) {
@@ -75,7 +138,8 @@ class WalletController extends EventEmitter {
       await this.stateStorageController.lock()
       await this.stateStorageController.unlock(_password)
 
-      this.selectedAccount.startFetch()
+      //this._bindAccountListeners()
+      //this.selectedAccount.startFetch()
       this.sessionController.startSession()
 
       this.setState(APP_STATE.WALLET_UNLOCKED)
@@ -109,7 +173,9 @@ class WalletController extends EventEmitter {
       const account = this.getCurrentAccount()
       const network = this.networkController.getCurrentNetwork()
 
-      this.selectedAccount.setProvider(network.provider)
+      this.selectedAccount = new PegasusAccount({ provider: network.provider })
+      this._bindAccountListeners()
+
       this.selectedAccount.setData(account.seed, account.data[network.type])
       this.selectedAccount.startFetch()
 
@@ -133,10 +199,10 @@ class WalletController extends EventEmitter {
     this.setState(APP_STATE.WALLET_LOCKED)
     await this.stateStorageController.lock()
     this.sessionController.deleteSession()
-    this.selectedAccount.stopFetch()
+    this.selectedAccount.clear()
 
     if (this.selectedAccount) {
-      this.selectedAccount.stopFetch()
+      this.selectedAccount.clear()
       this.selectedAccount = null
     }
 
@@ -163,7 +229,6 @@ class WalletController extends EventEmitter {
 
       this.sessionController.startSession()
       this.loginPasswordController.setPassword(_password)
-      this.selectedAccount.startFetch()
 
       await this.stateStorageController.reset()
       this.networkController.setCurrentNetwork(options.networks[0])
@@ -266,9 +331,11 @@ class WalletController extends EventEmitter {
       const network = this.networkController.getCurrentNetwork()
 
       // reset selectedAccount with new seed and current network
-      this.selectedAccount.stopFetch()
-      this.selectedAccount.setSeed(seed)
-      this.selectedAccount.setProvider(network.provider)
+      this.selectedAccount.clear()
+      this.selectedAccount = new PegasusAccount({
+        seed,
+        provider: network.provider
+      })
 
       // fetch data for the current network
       const creations = []
@@ -345,14 +412,14 @@ class WalletController extends EventEmitter {
       await this.stateStorageController.lock()
       await this.stateStorageController.unlock(password)
 
+      this._bindAccountListeners()
+      this.selectedAccount.startFetch()
+
       logger.log(`(WalletController) Account added : ${accountToAdd.name}`)
 
       return true
     } catch (error) {
-      if (this.selectedAccount) {
-        this.selectedAccount.stopFetch()
-        this.selectedAccount = null
-      }
+      this.selectedAccount.clear()
 
       logger.error(`(WalletController) Error during account creation: ${error}`)
       return false
@@ -388,11 +455,15 @@ class WalletController extends EventEmitter {
     _account.seed = account.seed
     accounts.selected = _account
 
-    this.selectedAccount.setData(_account.seed, _account.data)
+    const network = this.networkController.getCurrentNetwork()
+
+    this.selectedAccount.clear()
+    this.selectedAccount = new PegasusAccount({ provider: network.provider })
+    this.selectedAccount.setData(_account.seed, _account.data[network.type])
+    this._bindAccountListeners()
+    this.selectedAccount.startFetch()
 
     this.stateStorageController.set('accounts', accounts)
-
-    const network = this.networkController.getCurrentNetwork()
 
     this.emit('accountChanged', _account.data[network.type].latestAddress)
 
@@ -479,9 +550,16 @@ class WalletController extends EventEmitter {
     accounts.selected = accounts.all[0]
     this.stateStorageController.set('accounts', accounts)
 
-    this.selectedAccount.setData(accounts.seed, accounts.data)
+    this.selectedAccount.clear()
+    this._removeAccountListeners()
+    this.selectedAccount = new PegasusAccount({ provider: network.provider })
+    this.selectedAccount.setData(
+      accounts.selected.seed,
+      accounts.selected.data[network.type]
+    )
+    this._bindAccountListeners()
+    this.selectedAccount.startFetch()
 
-    const network = this.networkController.getCurrentNetwork()
     this.emit(
       'accountChanged',
       accounts.selected.data[network.type].latestAddress

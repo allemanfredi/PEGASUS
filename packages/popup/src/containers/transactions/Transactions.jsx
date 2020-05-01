@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import Utils from '@pegasus/utils/utils'
 import Details from './details/Details'
-import Spinner from '../../components/spinner/Spinner'
 import Filters from './filters/Filters'
 
 class Transactions extends Component {
@@ -85,11 +84,13 @@ class Transactions extends Component {
   //keep open the opened cards
   handleShowDetails() {
     const opened = this.state.opened
-    this.props.account.data.transactions.forEach(transaction => {
-      if (!opened[`${transaction.bundle}-${transaction.timestamp}`]) {
-        opened[`${transaction.bundle}-${transaction.timestamp}`] = false
-      } else opened[`${transaction.bundle}-${transaction.timestamp}`] = true
-    })
+    this.props.account.data[this.props.network.type].transactions.forEach(
+      transaction => {
+        if (!opened[`${transaction.bundle}-${transaction.timestamp}`]) {
+          opened[`${transaction.bundle}-${transaction.timestamp}`] = false
+        } else opened[`${transaction.bundle}-${transaction.timestamp}`] = true
+      }
+    )
     this.setState({ opened })
   }
 
@@ -124,22 +125,10 @@ class Transactions extends Component {
         ) : null}
         <div className="container">
           <div className="row">
-            <div className="col-3 text-left text-black text-gray text-xs pl-0">
+            <div className="col-6 text-left text-black text-gray text-xs pl-0">
               History
             </div>
-            <div className="col-6 text-center">
-              {this.props.isLoading ? (
-                <Spinner />
-              ) : (
-                <button
-                  onClick={() => this.props.onReload()}
-                  className="btn btn-icon-inverted mb-05"
-                >
-                  <i className="fa fa-refresh"></i>
-                </button>
-              )}
-            </div>
-            <div className="col-3 text-right pr-0">
+            <div className="col-6 text-right pr-0">
               <button
                 className="btn btn-icon-inverted mb-05"
                 onClick={() => {
@@ -153,14 +142,12 @@ class Transactions extends Component {
         </div>
         <hr />
         <div className="transaction-list">
-          {this.props.account.data.transactions.length > 0 ? (
-            this.props.account.data.transactions
-              .filter(
-                transaction => transaction.network === this.props.network.type
-              )
+          {this.props.account.data[this.props.network.type].transactions
+            .length > 0 ? (
+            this.props.account.data[this.props.network.type].transactions
               .filter(transaction =>
                 this.state.settings.filters.hidePendingTxs
-                  ? transaction.status
+                  ? transaction.persistence
                   : true
               )
               .filter(transaction =>
@@ -184,12 +171,12 @@ class Transactions extends Component {
                       <div className="col-4 text-center my-auto">
                         <div
                           className={
-                            transaction.status
+                            transaction.persistence
                               ? 'text-xxs text-bold text-blue'
                               : 'text-xxs text-bold text-gray'
                           }
                         >
-                          {transaction.status ? 'confirmed ' : 'pending'}
+                          {transaction.persistence ? 'confirmed ' : 'pending'}
                           <span className="text-green">
                             <br />
                             {transaction.isReattached ? 'reattached ' : ''}

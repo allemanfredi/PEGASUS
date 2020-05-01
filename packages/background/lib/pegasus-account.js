@@ -16,7 +16,7 @@ class PegasusAccount extends EventEmitter3 {
     this.index = 0
     this.interval = null
     this.addresses = []
-    this.walletTransactions = []
+    this.transactions = []
 
     this.emittedIncludedDeposits = {}
     this.emittedPendingDeposits = {}
@@ -42,7 +42,7 @@ class PegasusAccount extends EventEmitter3 {
       addresses: this.addresses,
       latestAddress: this.addresses[this.addresses.length - 1],
       balance: await this.getBalance(),
-      transactions: this.walletTransactions,
+      transactions: this.transactions,
       emittedIncludedDeposits: this.emittedIncludedDeposits,
       emittedPendingDeposits: this.emittedPendingDeposits,
       emittedIncludedWithdrawals: this.emittedIncludedWithdrawals,
@@ -66,9 +66,10 @@ class PegasusAccount extends EventEmitter3 {
   startFetch() {
     if (this.interval) return
 
+    this.fetch(true)
     this.interval = setInterval(() => {
       this.fetch(true)
-    }, 30000)
+    }, 20000)
   }
 
   /**
@@ -90,6 +91,7 @@ class PegasusAccount extends EventEmitter3 {
         this.addresses,
         true
       )
+
       bundles
         .filter(
           _bundle =>
@@ -109,8 +111,13 @@ class PegasusAccount extends EventEmitter3 {
             .filter(
               _tx => this.addresses.indexOf(_tx.address) > -1 && _tx.value > 0
             )
-            .forEach(_tx => {
-              this._processNewBundle(_bundle, _withEmit, true)
+            .forEach(async _tx => {
+              await this._processNewBundle(
+                _bundle,
+                _withEmit,
+                true,
+                _bundle[0].persistence ? 'includedDeposit' : 'pendingDeposit'
+              )
             })
         )
       bundles
@@ -132,8 +139,15 @@ class PegasusAccount extends EventEmitter3 {
             .filter(
               _tx => this.addresses.indexOf(_tx.address) > -1 && _tx.value < 0
             )
-            .forEach(_tx => {
-              this._processNewBundle(_bundle, _withEmit, false)
+            .forEach(async _tx => {
+              await this._processNewBundle(
+                _bundle,
+                _withEmit,
+                false,
+                _bundle[0].persistence
+                  ? 'includedWithdrawal'
+                  : 'pendingWithdrawal'
+              )
             })
         )
 
@@ -151,39 +165,22 @@ class PegasusAccount extends EventEmitter3 {
    * @param {Object} _bundle
    * @param {Boolean} _withEmit
    * @param {Boolean} _incoming
+   * @param {String} _eventName
    */
-  _processNewBundle(_bundle, _withEmit, _incoming) {
-    // check if already exists, if yes and this persistence is true update it
-    const existsAsPending = this.walletTransactions.find(
-      _tx => _tx.bundle === _bundle[0].bundle && _tx.persistence === false
+  async _processNewBundle(_bundle, _withEmit, _incoming, _eventName) {
+    const exists = this.transactions.find(
+      _tx => _tx.bundle === _bundle[0].bundle
     )
 
-    if (existsAsPending)
-      this.walletTransactions = this.walletTransactions.filter(
+    if (exists)
+      this.transactions = this.transactions.filter(
         _transaction => _transaction.bundle !== _bundle[0].bundle
       )
 
-    this.walletTransactions.push(
-      bundleToWalletTransaction(_bundle, this.addresses)
-    )
+    this.transactions.push(bundleToWalletTransaction(_bundle, this.addresses))
 
     // NOTE: update address when a withdrawal is detected and confirmed
-    if (_bundle[0].persistence) this.generateNewAddress()
-
-    if (_withEmit) {
-      this.emit(
-        _incoming === true
-          ? _bundle[0].persistence
-            ? 'includedDeposit'
-            : 'pendingDeposit'
-          : _bundle[0].persistence
-          ? 'includedWithdrawal'
-          : 'pendingWithdrawal',
-        _bundle[0].bundle
-      )
-
-      this.emit('data', this.getData())
-    }
+    if (_bundle[0].persistence) await this.generateNewAddress()
 
     if (_incoming) {
       this.emittedIncludedDeposits[_bundle[0].hash] = _bundle[0].persistence
@@ -193,6 +190,13 @@ class PegasusAccount extends EventEmitter3 {
       this.emittedIncludedWithdrawals[_bundle[0].hash] = _bundle[0].persistence
         ? true
         : false // from iota.js is true i don't know why
+    }
+
+    if (_withEmit) {
+      this.emit(_eventName, _bundle[0].bundle)
+
+      const data = await this.getData()
+      this.emit('data', data)
     }
   }
 
@@ -220,7 +224,7 @@ class PegasusAccount extends EventEmitter3 {
    *
    * Destroy all handlers
    */
-  stopFetch() {
+  clear() {
     clearInterval(this.interval)
   }
 

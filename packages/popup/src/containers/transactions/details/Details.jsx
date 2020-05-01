@@ -31,7 +31,7 @@ class Details extends Component {
             <div className="text-no-overflow">{this.props.details.bundle}</div>
           </div>
         </div>
-        <div className="mt-1">
+        {/*<div className="mt-1">
           <ul className="list-group">
             {this.props.details.transfer.map(detail => {
               return (
@@ -50,13 +50,11 @@ class Details extends Component {
               )
             })}
           </ul>
-        </div>
+        </div>*/}
         <div className="row mt-1">
           <div className="col-6">
             <button
-              onClick={() =>
-                this.props.replayBundle(this.props.details.transfer[0].hash)
-              }
+              onClick={() => this.props.replayBundle(this.props.details.hash)}
               disabled={this.props.details.status ? true : false}
               className="btn btn-border-blue text-xs btn-small"
             >
@@ -66,9 +64,7 @@ class Details extends Component {
           <div className="col-6">
             <button
               onClick={() =>
-                this.props.promoteTransaction(
-                  this.props.details.transfer[0].hash
-                )
+                this.props.promoteTransaction(this.props.details.hash)
               }
               disabled={this.props.details.status ? true : false}
               className="btn btn-border-blue text-xs btn-small"

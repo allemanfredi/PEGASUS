@@ -66,7 +66,8 @@ class PegasusEngine {
       stateStorageController: this.stateStorageController,
       networkController: this.networkController,
       connectorController: this.connectorController,
-      loginPasswordController: this.loginPasswordController
+      loginPasswordController: this.loginPasswordController,
+      showNotification: this.showNotification.bind(this)
     })
 
     this.nodeController = new NodeController({
@@ -313,10 +314,6 @@ class PegasusEngine {
 
       // mam controller
       fetchFromPopup: (opts, cb) => cb(this.mamController.fetch(opts)),
-
-      // accountData controller
-      loadAccountData: cb =>
-        nodeify(this.accountDataController.loadAccountData(), cb),
 
       // node controller
       enableTransactionsAutoPromotion: (time, cb) =>

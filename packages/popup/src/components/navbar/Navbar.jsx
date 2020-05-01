@@ -142,7 +142,8 @@ export default class Navbar extends Component {
                   href={
                     this.props.network.link +
                     'address/' +
-                    this.props.account.data.latestAddress
+                    this.props.account.data[this.props.network.type]
+                      .latestAddress
                   }
                   target="_blank"
                   rel="noopener noreferrer"

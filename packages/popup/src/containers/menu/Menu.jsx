@@ -139,13 +139,15 @@ class Settings extends Component {
                     {!this.state.showFullAddress
                       ? Utils.showAddress(
                           Utils.checksummed(
-                            this.props.account.data.latestAddress
+                            this.props.account.data[this.props.network.type]
+                              .latestAddress
                           ),
                           6,
                           8
                         )
                       : Utils.checksummed(
-                          this.props.account.data.latestAddress
+                          this.props.account.data[this.props.network.type]
+                            .latestAddress
                         )}
                   </div>
                 </div>
@@ -166,10 +168,9 @@ class Settings extends Component {
                 <div className="row mt-2">
                   <div className="col-6 text-right text-sm text text-bold pr-1">
                     {Utils.iotaReducer(
-                      this.props.account.data.balance[this.props.network.type]
-                        ? this.props.account.data.balance[
-                            this.props.network.type
-                          ]
+                      this.props.account.data[this.props.network.type].balance
+                        ? this.props.account.data[this.props.network.type]
+                            .balance
                         : 0
                     )}
                   </div>

@@ -94,7 +94,9 @@ class AccountSelection extends React.Component {
                   </div>
                   <div className="col-12 text-xxxs text-white">
                     {Utils.showAddress(
-                      Utils.checksummed(account.data.latestAddress),
+                      Utils.checksummed(
+                        account.data[this.props.network.type].latestAddress
+                      ),
                       8,
                       14
                     )}
@@ -103,8 +105,8 @@ class AccountSelection extends React.Component {
               </div>
               <div className="col-5 my-auto text-white font-weight-bold text-right text-md">
                 {Utils.iotaReducer(
-                  account.data.balance[this.props.network.type]
-                    ? account.data.balance[this.props.network.type]
+                  account.data[this.props.network.type].balance
+                    ? account.data[this.props.network.type].balance
                     : 0
                 )}
               </div>
