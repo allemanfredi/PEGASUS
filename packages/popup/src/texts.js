@@ -32,11 +32,13 @@ export const RECEIVE_TEXT = {
   items: [
     {
       title: 'Account Info',
-      description: 'View your address'
+      description: 'View your address',
+      networks: ['mainnet', 'devnet', 'comnet']
     },
     {
       title: 'Buy',
-      description: 'View all possible options to buy IOTA'
+      description: 'View all possible options to buy IOTA',
+      networks: ['mainnet']
     }
   ]
 }

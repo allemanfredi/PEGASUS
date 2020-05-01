@@ -29,8 +29,12 @@ class WalletController extends EventEmitter {
       provider: this.networkController.getCurrentNetwork().provider
     })
 
-    // NOTE: in case of provider changig, a new selected account must be created
-    // with the data corresponding to this network type
+    /**
+     * NOTE:
+     *  in case of provider changing, a new selected account must be created.
+     *  It's important to _removeAccountListeners before each account initialization
+     *  in order to remove the previouse listeners and avoiding data overwritting
+     */ 
     this.networkController.on('providerChanged', _provider => {
       if (this.getState() > APP_STATE.WALLET_LOCKED) {
         const account = this.getCurrentAccount()
@@ -138,8 +142,6 @@ class WalletController extends EventEmitter {
       await this.stateStorageController.lock()
       await this.stateStorageController.unlock(_password)
 
-      //this._bindAccountListeners()
-      //this.selectedAccount.startFetch()
       this.sessionController.startSession()
 
       this.setState(APP_STATE.WALLET_UNLOCKED)
@@ -175,7 +177,6 @@ class WalletController extends EventEmitter {
 
       this.selectedAccount = new PegasusAccount({ provider: network.provider })
       this._bindAccountListeners()
-
       this.selectedAccount.setData(account.seed, account.data[network.type])
       this.selectedAccount.startFetch()
 
@@ -330,7 +331,8 @@ class WalletController extends EventEmitter {
       const seed = _account.seed.toString().replace(/,/g, '')
       const network = this.networkController.getCurrentNetwork()
 
-      // reset selectedAccount with new seed and current network
+      // reset selectedAccount with new seed and current 
+      this._removeAccountListeners()
       this.selectedAccount.clear()
       this.selectedAccount = new PegasusAccount({
         seed,
@@ -457,6 +459,7 @@ class WalletController extends EventEmitter {
 
     const network = this.networkController.getCurrentNetwork()
 
+    this._removeAccountListeners()
     this.selectedAccount.clear()
     this.selectedAccount = new PegasusAccount({ provider: network.provider })
     this.selectedAccount.setData(_account.seed, _account.data[network.type])
