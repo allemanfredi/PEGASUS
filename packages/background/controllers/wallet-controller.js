@@ -39,7 +39,7 @@ class WalletController extends EventEmitter {
   }
 
   setAccountDataController(accountDataController) {
-    this.selectedAccountDataController = accountDataController
+    this.accountDataController = accountDataController
   }
 
   isWalletSetup() {
@@ -65,7 +65,7 @@ class WalletController extends EventEmitter {
       // in order to write on storage the first time
       await this.stateStorageController.lock()
       await this.stateStorageController.unlock(_password)
-      this.selectedAccountDataController.startHandle()
+      this.accountDataController.startHandle()
       this.sessionController.startSession()
 
       this.setState(APP_STATE.WALLET_UNLOCKED)
@@ -87,7 +87,7 @@ class WalletController extends EventEmitter {
       this.loginPasswordController.setPassword(_password)
 
       await this.stateStorageController.unlock(_password)
-      this.selectedAccountDataController.startHandle()
+      this.accountDataController.startHandle()
 
       this.setState(APP_STATE.WALLET_UNLOCKED)
 
@@ -113,7 +113,7 @@ class WalletController extends EventEmitter {
     this.setState(APP_STATE.WALLET_LOCKED)
     await this.stateStorageController.lock()
     this.sessionController.deleteSession()
-    this.selectedAccountDataController.stopHandle()
+    this.accountDataController.stopHandle()
 
     if (this.selectedAccount) {
       this.selectedAccount.stopFetch()
@@ -133,7 +133,7 @@ class WalletController extends EventEmitter {
 
       this.sessionController.startSession()
       this.loginPasswordController.setPassword(_password)
-      this.selectedAccountDataController.startHandle()
+      this.accountDataController.startHandle()
 
       await this.stateStorageController.reset()
       this.networkController.setCurrentNetwork(options.networks[0])
