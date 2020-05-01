@@ -388,6 +388,8 @@ class WalletController extends EventEmitter {
     _account.seed = account.seed
     accounts.selected = _account
 
+    this.selectedAccount.setData(_account.seed, _account.data)
+
     this.stateStorageController.set('accounts', accounts)
 
     const network = this.networkController.getCurrentNetwork()
