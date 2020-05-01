@@ -85,7 +85,7 @@ class NodeController {
     const network = this.networkController.getCurrentNetwork()
     const account = this.walletController.getCurrentAccount()
 
-    const tails = account.data.transactions
+    const tails = account[network.type].data.transactions
       .filter(transaction => transaction.network === network.type)
       .map(transaction => transaction.transfer[0].hash)
 
