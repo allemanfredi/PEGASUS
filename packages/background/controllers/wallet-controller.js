@@ -4,6 +4,8 @@ import logger from '@pegasus/utils/logger'
 import options from '@pegasus/utils/options'
 import { EventEmitter } from 'eventemitter3'
 import { setTransactionsReattach } from '../lib/account-data'
+import PegasusAccount from '../lib/pegasus-account'
+import { NETWORK_TYPES } from '../lib/constants'
 
 class WalletController extends EventEmitter {
   constructor(options) {
@@ -20,6 +22,16 @@ class WalletController extends EventEmitter {
     this.networkController = networkController
     this.connectorController = connectorController
     this.loginPasswordController = loginPasswordController
+
+    this.networkController.on('providerChanged', _provider => {
+      if (this.getState() > APP_STATE.WALLET_LOCKED)
+        this.selectedAccount.setProvider(_provider)
+    })
+
+    this.selectedAccount = new PegasusAccount({
+      provider:  this.networkController.getCurrentNetwork().provider
+    })
+    this.selectedAccount.on('data', e => console.log("djdndhdhdbddatatdt"))
   }
 
   setSessionController(_sessionController) {
@@ -27,7 +39,7 @@ class WalletController extends EventEmitter {
   }
 
   setAccountDataController(accountDataController) {
-    this.accountDataController = accountDataController
+    this.selectedAccountDataController = accountDataController
   }
 
   isWalletSetup() {
@@ -53,7 +65,7 @@ class WalletController extends EventEmitter {
       // in order to write on storage the first time
       await this.stateStorageController.lock()
       await this.stateStorageController.unlock(_password)
-      this.accountDataController.startHandle()
+      this.selectedAccountDataController.startHandle()
       this.sessionController.startSession()
 
       this.setState(APP_STATE.WALLET_UNLOCKED)
@@ -75,13 +87,17 @@ class WalletController extends EventEmitter {
       this.loginPasswordController.setPassword(_password)
 
       await this.stateStorageController.unlock(_password)
-      this.accountDataController.startHandle()
+      this.selectedAccountDataController.startHandle()
 
       this.setState(APP_STATE.WALLET_UNLOCKED)
 
       const account = this.getCurrentAccount()
+      const network = this.networkController.getCurrentNetwork()
 
-      this.emit('accountChanged', account.data.latestAddress)
+      this.selectedAccount.setProvider(network.provider)
+      this.selectedAccount.setData(account.seed, account.data[network.type])
+
+      this.emit('accountChanged', account.data[network.type].latestAddress)
 
       logger.log(
         `(WalletController) Wallet unlocked with account: ${account.name}`
@@ -97,7 +113,12 @@ class WalletController extends EventEmitter {
     this.setState(APP_STATE.WALLET_LOCKED)
     await this.stateStorageController.lock()
     this.sessionController.deleteSession()
-    this.accountDataController.stopHandle()
+    this.selectedAccountDataController.stopHandle()
+
+    if (this.selectedAccount) {
+      this.selectedAccount.stopFetch()
+      this.selectedAccount = null
+    }
 
     logger.log('(WalletController) Wallet succesfully locked')
     return true
@@ -112,7 +133,7 @@ class WalletController extends EventEmitter {
 
       this.sessionController.startSession()
       this.loginPasswordController.setPassword(_password)
-      this.accountDataController.startHandle()
+      this.selectedAccountDataController.startHandle()
 
       await this.stateStorageController.reset()
       this.networkController.setCurrentNetwork(options.networks[0])
@@ -171,30 +192,76 @@ class WalletController extends EventEmitter {
   async addAccount(_account, _isCurrent) {
     try {
       const accounts = this.stateStorageController.get('accounts')
-
-      const seed = _account.seed.toString().replace(/,/g, '')
-
-      // NOTE: transaction mapping
-      const accountData = await this.accountDataController.retrieveAccountData(
-        seed
-      )
-      const transactionsWithReattachSet = setTransactionsReattach(
-        accountData.transactions
-      )
-      accountData.transactions = transactionsWithReattachSet
-
+      
       const id = Utils.sha256(_account.name)
+      const alreadyExist = accounts.all.find(account => account.id === id)
+      if (alreadyExist) return false
 
+      const seed = _account.seed//.toString().replace(/,/g, '')
+      const network = this.networkController.getCurrentNetwork()
+
+      if (this.selectedAccount) 
+        this.selectedAccount.stopFetch()
+
+      // reset selectedAccount with new seed and current network
+      this.selectedAccount.setSeed(seed)
+      this.selectedAccount.setProvider(network.provider)
+
+      // fetch data for the current network
+      const creations = []
+      creations.push(
+        new Promise((resolve, reject) => {
+          this.selectedAccount.fetch()
+          .then(_data => resolve({
+            data: _data,
+            networkType: network.type
+          }))
+          .catch(_err => reject(_err))
+        })
+      )
+
+      // fetch also data for not selected networks
+      creations.push(
+        ...NETWORK_TYPES
+        .filter(_networkType => _networkType !== network.type)
+        .map(_networkType => {
+          const notSelectedNetwork = 
+            options.networks.find(_network => _network.type === _networkType)
+          
+          return new Promise((resolve, reject) => {
+            new PegasusAccount({ seed, provider: notSelectedNetwork.provider })
+            .getData()
+            .then(_data => resolve({
+              data: _data,
+              networkType: _networkType
+            }))
+            .catch(_err => reject(_err))
+          })
+        })
+      )
+      
+      // wait all fetching
+      const waitForCreations = _creations =>
+        new Promise((resolve, reject) => {
+          Promise.all(_creations)
+          .then(_data => resolve(_data))
+          .catch(_err => reject(_err))
+        })
+      
+      // create the object containing data for each network type
+      const networkData = await waitForCreations(creations)
+      const networkedData = {}
+      networkData.forEach(_data => networkedData[_data.networkType] = _data.data)
+      
+      console.log(networkedData)
+      
       const accountToAdd = {
         name: _account.name,
         avatar: _account.avatar,
         seed,
-        data: accountData,
+        data: networkedData,
         id
       }
-
-      const alreadyExist = accounts.all.find(account => account.id === id)
-      if (alreadyExist) return false
 
       if (_isCurrent) accounts.selected = accountToAdd
 
@@ -202,7 +269,7 @@ class WalletController extends EventEmitter {
 
       this.stateStorageController.set('accounts', accounts)
 
-      this.emit('accountChanged', accountToAdd.data.latestAddress)
+      this.emit('accountChanged', accountToAdd.data[network.type].latestAddress)
 
       // in order to write on storage the first time
       const password = this.loginPasswordController.getPassword()
@@ -213,6 +280,11 @@ class WalletController extends EventEmitter {
 
       return true
     } catch (error) {
+      if (this.selectedAccount){
+        this.selectedAccount.stopFetch()
+        this.selectedAccount = null
+      }
+
       logger.error(`(WalletController) Error during account creation: ${error}`)
       return false
     }
@@ -246,11 +318,12 @@ class WalletController extends EventEmitter {
 
   updateDataAccount(_data) {
     const accounts = this.stateStorageController.get('accounts')
+    const network = this.networkController.getCurrentNetwork()
 
     accounts.all.forEach(account => {
-      if (account.id === accounts.selected.id) account.data = _data
+      if (account.id === accounts.selected.id) account.data[network.type] = _data
     })
-    accounts.selected.data = _data
+    accounts.selected.data[network.type] = _data
 
     this.stateStorageController.set('accounts', accounts)
     logger.log(`(WalletController) Data updated for ${accounts.selected.name}`)

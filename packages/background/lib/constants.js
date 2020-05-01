@@ -15,5 +15,11 @@ export const REQUESTS_WITH_USER_INTERACTION = [
   'transfer'
 ]
 
+export const NETWORK_TYPES = [
+  'comnet',
+  'mainnet',
+  'devnet'
+]
+
 export const CONNECT = 'connect'
 export const WEBSITE_METADATA = 'websiteMetadata'

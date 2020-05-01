@@ -84,7 +84,6 @@ const mapTransactions = (_data, _network) => {
           hash: t.hash
         }
       }),
-      network: _network.type,
       message
     }
 
@@ -132,6 +131,42 @@ const setTransactionsReattach = _transactions => {
   return _transactions
 }
 
+/**
+ * 
+ * Function used to transforma bundle into 
+ * an object easliy interpretable by the popup
+ * 
+ * @param {Object} _bundle 
+ * @param {Array} _addresses 
+ */
+const bundleToWalletTransaction = (_bundle, _addresses) => {
+  let value = 0
+  let values = []
+  for (let transaction of _bundle) {
+    if (_addresses.includes(transaction.address)) {
+      value = value + transaction.value
+      values.push(transaction.value)
+    }
+  }
+
+  if (value < 0) {
+    value = 0
+    values = values.map(value => -value)
+    values.forEach(v => { value = value + v })
+    value = -1 * value
+  }
+
+  const message = getMessage(_bundle)
+
+  return {
+    timestamp: _bundle[0].attachmentTimestamp,
+    value,
+    persistence: _bundle[0].persistence,
+    bundle: _bundle[0].bundle,
+    message
+  }
+}
+
 export {
   mapBalance,
   mapTransactions,
@@ -139,5 +174,6 @@ export {
   getNewPendingIncomingTransactions,
   getNewConfirmedTransactions,
   setTransactionsReattach,
-  getMessage
+  getMessage,
+  bundleToWalletTransaction
 }

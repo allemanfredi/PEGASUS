@@ -1,7 +1,7 @@
 // part of this code is taken from here https://github.com/iotaledger/iota.js/blob/next/packages/account/src/account.ts#L397
 import EventEmitter3 from 'eventemitter3'
 import { composeAPI } from '@iota/core'
-import { bundleToTransaction, findUsedAddresses } from './account-data'
+import { bundleToWalletTransaction, findUsedAddresses } from './account-data'
 
 /**
  * Class used to rapresent an account within Pegasus
@@ -16,10 +16,10 @@ class PegasusAccount extends EventEmitter3 {
     } = _configs
 
     this.seed = seed
-    this.index = 1
+    this.index = 0
     this.interval = null
     this.addresses = []
-    this.transactions = []
+    this.walletTransactions = []
 
     this.emittedIncludedDeposits = {}
     this.emittedPendingDeposits = {}
@@ -27,19 +27,26 @@ class PegasusAccount extends EventEmitter3 {
     this.emittedPendingWithdrawals = {}
 
     //RXVZXEFEHCFOLUDZLRTABWVPYGHJXSDICUPNXAAGMJMMLOEQPZIFRXWLRNJ9CSFBMQZCPSMJGGCKBZAMCBIOEEXXLB
-    this.api = composeAPI({ provider: 'https://nodes.comnet.thetangle.org:443' })
+    this.api = composeAPI({ provider })
   }
-
+  
   /**
    * 
-   * Returns an object containing data of this account
+   * Returns an object containing data of this account.
+   * If there are not address, at least 1 must be generated
    */
-  getData() {
+  async getData() {
+
+    if (this.addresses.length === 0) {
+      await this.generateNewAddress(true)
+      await this.fetch()
+    }
+
     return {
       index: this.index,
       addresses: this.addresses,
       latestAddress: this.addresses[this.addresses.length - 1],
-      transactions: this.transactions,
+      transactions: this.walletTransactions,
       emittedIncludedDeposits: this.emittedIncludedDeposits,
       emittedPendingDeposits: this.emittedPendingDeposits,
       emittedIncludedWithdrawals: this.emittedIncludedWithdrawals,
@@ -55,16 +62,20 @@ class PegasusAccount extends EventEmitter3 {
     if (this.interval) return
 
     this.interval = setInterval(() => {
-      this.fetch()
+      this.fetch(true)
     }, 1000)
   }
 
   /**
    *
    * Fetch account data and emits event related to
-   * new deposits/withdrawals
+   * new deposits/withdrawals. If _withEmit is set to
+   * true, events will be emitted otherwise not
+   * 
+   * @param {Boolean} _withEmit
+   * 
    */
-  async fetch() {
+  async fetch(_withEmit = false) {
 
     if (this.addresses.length === 0) {
       await this.generateNewAddress(true)
@@ -87,23 +98,7 @@ class PegasusAccount extends EventEmitter3 {
         _bundle
           .filter(_tx => this.addresses.indexOf(_tx.address) > -1 && _tx.value > 0)
           .forEach(_tx => {
-
-            this.transactions.push(bundleToTransaction(_bundle, this.addresses))
-
-            // NOTE: update address when a deposit is detected and confirmed
-            if (_bundle[0].persistence)
-              this.generateNewAddress()
-
-            this.emit(
-              _bundle[0].persistence ? 'includedDeposit' : 'pendingDeposit',
-              _bundle[0].bundle
-            )
-
-            this.emittedIncludedDeposits[_bundle[0].hash] = _bundle[0].persistence
-              ? true
-              : false // from iota.js is true i don't know why
-            
-            this.emit('data', this.getData())
+            this._processNewBundle(_bundle, _withEmit, true)
           })
       )
     bundles
@@ -122,23 +117,7 @@ class PegasusAccount extends EventEmitter3 {
         _bundle
           .filter(_tx => this.addresses.indexOf(_tx.address) > -1 && _tx.value < 0)
           .forEach(_tx => {
-
-            this.transactions.push(bundleToTransaction(_bundle, this.addresses))
-
-            // NOTE: update address when a withdrawal is detected and confirmed
-            if (_bundle[0].persistence)
-              this.generateNewAddress()
-
-            this.emit(
-              _bundle[0].persistence ? 'includedWithdrawal' : 'pendingWithdrawal',
-              _bundle[0].bundle
-            )
-
-            this.emittedIncludedWithdrawals[_bundle[0].hash] = _bundle[0].persistence
-              ? true
-              : false // from iota.js is true i don't know why
-
-            this.emit('data', this.getData())
+            this._processNewBundle(_bundle, _withEmit, false)
           })
       )
     
@@ -147,21 +126,78 @@ class PegasusAccount extends EventEmitter3 {
 
   /**
    * 
+   * Function used to process a new deposit or withdrawal
+   * and emit an event if _withEmit is set to true
+   * 
+   * @param {Object} _bundle 
+   * @param {Boolean} _withEmit 
+   * @param {Boolean} _incoming
+   */
+  _processNewBundle(_bundle, _withEmit, _incoming) {
+
+    // check if already exists, if yes and this persistence is true update it
+    const existsAsPending = 
+      this.walletTransactions.find(_tx => _tx.bundle === _bundle[0].bundle && _tx.persistence === false)
+    
+    if (existsAsPending)
+      this.walletTransactions = this.walletTransactions.filter(_transaction => _transaction.bundle !== _bundle[0].bundle)
+
+    this.walletTransactions.push(bundleToWalletTransaction(_bundle, this.addresses))
+
+    // NOTE: update address when a withdrawal is detected and confirmed
+    if (_bundle[0].persistence)
+      this.generateNewAddress()
+
+    
+    if (_withEmit) {
+      this.emit(
+        _incoming === true
+          ? _bundle[0].persistence ? 'includedDeposit' : 'pendingDeposit'
+          : _bundle[0].persistence ? 'includedWithdrawal' : 'pendingWithdrawal',
+        _bundle[0].bundle
+      )
+
+      this.emit('data', this.getData())
+    }
+
+    if (_incoming) {
+      this.emittedIncludedDeposits[_bundle[0].hash] = _bundle[0].persistence
+        ? true
+        : false // from iota.js is true i don't know why
+    } else {
+      this.emittedIncludedWithdrawals[_bundle[0].hash] = _bundle[0].persistence
+        ? true
+        : false // from iota.js is true i don't know why
+    }
+  }
+
+  /**
+   * 
    * @param {Object} _data 
    */
   setData(_seed, _data) {
     this.seed = _seed
-    //Object.keys(_data).map(_key => this[_key] = _data[_key])
-    //console.log(this)
+    Object.keys(_data).map(_key => this[_key] = _data[_key])
+  }
+
+  /**
+   * 
+   * Set a new seed
+   * 
+   * @param {String} _seed 
+   */
+  setSeed(_seed) {
+    this.seed = _seed
+    this.index = 0
   }
 
   /**
    * 
    * Destroy all handlers
    */
-  destroy() {
+  stopFetch() {
     clearInterval(this.interval)
-    console.log("pegasusAccount destroy")
+    console.log("pegasusAccount stopFetch")
   }
 
   /**
@@ -186,7 +222,7 @@ class PegasusAccount extends EventEmitter3 {
     if (_fromStart) {
       const addresses = await this.api.getNewAddress(this.seed, { index: this.index, returnAll: true })
       this.index = addresses.length
-      this.addresses.push(...addresses)
+      this.addresses = addresses
       return
     }
 
