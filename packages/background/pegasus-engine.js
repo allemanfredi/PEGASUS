@@ -1,5 +1,4 @@
 import options from '@pegasus/utils/options'
-import AccountDataController from './controllers/account-data-controller'
 import RequestsController from './controllers/requests-controller'
 import MamController from './controllers/mam-controller'
 import StateStorageController from './controllers/state-storage-controller'
@@ -76,13 +75,6 @@ class PegasusEngine {
       stateStorageController: this.stateStorageController
     })
 
-    this.accountDataController = new AccountDataController({
-      networkController: this.networkController,
-      walletController: this.walletController,
-      nodeController: this.nodeController,
-      showNotification: this.showNotification.bind(this)
-    })
-
     this.sessionController = new SessionsController({
       walletController: this.walletController,
       stateStorageController: this.stateStorageController,
@@ -99,7 +91,6 @@ class PegasusEngine {
     this.requestsController.setNetworkController(this.networkController)
     this.requestsController.setNodeController(this.nodeController)
     this.connectorController.setWalletController(this.walletController)
-    this.walletController.setAccountDataController(this.accountDataController)
     this.connectorController.setNetworkController(this.networkController)
     this.networkController.setWalletController(this.walletController)
     this.walletController.setSessionController(this.sessionController)

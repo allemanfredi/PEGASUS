@@ -10,10 +10,7 @@ class PegasusAccount extends EventEmitter3 {
   constructor(_configs) {
     super()
 
-    const {
-      seed,
-      provider
-    } = _configs
+    const { seed, provider } = _configs
 
     this.seed = seed
     this.index = 0
@@ -28,14 +25,13 @@ class PegasusAccount extends EventEmitter3 {
 
     this.api = composeAPI({ provider })
   }
-  
+
   /**
-   * 
+   *
    * Returns an object containing data of this account.
    * If there are not address, at least 1 must be generated
    */
   async getData() {
-
     if (this.addresses.length === 0) {
       await this.generateNewAddress(true)
       await this.fetch()
@@ -53,9 +49,9 @@ class PegasusAccount extends EventEmitter3 {
       emittedPendingWithdrawals: this.emittedPendingWithdrawals
     }
   }
-  
+
   /**
-   * 
+   *
    * Get account balance
    */
   async getBalance() {
@@ -64,7 +60,7 @@ class PegasusAccount extends EventEmitter3 {
   }
 
   /**
-   * 
+   *
    * Start fetching and storing data
    */
   startFetch() {
@@ -72,7 +68,7 @@ class PegasusAccount extends EventEmitter3 {
 
     this.interval = setInterval(() => {
       this.fetch(true)
-    }, 1000)
+    }, 30000)
   }
 
   /**
@@ -80,19 +76,18 @@ class PegasusAccount extends EventEmitter3 {
    * Fetch account data and emits event related to
    * new deposits/withdrawals. If _withEmit is set to
    * true, events will be emitted otherwise not
-   * 
+   *
    * @param {Boolean} _withEmit
-   * 
+   *
    */
   async fetch(_withEmit = false) {
-
     if (this.addresses.length === 0) {
       await this.generateNewAddress(true)
     }
 
     const bundles = await this.api.getBundlesFromAddresses(this.addresses, true)
-    bundles.
-      filter(
+    bundles
+      .filter(
         _bundle =>
           (this.emittedIncludedDeposits[_bundle[0].hash] !== true &&
             _bundle[0].persistence === true) ||
@@ -101,11 +96,15 @@ class PegasusAccount extends EventEmitter3 {
       )
       .filter(
         _bundle =>
-          _bundle.findIndex(_tx => this.addresses.indexOf(_tx.address) > -1 && _tx.value > 0) > -1
+          _bundle.findIndex(
+            _tx => this.addresses.indexOf(_tx.address) > -1 && _tx.value > 0
+          ) > -1
       )
       .forEach(_bundle =>
         _bundle
-          .filter(_tx => this.addresses.indexOf(_tx.address) > -1 && _tx.value > 0)
+          .filter(
+            _tx => this.addresses.indexOf(_tx.address) > -1 && _tx.value > 0
+          )
           .forEach(_tx => {
             this._processNewBundle(_bundle, _withEmit, true)
           })
@@ -120,49 +119,59 @@ class PegasusAccount extends EventEmitter3 {
       )
       .filter(
         _bundle =>
-          _bundle.findIndex(_tx => this.addresses.indexOf(_tx.address) > -1 && _tx.value < 0) > -1
+          _bundle.findIndex(
+            _tx => this.addresses.indexOf(_tx.address) > -1 && _tx.value < 0
+          ) > -1
       )
       .forEach(_bundle =>
         _bundle
-          .filter(_tx => this.addresses.indexOf(_tx.address) > -1 && _tx.value < 0)
+          .filter(
+            _tx => this.addresses.indexOf(_tx.address) > -1 && _tx.value < 0
+          )
           .forEach(_tx => {
             this._processNewBundle(_bundle, _withEmit, false)
           })
       )
-    
+
     return this.getData()
   }
 
   /**
-   * 
+   *
    * Function used to process a new deposit or withdrawal
    * and emit an event if _withEmit is set to true
-   * 
-   * @param {Object} _bundle 
-   * @param {Boolean} _withEmit 
+   *
+   * @param {Object} _bundle
+   * @param {Boolean} _withEmit
    * @param {Boolean} _incoming
    */
   _processNewBundle(_bundle, _withEmit, _incoming) {
-
     // check if already exists, if yes and this persistence is true update it
-    const existsAsPending = 
-      this.walletTransactions.find(_tx => _tx.bundle === _bundle[0].bundle && _tx.persistence === false)
-    
-    if (existsAsPending)
-      this.walletTransactions = this.walletTransactions.filter(_transaction => _transaction.bundle !== _bundle[0].bundle)
+    const existsAsPending = this.walletTransactions.find(
+      _tx => _tx.bundle === _bundle[0].bundle && _tx.persistence === false
+    )
 
-    this.walletTransactions.push(bundleToWalletTransaction(_bundle, this.addresses))
+    if (existsAsPending)
+      this.walletTransactions = this.walletTransactions.filter(
+        _transaction => _transaction.bundle !== _bundle[0].bundle
+      )
+
+    this.walletTransactions.push(
+      bundleToWalletTransaction(_bundle, this.addresses)
+    )
 
     // NOTE: update address when a withdrawal is detected and confirmed
-    if (_bundle[0].persistence)
-      this.generateNewAddress()
+    if (_bundle[0].persistence) this.generateNewAddress()
 
-    
     if (_withEmit) {
       this.emit(
         _incoming === true
-          ? _bundle[0].persistence ? 'includedDeposit' : 'pendingDeposit'
-          : _bundle[0].persistence ? 'includedWithdrawal' : 'pendingWithdrawal',
+          ? _bundle[0].persistence
+            ? 'includedDeposit'
+            : 'pendingDeposit'
+          : _bundle[0].persistence
+          ? 'includedWithdrawal'
+          : 'pendingWithdrawal',
         _bundle[0].bundle
       )
 
@@ -181,19 +190,19 @@ class PegasusAccount extends EventEmitter3 {
   }
 
   /**
-   * 
-   * @param {Object} _data 
+   *
+   * @param {Object} _data
    */
   setData(_seed, _data) {
     this.seed = _seed
-    Object.keys(_data).map(_key => this[_key] = _data[_key])
+    Object.keys(_data).map(_key => (this[_key] = _data[_key]))
   }
 
   /**
-   * 
+   *
    * Set a new seed
-   * 
-   * @param {String} _seed 
+   *
+   * @param {String} _seed
    */
   setSeed(_seed) {
     this.seed = _seed
@@ -201,48 +210,51 @@ class PegasusAccount extends EventEmitter3 {
   }
 
   /**
-   * 
+   *
    * Destroy all handlers
    */
   stopFetch() {
     clearInterval(this.interval)
-    console.log("pegasusAccount stopFetch")
+    console.log('pegasusAccount stopFetch')
   }
 
   /**
-   * 
-   * @param {Object} _provider 
+   *
+   * @param {Object} _provider
    */
   setProvider(_provider) {
     this.api = composeAPI({ provider: _provider })
-    console.log("pegasusAccount setprovider")
+    console.log('pegasusAccount setprovider')
   }
 
   /**
-   * 
-   * Generate new Address and store it within 
+   *
+   * Generate new Address and store it within
    * the whole list. If _fromStart is equal to true,
    * all addresses will be fetched
-   * 
+   *
    * @param {Boolean} _fromStart
    */
   async generateNewAddress(_fromStart = false) {
-
     if (_fromStart) {
-      const addresses = await this.api.getNewAddress(this.seed, { index: this.index, returnAll: true })
+      const addresses = await this.api.getNewAddress(this.seed, {
+        index: this.index,
+        returnAll: true
+      })
       this.index = addresses.length
       this.addresses = addresses
       return
     }
 
-    const address = await this.api.getNewAddress(this.seed, { index: this.index })
+    const address = await this.api.getNewAddress(this.seed, {
+      index: this.index
+    })
     if (!this.addresses.includes(address)) {
       this.index += 1
       this.addresses.push(address)
     }
     return address
   }
-
 }
 
 export default PegasusAccount

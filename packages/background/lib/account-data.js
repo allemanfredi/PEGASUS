@@ -132,12 +132,12 @@ const setTransactionsReattach = _transactions => {
 }
 
 /**
- * 
- * Function used to transforma bundle into 
+ *
+ * Function used to transforma bundle into
  * an object easliy interpretable by the popup
- * 
- * @param {Object} _bundle 
- * @param {Array} _addresses 
+ *
+ * @param {Object} _bundle
+ * @param {Array} _addresses
  */
 const bundleToWalletTransaction = (_bundle, _addresses) => {
   let value = 0
@@ -152,7 +152,9 @@ const bundleToWalletTransaction = (_bundle, _addresses) => {
   if (value < 0) {
     value = 0
     values = values.map(value => -value)
-    values.forEach(v => { value = value + v })
+    values.forEach(v => {
+      value = value + v
+    })
     value = -1 * value
   }
 

@@ -45,7 +45,7 @@ class RequestsController {
   }
 
   /**
-   * 
+   *
    * Get all current requests
    */
   getRequests() {
@@ -53,7 +53,7 @@ class RequestsController {
   }
 
   /**
-   * 
+   *
    * Get all approved requests
    */
   getExecutableRequests() {
@@ -61,14 +61,14 @@ class RequestsController {
   }
 
   /**
-   * 
+   *
    * Push into request queue a new one. Pegasus
-   * MUST be unlocked and the connection with the 
-   * corresponding website must be done. If NOT, this 
+   * MUST be unlocked and the connection with the
+   * corresponding website must be done. If NOT, this
    * method will call the Connector wich will redirect
    * the user in the popup Connection view
-   * 
-   * @param {Object} _request 
+   *
+   * @param {Object} _request
    */
   async pushRequest(_request) {
     logger.log(
@@ -169,13 +169,13 @@ class RequestsController {
   }
 
   /**
-   * 
+   *
    * Confirm a request. In order to be confirmable,
    * the connection with this website must be granted.
    * A request, in order to be executable must pass
    * within the connector
-   * 
-   * @param {Object} _request 
+   *
+   * @param {Object} _request
    */
   async confirmRequest(_request) {
     const state = this.walletController.getState()
@@ -263,9 +263,9 @@ class RequestsController {
   }
 
   /**
-   * 
+   *
    * Reject a single pendind request
-   * 
+   *
    * @param {Object} _request
    */
   rejectRequest(_request) {
@@ -292,7 +292,7 @@ class RequestsController {
   }
 
   /**
-   * 
+   *
    * Reject all pending requests
    */
   rejectRequests() {
@@ -314,11 +314,11 @@ class RequestsController {
   }
 
   /**
-   * 
+   *
    * Execute a request. This method is not exposed
    * into the public API
-   * 
-   * @param {Object} _request 
+   *
+   * @param {Object} _request
    */
   execute(_request) {
     const { method, args } = _request
@@ -367,11 +367,11 @@ class RequestsController {
   }
 
   /**
-   * 
+   *
    * Remove a request and update the
    * exstension badge
-   * 
-   * @param {Object} _request 
+   *
+   * @param {Object} _request
    */
   removeRequest(_request) {
     logger.log(
