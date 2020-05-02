@@ -2,6 +2,9 @@ import React, { Component } from 'react'
 import Utils from '@pegasus/utils/utils'
 import OutlinedInput from '../../components/outlinedInput/OutlinedInput'
 import Picklist from '../../components/picklist/Picklist'
+import IconedInput from '../../components/iconedInput/IconedInput'
+import CheckBox from '../../components/checkbox/Checkbox'
+import SelectWalletAccount from './selectWalletAccounts/SelectWalletAccounts'
 
 class Send extends Component {
   constructor(props, context) {
@@ -20,7 +23,7 @@ class Send extends Component {
       isLoading: false,
       error: null,
       isTransferingBetweenWalletAccounts: false,
-      accounts: {}
+      accounts: []
     }
   }
 
@@ -81,162 +84,52 @@ class Send extends Component {
 
   render() {
     return (
-      <div className="container overflow-auto-475h">
-        <div>
-          <div className="row mt-2">
-            <div className="col-12">
-              {this.state.isTransferingBetweenWalletAccounts ? (
-                <div className="mt-07">
-                  <Picklist
-                    placeholder="Select account"
-                    text={this.state.dstAddress}
-                    options={this.state.accounts.map(account => {
-                      return (
-                        <React.Fragment>
-                          <div className="row">
-                            <div className="col-2 my-auto">
-                              <img
-                                className="border-radius-50 cursor-pointer"
-                                src={`./material/profiles/${
-                                  account.avatar ? account.avatar : 1
-                                }.svg`}
-                                height="30"
-                                width="30"
-                                alt={`avater logo ${account.name}`}
-                              />
-                            </div>
-                            <div className="col-10 pl-0">
-                              <div className="row">
-                                <div className="col-12 text-xs">
-                                  {account.name}
-                                </div>
-                                <div className="col-12 text-xxxs">
-                                  {Utils.showAddress(
-                                    Utils.checksummed(
-                                      account.data[this.props.network.type]
-                                        .latestAddress
-                                    ),
-                                    18,
-                                    23
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </React.Fragment>
-                      )
-                    })}
-                    onSelect={index =>
-                      this.setState({
-                        dstAddress: Utils.checksummed(
-                          this.state.accounts[index].data[
-                            this.props.network.type
-                          ].latestAddress
-                        )
-                      })
-                    }
-                  />
-                </div>
-              ) : (
-                <OutlinedInput
-                  value={this.state.dstAddress}
-                  onChange={e => this.setState({ dstAddress: e.target.value })}
-                  label="address"
-                  id="inp-address"
-                />
-              )}
-            </div>
-          </div>
-          <div className="row mt-1">
-            <div
-              className="col-12 text-blue text-xxs text-underline cursor-pointer"
-              onClick={() =>
-                this.setState({
-                  isTransferingBetweenWalletAccounts: !this.state
-                    .isTransferingBetweenWalletAccounts,
-                  dstAddress: ''
-                })
+      <div className="container">
+        <div className="row">
+          <div className="col-12 mt-2 mb-2">
+            <IconedInput
+              placeholder="Address"
+              prependIcon={
+                Utils.isValidAddress(this.state.dstAddress)
+                  ? 'correct'
+                  : 'search'
               }
-            >
-              {this.state.isTransferingBetweenWalletAccounts
-                ? 'Normal Transfer'
-                : 'Transfer between my accounts'}
-            </div>
-          </div>
-          <div className="row mt-4">
-            <div className="col-12">
-              <OutlinedInput
-                value={this.state.message}
-                onChange={e => this.setState({ message: e.target.value })}
-                label="message"
-                id="inp-message"
-              />
-            </div>
-          </div>
-          <div className="row mt-3">
-            <div className="col-6">
-              <OutlinedInput
-                value={this.state.tag}
-                onChange={e => this.setState({ tag: e.target.value })}
-                label="tag"
-                id="inp-tag"
-              />
-            </div>
-            <div className="col-6">
-              <OutlinedInput
-                value={this.state.value}
-                onChange={e => this.setState({ value: e.target.value })}
-                label="value"
-                id="inp-value"
-                type="number"
-              />
-            </div>
-          </div>
-
-          {this.state.value >
-          this.props.account.data[this.props.network.type].balance ? (
-            <div className="row mt-4">
-              <div className="col-12 text-xs">
-                <div class="alert alert-danger" role="alert">
-                  Insufficent funds
-                </div>
-              </div>
-            </div>
-          ) : null}
-
-          <div
-            className={
-              this.state.value >
-              this.props.account.data[this.props.network.type].balance
-                ? 'row mt-4'
-                : 'row mt-13'
-            }
-          >
-            <div className="col-6 text-center">
-              <button
-                onClick={() => this.props.onBack()}
-                className="btn btn-border-blue text-bold btn-big"
-              >
-                Cancel
-              </button>
-            </div>
-            <div className="col-6 text-center">
-              <button
-                disabled={
-                  this.state.dstAddress === '' ||
-                  this.state.value >
-                    this.props.account.data[this.props.network.type].balance
-                    ? true
-                    : false
-                }
-                onClick={this.clickTransfer}
-                className="btn btn-blue text-bold btn-big"
-              >
-                Send
-              </button>
-            </div>
+              onClickAppendIcon={() => this.setState({ dstAddress: '' })}
+              appendIcon={'cancel'}
+              value={this.state.dstAddress}
+              id="send-search-bar"
+              onChange={e => this.setState({ dstAddress: e.target.value })}
+            />
           </div>
         </div>
+        {!Utils.isValidAddress(this.state.dstAddress) ? (
+          <div className="row mb-1">
+            <div className="col-12">
+              <CheckBox
+                id="check-between-acc"
+                text="Transfer between my accounts"
+                value={this.state.isTransferingBetweenWalletAccounts}
+                checked={this.state.isTransferingBetweenWalletAccounts}
+                onChange={() =>
+                  this.setState({
+                    isTransferingBetweenWalletAccounts: !this.state
+                      .isTransferingBetweenWalletAccounts
+                  })
+                }
+              />
+            </div>
+          </div>
+        ) : null}
+        <hr className="mb-2" />
+        {!Utils.isValidAddress(this.state.dstAddress) ? (
+          this.state.isTransferingBetweenWalletAccounts ? (
+            <SelectWalletAccount
+              accounts={this.state.accounts}
+              network={this.props.network}
+              onSelect={address => this.setState({ dstAddress: address })}
+            />
+          ) : null
+        ) : null}
       </div>
     )
   }

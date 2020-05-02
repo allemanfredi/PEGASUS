@@ -227,6 +227,14 @@
     margin-bottom: 6px;
 }
 
+.container-accounts {
+    width: 100%;
+    height: 325px;
+    max-height: 325px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
 @media screen and (min-width: 381px) {
     .container-request-counter{
         position: initial;
@@ -1032,7 +1040,7 @@ header{
     background: white;
     border: 1px solid #c9c9c9;
     font-family: Arial;
-    font-size: 14px;
+    font-size: 13px;
     color: #5c5c5c;
     height: 45px;
     padding-left: 10px;
@@ -1053,6 +1061,7 @@ header{
     padding-right: 10px;
     cursor: pointer;
 }
+
 .picklist-menu{
     z-index: 100000;
     background: white;
@@ -1141,17 +1150,19 @@ textarea {
     cursor: pointer;
     padding: 0;
     font-size: 13px;
+    color: #475965;
 }
   
 .checkbox + label:before {
     content: '';
     margin-right: 8px;
     display: inline-block;
-    vertical-align: text-top;
-    width: 16px;
-    height: 16px;
-    background: white;
-    border: 1px solid #ddd;
+    vertical-align: bottom;
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border: 1px solid #c9c9c9;
+    border-radius: 4px;
 }
   
 .checkbox:checked + label:before {
@@ -1171,7 +1182,7 @@ textarea {
 .checkbox:checked + label:after {
     content: '';
     position: absolute;
-    left: 3px;
+    left: 5px;
     top: 9px;
     background: white;
     width: 2px;
@@ -1239,6 +1250,53 @@ textarea {
     border-bottom: 3px solid darkblue;
 }
 
+/**  O V E R R I D E */
 .alert {
     margin-bottom: 0 !important
 }
+
+.input-group {
+    box-shadow: -1px 0px 10px -5px rgba(0,0,0,0.75);
+}
+
+.form-control {
+    font-size: 13px !important;
+    border-left: 0px !important;
+    border-right: 0px !important;
+    border: 1px solid #c9c9c9 !important;
+    border-left: 0px !important;
+    height: 50px;
+}
+
+.form-control:focus {
+    box-shadow: inset 0 0 0;
+}
+
+.input-group {
+    border-radius: 8px;
+}
+
+.input-group-prepend, .input-group-append{
+    height: 50px;
+}
+
+.input-group-text {
+    border-radius: 8px;
+    border: 1px solid #c9c9c9;
+    color: #495057;
+    text-align: center;
+    white-space: nowrap;
+    background-color: white !important;
+    height: 50px;
+}
+
+.input-grop-text-left {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
+.input-grop-text-right {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+}
+
