@@ -1,7 +1,5 @@
 import React, { Component } from 'react'
 import Utils from '@pegasus/utils/utils'
-import OutlinedInput from '../../components/outlinedInput/OutlinedInput'
-import Picklist from '../../components/picklist/Picklist'
 import IconedInput from '../../components/iconedInput/IconedInput'
 import CheckBox from '../../components/checkbox/Checkbox'
 import SelectWalletAccount from './selectWalletAccounts/SelectWalletAccounts'
