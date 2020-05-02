@@ -32,7 +32,7 @@ const SelectWalletAccount = props => {
                     alt={`avatar logo ${account.name}`}
                   />
                 </div>
-                <div className="col-10 my-auto mx-auto">
+                <div className="col-7 my-auto mx-auto">
                   <div className="row">
                     <div className="col-12 text-xs text-gray font-weight-bold">
                       {account.name}
@@ -42,11 +42,18 @@ const SelectWalletAccount = props => {
                         Utils.checksummed(
                           account.data[props.network.type].latestAddress
                         ),
-                        10,
-                        19
+                        8,
+                        16
                       )}
                     </div>
                   </div>
+                </div>
+                <div className="col-3 my-auto text-gray font-weight-bold text-right text-md">
+                  {Utils.iotaReducer(
+                    account.data[props.network.type].balance
+                      ? account.data[props.network.type].balance
+                      : 0
+                  )}
                 </div>
               </div>
               <hr className="mt-2 mb-2" />

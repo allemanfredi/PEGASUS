@@ -5,12 +5,15 @@ import Picklist from '../../components/picklist/Picklist'
 import IconedInput from '../../components/iconedInput/IconedInput'
 import CheckBox from '../../components/checkbox/Checkbox'
 import SelectWalletAccount from './selectWalletAccounts/SelectWalletAccounts'
+import SendOptions from './sendOptions/SendOptions'
+
+const REQUESTED_REJECTED_BY_THE_USER = 'Request has been rejected by the user'
 
 class Send extends Component {
   constructor(props, context) {
     super(props, context)
 
-    this.clickTransfer = this.clickTransfer.bind(this)
+    this.send = this.send.bind(this)
     this.loadAccounts = this.loadAccounts.bind(this)
 
     this.state = {
@@ -43,7 +46,7 @@ class Send extends Component {
     this.setState({ accounts })
   }
 
-  async clickTransfer() {
+  async send(_data) {
     if (!Utils.isValidAddress(this.state.dstAddress)) {
       this.props.setNotification({
         type: 'danger',
@@ -55,10 +58,10 @@ class Send extends Component {
 
     const transfer = [
       {
-        tag: this.state.tag,
+        tag: 'PEGASUS',
         address: this.state.dstAddress,
-        value: this.state.value ? this.state.value : 0,
-        message: this.state.message
+        value: _data.value ? _data.value : 0,
+        message: _data.message
       }
     ]
 
@@ -67,13 +70,13 @@ class Send extends Component {
       args: [transfer]
     })
 
-    if (!success) {
+    if (!success && response !== REQUESTED_REJECTED_BY_THE_USER) {
       this.props.setNotification({
         type: 'danger',
         text: response,
         position: 'under-bar'
       })
-    } else {
+    } else if (success) {
       this.props.setNotification({
         type: 'success',
         text: 'Transfer was successful',
@@ -130,7 +133,13 @@ class Send extends Component {
               onSelect={address => this.setState({ dstAddress: address })}
             />
           ) : null
-        ) : null}
+        ) : (
+          <SendOptions
+            max={this.props.account.data[this.props.network.type].balance}
+            onSend={this.send}
+            onCancel={() => this.setState({ dstAddress: '' })}
+          />
+        )}
       </div>
     )
   }
