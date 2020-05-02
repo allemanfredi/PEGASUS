@@ -200,13 +200,11 @@ class WalletController extends EventEmitter {
     this.loginPasswordController.setPassword(null)
     this.setState(APP_STATE.WALLET_LOCKED)
     await this.stateStorageController.lock()
-    this.sessionController.deleteSession()
-    this.selectedAccount.clear()
 
-    if (this.selectedAccount) {
-      this.selectedAccount.clear()
-      this.selectedAccount = null
-    }
+    this.sessionController.deleteSession()
+
+    this.selectedAccount.clear()
+    this._removeAccountListeners()
 
     logger.log('(WalletController) Wallet succesfully locked')
     return true

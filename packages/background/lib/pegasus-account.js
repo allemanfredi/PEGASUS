@@ -230,6 +230,8 @@ class PegasusAccount extends EventEmitter3 {
    */
   clear() {
     clearInterval(this.interval)
+    this.seed = null
+    this._reset()
   }
 
   /**

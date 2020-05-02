@@ -49,7 +49,7 @@ class SessionController {
       return
     }
 
-    if (this.getInternalConnections() > 0){
+    if (this.getInternalConnections() > 0) {
       this.session = new Date().getTime()
       return
     }

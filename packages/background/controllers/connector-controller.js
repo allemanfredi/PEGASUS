@@ -184,7 +184,11 @@ class ConnectorController {
     }
 
     const account = this.walletController.getCurrentAccount()
-    this.walletController.emit('accountChanged', account.data.latestAddress)
+    const network = this.networkController.getCurrentNetwork()
+    this.walletController.emit(
+      'accountChanged',
+      account.data[network.type].latestAddress
+    )
 
     return true
   }

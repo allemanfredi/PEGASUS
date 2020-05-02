@@ -354,10 +354,11 @@ class PegasusEngine {
     })
 
     const account = this.walletController.getCurrentAccount()
+    const network = this.networkController.getCurrentNetwork()
     if (this.connectorController.isConnected(_url.origin) && account) {
       _inpageClient.push({
         action: 'accountChanged',
-        response: addChecksum(account.data.latestAddress)
+        response: addChecksum(account.data[network.type].latestAddress)
       })
     }
   }
@@ -406,7 +407,7 @@ class PegasusEngine {
   }
 
   /**
-   * 
+   *
    * Function to get the number of active internal connections
    */
   getInternalConnections() {

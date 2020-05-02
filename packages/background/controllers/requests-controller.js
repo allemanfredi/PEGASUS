@@ -8,7 +8,6 @@ class RequestsController {
   constructor(options) {
     const {
       connectorController,
-      walletController,
       popupController,
       networkController,
       mamController,
@@ -17,7 +16,6 @@ class RequestsController {
     } = options
 
     this.connectorController = connectorController
-    this.walletController = walletController
     this.popupController = popupController
     this.networkController = networkController
     this.mamController = mamController
@@ -347,9 +345,10 @@ class RequestsController {
     switch (method) {
       case 'getCurrentAccount': {
         const account = this.walletController.getCurrentAccount()
+        const network = this.networkController.getCurrentNetwork()
         return new Promise(resolve =>
           resolve({
-            response: addChecksum(account.data.latestAddress),
+            response: addChecksum(account.data[network.type].latestAddress),
             success: true
           })
         )
