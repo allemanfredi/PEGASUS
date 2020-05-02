@@ -554,6 +554,8 @@ class WalletController extends EventEmitter {
     accounts.selected = accounts.all[0]
     this.stateStorageController.set('accounts', accounts)
 
+    const network = this.networkController.getCurrentNetwork()
+
     this.selectedAccount.clear()
     this._removeAccountListeners()
     this.selectedAccount = new PegasusAccount({ provider: network.provider })
