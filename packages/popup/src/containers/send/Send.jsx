@@ -88,7 +88,7 @@ class Send extends Component {
         <div className="row">
           <div className="col-12 mt-2 mb-2">
             <IconedInput
-              placeholder="Address"
+              placeholder="Insert an IOTA address here..."
               prependIcon={
                 Utils.isValidAddress(this.state.dstAddress)
                   ? 'correct'
@@ -124,6 +124,7 @@ class Send extends Component {
         {!Utils.isValidAddress(this.state.dstAddress) ? (
           this.state.isTransferingBetweenWalletAccounts ? (
             <SelectWalletAccount
+              filter={this.state.dstAddress}
               accounts={this.state.accounts}
               network={this.props.network}
               onSelect={address => this.setState({ dstAddress: address })}
