@@ -112,7 +112,7 @@ class Network extends Component {
             <OutlinedInput
               value={this.state.port}
               onChange={e => this.setState({ port: e.target.value })}
-              label="Port"
+              label="port"
               id="inp-node-port"
             />
           </div>

@@ -39,6 +39,11 @@ export const RECEIVE_TEXT = {
       title: 'Buy',
       description: 'View all possible options to buy IOTA',
       networks: ['mainnet']
+    },
+    {
+      title: 'Faucet',
+      description: 'Get some IOTA from a Faucet',
+      networks: ['comnet']
     }
   ]
 }
@@ -66,6 +71,17 @@ export const BUY_INFO = {
       description:
         'Buy or sell IOTA anytime and from anywhere against Euro - from your e-banking (SEPA) or with Sofortüberweisung. Total fee from 0.1%',
       link: 'https://www.omoku.io/exchange/buy/'
+    }
+  ]
+}
+
+export const FAUCET_INFO = {
+  items: [
+    {
+      name: 'Einfachiota',
+      img: 'einfachiota.svg',
+      description: 'Get some IOTA Comnet Tokens with Einfachiota faucet',
+      link: 'https://faucet.comnet.einfachiota.de/#/?address='
     }
   ]
 }

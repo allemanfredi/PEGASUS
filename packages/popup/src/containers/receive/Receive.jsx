@@ -3,6 +3,7 @@ import AccountInfo from './accountInfo/AccountInfo'
 import Buy from './buy/Buy'
 import OptionsSelector from '../../components/optionsSelector/OptionsSelector'
 import { RECEIVE_TEXT } from '../../texts'
+import Faucet from './faucet/Faucet'
 
 class Receive extends React.Component {
   constructor(props, context) {
@@ -11,13 +12,13 @@ class Receive extends React.Component {
     this.goBack = this.goBack.bind(this)
 
     this.state = {
-      show: [false, false]
+      show: [false, false, false]
     }
   }
 
   goBack() {
     this.setState({
-      show: [false, false]
+      show: [false, false, false]
     })
     this.props.onChangeCanGoBack(true)
     this.props.changeNavbarText('Receive')
@@ -51,8 +52,13 @@ class Receive extends React.Component {
             setNotification={this.props.setNotification}
           />
         ) : null}
-        {this.state.show[1] ? (
+        {this.state.show[1] && this.props.network.type === 'mainnet' ? (
           <Buy account={this.props.account} network={this.props.network} />
+        ) : null}
+        {this.state.show[1] &&
+        (this.props.network.type === 'comnet' ||
+          this.props.network.type === 'devnet') ? (
+          <Faucet account={this.props.account} network={this.props.network} />
         ) : null}
       </div>
     )
