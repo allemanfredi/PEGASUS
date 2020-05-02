@@ -18,7 +18,9 @@ const RequestAccountInfo = props => {
       </div>
       <div className="col-4 text-center my-auto text-xs font-weight-bold">
         {Utils.showAddress(
-          Utils.checksummed(props.account.data[props.network.type].latestAddress),
+          Utils.checksummed(
+            props.account.data[props.network.type].latestAddress
+          ),
           4,
           6
         )}

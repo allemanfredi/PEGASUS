@@ -1,7 +1,7 @@
 import React from 'react'
 import Switch from 'react-switch'
 import ReactTooltip from 'react-tooltip'
-import Input from '../../../components/input/Input'
+import OutlinedInput from '../../../components/outlinedInput/OutlinedInput'
 
 class TransactionsSettings extends React.Component {
   constructor(props, context) {
@@ -90,7 +90,7 @@ class TransactionsSettings extends React.Component {
         </div>
         <div className="row mt-05">
           <div className="col-12">
-            <Input
+            <OutlinedInput
               value={this.state.settings.autoPromotion.time}
               onChange={e =>
                 this.handleChange({

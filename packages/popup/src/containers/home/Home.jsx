@@ -212,7 +212,8 @@ class Home extends Component {
     this.setState(() => {
       return {
         showHome: false,
-        showNetwork: true
+        showNetwork: true,
+        navbarText: 'Add Network'
       }
     })
   }

@@ -1,5 +1,5 @@
 import React from 'react'
-import Input from '../../../components/input/Input'
+import OutlinedInput from '../../../components/outlinedInput/OutlinedInput'
 import Utils from '@pegasus/utils/utils'
 import Url from 'url-parse'
 
@@ -92,7 +92,7 @@ class ConnectionsSettings extends React.Component {
         </div>
         <div className="row mt-1">
           <div className="col-12">
-            <Input
+            <OutlinedInput
               value={this.state.requestor}
               onChange={e => this.setState({ requestor: e.target.value })}
               label="website"

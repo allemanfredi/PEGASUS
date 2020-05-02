@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import Utils from '@pegasus/utils/utils'
 import { composeAPI } from '@iota/core'
-import Input from '../../components/input/Input'
+import OutlinedInput from '../../components/outlinedInput/OutlinedInput'
 
 class Network extends Component {
   constructor(props, context) {
@@ -51,15 +51,20 @@ class Network extends Component {
       return
     }
 
+    let link = 'https://thetangle.org/'
+    if (this.state.type === 'devnet') link = 'https://devnet.thetangle.org/'
+    if (this.state.type === 'comnet') link = 'https://comnet.thetangle.org/'
+
+    let difficulty = 14
+    if (this.state.type === 'devnet') difficulty = 9
+    if (this.state.type === 'comnet') difficulty = 10
+
     const network = {
       name: this.state.name,
       provider: `${this.state.url}:${this.state.port}`,
-      link:
-        this.state.type === 'mainnet'
-          ? 'https://thetangle.org/'
-          : 'https://devnet.thetangle.org/',
+      link,
       type: this.state.type,
-      difficulty: this.state.type === 'mainnet' ? 14 : 9,
+      difficulty,
       default: false
     }
 
@@ -72,9 +77,19 @@ class Network extends Component {
   render() {
     return (
       <div className="container">
-        <div className="row mt-4">
+        <div className="row mt-2">
+          <div className="col-12 text-center">
+            <img
+              src="./material/img/neural.png"
+              height="100"
+              width="100"
+              alt="neural logo"
+            />
+          </div>
+        </div>
+        <div className="row mt-3">
           <div className="col-12">
-            <Input
+            <OutlinedInput
               value={this.state.name}
               onChange={e => this.setState({ name: e.target.value })}
               label="name"
@@ -82,9 +97,9 @@ class Network extends Component {
             />
           </div>
         </div>
-        <div className="row mt-4">
+        <div className="row mt-2">
           <div className="col-12">
-            <Input
+            <OutlinedInput
               value={this.state.url}
               onChange={e => this.setState({ url: e.target.value })}
               label="URL"
@@ -92,9 +107,9 @@ class Network extends Component {
             />
           </div>
         </div>
-        <div className="row mt-4">
+        <div className="row mt-2">
           <div className="col-12">
-            <Input
+            <OutlinedInput
               value={this.state.port}
               onChange={e => this.setState({ port: e.target.value })}
               label="Port"
@@ -102,7 +117,7 @@ class Network extends Component {
             />
           </div>
         </div>
-        <div className="row mt-4">
+        <div className="row mt-2">
           <div className="col-4 text-left">
             <input
               onChange={() => this.setState({ type: 'mainnet' })}
@@ -117,19 +132,40 @@ class Network extends Component {
           </div>
           <div className="col-4 text-left">
             <input
-              onChange={() => this.setState({ type: 'testnet' })}
+              onChange={() => this.setState({ type: 'devnet' })}
               name="network"
-              id="testnet"
+              id="devnet"
               type="radio"
               value="Base"
             />
-            <label for="testnet" class="text-xxs">
+            <label for="devnet" class="text-xxs">
               Testnet
             </label>
           </div>
+          <div className="col-4 text-left">
+            <input
+              onChange={() => this.setState({ type: 'comnet' })}
+              name="network"
+              id="comnet"
+              type="radio"
+              value="Base"
+            />
+            <label for="comnet" class="text-xxs">
+              Comnet
+            </label>
+          </div>
         </div>
-        <div className="row mt-8">
-          <div className="col-12 text-center">
+        <div className="row mt-4">
+          <div className="col-6 text-center mx-auto">
+            <button
+              onClick={() => this.props.onBack()}
+              type="submit"
+              className="btn btn-border-blue text-bold btn-big"
+            >
+              Back
+            </button>
+          </div>
+          <div className="col-6 text-center mx-auto">
             <button
               disabled={
                 this.state.name === '' ||

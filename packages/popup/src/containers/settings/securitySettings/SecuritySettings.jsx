@@ -1,7 +1,7 @@
 import React from 'react'
 import Switch from 'react-switch'
 import ReactTooltip from 'react-tooltip'
-import Input from '../../../components/input/Input'
+import OutlinedInput from '../../../components/outlinedInput/OutlinedInput'
 
 class SecuritySettings extends React.Component {
   constructor(props, context) {
@@ -79,7 +79,7 @@ class SecuritySettings extends React.Component {
         </div>
         <div className="row mt-05">
           <div className="col-12">
-            <Input
+            <OutlinedInput
               value={this.state.time}
               onChange={e => {
                 this.setState({ time: parseInt(e.target.value) })

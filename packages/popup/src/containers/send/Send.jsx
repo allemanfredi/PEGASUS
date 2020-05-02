@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Utils from '@pegasus/utils/utils'
-import Input from '../../components/input/Input'
+import OutlinedInput from '../../components/outlinedInput/OutlinedInput'
 import Picklist from '../../components/picklist/Picklist'
 
 class Send extends Component {
@@ -129,14 +129,16 @@ class Send extends Component {
                     onSelect={index =>
                       this.setState({
                         dstAddress: Utils.checksummed(
-                          this.state.accounts[index].data[this.props.network.type].latestAddress
+                          this.state.accounts[index].data[
+                            this.props.network.type
+                          ].latestAddress
                         )
                       })
                     }
                   />
                 </div>
               ) : (
-                <Input
+                <OutlinedInput
                   value={this.state.dstAddress}
                   onChange={e => this.setState({ dstAddress: e.target.value })}
                   label="address"
@@ -163,7 +165,7 @@ class Send extends Component {
           </div>
           <div className="row mt-4">
             <div className="col-12">
-              <Input
+              <OutlinedInput
                 value={this.state.message}
                 onChange={e => this.setState({ message: e.target.value })}
                 label="message"
@@ -173,7 +175,7 @@ class Send extends Component {
           </div>
           <div className="row mt-3">
             <div className="col-6">
-              <Input
+              <OutlinedInput
                 value={this.state.tag}
                 onChange={e => this.setState({ tag: e.target.value })}
                 label="tag"
@@ -181,7 +183,7 @@ class Send extends Component {
               />
             </div>
             <div className="col-6">
-              <Input
+              <OutlinedInput
                 value={this.state.value}
                 onChange={e => this.setState({ value: e.target.value })}
                 label="value"
