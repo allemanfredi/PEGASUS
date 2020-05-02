@@ -208,11 +208,19 @@ class Send extends Component {
             className={
               this.state.value >
               this.props.account.data[this.props.network.type].balance
-                ? 'row mt-2'
-                : 'row mt-11'
+                ? 'row mt-4'
+                : 'row mt-13'
             }
           >
-            <div className="col-12 text-center">
+            <div className="col-6 text-center">
+              <button
+                onClick={() => this.props.onBack()}
+                className="btn btn-border-blue text-bold btn-big"
+              >
+                Cancel
+              </button>
+            </div>
+            <div className="col-6 text-center">
               <button
                 disabled={
                   this.state.dstAddress === '' ||
@@ -226,12 +234,6 @@ class Send extends Component {
               >
                 Send
               </button>
-            </div>
-          </div>
-          <div className="row mt-2">
-            <div className="col-12 text-center text-xxs text-blue">
-              Address is mandatory. if value is empty it's interpreted as 0 and
-              the wallet will generate a 0 value transaction
             </div>
           </div>
         </div>

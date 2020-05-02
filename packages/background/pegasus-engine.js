@@ -29,7 +29,7 @@ import { addChecksum } from '@iota/checksum'
 
 class PegasusEngine {
   constructor() {
-    this.activeStreams = {}
+    this.internalConnections = 0
 
     /* C O N T R O L L E R S */
     this.popupController = new PopupController()
@@ -80,7 +80,8 @@ class PegasusEngine {
       walletController: this.walletController,
       stateStorageController: this.stateStorageController,
       requestsController: this.requestsController,
-      loginPasswordController: this.loginPasswordController
+      loginPasswordController: this.loginPasswordController,
+      getInternalConnections: this.getInternalConnections.bind(this)
     })
 
     this.seedVaultController = new SeedVaultController({
@@ -116,8 +117,6 @@ class PegasusEngine {
         parseInt(settings.autoPromotion.time * 1000 * 60)
       )
     }
-
-    this.internalConnections = 0
   }
 
   /**
@@ -404,6 +403,14 @@ class PegasusEngine {
       if (!extensionizer.notifications.onClicked.hasListener(viewOnBrowser))
         extensionizer.notifications.onClicked.addListener(viewOnBrowser)
     }
+  }
+
+  /**
+   * 
+   * Function to get the number of active internal connections
+   */
+  getInternalConnections() {
+    return this.internalConnections
   }
 }
 

@@ -9,20 +9,21 @@ class SessionController {
       walletController,
       requestsController,
       stateStorageController,
-      loginPasswordController
+      loginPasswordController,
+      getInternalConnections
     } = options
 
     this.walletController = walletController
     this.stateStorageController = stateStorageController
     this.requestsController = requestsController
     this.loginPasswordController = loginPasswordController
+    this.getInternalConnections = getInternalConnections
 
     this.session = null
   }
 
   startSession() {
-    const date = new Date()
-    this.session = date.getTime()
+    this.session = new Date().getTime()
     this.sessionInterval = setInterval(
       () => this.checkSession(),
       SESSION_TIME_CHECK
@@ -45,6 +46,11 @@ class SessionController {
       currentState !== APP_STATE.WALLET_NOT_INITIALIZED
     ) {
       logger.log('(SessionController) Wallet locked')
+      return
+    }
+
+    if (this.getInternalConnections() > 0){
+      this.session = new Date().getTime()
       return
     }
 

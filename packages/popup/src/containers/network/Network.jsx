@@ -162,7 +162,7 @@ class Network extends Component {
               type="submit"
               className="btn btn-border-blue text-bold btn-big"
             >
-              Back
+              Cancel
             </button>
           </div>
           <div className="col-6 text-center mx-auto">

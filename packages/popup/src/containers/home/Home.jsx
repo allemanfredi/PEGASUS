@@ -209,6 +209,7 @@ class Home extends Component {
   }
 
   addCustomNetwork() {
+    this.onBack()
     this.setState(() => {
       return {
         showHome: false,
