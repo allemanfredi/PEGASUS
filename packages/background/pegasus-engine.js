@@ -96,7 +96,7 @@ class PegasusEngine {
     this.connectorController.setNetworkController(this.networkController)
     this.networkController.setWalletController(this.walletController)
     this.walletController.setSessionController(this.sessionController)
-    this.connectorController.setCustomizatorController(this.requestsController)
+    this.connectorController.setRequestsController(this.requestsController)
     /* E N D   C O N T R O L L E R S */
 
     const state = this.walletController.getState()

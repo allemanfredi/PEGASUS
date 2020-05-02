@@ -23,7 +23,7 @@ class ConnectorController {
     this.networkController = _networkController
   }
 
-  setCustomizatorController(_customizatorController) {
+  setRequestsController(_customizatorController) {
     this.requestsController = _customizatorController
   }
 
