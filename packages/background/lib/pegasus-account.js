@@ -33,7 +33,7 @@ class PegasusAccount extends EventEmitter3 {
    */
   async getData() {
     if (this.addresses.length === 0) {
-      await this.generateNewAddress(true)
+      await this._generateNewAddress(true)
       await this.fetch()
     }
 
@@ -69,6 +69,7 @@ class PegasusAccount extends EventEmitter3 {
     this.fetch(true)
     this.interval = setInterval(() => {
       this.fetch(true)
+      .catch(() => { return })
     }, 20000)
   }
 
@@ -84,7 +85,7 @@ class PegasusAccount extends EventEmitter3 {
   async fetch(_withEmit = false) {
     try {
       if (this.addresses.length === 0) {
-        await this.generateNewAddress(true)
+        await this._generateNewAddress(true)
       }
 
       const bundles = await this.api.getBundlesFromAddresses(
@@ -180,7 +181,7 @@ class PegasusAccount extends EventEmitter3 {
     this.transactions.push(bundleToWalletTransaction(_bundle, this.addresses))
 
     // NOTE: update address when a withdrawal is detected and confirmed
-    if (_bundle[0].persistence) await this.generateNewAddress()
+    if (_bundle[0].persistence) await this._generateNewAddress()
 
     if (_incoming) {
       if (_bundle[0].persistence) {
@@ -250,7 +251,7 @@ class PegasusAccount extends EventEmitter3 {
    *
    * @param {Boolean} _fromStart
    */
-  async generateNewAddress(_fromStart = false) {
+  async _generateNewAddress(_fromStart = false) {
     if (_fromStart) {
       const addresses = await this.api.getNewAddress(this.seed, {
         index: this.index,
