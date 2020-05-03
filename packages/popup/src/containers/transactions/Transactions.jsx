@@ -187,7 +187,7 @@ class Transactions extends Component {
                         <div className="text-sm text-bold">
                           {transaction.value > 0
                             ? '+' + Utils.iotaReducer(transaction.value)
-                            : Utils.iotaReducer(transaction.value)}
+                            : '-' + Utils.iotaReducer(-transaction.value)}
                         </div>
                       </div>
                     </div>
