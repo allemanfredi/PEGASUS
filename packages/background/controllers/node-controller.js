@@ -20,7 +20,14 @@ class NodeController {
     this.provider = null
   }
 
-  // NOTE following fx handles request from popup
+  /**
+   * 
+   * execute a request sent from the popup/tabs 
+   * which must be already passed through the connector
+   * 
+   * @param {String} _method 
+   * @param {Array} _args 
+   */
   execute(_method, _args) {
     switch (_method) {
       case 'transfer': {
@@ -35,6 +42,13 @@ class NodeController {
     }
   }
 
+  /**
+   * 
+   * Returns an instance of iota.js composeAPI
+   * result given a provider
+   * 
+   * @param {String} _provider 
+   */
   getNodeApi(_provider) {
     const network = this.networkController.getCurrentNetwork()
     if (!this.provider || network.provider !== this.provider) {
@@ -45,10 +59,13 @@ class NodeController {
     return this.api
   }
 
-  getAccountData(_seed) {
-    return this.getNodeApi().getAccountData(_seed, { start: 0, security: 2 })
-  }
-
+  /**
+   * 
+   * Generate and sing the trytes bundle
+   * 
+   * @param {Array} _transfers 
+   * @param {Array} _options 
+   */
   prepareTransfers(_transfers, _options = []) {
     const seed = this.walletController.getCurrentSeed()
 
@@ -64,6 +81,13 @@ class NodeController {
     return this.getNodeApi().prepareTransfers(seed, transfersCopy, _options)
   }
 
+  /**
+   * 
+   * Wrapper of prepareTransfer + sendTrytes
+   * 
+   * @param {Array} _transfers 
+   * @param {Array} _options 
+   */
   async transfer(_transfers, _options = []) {
     const network = this.networkController.getCurrentNetwork()
     const depth = 3
@@ -81,6 +105,9 @@ class NodeController {
     return bundle
   }
 
+  /**
+   * Promote current account transaction
+   */
   async promoteTransactions() {
     const network = this.networkController.getCurrentNetwork()
     const account = this.walletController.getCurrentAccount()
@@ -101,6 +128,13 @@ class NodeController {
     }
   }
 
+  /**
+   * 
+   * Enable transactions auto promotion 
+   * with an interval specified by _time
+   * 
+   * @param {Number} _time 
+   */
   enableTransactionsAutoPromotion(_time) {
     this.transactionsAutoPromotionHandler = setInterval(
       () => {
@@ -114,6 +148,9 @@ class NodeController {
     )
   }
 
+  /**
+   * Disable transaction auto promotion
+   */
   disableTransactionsAutoPromotion() {
     if (this.transactionsAutoPromotionHandler) {
       clearInterval(this.transactionsAutoPromotionHandler)

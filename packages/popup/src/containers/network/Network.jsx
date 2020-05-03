@@ -139,7 +139,7 @@ class Network extends Component {
               value="Base"
             />
             <label for="devnet" class="text-xxs">
-              Testnet
+              Devnet
             </label>
           </div>
           <div className="col-4 text-left">
