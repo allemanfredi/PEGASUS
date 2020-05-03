@@ -48,7 +48,7 @@ const SelectWalletAccount = props => {
                     </div>
                   </div>
                 </div>
-                <div className="col-4 my-auto text-gray font-weight-bold text-right text-md">
+                <div className="col-6 my-auto text-gray font-weight-bold text-right text-md">
                   {Utils.iotaReducer(
                     account.data[props.network.type].balance
                       ? account.data[props.network.type].balance
