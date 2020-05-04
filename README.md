@@ -72,6 +72,17 @@ In this way, if a user loses the access password (or if he forgets it), if he ha
 
 &nbsp;
 
+## :gear: Architecture
+
+
+<img src="./images/architecture.png" width="900" height="500"/>
+
+&nbsp;
+
+***
+
+&nbsp;
+
 ## :syringe: iota-js injection
 
 ```js
