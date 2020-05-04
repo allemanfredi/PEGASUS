@@ -3,12 +3,12 @@ import { trytesToAscii } from '@iota/converter'
 
 class MamController {
   constructor(options) {
-    const { networkController } = options
-    this.networkController = networkController
+    const { walletController } = options
+    this.walletController = walletController
   }
 
   fetch(_options) {
-    const network = this.networkController.getCurrentNetwork()
+    const network = this.walletController.getCurrentNetwork()
 
     const { root, mode, _sidekey, cb } = _options
 

@@ -9,35 +9,31 @@ class RequestsController {
     const {
       connectorController,
       popupController,
-      networkController,
+      walletController,
       mamController,
       stateStorageController,
+      nodeController,
       updateBadge
     } = options
 
     this.connectorController = connectorController
     this.popupController = popupController
-    this.networkController = networkController
+    this.walletController = walletController
     this.mamController = mamController
     this.stateStorageController = stateStorageController
+    this.nodeController = nodeController
 
     this.updateBadge = updateBadge
 
     this.requests = []
   }
 
-  setWalletController(_walletController) {
-    this.walletController = _walletController
-  }
-
-  setNetworkController(_networkController) {
-    this.networkController = _networkController
-  }
-
-  setNodeController(_networkController) {
-    this.nodeController = _networkController
-  }
-
+  /**
+   * 
+   * Set requests
+   * 
+   * @param {Array} _requests 
+   */
   setRequests(_requests) {
     this.requests = _requests
   }
@@ -345,7 +341,7 @@ class RequestsController {
     switch (method) {
       case 'getCurrentAccount': {
         const account = this.walletController.getCurrentAccount()
-        const network = this.networkController.getCurrentNetwork()
+        const network = this.walletController.getCurrentNetwork()
         return new Promise(resolve =>
           resolve({
             response: addChecksum(account.data[network.type].latestAddress),
@@ -354,7 +350,7 @@ class RequestsController {
         )
       }
       case 'getCurrentProvider': {
-        const network = this.networkController.getCurrentNetwork()
+        const network = this.walletController.getCurrentNetwork()
         return new Promise(resolve =>
           resolve({
             response: network.provider,

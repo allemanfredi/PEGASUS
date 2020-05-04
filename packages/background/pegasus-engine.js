@@ -3,7 +3,6 @@ import RequestsController from './controllers/requests-controller'
 import MamController from './controllers/mam-controller'
 import StateStorageController from './controllers/state-storage-controller'
 import ConnectorController from './controllers/connector-controller'
-import NetworkController from './controllers/network-controller'
 import WalletController from './controllers/wallet-controller'
 import SessionsController from './controllers/session-controller'
 import PopupController from './controllers/popup-controller'
@@ -35,10 +34,26 @@ class PegasusEngine {
     this.popupController = new PopupController()
     this.stateStorageController = new StateStorageController()
 
+    this.loginPasswordController = new LoginPasswordController({
+      stateStorageController: this.stateStorageController
+    })
+
+    this.walletController = new WalletController({
+      stateStorageController: this.stateStorageController,
+      loginPasswordController: this.loginPasswordController,
+      showNotification: this.showNotification.bind(this)
+    })
+
     this.connectorController = new ConnectorController({
       stateStorageController: this.stateStorageController,
       popupController: this.popupController,
-      updateBadge: this.updateBadge.bind(this)
+      walletController: this.walletController,
+      updateBadge: this.updateBadge.bind(this),
+    })
+
+    this.nodeController = new NodeController({
+      walletController: this.walletController,
+      stateStorageController: this.stateStorageController
     })
 
     this.requestsController = new RequestsController({
@@ -46,34 +61,13 @@ class PegasusEngine {
       connectorController: this.connectorController,
       mamController: this.mamController,
       stateStorageController: this.stateStorageController,
+      nodeController: this.nodeController,
+      walletController: this.walletController,
       updateBadge: this.updateBadge.bind(this)
     })
 
-    this.networkController = new NetworkController({
-      stateStorageController: this.stateStorageController,
-      requestsController: this.requestsController
-    })
-
     this.mamController = new MamController({
-      networkController: this.networkController
-    })
-
-    this.loginPasswordController = new LoginPasswordController({
-      stateStorageController: this.stateStorageController
-    })
-
-    this.walletController = new WalletController({
-      stateStorageController: this.stateStorageController,
-      networkController: this.networkController,
-      connectorController: this.connectorController,
-      loginPasswordController: this.loginPasswordController,
-      showNotification: this.showNotification.bind(this)
-    })
-
-    this.nodeController = new NodeController({
-      walletController: this.walletController,
-      networkController: this.networkController,
-      stateStorageController: this.stateStorageController
+      walletController: this.walletController
     })
 
     this.sessionController = new SessionsController({
@@ -89,12 +83,6 @@ class PegasusEngine {
       loginPasswordController: this.loginPasswordController
     })
 
-    this.requestsController.setWalletController(this.walletController)
-    this.requestsController.setNetworkController(this.networkController)
-    this.requestsController.setNodeController(this.nodeController)
-    this.connectorController.setWalletController(this.walletController)
-    this.connectorController.setNetworkController(this.networkController)
-    this.networkController.setWalletController(this.walletController)
     this.walletController.setSessionController(this.sessionController)
     this.connectorController.setRequestsController(this.requestsController)
     /* E N D   C O N T R O L L E R S */
@@ -107,9 +95,9 @@ class PegasusEngine {
       this.walletController.setState(APP_STATE.WALLET_LOCKED)
     }
 
-    const currentNetwork = this.networkController.getCurrentNetwork()
+    const currentNetwork = this.walletController.getCurrentNetwork()
     if (!currentNetwork)
-      this.networkController.setCurrentNetwork(options.networks[0])
+      this.walletController.setCurrentNetwork(options.networks[0])
 
     const settings = this.walletController.getSettings()
     if (settings.autoPromotion.enabled) {
@@ -255,6 +243,14 @@ class PegasusEngine {
       setSettings: (settings, cb) =>
         cb(this.walletController.setSettings(settings)),
       getSettings: cb => cb(this.walletController.getSettings()),
+      setCurrentNetwork: (network, cb) =>
+        cb(this.walletController.setCurrentNetwork(network)),
+      getCurrentNetwork: cb => cb(this.walletController.getCurrentNetwork()),
+      getAllNetworks: cb => cb(this.walletController.getAllNetworks()),
+      addNetwork: (network, cb) =>
+        cb(this.walletController.addNetwork(network)),
+      deleteCurrentNetwork: cb =>
+        cb(this.walletController.deleteCurrentNetwork()),
 
       // login password controller
       comparePassword: (password, cb) =>
@@ -264,16 +260,6 @@ class PegasusEngine {
       // session controller
       checkSession: cb => cb(this.sessionController.checkSession()),
       deleteSession: cb => cb(this.sessionController.deleteSession()),
-
-      // network controller
-      setCurrentNetwork: (network, cb) =>
-        cb(this.networkController.setCurrentNetwork(network)),
-      getCurrentNetwork: cb => cb(this.networkController.getCurrentNetwork()),
-      getAllNetworks: cb => cb(this.networkController.getAllNetworks()),
-      addNetwork: (network, cb) =>
-        cb(this.networkController.addNetwork(network)),
-      deleteCurrentNetwork: cb =>
-        cb(this.networkController.deleteCurrentNetwork()),
 
       // popup controller
       closePopup: cb => cb(this.popupController.closePopup()),
@@ -341,7 +327,7 @@ class PegasusEngine {
       }
     })
 
-    this.networkController.on('providerChanged', provider => {
+    this.walletController.on('providerChanged', provider => {
       _inpageClient.push({
         action: 'providerChanged',
         response: provider
@@ -350,11 +336,11 @@ class PegasusEngine {
 
     _inpageClient.push({
       action: 'providerChanged',
-      response: this.networkController.getCurrentNetwork().provider
+      response: this.walletController.getCurrentNetwork().provider
     })
 
     const account = this.walletController.getCurrentAccount()
-    const network = this.networkController.getCurrentNetwork()
+    const network = this.walletController.getCurrentNetwork()
     if (this.connectorController.isConnected(_url.origin) && account) {
       _inpageClient.push({
         action: 'accountChanged',

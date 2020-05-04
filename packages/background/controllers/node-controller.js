@@ -8,12 +8,10 @@ class NodeController {
   constructor(options) {
     const {
       walletController,
-      networkController,
       stateStorageController
     } = options
 
     this.walletController = walletController
-    this.networkController = networkController
     this.stateStorageController = stateStorageController
 
     this.transactionsAutoPromotionHandler = null
@@ -50,7 +48,7 @@ class NodeController {
    * @param {String} _provider 
    */
   getNodeApi(_provider) {
-    const network = this.networkController.getCurrentNetwork()
+    const network = this.walletController.getCurrentNetwork()
     if (!this.provider || network.provider !== this.provider) {
       this.provider = network.provider
       this.api = composeAPI({ provider: network.provider })
@@ -89,7 +87,7 @@ class NodeController {
    * @param {Array} _options 
    */
   async transfer(_transfers, _options = []) {
-    const network = this.networkController.getCurrentNetwork()
+    const network = this.walletController.getCurrentNetwork()
     const depth = 3
     const minWeightMagnitude = network.difficulty
 
@@ -109,7 +107,7 @@ class NodeController {
    * Promote current account transaction
    */
   async promoteTransactions() {
-    const network = this.networkController.getCurrentNetwork()
+    const network = this.walletController.getCurrentNetwork()
     const account = this.walletController.getCurrentAccount()
 
     const tails = account[network.type].data.transactions

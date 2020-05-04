@@ -4,23 +4,16 @@ import { normalizeConnectionRequests } from '../lib/connection-requests'
 
 class ConnectorController {
   constructor(configs) {
-    const { popupController, stateStorageController, updateBadge } = configs
+    const { popupController, stateStorageController, updateBadge, walletController } = configs
 
     this.popupController = popupController
     this.stateStorageController = stateStorageController
+    this.walletController = walletController
     this.connections = {}
     this.connectionRequests = {}
     this.websiteMetadata = {}
 
     this.updateBadge = updateBadge
-  }
-
-  setWalletController(_walletController) {
-    this.walletController = _walletController
-  }
-
-  setNetworkController(_networkController) {
-    this.networkController = _networkController
   }
 
   setRequestsController(_customizatorController) {
@@ -184,7 +177,7 @@ class ConnectorController {
     }
 
     const account = this.walletController.getCurrentAccount()
-    const network = this.networkController.getCurrentNetwork()
+    const network = this.walletController.getCurrentNetwork()
     this.walletController.emit(
       'accountChanged',
       account.data[network.type].latestAddress

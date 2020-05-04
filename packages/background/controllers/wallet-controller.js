@@ -13,20 +13,16 @@ class WalletController extends EventEmitter {
 
     const {
       stateStorageController,
-      networkController,
-      connectorController,
       loginPasswordController,
       showNotification
     } = options
 
     this.stateStorageController = stateStorageController
-    this.networkController = networkController
-    this.connectorController = connectorController
     this.loginPasswordController = loginPasswordController
     this.showNotification = showNotification
 
     this.selectedAccount = new PegasusAccount({
-      provider: this.networkController.getCurrentNetwork().provider
+      provider: this.getCurrentNetwork().provider
     })
 
     /**
@@ -36,10 +32,10 @@ class WalletController extends EventEmitter {
      *  in order to remove the previouse listeners and avoiding data overwritting
      */
 
-    this.networkController.on('providerChanged', _provider => {
+    this.on('providerChanged', _provider => {
       if (this.getState() > APP_STATE.WALLET_LOCKED) {
         const account = this.getCurrentAccount()
-        const network = this.networkController.getCurrentNetwork()
+        const network = this.getCurrentNetwork()
 
         this._removeAccountListeners()
         this.selectedAccount.clear()
@@ -94,7 +90,7 @@ class WalletController extends EventEmitter {
    * @param {String} _bundle
    */
   _handleAccountEvent(_msg, _bundle) {
-    const network = this.networkController.getCurrentNetwork()
+    const network = this.getCurrentNetwork()
     this.showNotification(
       _msg,
       Utils.showAddress(_bundle, 15, 12),
@@ -174,7 +170,7 @@ class WalletController extends EventEmitter {
       this.setState(APP_STATE.WALLET_UNLOCKED)
 
       const account = this.getCurrentAccount()
-      const network = this.networkController.getCurrentNetwork()
+      const network = this.getCurrentNetwork()
 
       this.selectedAccount = new PegasusAccount({ provider: network.provider })
       this._bindAccountListeners()
@@ -231,7 +227,7 @@ class WalletController extends EventEmitter {
       this.loginPasswordController.setPassword(_password)
 
       await this.stateStorageController.reset()
-      this.networkController.setCurrentNetwork(options.networks[0])
+      this.setCurrentNetwork(options.networks[0])
 
       const isAdded = await this.addAccount(_account, true)
       if (!isAdded) return false
@@ -328,7 +324,7 @@ class WalletController extends EventEmitter {
       if (alreadyExist) return false
 
       const seed = _account.seed.toString().replace(/,/g, '')
-      const network = this.networkController.getCurrentNetwork()
+      const network = this.getCurrentNetwork()
 
       // reset selectedAccount with new seed and current
       this._removeAccountListeners()
@@ -456,7 +452,7 @@ class WalletController extends EventEmitter {
     _account.seed = account.seed
     accounts.selected = _account
 
-    const network = this.networkController.getCurrentNetwork()
+    const network = this.getCurrentNetwork()
 
     this._removeAccountListeners()
     this.selectedAccount.clear()
@@ -481,7 +477,7 @@ class WalletController extends EventEmitter {
    */
   updateDataAccount(_data) {
     const accounts = this.stateStorageController.get('accounts')
-    const network = this.networkController.getCurrentNetwork()
+    const network = this.getCurrentNetwork()
 
     accounts.all.forEach(account => {
       if (account.id === accounts.selected.id)
@@ -552,7 +548,7 @@ class WalletController extends EventEmitter {
     accounts.selected = accounts.all[0]
     this.stateStorageController.set('accounts', accounts)
 
-    const network = this.networkController.getCurrentNetwork()
+    const network = this.getCurrentNetwork()
 
     this.selectedAccount.clear()
     this._removeAccountListeners()
@@ -599,6 +595,100 @@ class WalletController extends EventEmitter {
    */
   getSettings() {
     return this.stateStorageController.get('settings')
+  }
+
+  /**
+   * 
+   * Set the current network. This function is exposed (with API)
+   * 
+   * @param {Object} _network 
+   */
+  setCurrentNetwork(_network) {
+    try {
+      this.stateStorageController.set('selectedNetwork', _network)
+
+      this.emit('providerChanged', _network.provider)
+
+      logger.log(
+        `(WalletController) New selected provider ${_network.provider}`
+      )
+    } catch (err) {
+      throw new Error(err)
+    }
+  }
+
+  /**
+   * 
+   * Get current network
+   */
+  getCurrentNetwork() {
+    return this.stateStorageController.get('selectedNetwork')
+  }
+
+  /**
+   * 
+   * Get all networks
+   */
+  getAllNetworks() {
+    return this.stateStorageController.get('networks')
+  }
+
+  /**
+   * 
+   * Add a network. This function is exposed (with API)
+   * 
+   * @param {Object} _network 
+   */
+  addNetwork(_network) {
+    try {
+      const networks = this.stateStorageController.get('networks')
+
+      const alreadyExists = networks.find(
+        network => network.name === _network.name
+      )
+      if (alreadyExists) return false
+
+      networks.push(_network)
+      this.stateStorageController.set('networks', networks)
+
+      this.emit('providerChanged', _network.provider)
+
+      logger.log(`(WalletController) New provider added ${_network.provider}`)
+
+      return true
+    } catch (err) {
+      throw new Error(err)
+    }
+  }
+
+  /**
+   * 
+   * Delete the current network selected
+   */
+  deleteCurrentNetwork() {
+    try {
+      let networks = this.stateStorageController.get('networks')
+      const currentNetwork = this.stateStorageController.get('selectedNetwork')
+
+      networks = networks.filter(
+        network => currentNetwork.name !== network.name
+      )
+
+      const selectedNetwork = networks[0]
+
+      this.stateStorageController.set('networks', networks)
+      this.stateStorageController.set('selectedNetwork', selectedNetwork)
+
+      this.emit('providerChanged', selectedNetwork.provider)
+
+      logger.log(
+        `(WalletController) Deleted provider ${currentNetwork.provider}`
+      )
+
+      return currentNetwork
+    } catch (err) {
+      throw new Error(err)
+    }
   }
 }
 
