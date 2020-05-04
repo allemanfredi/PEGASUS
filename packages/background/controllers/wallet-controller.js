@@ -86,10 +86,10 @@ class WalletController extends EventEmitter {
       this._handleAccountEvent('Deposit has been included', _bundle)
     )
     this.selectedAccount.on('pendingWithdrawal', _bundle =>
-      this._handleAccountEvent('New Pending Deposit', _bundle)
+      this._handleAccountEvent('New Pending Withdrawal', _bundle)
     )
     this.selectedAccount.on('includedWithdrawal', _bundle =>
-      this._handleAccountEvent('New Pending Deposit', _bundle)
+      this._handleAccountEvent('Withdrawal has been included', _bundle)
     )
   }
 
