@@ -29,10 +29,10 @@ class RequestsController {
   }
 
   /**
-   * 
+   *
    * Set requests
-   * 
-   * @param {Array} _requests 
+   *
+   * @param {Array} _requests
    */
   setRequests(_requests) {
     this.requests = _requests

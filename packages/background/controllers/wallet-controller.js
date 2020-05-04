@@ -598,10 +598,10 @@ class WalletController extends EventEmitter {
   }
 
   /**
-   * 
+   *
    * Set the current network. This function is exposed (with API)
-   * 
-   * @param {Object} _network 
+   *
+   * @param {Object} _network
    */
   setCurrentNetwork(_network) {
     try {
@@ -618,7 +618,7 @@ class WalletController extends EventEmitter {
   }
 
   /**
-   * 
+   *
    * Get current network
    */
   getCurrentNetwork() {
@@ -626,7 +626,7 @@ class WalletController extends EventEmitter {
   }
 
   /**
-   * 
+   *
    * Get all networks
    */
   getAllNetworks() {
@@ -634,10 +634,10 @@ class WalletController extends EventEmitter {
   }
 
   /**
-   * 
+   *
    * Add a network. This function is exposed (with API)
-   * 
-   * @param {Object} _network 
+   *
+   * @param {Object} _network
    */
   addNetwork(_network) {
     try {
@@ -662,7 +662,7 @@ class WalletController extends EventEmitter {
   }
 
   /**
-   * 
+   *
    * Delete the current network selected
    */
   deleteCurrentNetwork() {

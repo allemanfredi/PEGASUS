@@ -6,10 +6,7 @@ import { APP_STATE } from '@pegasus/utils/states'
 
 class NodeController {
   constructor(options) {
-    const {
-      walletController,
-      stateStorageController
-    } = options
+    const { walletController, stateStorageController } = options
 
     this.walletController = walletController
     this.stateStorageController = stateStorageController
@@ -19,12 +16,12 @@ class NodeController {
   }
 
   /**
-   * 
-   * execute a request sent from the popup/tabs 
+   *
+   * execute a request sent from the popup/tabs
    * which must be already passed through the connector
-   * 
-   * @param {String} _method 
-   * @param {Array} _args 
+   *
+   * @param {String} _method
+   * @param {Array} _args
    */
   execute(_method, _args) {
     switch (_method) {
@@ -41,11 +38,11 @@ class NodeController {
   }
 
   /**
-   * 
+   *
    * Returns an instance of iota.js composeAPI
    * result given a provider
-   * 
-   * @param {String} _provider 
+   *
+   * @param {String} _provider
    */
   getNodeApi(_provider) {
     const network = this.walletController.getCurrentNetwork()
@@ -58,11 +55,11 @@ class NodeController {
   }
 
   /**
-   * 
+   *
    * Generate and sing the trytes bundle
-   * 
-   * @param {Array} _transfers 
-   * @param {Array} _options 
+   *
+   * @param {Array} _transfers
+   * @param {Array} _options
    */
   prepareTransfers(_transfers, _options = []) {
     const seed = this.walletController.getCurrentSeed()
@@ -80,11 +77,11 @@ class NodeController {
   }
 
   /**
-   * 
+   *
    * Wrapper of prepareTransfer + sendTrytes
-   * 
-   * @param {Array} _transfers 
-   * @param {Array} _options 
+   *
+   * @param {Array} _transfers
+   * @param {Array} _options
    */
   async transfer(_transfers, _options = []) {
     const network = this.walletController.getCurrentNetwork()
@@ -127,11 +124,11 @@ class NodeController {
   }
 
   /**
-   * 
-   * Enable transactions auto promotion 
+   *
+   * Enable transactions auto promotion
    * with an interval specified by _time
-   * 
-   * @param {Number} _time 
+   *
+   * @param {Number} _time
    */
   enableTransactionsAutoPromotion(_time) {
     this.transactionsAutoPromotionHandler = setInterval(

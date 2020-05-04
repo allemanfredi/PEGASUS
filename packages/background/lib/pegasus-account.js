@@ -68,8 +68,9 @@ class PegasusAccount extends EventEmitter3 {
 
     this.fetch(true)
     this.interval = setInterval(() => {
-      this.fetch(true)
-      .catch(() => { return })
+      this.fetch(true).catch(() => {
+        return
+      })
     }, 20000)
   }
 

@@ -48,7 +48,7 @@ class PegasusEngine {
       stateStorageController: this.stateStorageController,
       popupController: this.popupController,
       walletController: this.walletController,
-      updateBadge: this.updateBadge.bind(this),
+      updateBadge: this.updateBadge.bind(this)
     })
 
     this.nodeController = new NodeController({

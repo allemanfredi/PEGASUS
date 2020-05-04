@@ -4,7 +4,12 @@ import { normalizeConnectionRequests } from '../lib/connection-requests'
 
 class ConnectorController {
   constructor(configs) {
-    const { popupController, stateStorageController, updateBadge, walletController } = configs
+    const {
+      popupController,
+      stateStorageController,
+      updateBadge,
+      walletController
+    } = configs
 
     this.popupController = popupController
     this.stateStorageController = stateStorageController
