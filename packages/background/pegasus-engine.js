@@ -1,8 +1,7 @@
 import options from '@pegasus/utils/options'
-import RequestsController from './controllers/requests-controller'
+import PegasusWallController from './controllers/pegasus-wall-controller'
 import MamController from './controllers/mam-controller'
 import StateStorageController from './controllers/state-storage-controller'
-import ConnectorController from './controllers/connector-controller'
 import WalletController from './controllers/wallet-controller'
 import PopupController from './controllers/popup-controller'
 import SeedVaultController from './controllers/seed-vault-controller'
@@ -39,25 +38,9 @@ class PegasusEngine {
       getInternalConnections: this.getInternalConnections.bind(this)
     })
 
-    this.connectorController = new ConnectorController({
-      stateStorageController: this.stateStorageController,
-      popupController: this.popupController,
-      walletController: this.walletController,
-      updateBadge: this.updateBadge.bind(this)
-    })
-
     this.nodeController = new NodeController({
       walletController: this.walletController,
       stateStorageController: this.stateStorageController
-    })
-
-    this.requestsController = new RequestsController({
-      popupController: this.popupController,
-      connectorController: this.connectorController,
-      stateStorageController: this.stateStorageController,
-      nodeController: this.nodeController,
-      walletController: this.walletController,
-      updateBadge: this.updateBadge.bind(this)
     })
 
     this.mamController = new MamController({
@@ -68,8 +51,13 @@ class PegasusEngine {
       walletController: this.walletController
     })
 
-    this.connectorController.setRequestsController(this.requestsController)
-    this.walletController.setRequestsController(this.requestsController)
+    this.pegasusWallController = new PegasusWallController({
+      popupController: this.popupController,
+      stateStorageController: this.stateStorageController,
+      nodeController: this.nodeController,
+      walletController: this.walletController,
+      updateBadge: this.updateBadge.bind(this)
+    })
     /* E N D   C O N T R O L L E R S */
 
     const state = this.walletController.getState()
@@ -113,7 +101,7 @@ class PegasusEngine {
 
     pump(outStream, inpageClientStream, outStream, err => {
       // NOTE: if connection with this requestor is not enabled it will be removed when user closes the page
-      this.connectorController.removePendingConnection(url.origin)
+      this.pegasusWallController.removePendingConnection(url.origin)
       if (err) logger.error(err)
     })
 
@@ -121,7 +109,7 @@ class PegasusEngine {
     if (!isInternal)
       this.setupInpageClientDefaultValues(inpageClientStream, url)
 
-    this.connectorController.estabilishConnection(requestor)
+    this.pegasusWallController.estabilishConnection(requestor)
   }
 
   /**
@@ -166,22 +154,22 @@ class PegasusEngine {
       iota[_request.method] &&
       !FORBIDDEN_REQUESTS.includes(_request.method)
     ) {
-      this.requestsController.pushRequest(_request)
+      this.pegasusWallController.pushRequest(_request)
       return
     }
 
     if (ADDITIONAL_METHODS.includes(_request.method)) {
-      this.requestsController.pushRequest(_request)
+      this.pegasusWallController.pushRequest(_request)
       return
     }
 
     if (method === WEBSITE_METADATA) {
-      this.connectorController.attachMetadata(requestor.origin, args)
+      this.pegasusWallController.attachMetadata(requestor.origin, args)
       return
     }
 
     if (method === CONNECT) {
-      this.connectorController.connect(uuid, push, requestor)
+      this.pegasusWallController.connect(uuid, push, requestor)
       return
     }
 
@@ -245,28 +233,26 @@ class PegasusEngine {
       // popup controller
       closePopup: cb => cb(this.popupController.closePopup()),
 
-      // requests controller
-      getRequests: cb => cb(this.requestsController.getRequests()),
+      // pegasus wallet controller
+      getRequests: cb => cb(this.pegasusWallController.getRequests()),
       getExecutableRequests: cb =>
-        cb(this.requestsController.getExecutableRequests()),
+        cb(this.pegasusWallController.getExecutableRequests()),
       rejectRequest: (request, cb) =>
-        cb(this.requestsController.rejectRequest(request)),
-      rejectRequests: cb => cb(this.requestsController.rejectRequests()),
+        cb(this.pegasusWallController.rejectRequest(request)),
+      rejectRequests: cb => cb(this.pegasusWallController.rejectRequests()),
       confirmRequest: (request, cb) =>
-        nodeify(this.requestsController.confirmRequest(request), cb),
-
-      // connector controller
+        nodeify(this.pegasusWallController.confirmRequest(request), cb),
       completeConnectionRequest: (origin, tabId, cb) =>
-        cb(this.connectorController.completeConnectionRequest(origin, tabId)),
+        cb(this.pegasusWallController.completeConnectionRequest(origin, tabId)),
       rejectConnectionRequest: (origin, tabId, cb) =>
-        cb(this.connectorController.rejectConnectionRequest(origin, tabId)),
-      getConnections: cb => cb(this.connectorController.getConnections()),
+        cb(this.pegasusWallController.rejectConnectionRequest(origin, tabId)),
+      getConnections: cb => cb(this.pegasusWallController.getConnections()),
       removeConnection: (origin, cb) =>
-        cb(this.connectorController.removeConnection(origin)),
+        cb(this.pegasusWallController.removeConnection(origin)),
       addConnection: (connection, cb) =>
-        cb(this.connectorController.addConnection(connection)),
+        cb(this.pegasusWallController.addConnection(connection)),
       getConnectionRequests: cb =>
-        cb(this.connectorController.getConnectionRequests()),
+        cb(this.pegasusWallController.getConnectionRequests()),
 
       // seed vault controller
       createSeedVault: (loginPassword, encryptionPassword, cb) =>
@@ -300,7 +286,7 @@ class PegasusEngine {
    */
   setupInpageClientDefaultValues(_inpageClient, _url) {
     this.walletController.on('accountChanged', account => {
-      if (this.connectorController.isConnected(_url.origin)) {
+      if (this.pegasusWallController.isConnected(_url.origin)) {
         _inpageClient.push({
           action: 'accountChanged',
           response: addChecksum(account)
@@ -322,7 +308,7 @@ class PegasusEngine {
 
     const account = this.walletController.getCurrentAccount()
     const network = this.walletController.getCurrentNetwork()
-    if (this.connectorController.isConnected(_url.origin) && account) {
+    if (this.pegasusWallController.isConnected(_url.origin) && account) {
       _inpageClient.push({
         action: 'accountChanged',
         response: addChecksum(account.data[network.type].latestAddress)
@@ -335,8 +321,8 @@ class PegasusEngine {
    * function for updating the number of requests from tabs
    */
   updateBadge() {
-    const connectionRequests = this.connectorController.getConnectionRequests()
-    const requests = this.requestsController.getRequests()
+    const connectionRequests = this.pegasusWallController.getConnectionRequests()
+    const requests = this.pegasusWallController.getRequests()
 
     const sum = connectionRequests.length + requests.length
 

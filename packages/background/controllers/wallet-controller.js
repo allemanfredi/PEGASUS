@@ -24,6 +24,8 @@ class WalletController extends EventEmitter {
     this.getInternalConnections = getInternalConnections
 
     this.session = null
+    this.sessionInterval = null
+
     this.password = null
 
     this.selectedAccount = new PegasusAccount({
@@ -54,9 +56,9 @@ class WalletController extends EventEmitter {
     })
   }
 
-  setRequestsController(_requestController) {
+  /*setRequestsController(_requestController) {
     this.requestsController = _requestController
-  }
+  }*/
 
   /**
    *
@@ -731,7 +733,7 @@ class WalletController extends EventEmitter {
       return
     }
 
-    const requests = this.requestsController.getRequests()
+    /*const requests = this.requestsController.getRequests()
     const requestWitUserInteraction = requests.filter(
       request => request.needUserInteraction
     )
@@ -744,7 +746,7 @@ class WalletController extends EventEmitter {
       )
       this.setState(APP_STATE.WALLET_UNLOCKED)
       return
-    }
+    }*/
 
     if (this.session) {
       const date = new Date()
@@ -780,7 +782,7 @@ class WalletController extends EventEmitter {
    *
    * Derive the login password from _password and store
    * it. Store also only _password which will be used to derive
-   * another key used to encrypt the content of storge
+   * another key used to encrypt the content of the storage
    * with browser-protector (AES-GCM256 + argoin2id)
    *
    * @param {Password} _password
