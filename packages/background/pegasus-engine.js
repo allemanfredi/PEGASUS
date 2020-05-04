@@ -59,7 +59,6 @@ class PegasusEngine {
     this.requestsController = new RequestsController({
       popupController: this.popupController,
       connectorController: this.connectorController,
-      mamController: this.mamController,
       stateStorageController: this.stateStorageController,
       nodeController: this.nodeController,
       walletController: this.walletController,

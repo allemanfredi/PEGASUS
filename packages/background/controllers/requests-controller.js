@@ -10,7 +10,6 @@ class RequestsController {
       connectorController,
       popupController,
       walletController,
-      mamController,
       stateStorageController,
       nodeController,
       updateBadge
@@ -19,7 +18,6 @@ class RequestsController {
     this.connectorController = connectorController
     this.popupController = popupController
     this.walletController = walletController
-    this.mamController = mamController
     this.stateStorageController = stateStorageController
     this.nodeController = nodeController
 
