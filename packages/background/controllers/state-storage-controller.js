@@ -25,19 +25,35 @@ class StateStorageController extends Store {
     this._init()
   }
 
+  /**
+   * 
+   * Load data from the storage (internal function)
+   */
   async _init() {
     const data = await this._loadFromStorage()
     if (data) this.setState(data)
   }
 
+  /**
+   * 
+   * Function used to check if the wallet is ready
+   */
   isReady() {
     return Boolean(this.encryptionkey && this.unlocked)
   }
 
+  /**
+   * 
+   * Function to check if the wallet is initialized
+   */
   isInitialized() {
     return this.state.accounts.length > 0 // no account = no usage
   }
 
+  /**
+   * 
+   * Write data to the storage with the current encryption key and delete it
+   */
   async lock() {
     if (!this.unlocked) {
       logger.log('(StateStorageController) Protected data already locked')
@@ -63,12 +79,24 @@ class StateStorageController extends Store {
     logger.log('(StateStorageController) Protected data succesfully locked')
   }
 
+  /**
+   * 
+   * Init the global state by loading data from the storage
+   * decrypting them with _encryptionKey
+   */
   init(_encryptionKey) {
     this.encryptionkey = _encryptionKey
     this.unlocked = true
     logger.log('(StateStorageController) Initialized succesfully')
   }
 
+  /**
+   * 
+   * Decrypt the data for example when a user log in
+   * into the wallet
+   * 
+   * @param {String} _encryptionKey 
+   */
   async unlock(_encryptionKey) {
     if (this.unlocked) {
       logger.log('(StateStorageController) Protected data already unlocked')
@@ -89,10 +117,23 @@ class StateStorageController extends Store {
     })
   }
 
+  /**
+   * 
+   * Get the corresponding value to _key
+   * 
+   * @param {String} _key 
+   */
   get(_key) {
     return this.state[_key]
   }
 
+  /**
+   * 
+   * Set _data corresponding to _key
+   * 
+   * @param {Key} _key 
+   * @param {Any} _data 
+   */
   set(_key, _data) {
     const state = this.state
 
@@ -101,6 +142,10 @@ class StateStorageController extends Store {
     this.setState(state)
   }
 
+  /**
+   * 
+   * Reset the state and write it into the storage
+   */
   async reset() {
     this.setState({
       ...this.state,
@@ -110,6 +155,10 @@ class StateStorageController extends Store {
     await this._writeToStorage()
   }
 
+  /**
+   * 
+   * Internal function used to read all data from the storage
+   */
   async _loadFromStorage() {
     const storedData = await this.storage.get()
     if (!storedData) return null
@@ -138,6 +187,10 @@ class StateStorageController extends Store {
     return savedState
   }
 
+  /**
+   * 
+   * Internal function user to write all data into the storage
+   */
   async _writeToStorage() {
     await this.storage.set({ PEGASUS_DATA: this.state.data })
     await this.storage.set({ PEGASUS_HPSW: this.state.hpsw })

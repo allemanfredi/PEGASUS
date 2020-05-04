@@ -4,7 +4,9 @@ import logger from '@pegasus/utils/logger'
 import options from '@pegasus/utils/options'
 import { EventEmitter } from 'eventemitter3'
 import PegasusAccount from '../lib/pegasus-account'
-import { NETWORK_TYPES } from '../lib/constants'
+import argon2 from 'argon2-browser'
+import crypto from 'crypto'
+import { NETWORK_TYPES, SESSION_TIME_CHECK } from '../lib/constants'
 import { removeSeed } from '../lib/removers'
 
 class WalletController extends EventEmitter {
@@ -13,13 +15,16 @@ class WalletController extends EventEmitter {
 
     const {
       stateStorageController,
-      loginPasswordController,
-      showNotification
+      showNotification,
+      getInternalConnections
     } = options
 
     this.stateStorageController = stateStorageController
-    this.loginPasswordController = loginPasswordController
     this.showNotification = showNotification
+    this.getInternalConnections = getInternalConnections
+
+    this.session = null
+    this.password = null
 
     this.selectedAccount = new PegasusAccount({
       provider: this.getCurrentNetwork().provider
@@ -47,6 +52,10 @@ class WalletController extends EventEmitter {
         this.selectedAccount.startFetch()
       }
     })
+  }
+
+  setRequestsController(_requestController) {
+    this.requestsController = _requestController
   }
 
   /**
@@ -98,10 +107,6 @@ class WalletController extends EventEmitter {
     )
   }
 
-  setSessionController(_sessionController) {
-    this.sessionController = _sessionController
-  }
-
   /**
    *
    * Function used to check if pegasus
@@ -126,7 +131,7 @@ class WalletController extends EventEmitter {
     try {
       this.stateStorageController.init(_password)
 
-      await this.loginPasswordController.storePassword(_password)
+      await this.storePassword(_password)
 
       await this.stateStorageController.unlock(_password)
 
@@ -139,7 +144,7 @@ class WalletController extends EventEmitter {
       await this.stateStorageController.lock()
       await this.stateStorageController.unlock(_password)
 
-      this.sessionController.startSession()
+      this.startSession()
 
       this.setState(APP_STATE.WALLET_UNLOCKED)
 
@@ -160,10 +165,10 @@ class WalletController extends EventEmitter {
    * @param {String} _password
    */
   async unlockWallet(_password) {
-    if (await this.loginPasswordController.comparePassword(_password)) {
-      this.sessionController.startSession()
+    if (await this.comparePassword(_password)) {
+      this.startSession()
 
-      this.loginPasswordController.setPassword(_password)
+      this.password = _password
 
       await this.stateStorageController.unlock(_password)
 
@@ -193,11 +198,11 @@ class WalletController extends EventEmitter {
    * Lock the wallet
    */
   async lockWallet() {
-    this.loginPasswordController.setPassword(null)
+    this.password = null
     this.setState(APP_STATE.WALLET_LOCKED)
     await this.stateStorageController.lock()
 
-    this.sessionController.deleteSession()
+    this.deleteSession()
 
     this.selectedAccount.clear()
     this._removeAccountListeners()
@@ -217,14 +222,14 @@ class WalletController extends EventEmitter {
    * @param {Object} _account
    */
   async restoreWallet(_password, _account) {
-    if (!(await this.loginPasswordController.comparePassword(_password)))
+    if (!(await this.comparePassword(_password)))
       return false
 
     try {
       this.setState(APP_STATE.WALLET_RESTORE)
 
-      this.sessionController.startSession()
-      this.loginPasswordController.setPassword(_password)
+      this.startSession()
+      this.password = _password
 
       await this.stateStorageController.reset()
       this.setCurrentNetwork(options.networks[0])
@@ -280,7 +285,7 @@ class WalletController extends EventEmitter {
    * @param {String} _password
    */
   async unlockSeed(_password) {
-    if (await this.loginPasswordController.comparePassword(_password))
+    if (await this.comparePassword(_password))
       return this.getCurrentSeed()
     return false
   }
@@ -405,9 +410,8 @@ class WalletController extends EventEmitter {
       this.emit('accountChanged', accountToAdd.data[network.type].latestAddress)
 
       // in order to write on storage the first time
-      const password = this.loginPasswordController.getPassword()
       await this.stateStorageController.lock()
-      await this.stateStorageController.unlock(password)
+      await this.stateStorageController.unlock(this.password)
 
       this._bindAccountListeners()
       this.selectedAccount.startFetch()
@@ -689,6 +693,144 @@ class WalletController extends EventEmitter {
     } catch (err) {
       throw new Error(err)
     }
+  }
+
+  /**
+   * 
+   * Start a session
+   */
+  startSession() {
+    this.session = new Date().getTime()
+    this.sessionInterval = setInterval(
+      () => this.checkSession(),
+      SESSION_TIME_CHECK
+    )
+  }
+
+  /**
+   * 
+   * Check the correctness of the current session
+   */
+  checkSession() {
+    const currentState = this.getState()
+
+    if (!this.password && !this.isWalletSetup()) {
+      this.setState(APP_STATE.WALLET_NOT_INITIALIZED)
+      return
+    }
+
+    if (
+      !this.password &&
+      currentState !== APP_STATE.WALLET_RESTORE &&
+      currentState !== APP_STATE.WALLET_NOT_INITIALIZED
+    ) {
+      logger.log('(WalletController) Wallet locked')
+      return
+    }
+
+    if (this.getInternalConnections() > 0) {
+      this.session = new Date().getTime()
+      return
+    }
+
+    const requests = this.requestsController.getRequests()
+    const requestWitUserInteraction = requests.filter(
+      request => request.needUserInteraction
+    )
+    if (
+      requestWitUserInteraction.length === 0 &&
+      currentState === APP_STATE.WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION
+    ) {
+      logger.log(
+        '(WalletController) found state = WALLET_REQUEST_IN_QUEUE_WITH_USER_INTERACTION with requests = 0 -> set to WALLET_UNLOCKED'
+      )
+      this.setState(APP_STATE.WALLET_UNLOCKED)
+      return
+    }
+
+    if (this.session) {
+      const date = new Date()
+      const currentTime = date.getTime()
+
+      const { autoLocking } = this.getSettings()
+
+      // NOTE: if auto locking is enabled check the session
+      if (autoLocking.enabled) {
+        if (currentTime - this.session > autoLocking.time * 60 * 1000) {
+          if (currentState >= APP_STATE.WALLET_UNLOCKED) {
+            this.lockWallet()
+            logger.log(
+              '(WalletController) Session expired... Locking the wallet'
+            )
+          }
+          return
+        }
+      }
+    }
+  }
+
+  /**
+   * 
+   * Delete current session
+   */
+  deleteSession() {
+    this.session = null
+    clearInterval(this.sessionInterval)
+  }
+
+
+  /**
+   * 
+   * Derive the login password from _password and store
+   * it. Store also only _password which will be used to derive
+   * another key used to encrypt the content of storge 
+   * with browser-protector (AES-GCM256 + argoin2id)
+   * 
+   * @param {Password} _password 
+   */
+  async storePassword(_password) {
+    const result = await argon2.hash({
+      pass: _password,
+      salt: crypto.randomBytes(16),
+      time: 9,
+      mem: 16384,
+      hashLen: 32,
+      parallelism: 2,
+      type: argon2.ArgonType.Argon2id,
+      distPath: ''
+    })
+
+    this.password = _password
+    this.stateStorageController.set('hpsw', result.encoded, true)
+  }
+
+  /**
+   * 
+   * Check if the login password is correct by checking the hash
+   * previously stored
+   * 
+   * @param {String} _password 
+   */
+  comparePassword(_password) {
+    const encoded = this.stateStorageController.get('hpsw')
+
+    return new Promise(resolve => {
+      argon2
+        .verify({
+          pass: _password,
+          encoded
+        })
+        .then(() => resolve(true))
+        .catch(() => resolve(false))
+    })
+  }
+
+  /**
+   * 
+   * Check if the wallet is unlocked
+   */
+  isUnlocked() {
+    return Boolean(this.password)
   }
 }
 

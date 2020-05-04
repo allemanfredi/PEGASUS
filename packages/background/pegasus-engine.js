@@ -4,10 +4,8 @@ import MamController from './controllers/mam-controller'
 import StateStorageController from './controllers/state-storage-controller'
 import ConnectorController from './controllers/connector-controller'
 import WalletController from './controllers/wallet-controller'
-import SessionsController from './controllers/session-controller'
 import PopupController from './controllers/popup-controller'
 import SeedVaultController from './controllers/seed-vault-controller'
-import LoginPasswordController from './controllers/login-password-controller'
 import NodeController from './controllers/node-controller'
 import { APP_STATE } from '@pegasus/utils/states'
 import logger from '@pegasus/utils/logger'
@@ -34,14 +32,11 @@ class PegasusEngine {
     this.popupController = new PopupController()
     this.stateStorageController = new StateStorageController()
 
-    this.loginPasswordController = new LoginPasswordController({
-      stateStorageController: this.stateStorageController
-    })
-
     this.walletController = new WalletController({
       stateStorageController: this.stateStorageController,
-      loginPasswordController: this.loginPasswordController,
-      showNotification: this.showNotification.bind(this)
+      walletController: this.walletController,
+      showNotification: this.showNotification.bind(this),
+      getInternalConnections: this.getInternalConnections.bind(this)
     })
 
     this.connectorController = new ConnectorController({
@@ -69,21 +64,12 @@ class PegasusEngine {
       walletController: this.walletController
     })
 
-    this.sessionController = new SessionsController({
-      walletController: this.walletController,
-      stateStorageController: this.stateStorageController,
-      requestsController: this.requestsController,
-      loginPasswordController: this.loginPasswordController,
-      getInternalConnections: this.getInternalConnections.bind(this)
-    })
-
     this.seedVaultController = new SeedVaultController({
-      walletController: this.walletController,
-      loginPasswordController: this.loginPasswordController
+      walletController: this.walletController
     })
 
-    this.walletController.setSessionController(this.sessionController)
     this.connectorController.setRequestsController(this.requestsController)
+    this.walletController.setRequestsController(this.requestsController)
     /* E N D   C O N T R O L L E R S */
 
     const state = this.walletController.getState()
@@ -250,15 +236,11 @@ class PegasusEngine {
         cb(this.walletController.addNetwork(network)),
       deleteCurrentNetwork: cb =>
         cb(this.walletController.deleteCurrentNetwork()),
-
-      // login password controller
+      checkSession: cb => cb(this.walletController.checkSession()),
+        deleteSession: cb => cb(this.walletController.deleteSession()),
       comparePassword: (password, cb) =>
-        nodeify(this.loginPasswordController.comparePassword(password), cb),
-      isUnlocked: cb => cb(this.loginPasswordController.isUnlocked()),
-
-      // session controller
-      checkSession: cb => cb(this.sessionController.checkSession()),
-      deleteSession: cb => cb(this.sessionController.deleteSession()),
+        nodeify(this.walletController.comparePassword(password), cb),
+      isUnlocked: cb => cb(this.walletController.isUnlocked()),  
 
       // popup controller
       closePopup: cb => cb(this.popupController.closePopup()),

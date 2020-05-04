@@ -8,6 +8,10 @@ class PopupController {
     this.mutex = new Mutex()
   }
 
+  /**
+   * 
+   * Handle popup opening
+   */
   async openPopup() {
     const release = await this.mutex.acquire()
 
@@ -40,6 +44,10 @@ class PopupController {
     )
   }
 
+  /**
+   * 
+   * Close the current opened popup
+   */
   closePopup() {
     if (!this.popup) return
 
@@ -47,6 +55,10 @@ class PopupController {
     this.popup = null
   }
 
+  /**
+   * 
+   * Trigger popup
+   */
   updatePopup() {
     return new Promise(resolve => {
       extensionizer.windows.update(this.popup.id, { focused: true }, window => {

@@ -5,14 +5,13 @@ import logger from '@pegasus/utils/logger'
 
 class SeedVaultController {
   constructor(configs) {
-    const { walletController, loginPasswordController } = configs
+    const { walletController } = configs
 
     this.walletController = walletController
-    this.loginPasswordController = loginPasswordController
   }
 
   async createSeedVault(_loginPassword, _encryptionPassword) {
-    if (!this.loginPasswordController.comparePassword(_loginPassword))
+    if (!this.walletController.comparePassword(_loginPassword))
       return false
 
     const account = this.walletController.getCurrentAccount()
