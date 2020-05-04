@@ -237,10 +237,10 @@ class PegasusEngine {
       deleteCurrentNetwork: cb =>
         cb(this.walletController.deleteCurrentNetwork()),
       checkSession: cb => cb(this.walletController.checkSession()),
-        deleteSession: cb => cb(this.walletController.deleteSession()),
+      deleteSession: cb => cb(this.walletController.deleteSession()),
       comparePassword: (password, cb) =>
         nodeify(this.walletController.comparePassword(password), cb),
-      isUnlocked: cb => cb(this.walletController.isUnlocked()),  
+      isUnlocked: cb => cb(this.walletController.isUnlocked()),
 
       // popup controller
       closePopup: cb => cb(this.popupController.closePopup()),

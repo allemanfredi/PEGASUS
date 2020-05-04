@@ -11,8 +11,7 @@ class SeedVaultController {
   }
 
   async createSeedVault(_loginPassword, _encryptionPassword) {
-    if (!this.walletController.comparePassword(_loginPassword))
-      return false
+    if (!this.walletController.comparePassword(_loginPassword)) return false
 
     const account = this.walletController.getCurrentAccount()
     const seed = account.seed

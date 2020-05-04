@@ -9,7 +9,7 @@ class PopupController {
   }
 
   /**
-   * 
+   *
    * Handle popup opening
    */
   async openPopup() {
@@ -45,7 +45,7 @@ class PopupController {
   }
 
   /**
-   * 
+   *
    * Close the current opened popup
    */
   closePopup() {
@@ -56,7 +56,7 @@ class PopupController {
   }
 
   /**
-   * 
+   *
    * Trigger popup
    */
   updatePopup() {

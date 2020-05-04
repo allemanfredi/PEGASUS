@@ -26,7 +26,7 @@ class StateStorageController extends Store {
   }
 
   /**
-   * 
+   *
    * Load data from the storage (internal function)
    */
   async _init() {
@@ -35,7 +35,7 @@ class StateStorageController extends Store {
   }
 
   /**
-   * 
+   *
    * Function used to check if the wallet is ready
    */
   isReady() {
@@ -43,7 +43,7 @@ class StateStorageController extends Store {
   }
 
   /**
-   * 
+   *
    * Function to check if the wallet is initialized
    */
   isInitialized() {
@@ -51,7 +51,7 @@ class StateStorageController extends Store {
   }
 
   /**
-   * 
+   *
    * Write data to the storage with the current encryption key and delete it
    */
   async lock() {
@@ -80,7 +80,7 @@ class StateStorageController extends Store {
   }
 
   /**
-   * 
+   *
    * Init the global state by loading data from the storage
    * decrypting them with _encryptionKey
    */
@@ -91,11 +91,11 @@ class StateStorageController extends Store {
   }
 
   /**
-   * 
+   *
    * Decrypt the data for example when a user log in
    * into the wallet
-   * 
-   * @param {String} _encryptionKey 
+   *
+   * @param {String} _encryptionKey
    */
   async unlock(_encryptionKey) {
     if (this.unlocked) {
@@ -118,21 +118,21 @@ class StateStorageController extends Store {
   }
 
   /**
-   * 
+   *
    * Get the corresponding value to _key
-   * 
-   * @param {String} _key 
+   *
+   * @param {String} _key
    */
   get(_key) {
     return this.state[_key]
   }
 
   /**
-   * 
+   *
    * Set _data corresponding to _key
-   * 
-   * @param {Key} _key 
-   * @param {Any} _data 
+   *
+   * @param {Key} _key
+   * @param {Any} _data
    */
   set(_key, _data) {
     const state = this.state
@@ -143,7 +143,7 @@ class StateStorageController extends Store {
   }
 
   /**
-   * 
+   *
    * Reset the state and write it into the storage
    */
   async reset() {
@@ -156,7 +156,7 @@ class StateStorageController extends Store {
   }
 
   /**
-   * 
+   *
    * Internal function used to read all data from the storage
    */
   async _loadFromStorage() {
@@ -188,7 +188,7 @@ class StateStorageController extends Store {
   }
 
   /**
-   * 
+   *
    * Internal function user to write all data into the storage
    */
   async _writeToStorage() {

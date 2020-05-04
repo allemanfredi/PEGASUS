@@ -1,5 +1,3 @@
-
-
 class LoginPasswordController {
   constructor(configs) {
     const { stateStorageController } = configs
@@ -8,8 +6,6 @@ class LoginPasswordController {
 
     this.password = null
   }
-
-  
 
   isUnlocked() {
     return Boolean(this.password)

@@ -222,8 +222,7 @@ class WalletController extends EventEmitter {
    * @param {Object} _account
    */
   async restoreWallet(_password, _account) {
-    if (!(await this.comparePassword(_password)))
-      return false
+    if (!(await this.comparePassword(_password))) return false
 
     try {
       this.setState(APP_STATE.WALLET_RESTORE)
@@ -285,8 +284,7 @@ class WalletController extends EventEmitter {
    * @param {String} _password
    */
   async unlockSeed(_password) {
-    if (await this.comparePassword(_password))
-      return this.getCurrentSeed()
+    if (await this.comparePassword(_password)) return this.getCurrentSeed()
     return false
   }
 
@@ -696,7 +694,7 @@ class WalletController extends EventEmitter {
   }
 
   /**
-   * 
+   *
    * Start a session
    */
   startSession() {
@@ -708,7 +706,7 @@ class WalletController extends EventEmitter {
   }
 
   /**
-   * 
+   *
    * Check the correctness of the current session
    */
   checkSession() {
@@ -770,7 +768,7 @@ class WalletController extends EventEmitter {
   }
 
   /**
-   * 
+   *
    * Delete current session
    */
   deleteSession() {
@@ -778,15 +776,14 @@ class WalletController extends EventEmitter {
     clearInterval(this.sessionInterval)
   }
 
-
   /**
-   * 
+   *
    * Derive the login password from _password and store
    * it. Store also only _password which will be used to derive
-   * another key used to encrypt the content of storge 
+   * another key used to encrypt the content of storge
    * with browser-protector (AES-GCM256 + argoin2id)
-   * 
-   * @param {Password} _password 
+   *
+   * @param {Password} _password
    */
   async storePassword(_password) {
     const result = await argon2.hash({
@@ -805,11 +802,11 @@ class WalletController extends EventEmitter {
   }
 
   /**
-   * 
+   *
    * Check if the login password is correct by checking the hash
    * previously stored
-   * 
-   * @param {String} _password 
+   *
+   * @param {String} _password
    */
   comparePassword(_password) {
     const encoded = this.stateStorageController.get('hpsw')
@@ -826,7 +823,7 @@ class WalletController extends EventEmitter {
   }
 
   /**
-   * 
+   *
    * Check if the wallet is unlocked
    */
   isUnlocked() {
