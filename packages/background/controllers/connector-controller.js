@@ -21,8 +21,8 @@ class ConnectorController {
     this.updateBadge = updateBadge
   }
 
-  setRequestsController(_customizatorController) {
-    this.requestsController = _customizatorController
+  setRequestsController(_requestsController) {
+    this.requestsController = _requestsController
   }
 
   /**
