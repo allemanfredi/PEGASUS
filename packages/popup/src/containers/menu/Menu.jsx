@@ -16,7 +16,6 @@ class Settings extends Component {
       showEdit: false,
       editedName: this.props.account.name,
       isDisappearing: false,
-      showFullAddress: false,
       showChangeAvatar: false
     }
   }
@@ -136,33 +135,16 @@ class Settings extends Component {
                         : ' break-text')
                     }
                   >
-                    {!this.state.showFullAddress
-                      ? Utils.showAddress(
-                          Utils.checksummed(
-                            this.props.account.data[this.props.network.type]
-                              .latestAddress
-                          ),
-                          6,
-                          8
-                        )
-                      : Utils.checksummed(
-                          this.props.account.data[this.props.network.type]
-                            .latestAddress
-                        )}
-                  </div>
-                </div>
-                <div className="row mt-05">
-                  <div
-                    onClick={() =>
-                      this.setState({
-                        showFullAddress: !this.state.showFullAddress
-                      })
-                    }
-                    className="col-12 text-center text-blue text-xxs cursor-pointer"
-                  >
-                    {!this.state.showFullAddress
-                      ? 'Show Full Address'
-                      : 'Hide Full Address'}
+                  {
+                    Utils.showAddress(
+                      Utils.checksummed(
+                        this.props.account.data[this.props.network.type]
+                          .latestAddress
+                      ),
+                      6,
+                      8
+                    )
+                  }
                   </div>
                 </div>
                 <div className="row mt-2">
@@ -184,7 +166,7 @@ class Settings extends Component {
                   </div>
                 </div>
               </li>
-              <hr className="mt-1 mb-1" />
+              <hr className="mt-8 mb-1" />
               <li className="sidebar-brand mt-1 mb-1 cursor-pointer">
                 <div className="row">
                   <div className="col-2 text-center">
@@ -237,6 +219,7 @@ class Settings extends Component {
                   </div>
                 </div>
               </li>
+              <hr className="mt-1 mb-1" />
             </ul>
           </nav>
         </div>
