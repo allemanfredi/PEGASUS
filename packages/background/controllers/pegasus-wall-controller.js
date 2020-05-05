@@ -42,7 +42,7 @@ class PegasusWallController {
 
   /**
    *
-   * Adds a pending connection used by RequestsController
+   * Adds a pending connection used by PegasusWallController
    * whem user try to call a function from the content script
    * without having estabilished the connection
    *
@@ -400,7 +400,7 @@ class PegasusWallController {
    */
   async pushRequest(_request) {
     logger.log(
-      `(RequestsController) New request ${_request.uuid} - ${_request.method} from ${_request.requestor.origin}`
+      `(PegasusWallController) New request ${_request.uuid} - ${_request.method} from ${_request.requestor.origin}`
     )
 
     const { method, uuid, args, push, requestor } = _request
@@ -434,7 +434,7 @@ class PegasusWallController {
 
     if (state <= APP_STATE.WALLET_LOCKED || !connection.enabled) {
       logger.log(
-        `(RequestsController) Pushing request ${uuid} - ${method} because of locked wallet`
+        `(PegasusWallController) Pushing request ${uuid} - ${method} because of locked wallet`
       )
 
       this.requests = [
@@ -458,7 +458,7 @@ class PegasusWallController {
     } else if (connection.enabled && state >= APP_STATE.WALLET_UNLOCKED) {
       if (REQUESTS_WITH_USER_INTERACTION.includes(method)) {
         logger.log(
-          `(RequestsController) Pushing request ${uuid} - ${method} and asking for user permission`
+          `(PegasusWallController) Pushing request ${uuid} - ${method} and asking for user permission`
         )
 
         this.requests = [
@@ -518,7 +518,7 @@ class PegasusWallController {
      *  a request directly, it MUST be rejected since has not passed through the pegasus wall
      */
     if (!request) {
-      logger.log(`(RequestsController) request ${_request.uuid} not found.`)
+      logger.log(`(PegasusWallController) request ${_request.uuid} not found.`)
       return
     }
 
@@ -531,10 +531,10 @@ class PegasusWallController {
     const connection = this.getConnection(origin)
     if (!connection) {
       logger.log(
-        `(RequestsController) Impossible to execute a request with a not connected origin: ${origin}`
+        `(PegasusWallController) Impossible to execute a request with a not connected origin: ${origin}`
       )
       request.push({
-        response: `(RequestsController) Impossible to execute a request with a not connected origin: ${origin}`,
+        response: `(PegasusWallController) Impossible to execute a request with a not connected origin: ${origin}`,
         success: false,
         uuid: _request.uuid
       })
@@ -542,7 +542,7 @@ class PegasusWallController {
     }
 
     logger.log(
-      `(RequestsController) Executing request ${_request.uuid} - ${_request.method} ...`
+      `(PegasusWallController) Executing request ${_request.uuid} - ${_request.method} ...`
     )
 
     if (connection.enabled && request.push) {
@@ -557,7 +557,7 @@ class PegasusWallController {
       this.removeRequest(_request)
 
       logger.log(
-        `(RequestsController) Request ${_request.uuid} - ${_request.method}  executed`
+        `(PegasusWallController) Request ${_request.uuid} - ${_request.method}  executed`
       )
 
       if (this.requests.length === 0) {
@@ -573,7 +573,7 @@ class PegasusWallController {
       return res
     } else if (!connection.enabled && request.push) {
       logger.log(
-        `(RequestsController) Rejecting request ${_request.uuid} - ${_request.method} because of no granted permission`
+        `(PegasusWallController) Rejecting request ${_request.uuid} - ${_request.method} because of no granted permission`
       )
 
       request.push({
@@ -602,7 +602,7 @@ class PegasusWallController {
     )
 
     logger.log(
-      `(RequestsController) Rejecting (singular) request ${_request.uuid} - ${_request.method}`
+      `(PegasusWallController) Rejecting (singular) request ${_request.uuid} - ${_request.method}`
     )
 
     request.push({
@@ -632,7 +632,7 @@ class PegasusWallController {
       })
 
       logger.log(
-        `(RequestsController) Rejecting (All) request ${request.uuid} - ${request.method}`
+        `(PegasusWallController) Rejecting (All) request ${request.uuid} - ${request.method}`
       )
 
       this.removeRequest(request)
@@ -704,7 +704,7 @@ class PegasusWallController {
    */
   removeRequest(_request) {
     logger.log(
-      `(RequestsController) Removing request ${_request.uuid} - ${_request.method}`
+      `(PegasusWallController) Removing request ${_request.uuid} - ${_request.method}`
     )
 
     this.requests = this.requests.filter(
