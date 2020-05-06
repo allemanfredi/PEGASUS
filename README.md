@@ -87,21 +87,18 @@ In this way, if a user loses the access password (or if he forgets it), if he ha
 
 ```js
 if (window.iota) {
-    // grant permission
+
+    window.iota.on('providerChanged', provider => ...)
+    window.iota.on('accountChanged', account => ...)
+
+    // if you want to create a connection directly
     const isConnected = await window.iota.connect()
+    
+    const trytes = await window.iota.core.prepareTransfers(transfers)
+    const bundle = await window.iota.core.sendTrytes(trytes, depth, minWeightMagnitude)
 
-    // if user enabled
-    if (isConnected) {
-
-        window.iota.on('providerChanged', provider => ...)
-        window.iota.on('accountChanged', account => ...)
-
-        const trytes = await window.iota.core.prepareTransfers(transfers)
-        const bundle = await window.iota.core.sendTrytes(trytes, depth, minWeightMagnitude)
-
-        // or
-        const bundle = await window.iota.transfer(transfers)
-    } 
+    // or
+    const bundle = await window.iota.transfer(transfers)
 }
 ```
 
