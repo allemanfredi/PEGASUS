@@ -118,6 +118,17 @@ if (window.iota) {
 
 &nbsp;
 
+## :page_with_curl: Articles
+
+* [Introduction to Pegasus: Seed Security](https://medium.com/@alessandromanfredi_46016/introduction-to-pegasus-seed-security-a9f25d68f28a)
+* [Introduction to Pegasus: Architecture](https://medium.com/@alessandromanfredi_46016/introduction-to-pegasus-architecture-8fe70bcaed77)
+
+&nbsp;
+
+***
+
+&nbsp;
+
 ## :rocket: Collaboration
 
 ### Code contributions are welcome!
