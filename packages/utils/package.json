@@ -2,7 +2,7 @@
   "name": "@pegasus/utils",
   "author": "allemanfredi <alle.manfredi@gmail.com>",
   "private": true,
-  "version": "0.10.0",
+  "version": "0.11.0",
   "dependencies": {
     "@iota/checksum": "^1.0.0-beta.21",
     "@iota/converter": "^1.0.0-beta.8",
