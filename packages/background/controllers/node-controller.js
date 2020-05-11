@@ -67,7 +67,7 @@ class NodeController {
     const transfersCopy = Utils.copyObject(_transfers)
     transfersCopy.forEach(t => {
       t.value = parseInt(t.value)
-      t.tag = asciiToTrytes(JSON.stringify(t.tag))
+      t.tag = asciiToTrytes(t.tag)
       t.message = asciiToTrytes(JSON.stringify(t.message))
     })
 
