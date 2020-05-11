@@ -315,6 +315,14 @@ const buildPromisedBackgroundApi = _backgroundConnection => {
         _backgroundConnection.getConnectionRequests((res, err) =>
           err ? reject(err) : resolve(res)
         )
+      ),
+
+    // TODO: remove when UI will be refactored
+    getRecentsAddresses: () =>
+      new Promise((resolve, reject) =>
+        _backgroundConnection.getRecentsAddresses((res, err) =>
+          err ? reject(err) : resolve(res)
+        )
       )
   }
 }

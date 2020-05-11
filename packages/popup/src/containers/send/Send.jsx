@@ -4,6 +4,7 @@ import IconedInput from '../../components/iconedInput/IconedInput'
 import CheckBox from '../../components/checkbox/Checkbox'
 import SelectWalletAccount from './selectWalletAccounts/SelectWalletAccounts'
 import SendOptions from './sendOptions/SendOptions'
+import { asciiToTrytes } from '@iota/converter'
 
 const REQUESTED_REJECTED_BY_THE_USER = 'Request has been rejected by the user'
 
@@ -24,7 +25,9 @@ class Send extends Component {
       isLoading: false,
       error: null,
       isTransferingBetweenWalletAccounts: false,
-      accounts: []
+      accounts: [],
+      recents: [],
+      viewRecents: 4
     }
   }
 
@@ -34,8 +37,25 @@ class Send extends Component {
     }
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this.loadAccounts()
+
+    const recents = await this.props.background.getRecentsAddresses()
+    this.setState({
+      recents: recents[this.props.network.type]
+        ? recents[this.props.network.type]
+        : []
+    })
+
+    this.props.background.on('update', backgroundState => {
+      const { selectedNetwork, recents } = backgroundState
+      this.setState({
+        recents:
+          recents && recents[selectedNetwork.type]
+            ? recents[selectedNetwork.type]
+            : []
+      })
+    })
   }
 
   async loadAccounts() {
@@ -58,8 +78,8 @@ class Send extends Component {
       {
         tag: 'PEGASUS',
         address: this.state.dstAddress,
-        value: _data.value ? _data.value : 0,
-        message: _data.message
+        value: _data.value ? parseInt(_data.value) : 0,
+        message: asciiToTrytes(_data.message)
       }
     ]
 
@@ -130,7 +150,55 @@ class Send extends Component {
               network={this.props.network}
               onSelect={address => this.setState({ dstAddress: address })}
             />
-          ) : null
+          ) : (
+            <div className="container-accounts">
+              {this.state.recents
+                .filter(value =>
+                  this.state.dstAddress.length > 0
+                    ? value.includes(this.state.dstAddress)
+                    : true
+                )
+                .filter((_, index) => index < this.state.viewRecents)
+                .map(address => {
+                  return (
+                    <React.Fragment>
+                      <div className="row">
+                        <div
+                          className="col-12 text-dark-gray text-xxs text-left cursor-pointer"
+                          onClick={() => this.setState({ dstAddress: address })}
+                        >
+                          {Utils.showAddress(address, 27, 18)}
+                        </div>
+                      </div>
+                      <hr className="mb-2 mt-2" />
+                    </React.Fragment>
+                  )
+                })}
+              <div className="row mb-2">
+                <div
+                  onClick={() =>
+                    this.setState({
+                      viewRecents: this.state.viewRecents + 4
+                    })
+                  }
+                  className={
+                    'col-12 text-primary text-xs text-center ' +
+                    (this.state.viewRecents >= this.state.recents.length
+                      ? ''
+                      : 'cursor-pointer')
+                  }
+                  style={{
+                    opacity:
+                      this.state.viewRecents >= this.state.recents.length
+                        ? 0.5
+                        : 1
+                  }}
+                >
+                  View More <span className="text-xxs">(recents)</span>
+                </div>
+              </div>
+            </div>
+          )
         ) : (
           <SendOptions
             max={this.props.account.data[this.props.network.type].balance}

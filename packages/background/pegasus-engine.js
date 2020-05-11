@@ -271,7 +271,9 @@ class PegasusEngine {
       enableTransactionsAutoPromotion: (time, cb) =>
         cb(this.nodeController.enableTransactionsAutoPromotion(time)),
       disableTransactionsAutoPromotion: cb =>
-        cb(this.nodeController.disableTransactionsAutoPromotion())
+        cb(this.nodeController.disableTransactionsAutoPromotion()),
+      // TODO: remove when UI will be refactored
+      getRecentsAddresses: cb => cb(this.nodeController.getRecentsAddresses())
     }
   }
 

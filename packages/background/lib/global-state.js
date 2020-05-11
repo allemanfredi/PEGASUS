@@ -48,6 +48,7 @@ export class PegasusGlobalState {
         hideReattachedTxs: false
       }
     }
+    this.recents = {}
     this.state = 0
     this.accounts = {
       selected: {},
@@ -80,6 +81,7 @@ export const resetState = {
       hideReattachedTxs: false
     }
   },
+  recents: {},
   accounts: {
     selected: {},
     all: []

@@ -1,4 +1,3 @@
-import Utils from '@pegasus/utils/utils'
 import { composeAPI } from '@iota/core'
 import { asciiToTrytes } from '@iota/converter'
 import logger from '@pegasus/utils/logger'
@@ -13,6 +12,17 @@ class NodeController {
 
     this.transactionsAutoPromotionHandler = null
     this.provider = null
+
+    /*
+     * NOTE:
+     *  kept it here and stored into global state only when the wallet is unlocked,
+     *  in order to don't increase the storage size, because in order to
+     *  don't miss these values, they should be stored
+     *  since the state is reset and written into the storage when the
+     *  wallet is locked
+     */
+
+    this.recents = {}
   }
 
   /**
@@ -64,16 +74,22 @@ class NodeController {
   prepareTransfers(_transfers, _options = []) {
     const seed = this.walletController.getCurrentSeed()
 
-    const transfersCopy = Utils.copyObject(_transfers)
-    transfersCopy.forEach(t => {
-      t.value = parseInt(t.value)
-      t.tag = asciiToTrytes(t.tag)
-      t.message = asciiToTrytes(JSON.stringify(t.message))
-    })
-
     logger.log('(NodeController) signing ...')
 
-    return this.getNodeApi().prepareTransfers(seed, transfersCopy, _options)
+    // NOTE: store address in recents array
+    const network = this.walletController.getCurrentNetwork()
+    if (!this.recents[network.type]) this.recents[network.type] = []
+
+    const newAddresses = []
+    _transfers.forEach(_transfer => {
+      if (!this.recents[network.type].includes(_transfer.address))
+        newAddresses.push(_transfer.address)
+    })
+
+    this.recents[network.type].push(...newAddresses)
+    this.stateStorageController.set('recents', this.recents)
+
+    return this.getNodeApi().prepareTransfers(seed, _transfers, _options)
   }
 
   /**
@@ -151,6 +167,18 @@ class NodeController {
       clearInterval(this.transactionsAutoPromotionHandler)
       logger.log('(NodeController) Disabled transactions auto promotion')
     }
+  }
+
+  /**
+   *
+   * TODO: remove when the UI will be refactored
+   * since this.recents is also within the global state
+   * and will be handled with redux during the popup
+   * opening
+   *
+   */
+  getRecentsAddresses() {
+    return this.recents
   }
 }
 
