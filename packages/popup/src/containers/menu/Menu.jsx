@@ -135,16 +135,14 @@ class Settings extends Component {
                         : ' break-text')
                     }
                   >
-                  {
-                    Utils.showAddress(
+                    {Utils.showAddress(
                       Utils.checksummed(
                         this.props.account.data[this.props.network.type]
                           .latestAddress
                       ),
                       6,
                       8
-                    )
-                  }
+                    )}
                   </div>
                 </div>
                 <div className="row mt-2">

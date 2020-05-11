@@ -1056,10 +1056,17 @@ header{
     font-family: Arial;
     font-size: 14px;
     color: #5c5c5c;
-    height: 40px;
+    height: 45px;
     padding-left: 10px;
     padding-right: 10px;
     cursor: pointer;
+}
+
+.picklist-menu-container {
+    padding-left: 15px;
+    position: absolute;
+    left: 0;
+    right: 15px;
 }
 
 .picklist-menu{
