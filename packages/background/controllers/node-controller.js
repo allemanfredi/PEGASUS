@@ -10,7 +10,6 @@ class NodeController {
     this.walletController = walletController
     this.stateStorageController = stateStorageController
 
-    this.transactionsAutoPromotionHandler = null
     this.provider = null
 
     /*
@@ -114,59 +113,6 @@ class NodeController {
     logger.log(`(NodeController) Transfer success : ${bundle[0].bundle}`)
 
     return bundle
-  }
-
-  /**
-   * Promote current account transaction
-   */
-  async promoteTransactions() {
-    const network = this.walletController.getCurrentNetwork()
-    const account = this.walletController.getCurrentAccount()
-
-    const tails = account[network.type].data.transactions
-      .filter(transaction => transaction.network === network.type)
-      .map(transaction => transaction.transfer[0].hash)
-
-    const states = await this.getNodeApi().getLatestInclusion(tails)
-
-    for (let [index, tail] of tails.entries()) {
-      if (!states[index] && (await this.getNodeApi().isPromotable(tail))) {
-        await this.getNodeApi().promoteTransaction(tail, 3, 14)
-        logger.log(`(NodeController) Transaction promoted ${tail}`)
-      } else {
-        logger.log(`(NodeController) Transaction not promotable ${tail}`)
-      }
-    }
-  }
-
-  /**
-   *
-   * Enable transactions auto promotion
-   * with an interval specified by _time
-   *
-   * @param {Number} _time
-   */
-  enableTransactionsAutoPromotion(_time) {
-    this.transactionsAutoPromotionHandler = setInterval(
-      () => {
-        const state = this.walletController.getState()
-        if (state > APP_STATE.WALLET_LOCKED) this.promoteTransactions()
-      },
-      _time > 3 ? _time : 3
-    )
-    logger.log(
-      `(NodeController) Enabled transactions auto promotion every ${_time} ms`
-    )
-  }
-
-  /**
-   * Disable transaction auto promotion
-   */
-  disableTransactionsAutoPromotion() {
-    if (this.transactionsAutoPromotionHandler) {
-      clearInterval(this.transactionsAutoPromotionHandler)
-      logger.log('(NodeController) Disabled transactions auto promotion')
-    }
   }
 
   /**

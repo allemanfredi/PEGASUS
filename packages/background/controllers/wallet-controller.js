@@ -405,6 +405,12 @@ class WalletController extends EventEmitter {
 
       accounts.all.push(accountToAdd)
 
+      // check if transactions auto promotion is enabled
+      const { autoPromotion } = this.getSettings()
+      if (autoPromotion.enabled) {
+        this.enableTransactionsAutoPromotion(autoPromotion.time)
+      }
+
       this.stateStorageController.set('accounts', accounts)
 
       this.emit('accountChanged', accountToAdd.data[network.type].latestAddress)
@@ -464,6 +470,12 @@ class WalletController extends EventEmitter {
     this.selectedAccount.setData(_account.seed, _account.data[network.type])
     this._bindAccountListeners()
     this.selectedAccount.startFetch()
+
+    // check if transactions auto promotion is enabled
+    const { autoPromotion } = this.getSettings()
+    if (autoPromotion.enabled) {
+      this.enableTransactionsAutoPromotion(autoPromotion.time)
+    }
 
     this.stateStorageController.set('accounts', accounts)
 
@@ -563,6 +575,12 @@ class WalletController extends EventEmitter {
     )
     this._bindAccountListeners()
     this.selectedAccount.startFetch()
+
+    // check if transactions auto promotion is enabled
+    const { autoPromotion } = this.getSettings()
+    if (autoPromotion.enabled) {
+      this.enableTransactionsAutoPromotion(autoPromotion.time)
+    }
 
     this.emit(
       'accountChanged',
@@ -830,6 +848,26 @@ class WalletController extends EventEmitter {
    */
   isUnlocked() {
     return Boolean(this.password)
+  }
+
+  /**
+   *
+   * Enable transactions auto promotionms
+   *
+   * @param {Integer} _time
+   */
+  enableTransactionsAutoPromotion(_time) {
+    logger.log('(WalletController) Enabling transactions auto promotion...')
+    this.selectedAccount.enableTransactionsAutoPromotion(_time)
+  }
+
+  /**
+   *
+   *  Disable transactions auto promotion
+   */
+  disableTransactionsAutoPromotion() {
+    logger.log('(WalletController) Disabling transactions auto promotion...')
+    this.selectedAccount.disableTransactionsAutoPromotion()
   }
 }
 

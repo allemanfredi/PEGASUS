@@ -2,6 +2,7 @@
 import EventEmitter3 from 'eventemitter3'
 import { composeAPI } from '@iota/core'
 import { bundleToWalletTransaction } from './account-data'
+import { Mutex } from 'async-mutex'
 
 /**
  * Class used to rapresent an account within Pegasus
@@ -24,6 +25,10 @@ class PegasusAccount extends EventEmitter3 {
     this.emittedPendingWithdrawals = {}
 
     this.api = composeAPI({ provider })
+
+    this.interval = null
+    this.transactionsAutoPromotionHandler = null
+    this.transactionsAutoReattachmentHandler = null
   }
 
   /**
@@ -232,6 +237,8 @@ class PegasusAccount extends EventEmitter3 {
    */
   clear() {
     clearInterval(this.interval)
+    clearInterval(this.transactionsAutoPromotionHandler)
+    clearInterval(this.transactionsAutoReattachmentHandler)
     this.seed = null
     this._reset()
   }
@@ -285,6 +292,49 @@ class PegasusAccount extends EventEmitter3 {
     this.emittedPendingDeposits = {}
     this.emittedIncludedWithdrawals = {}
     this.emittedPendingWithdrawals = {}
+  }
+
+  /**
+   * Promote current account transaction
+   */
+  async promoteTransactions() {
+    const tails = this.transactions.map(
+      transaction => transaction.transfer[0].hash
+    )
+
+    const states = await this.api.getLatestInclusion(tails)
+
+    for (let [index, tail] of tails.entries()) {
+      if (!states[index] && (await this.api.isPromotable(tail))) {
+        await this.api.promoteTransaction(tail, 3, 14)
+      }
+    }
+  }
+
+  /**
+   *
+   * Enable transactions auto promotion
+   * with an interval specified by _time.
+   * _time must be greater than 15 minutes
+   *
+   * @param {Number} _time
+   */
+  enableTransactionsAutoPromotion(_time) {
+    this.transactionsAutoPromotionHandler = setInterval(
+      () => {
+        this.promoteTransactions()
+      },
+      _time > 15 * 60 * 1000 ? _time : 15 * 60 * 1000
+    )
+  }
+
+  /**
+   * Disable transaction auto promotion
+   */
+  disableTransactionsAutoPromotion() {
+    if (this.transactionsAutoPromotionHandler) {
+      clearInterval(this.transactionsAutoPromotionHandler)
+    }
   }
 }
 

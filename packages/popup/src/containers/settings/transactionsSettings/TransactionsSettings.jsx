@@ -38,7 +38,7 @@ class TransactionsSettings extends React.Component {
         !settings.autoPromotion.enabled ||
         settings.autoPromotion.time === 0
       ) {
-        if (settings.autoPromotion.time > 3) settings.autoPromotion.time = 0
+        if (settings.autoPromotion.time > 15) settings.autoPromotion.time = 0
         this.props.background.disableTransactionsAutoPromotion()
       }
     }
@@ -67,7 +67,7 @@ class TransactionsSettings extends React.Component {
                     ...this.state.settings,
                     autoPromotion: {
                       enabled:
-                        this.state.settings.autoPromotion.time > 3
+                        this.state.settings.autoPromotion.time > 15
                           ? !this.state.settings.autoPromotion.enabled
                           : false,
                       time: this.state.settings.autoPromotion.time
@@ -97,7 +97,7 @@ class TransactionsSettings extends React.Component {
                   ...this.state.settings,
                   autoPromotion: {
                     enabled:
-                      e.target.value > 3
+                      e.target.value > 15
                         ? this.state.settings.autoPromotion.enabled
                         : false,
                     time: e.target.value
@@ -112,7 +112,7 @@ class TransactionsSettings extends React.Component {
         </div>
         <div className="row mt-05">
           <div className="col-12 text-xxxs text-gray">
-            (Must be greater than 3 minutes)
+            (Must be greater than 15 minutes)
           </div>
         </div>
         <hr className="mt-1 mb-1" />

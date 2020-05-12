@@ -229,6 +229,10 @@ class PegasusEngine {
       comparePassword: (password, cb) =>
         nodeify(this.walletController.comparePassword(password), cb),
       isUnlocked: cb => cb(this.walletController.isUnlocked()),
+      enableTransactionsAutoPromotion: (time, cb) =>
+        cb(this.walletController.enableTransactionsAutoPromotion(time)),
+      disableTransactionsAutoPromotion: cb =>
+        cb(this.walletController.disableTransactionsAutoPromotion()),
 
       // popup controller
       closePopup: cb => cb(this.popupController.closePopup()),
@@ -267,11 +271,6 @@ class PegasusEngine {
       // mam controller
       fetchFromPopup: (opts, cb) => cb(this.mamController.fetch(opts)),
 
-      // node controller
-      enableTransactionsAutoPromotion: (time, cb) =>
-        cb(this.nodeController.enableTransactionsAutoPromotion(time)),
-      disableTransactionsAutoPromotion: cb =>
-        cb(this.nodeController.disableTransactionsAutoPromotion()),
       // TODO: remove when UI will be refactored
       getRecentsAddresses: cb => cb(this.nodeController.getRecentsAddresses())
     }
