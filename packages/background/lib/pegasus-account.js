@@ -2,7 +2,6 @@
 import EventEmitter3 from 'eventemitter3'
 import { composeAPI } from '@iota/core'
 import { bundleToWalletTransaction } from './account-data'
-import { Mutex } from 'async-mutex'
 
 /**
  * Class used to rapresent an account within Pegasus
@@ -11,9 +10,10 @@ class PegasusAccount extends EventEmitter3 {
   constructor(_configs) {
     super()
 
-    const { seed, provider } = _configs
+    const { seed, provider, minWeightMagnitude } = _configs
 
     this.seed = seed
+    this.minWeightMagnitude = minWeightMagnitude
     this.index = 0
     this.interval = null
     this.addresses = []
@@ -295,18 +295,18 @@ class PegasusAccount extends EventEmitter3 {
   }
 
   /**
-   * Promote current account transaction
+   * Promote transactions
+   *
+   * @param {Integer} _minWeightMagnitude
    */
-  async promoteTransactions() {
-    const tails = this.transactions.map(
-      transaction => transaction.transfer[0].hash
-    )
+  async _promoteTransactions(_minWeightMagnitude) {
+    const tails = this.transactions
+      .filter(_tx => !_tx.persistence)
+      .map(_tx => _tx.hash)
 
-    const states = await this.api.getLatestInclusion(tails)
-
-    for (let [index, tail] of tails.entries()) {
-      if (!states[index] && (await this.api.isPromotable(tail))) {
-        await this.api.promoteTransaction(tail, 3, 14)
+    for (let tail of tails) {
+      if (await this.api.isPromotable(tail)) {
+        await this.api.promoteTransaction(tail, 3, this.minWeightMagnitude)
       }
     }
   }
@@ -320,9 +320,10 @@ class PegasusAccount extends EventEmitter3 {
    * @param {Number} _time
    */
   enableTransactionsAutoPromotion(_time) {
+    this._promoteTransactions()
     this.transactionsAutoPromotionHandler = setInterval(
       () => {
-        this.promoteTransactions()
+        this._promoteTransactions()
       },
       _time > 15 * 60 * 1000 ? _time : 15 * 60 * 1000
     )
@@ -334,6 +335,49 @@ class PegasusAccount extends EventEmitter3 {
   disableTransactionsAutoPromotion() {
     if (this.transactionsAutoPromotionHandler) {
       clearInterval(this.transactionsAutoPromotionHandler)
+    }
+  }
+
+  /**
+   * Reattach transactions
+   *
+   */
+  async _reattachTransactions() {
+    const tails = this.transactions
+      .filter(_tx => !_tx.persistence)
+      .map(_tx => _tx.hash)
+
+    for (let tail of tails) {
+      if (!(await this.api.isPromotable(tail))) {
+        await this.api.replayBundle(tail, 3, this.minWeightMagnitude)
+      }
+    }
+  }
+
+  /**
+   *
+   * Enable transactions auto reattachment
+   * with an interval specified by _time.
+   * _time must be greater than 20 minutes
+   *
+   * @param {Number} _time
+   */
+  enableTransactionsAutoReattachment(_time) {
+    this._reattachTransactions()
+    this.transactionsAutoReattachmentHandler = setInterval(
+      () => {
+        this._reattachTransactions()
+      },
+      _time > 15 * 60 * 1000 ? _time : 15 * 60 * 1000
+    )
+  }
+
+  /**
+   * Disable transaction auto reattachment
+   */
+  disableTransactionsAutoReattachment() {
+    if (this.transactionsAutoReattachmentHandler) {
+      clearInterval(this.transactionsAutoReattachmentHandler)
     }
   }
 }

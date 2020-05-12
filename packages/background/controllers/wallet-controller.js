@@ -47,7 +47,8 @@ class WalletController extends EventEmitter {
         this._removeAccountListeners()
         this.selectedAccount.clear()
         this.selectedAccount = new PegasusAccount({
-          provider: network.provider
+          provider: network.provider,
+          minWeightMagnitude: network.difficulty
         })
         this._bindAccountListeners()
         this.selectedAccount.setData(account.seed, account.data[network.type])
@@ -179,7 +180,10 @@ class WalletController extends EventEmitter {
       const account = this.getCurrentAccount()
       const network = this.getCurrentNetwork()
 
-      this.selectedAccount = new PegasusAccount({ provider: network.provider })
+      this.selectedAccount = new PegasusAccount({
+        provider: network.provider,
+        minWeightMagnitude: network.difficulty
+      })
       this._bindAccountListeners()
       this.selectedAccount.setData(account.seed, account.data[network.type])
       this.selectedAccount.startFetch()
@@ -336,7 +340,8 @@ class WalletController extends EventEmitter {
       this.selectedAccount.clear()
       this.selectedAccount = new PegasusAccount({
         seed,
-        provider: network.provider
+        provider: network.provider,
+        minWeightMagnitude: network.difficulty
       })
 
       // fetch data for the current network
@@ -466,7 +471,10 @@ class WalletController extends EventEmitter {
 
     this._removeAccountListeners()
     this.selectedAccount.clear()
-    this.selectedAccount = new PegasusAccount({ provider: network.provider })
+    this.selectedAccount = new PegasusAccount({
+      provider: network.provider,
+      minWeightMagnitude: network.difficulty
+    })
     this.selectedAccount.setData(_account.seed, _account.data[network.type])
     this._bindAccountListeners()
     this.selectedAccount.startFetch()
@@ -568,7 +576,10 @@ class WalletController extends EventEmitter {
 
     this.selectedAccount.clear()
     this._removeAccountListeners()
-    this.selectedAccount = new PegasusAccount({ provider: network.provider })
+    this.selectedAccount = new PegasusAccount({
+      provider: network.provider,
+      minWeightMagnitude: network.difficulty
+    })
     this.selectedAccount.setData(
       accounts.selected.seed,
       accounts.selected.data[network.type]
@@ -878,6 +889,7 @@ class WalletController extends EventEmitter {
    */
   enableTransactionsAutoReattachment(_time) {
     logger.log('(WalletController) Enabling transactions auto reattachment...')
+    this.selectedAccount.enableTransactionsAutoReattachment(_time)
   }
 
   /**
@@ -886,6 +898,7 @@ class WalletController extends EventEmitter {
    */
   disableTransactionsAutoReattachment() {
     logger.log('(WalletController) Disabling transactions auto reattachment...')
+    this.selectedAccount.disableTransactionsAutoReattachment()
   }
 }
 
