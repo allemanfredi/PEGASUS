@@ -36,7 +36,7 @@ class WalletController extends EventEmitter {
      * NOTE:
      *  in case of provider changing, a new selected account must be created.
      *  It's important to _removeAccountListeners before each account initialization
-     *  in order to remove the previouse listeners and avoiding data overwritting
+     *  in order to remove the previous listeners and avoiding data overwriting
      */
 
     this.on('providerChanged', _provider => {
@@ -53,6 +53,15 @@ class WalletController extends EventEmitter {
         this._bindAccountListeners()
         this.selectedAccount.setData(account.seed, account.data[network.type])
         this.selectedAccount.startFetch()
+
+        // check if transactions auto promotion is enabled
+        const { autoPromotion, autoReattachment } = this.getSettings()
+        if (autoPromotion.enabled) {
+          this.enableTransactionsAutoPromotion(autoPromotion.time)
+        }
+        if (autoReattachment.enabled) {
+          this.enableTransactionsAutoReattachment(autoReattachment.time)
+        }
       }
     })
   }
@@ -411,9 +420,12 @@ class WalletController extends EventEmitter {
       accounts.all.push(accountToAdd)
 
       // check if transactions auto promotion is enabled
-      const { autoPromotion } = this.getSettings()
+      const { autoPromotion, autoReattachment } = this.getSettings()
       if (autoPromotion.enabled) {
         this.enableTransactionsAutoPromotion(autoPromotion.time)
+      }
+      if (autoReattachment.enabled) {
+        this.enableTransactionsAutoReattachment(autoReattachment.time)
       }
 
       this.stateStorageController.set('accounts', accounts)
@@ -480,9 +492,12 @@ class WalletController extends EventEmitter {
     this.selectedAccount.startFetch()
 
     // check if transactions auto promotion is enabled
-    const { autoPromotion } = this.getSettings()
+    const { autoPromotion, autoReattachment } = this.getSettings()
     if (autoPromotion.enabled) {
       this.enableTransactionsAutoPromotion(autoPromotion.time)
+    }
+    if (autoReattachment.enabled) {
+      this.enableTransactionsAutoReattachment(autoReattachment.time)
     }
 
     this.stateStorageController.set('accounts', accounts)
@@ -587,10 +602,13 @@ class WalletController extends EventEmitter {
     this._bindAccountListeners()
     this.selectedAccount.startFetch()
 
-    // check if transactions auto promotion is enabled
-    const { autoPromotion } = this.getSettings()
+    // check if transactions auto promotion/reattach is enabled
+    const { autoPromotion, autoReattachment } = this.getSettings()
     if (autoPromotion.enabled) {
       this.enableTransactionsAutoPromotion(autoPromotion.time)
+    }
+    if (autoReattachment.enabled) {
+      this.enableTransactionsAutoReattachment(autoReattachment.time)
     }
 
     this.emit(
