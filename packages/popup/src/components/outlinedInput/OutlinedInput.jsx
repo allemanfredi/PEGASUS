@@ -8,6 +8,7 @@ const OutlinedInput = props => {
       type={props.type ? props.type : 'text'}
       id={props.id}
       placeholder={props.label}
+      disabled={props.disabled ? props.disabled : false}
       className="outlined-input"
     />
   )
