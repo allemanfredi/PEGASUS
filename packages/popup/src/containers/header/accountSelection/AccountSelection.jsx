@@ -9,6 +9,7 @@ class AccountSelection extends React.Component {
     this.loadAccounts = this.loadAccounts.bind(this)
     this.switchAccount = this.switchAccount.bind(this)
     this.handleClickOutside = this.handleClickOutside.bind(this)
+    this.close = this.close.bind(this)
 
     this.state = {
       isClosing: false,
@@ -26,12 +27,7 @@ class AccountSelection extends React.Component {
 
   handleClickOutside(event) {
     if (this.ref && !this.ref.contains(event.target)) {
-      this.setState({
-        isClosing: true
-      })
-      setTimeout(() => {
-        this.props.onClose()
-      }, 250)
+      this.close()
     }
   }
 
@@ -61,6 +57,15 @@ class AccountSelection extends React.Component {
     this.setState({ accounts })
   }
 
+  close() {
+    this.setState({
+      isClosing: true
+    })
+    setTimeout(() => {
+      this.props.onClose()
+    }, 250)
+  }
+
   render() {
     return this.state.accounts.length > 0 ? (
       <div
@@ -74,7 +79,10 @@ class AccountSelection extends React.Component {
           return (
             <div
               className="row mt-1 cursor-pointer"
-              onClick={() => this.switchAccount(account)}
+              onClick={() => {
+                this.switchAccount(account)
+                this.close()
+              }}
             >
               <div className="col-2 my-auto">
                 <img
