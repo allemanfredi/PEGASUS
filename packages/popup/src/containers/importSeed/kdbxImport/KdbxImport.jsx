@@ -7,6 +7,7 @@ import OutlinedInput from '../../../components/outlinedInput/OutlinedInput'
 const KdbxImport = props => {
   const [filename, setFilename] = useState(null)
   const [password, setPassword] = useState('')
+  const [filedata, setFiledata] = useState(null)
 
   const params = queryString.parse(window.location.search)
   if (!params['kdbx'])
@@ -31,9 +32,7 @@ const KdbxImport = props => {
         })
 
       reader.onload = () => {
-        // Do whatever you want with the file contents
-        const binaryStr = reader.result
-        console.log(binaryStr)
+        setFiledata(reader.result)
       }
 
       if (!file.name.endsWith('.kdbx')) {
@@ -51,6 +50,21 @@ const KdbxImport = props => {
   }, [])
   const { getRootProps, getInputProps } = useDropzone({ onDrop })
 
+  const unlock = async () => {
+    try {
+      const seed = await props.background.importSeedVault(
+        new Uint8Array(filedata),
+        password
+      )
+    } catch (err) {
+      props.setNotification({
+        type: 'danger',
+        text: 'Invalid Password. Try again',
+        position: 'under-bar'
+      })
+    }
+  }
+
   return (
     <React.Fragment>
       <div className="row mt-4">
@@ -64,6 +78,7 @@ const KdbxImport = props => {
         </div>
       </div>
       <div
+        style={{ borderStyle: 'dotted' }}
         className="container-import-kdbx mt-6 cursor-pointer"
         {...getRootProps()}
       >
@@ -76,6 +91,7 @@ const KdbxImport = props => {
         <div className="row">
           <div className="col-12 mt-3">
             <OutlinedInput
+              type="password"
               value={password}
               label={'password'}
               onChange={e => setPassword(e.target.value)}
@@ -84,19 +100,12 @@ const KdbxImport = props => {
         </div>
       ) : null}
       <div className={'row ' + (filename ? 'mt-6' : 'mt-13')}>
-        <div className="col-6 text-center mx-auto">
-          <button
-            type="submit"
-            className="btn btn-border-blue text-bold btn-big"
-          >
-            Cancel
-          </button>
-        </div>
-        <div className="col-6 text-center mx-auto">
+        <div className="col-12 text-center mx-auto">
           <button
             disabled={password.length > 0 ? false : true}
             type="submit"
             className="btn btn-blue text-bold btn-big"
+            onClick={unlock}
           >
             Unlock
           </button>

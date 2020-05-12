@@ -70,7 +70,7 @@ export const IMPORT_SEED_TEXT = {
       description: 'Paste a seed and type the corresponding account name'
     },
     {
-      title: 'Kdbx Import',
+      title: 'Import SeedVault',
       description: 'Import a seed encrypted within a Kdbx file'
     }
   ]

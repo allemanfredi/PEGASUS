@@ -235,6 +235,17 @@ const buildPromisedBackgroundApi = _backgroundConnection => {
         )
       ),
 
+    importSeedVault: (encodedFile, password) =>
+      new Promise((resolve, reject) =>
+        _backgroundConnection.importSeedVault(
+          encodedFile,
+          password,
+          (err, res) => {
+            err ? reject(err) : resolve(res)
+          }
+        )
+      ),
+
     fetchFromPopup: options =>
       new Promise((resolve, reject) =>
         _backgroundConnection.fetchFromPopup(options, (res, err) =>

@@ -8894,7 +8894,7 @@ jsx-ast-utils@^2.0.1, jsx-ast-utils@^2.2.3:
     array-includes "^3.0.3"
     object.assign "^4.1.0"
 
-kdbxweb@^1.5.7:
+kdbxweb@^1.5.7, kdbxweb@^1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/kdbxweb/-/kdbxweb-1.6.0.tgz#e445a4e8b665fda059e38cd4a83749602ab432dc"
   integrity sha512-/Kur10RRVqbGjkCAEn9JNYCevpw4rs91UAjEcPCZn5QhmIchxd+X3Ah8VAid8nvK6snrlW8XQuQrdTkousMYpg==

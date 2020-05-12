@@ -83,7 +83,7 @@ class Home extends Component {
           showHome: false,
           showImportSeed: true,
           canGoBack: false,
-          navbarText: 'Kdbx Import'
+          navbarText: 'Import SeedVault'
         },
         () => {
           // 1 = import kdbx file

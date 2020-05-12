@@ -3,6 +3,30 @@ import argon2 from 'argon2-browser'
 import * as FileSaver from 'file-saver'
 import logger from '@pegasus/utils/logger'
 
+kdbxweb.CryptoEngine.argon2 = async (
+  _encryptionPassword,
+  salt,
+  memory,
+  iterations,
+  length,
+  parallelism,
+  type,
+  version
+) => {
+  const hash = await argon2.hash({
+    pass: new Uint8Array(_encryptionPassword),
+    salt: new Uint8Array(salt),
+    mem: memory,
+    time: iterations,
+    hashLen: length,
+    parallelism,
+    type,
+    version
+  })
+
+  return hash.hash
+}
+
 class SeedVaultController {
   constructor(configs) {
     const { walletController } = configs
@@ -10,35 +34,18 @@ class SeedVaultController {
     this.walletController = walletController
   }
 
+  /**
+   * Create a .kdbx file encrypted with _encryptionPassword
+   * after having validated _encryptionPassword
+   *
+   * @param {String} _loginPassword
+   * @param {String} _encryptionPassword
+   */
   async createSeedVault(_loginPassword, _encryptionPassword) {
     if (!this.walletController.comparePassword(_loginPassword)) return false
 
     const account = this.walletController.getCurrentAccount()
     const seed = account.seed
-
-    kdbxweb.CryptoEngine.argon2 = async (
-      _encryptionPassword,
-      salt,
-      memory,
-      iterations,
-      length,
-      parallelism,
-      type,
-      version
-    ) => {
-      const hash = await argon2.hash({
-        pass: new Uint8Array(_encryptionPassword),
-        salt: new Uint8Array(salt),
-        mem: memory,
-        time: iterations,
-        hashLen: length,
-        parallelism,
-        type,
-        version
-      })
-
-      return hash.hash
-    }
 
     const credentials = new kdbxweb.Credentials(
       kdbxweb.ProtectedValue.fromString(_encryptionPassword),
@@ -61,6 +68,26 @@ class SeedVaultController {
     )
 
     return true
+  }
+
+  /**
+   *
+   * Importing a seed encrypted within a .kdbx file.
+   * _encodedFile must be parsed
+   *
+   * @param {Uint8Array} _encodedFile
+   * @param {String} _password
+   */
+  async importSeedVault(_encodedFile, _password) {
+    const credentials = new kdbxweb.Credentials(
+      kdbxweb.ProtectedValue.fromString(_password),
+      null
+    )
+
+    const db = await kdbxweb.Kdbx.load(
+      Uint8Array.from(Object.values(_encodedFile)).buffer,
+      credentials
+    )
   }
 }
 

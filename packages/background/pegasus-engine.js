@@ -271,6 +271,11 @@ class PegasusEngine {
           ),
           cb
         ),
+      importSeedVault: (encodedFile, password, cb) =>
+        nodeify(
+          this.seedVaultController.importSeedVault(encodedFile, password),
+          cb
+        ),
 
       // mam controller
       fetchFromPopup: (opts, cb) => cb(this.mamController.fetch(opts)),
