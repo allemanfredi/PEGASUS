@@ -52,10 +52,11 @@ const KdbxImport = props => {
 
   const unlock = async () => {
     try {
-      const seed = await props.background.importSeedVault(
+      const seeds = await props.background.importSeedVault(
         new Uint8Array(filedata),
         password
       )
+      console.log(seeds)
     } catch (err) {
       props.setNotification({
         type: 'danger',

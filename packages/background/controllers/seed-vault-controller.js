@@ -88,6 +88,9 @@ class SeedVaultController {
       Uint8Array.from(Object.values(_encodedFile)).buffer,
       credentials
     )
+
+    const group = db.groups.find(group => group.name === 'Trinity')
+    return group.entries.map(entry => entry.fields.Seed.getText())
   }
 }
 
