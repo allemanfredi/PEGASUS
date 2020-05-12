@@ -63,6 +63,19 @@ export const EXPORT_SEED_TEXT = {
   ]
 }
 
+export const IMPORT_SEED_TEXT = {
+  items: [
+    {
+      title: 'Simple Import',
+      description: 'Paste a seed and type the corresponding account name'
+    },
+    {
+      title: 'Kdbx Import',
+      description: 'Import a seed encrypted within a Kdbx file'
+    }
+  ]
+}
+
 export const BUY_INFO = {
   items: [
     {

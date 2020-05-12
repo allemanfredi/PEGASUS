@@ -15,6 +15,7 @@ import Settings from '../settings/Settings'
 import Utils from '@pegasus/utils/utils'
 import ReactTooltip from 'react-tooltip'
 import { getPrice } from '@pegasus/utils/prices'
+import queryString from 'query-string'
 
 class Home extends Component {
   constructor(props, context) {
@@ -22,6 +23,7 @@ class Home extends Component {
 
     this.mam = React.createRef()
     this.exportSeed = React.createRef()
+    this.importSeed = React.createRef()
     this.settings = React.createRef()
     this.receive = React.createRef()
 
@@ -68,6 +70,26 @@ class Home extends Component {
       navbarText: '',
       iotaPrice: false,
       settings: null
+    }
+  }
+
+  componentDidMount() {
+    // NOTE: mantain state when popup is opened on tabs for importing kdbx file
+    const params = queryString.parse(window.location.search)
+
+    if (params['kdbx']) {
+      this.setState(
+        {
+          showHome: false,
+          showImportSeed: true,
+          canGoBack: false,
+          navbarText: 'Kdbx Import'
+        },
+        () => {
+          // 1 = import kdbx file
+          this.importSeed.current.goOn(1)
+        }
+      )
     }
   }
 
@@ -183,6 +205,7 @@ class Home extends Component {
     if (!this.state.canGoBack) {
       if (this.mam.current) this.mam.current.goBack()
       if (this.exportSeed.current) this.exportSeed.current.goBack()
+      if (this.importSeed.current) this.importSeed.current.goBack()
       if (this.settings.current) this.settings.current.goBack()
       if (this.receive.current) this.receive.current.goBack()
       return
@@ -387,11 +410,17 @@ class Home extends Component {
             )}
             {this.state.showImportSeed ? (
               <ImportSeed
+                ref={this.importSeed}
                 setNotification={this.props.setNotification}
                 background={this.props.background}
                 account={this.props.account}
                 network={this.props.network}
+                changeNavbarText={navbarText => this.setState({ navbarText })}
                 onBack={this.onBack}
+                onForcedBack={() =>
+                  this.setState({ canGoBack: true }, () => this.onBack())
+                }
+                onChangeCanGoBack={value => this.setState({ canGoBack: value })}
               />
             ) : (
               ''
