@@ -3,11 +3,13 @@ import extension from 'extensionizer'
 import queryString from 'query-string'
 import { useDropzone } from 'react-dropzone'
 import OutlinedInput from '../../../components/outlinedInput/OutlinedInput'
+import Utils from '@pegasus/utils/utils'
 
 const KdbxImport = props => {
   const [filename, setFilename] = useState(null)
   const [password, setPassword] = useState('')
   const [filedata, setFiledata] = useState(null)
+  const [seed, setSeed] = useState(null)
 
   const params = queryString.parse(window.location.search)
   if (!params['kdbx'])
@@ -56,7 +58,7 @@ const KdbxImport = props => {
         new Uint8Array(filedata),
         password
       )
-      console.log(seeds)
+      setSeed(seeds[0])
     } catch (err) {
       props.setNotification({
         type: 'danger',
@@ -64,6 +66,10 @@ const KdbxImport = props => {
         position: 'under-bar'
       })
     }
+  }
+
+  const createAccount = async () => {
+    //TODO
   }
 
   return (
@@ -79,13 +85,15 @@ const KdbxImport = props => {
         </div>
       </div>
       <div
-        style={{ borderStyle: 'dotted' }}
+        style={{ borderStyle: seed ? 'solid' : 'dotted' }}
         className="container-import-kdbx mt-6 cursor-pointer"
         {...getRootProps()}
       >
         <input {...getInputProps()} />
-        {filename
+        {filename && !seed
           ? filename
+          : seed
+          ? Utils.showAddress(seed, 15, 15)
           : "Drag 'n' drop a .kdbx file here, or click to one!"}
       </div>
       {filename ? (
@@ -106,9 +114,9 @@ const KdbxImport = props => {
             disabled={password.length > 0 ? false : true}
             type="submit"
             className="btn btn-blue text-bold btn-big"
-            onClick={unlock}
+            onClick={() => (seed ? unlock() : createAccount())}
           >
-            Unlock
+            {seed ? 'Import Account' : 'Unlock'}
           </button>
         </div>
       </div>
