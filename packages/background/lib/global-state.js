@@ -38,6 +38,10 @@ export class PegasusGlobalState {
         emabled: false,
         time: 0
       },
+      autoReattachment: {
+        enabled: false,
+        time: 0
+      },
       autoLocking: {
         enabled: true,
         time: DEFAULT_LOCKING_TIME
@@ -68,7 +72,11 @@ export const resetState = {
       all: availablesCurrencies
     },
     autoPromotion: {
-      emabled: false,
+      enabled: false,
+      time: 0
+    },
+    autoReattachment: {
+      enabled: false,
       time: 0
     },
     autoLocking: {

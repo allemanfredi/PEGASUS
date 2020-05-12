@@ -163,20 +163,18 @@ class StateStorageController extends Store {
     const storedData = await this.storage.get()
     if (!storedData) return null
 
-    // NOTE: adds comnet support into previous versions <= 0.10.0 (will be removed in 0.12.0)
-    const comnet = options.networks[1]
-    const comnetExists = storedData['PEGASUS_NETWORKS'].find(
-      _network => _network.name === comnet.name && _network.default
-    )
-
-    if (!comnetExists) {
-      storedData['PEGASUS_NETWORKS'].splice(1, 0, comnet)
-    }
+    // NOTE: adds auto reattachment settings (will be removed in the next versions)
+    const settings = Object.assign({}, storedData['PEGASUS_POPUP_SETTINGS'], {
+      autoReattachment: {
+        enabled: false,
+        time: 0
+      }
+    })
 
     const savedState = {
       data: storedData['PEGASUS_DATA'], // still encrypted
       hpsw: storedData['PEGASUS_HPSW'],
-      settings: storedData['PEGASUS_POPUP_SETTINGS'],
+      settings,
       selectedNetwork: storedData['PEGASUS_SELECTED_NETWORK'],
       networks: storedData['PEGASUS_NETWORKS'],
       state: APP_STATE.WALLET_LOCKED // in order to start from login

@@ -852,7 +852,7 @@ class WalletController extends EventEmitter {
 
   /**
    *
-   * Enable transactions auto promotionms
+   * Enable transactions auto promotion
    *
    * @param {Integer} _time
    */
@@ -868,6 +868,24 @@ class WalletController extends EventEmitter {
   disableTransactionsAutoPromotion() {
     logger.log('(WalletController) Disabling transactions auto promotion...')
     this.selectedAccount.disableTransactionsAutoPromotion()
+  }
+
+  /**
+   *
+   * Enable transactions auto reattachment
+   *
+   * @param {Integer} _time
+   */
+  enableTransactionsAutoReattachment(_time) {
+    logger.log('(WalletController) Enabling transactions auto reattachment...')
+  }
+
+  /**
+   *
+   *  Disable transactions auto reattachment
+   */
+  disableTransactionsAutoReattachment() {
+    logger.log('(WalletController) Disabling transactions auto reattachment...')
   }
 }
 

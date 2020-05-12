@@ -233,6 +233,10 @@ class PegasusEngine {
         cb(this.walletController.enableTransactionsAutoPromotion(time)),
       disableTransactionsAutoPromotion: cb =>
         cb(this.walletController.disableTransactionsAutoPromotion()),
+      enableTransactionsAutoReattachment: (time, cb) =>
+        cb(this.walletController.enableTransactionsAutoReattachment(time)),
+      disableTransactionsAutoReattachment: cb =>
+        cb(this.walletController.disableTransactionsAutoReattachment()),
 
       // popup controller
       closePopup: cb => cb(this.popupController.closePopup()),

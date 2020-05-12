@@ -271,6 +271,21 @@ const buildPromisedBackgroundApi = _backgroundConnection => {
         )
       ),
 
+    enableTransactionsAutoReattachment: time =>
+      new Promise((resolve, reject) =>
+        _backgroundConnection.enableTransactionsAutoReattachment(
+          time,
+          (res, err) => (err ? reject(err) : resolve(res))
+        )
+      ),
+
+    disableTransactionsAutoReattachment: () =>
+      new Promise((resolve, reject) =>
+        _backgroundConnection.disableTransactionsAutoReattachment((res, err) =>
+          err ? reject(err) : resolve(res)
+        )
+      ),
+
     completeConnectionRequest: (origin, tabId) =>
       new Promise((resolve, reject) =>
         _backgroundConnection.completeConnectionRequest(

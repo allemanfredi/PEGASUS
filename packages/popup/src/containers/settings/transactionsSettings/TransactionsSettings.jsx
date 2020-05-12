@@ -14,6 +14,10 @@ class TransactionsSettings extends React.Component {
         autoPromotion: {
           enabled: false,
           time: 0
+        },
+        autoReattachment: {
+          enabled: false,
+          time: 0
         }
       }
     }
@@ -43,6 +47,24 @@ class TransactionsSettings extends React.Component {
       }
     }
 
+    if (action === 'reattach') {
+      if (
+        settings.autoReattachment.enabled &&
+        settings.autoReattachment.time > 0
+      ) {
+        this.props.background.enableTransactionsAutoReattachment(
+          this.state.settings.autoReattachment.time * 1000 * 60
+        )
+      } else if (
+        !settings.autoReattachment.enabled ||
+        settings.autoReattachment.time === 0
+      ) {
+        if (settings.autoReattachment.time > 20)
+          settings.autoReattachment.time = 0
+        this.props.background.disableTransactionsAutoReattachment()
+      }
+    }
+
     this.props.background.setSettings(settings)
   }
 
@@ -56,7 +78,7 @@ class TransactionsSettings extends React.Component {
             data-tip="Promote all transactions pending from the specified number of seconds"
           >
             <i className="fa fa-info-circle mr-05" />
-            Enable transactions auto promotion
+            Enable auto promotion
           </div>
           <div className="col-3 text-right">
             <Switch
@@ -115,7 +137,75 @@ class TransactionsSettings extends React.Component {
             (Must be greater than 15 minutes)
           </div>
         </div>
-        <hr className="mt-1 mb-1" />
+
+        <hr className="mt-2 mb-2" />
+
+        <div className="row mt-2">
+          <ReactTooltip />
+          <div
+            className="col-9 text-xs my-auto text-dark-gray"
+            data-tip="Enable transactions auto reattachment every a specified number of minutes"
+          >
+            <i className="fa fa-info-circle mr-05" />
+            Enable auto reattachment
+          </div>
+          <div className="col-3 text-right">
+            <Switch
+              checked={this.state.settings.autoReattachment.enabled}
+              onChange={() => {
+                this.handleChange(
+                  {
+                    ...this.state.settings,
+                    autoReattachment: {
+                      enabled:
+                        this.state.settings.autoReattachment.time > 20
+                          ? !this.state.settings.autoReattachment.enabled
+                          : false,
+                      time: this.state.settings.autoReattachment.time
+                    }
+                  },
+                  'reattach'
+                )
+              }}
+              onColor="#00008b"
+              handleDiameter={30}
+              uncheckedIcon={false}
+              checkedIcon={false}
+              boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+              activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+              height={20}
+              width={48}
+              className="react-switch"
+            />
+          </div>
+        </div>
+        <div className="row mt-05">
+          <div className="col-12">
+            <OutlinedInput
+              value={this.state.settings.autoReattachment.time}
+              onChange={e =>
+                this.handleChange({
+                  ...this.state.settings,
+                  autoReattachment: {
+                    enabled:
+                      e.target.value > 20
+                        ? this.state.settings.autoReattachment.enabled
+                        : false,
+                    time: e.target.value
+                  }
+                })
+              }
+              label="minutes"
+              id="auto-prom-sec"
+              type="number"
+            />
+          </div>
+        </div>
+        <div className="row mt-05">
+          <div className="col-12 text-xxxs text-gray">
+            (Must be greater than 20 minutes)
+          </div>
+        </div>
       </React.Fragment>
     )
   }
