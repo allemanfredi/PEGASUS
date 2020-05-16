@@ -65,6 +65,9 @@ class ImportSeed extends Component {
             account={this.props.account}
             background={this.props.background}
             setNotification={this.props.setNotification}
+            onTerminated={() => {
+              this.props.onForcedBack()
+            }}
           />
         ) : null}
       </div>
