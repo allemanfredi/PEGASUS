@@ -8,6 +8,7 @@ import Utils from '@pegasus/utils/utils'
 const KdbxImport = props => {
   const [filename, setFilename] = useState(null)
   const [password, setPassword] = useState('')
+  const [accountName, setAccountName] = useState('')
   const [filedata, setFiledata] = useState(null)
   const [seed, setSeed] = useState(null)
 
@@ -54,7 +55,7 @@ const KdbxImport = props => {
 
   const unlock = async () => {
     try {
-      const seeds = await props.background.importSeedVault(
+      const seeds = await props.background.getSeedVaultContent(
         new Uint8Array(filedata),
         password
       )
@@ -69,12 +70,12 @@ const KdbxImport = props => {
   }
 
   const createAccount = async () => {
-    //TODO
+    // TODO
   }
 
   return (
     <React.Fragment>
-      <div className="row mt-4">
+      <div className="row mt-3">
         <div className="col-12 text-center">
           <img
             src="./material/img/money.png"
@@ -84,9 +85,16 @@ const KdbxImport = props => {
           />
         </div>
       </div>
+      <div className="row">
+        <div className="col-12 mt-2 text-blue font-weight-bold text-center">
+          {!seed && !filename ? 'Select a Seed Vault' : ''}
+          {!seed && filename ? 'Type a password to unlock it' : ''}
+          {seed && filename ? 'Now choose an account name' : ''}
+        </div>
+      </div>
       <div
         style={{ borderStyle: seed ? 'solid' : 'dotted' }}
-        className="container-import-kdbx mt-6 cursor-pointer"
+        className="container-import-kdbx mt-3 cursor-pointer"
         {...getRootProps()}
       >
         <input {...getInputProps()} />
@@ -101,9 +109,13 @@ const KdbxImport = props => {
           <div className="col-12 mt-3">
             <OutlinedInput
               type="password"
-              value={password}
-              label={'password'}
-              onChange={e => setPassword(e.target.value)}
+              value={!seed ? password : accountName}
+              label={!seed ? 'password' : 'account name'}
+              onChange={e =>
+                seed
+                  ? setAccountName(e.target.value)
+                  : setPassword(e.target.value)
+              }
             />
           </div>
         </div>
@@ -111,10 +123,18 @@ const KdbxImport = props => {
       <div className={'row ' + (filename ? 'mt-6' : 'mt-13')}>
         <div className="col-12 text-center mx-auto">
           <button
-            disabled={password.length > 0 ? false : true}
+            disabled={
+              !seed
+                ? password.length > 0
+                  ? false
+                  : true
+                : accountName.length > 0
+                ? false
+                : true
+            }
             type="submit"
             className="btn btn-blue text-bold btn-big"
-            onClick={() => (seed ? unlock() : createAccount())}
+            onClick={() => (!seed ? unlock() : createAccount())}
           >
             {seed ? 'Import Account' : 'Unlock'}
           </button>

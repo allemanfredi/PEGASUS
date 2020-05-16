@@ -271,9 +271,9 @@ class PegasusEngine {
           ),
           cb
         ),
-      importSeedVault: (encodedFile, password, cb) =>
+      getSeedVaultContent: (encodedFile, password, cb) =>
         nodeify(
-          this.seedVaultController.importSeedVault(encodedFile, password),
+          this.seedVaultController.getSeedVaultContent(encodedFile, password),
           cb
         ),
 

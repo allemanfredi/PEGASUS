@@ -72,13 +72,13 @@ class SeedVaultController {
 
   /**
    *
-   * Importing a seed encrypted within a .kdbx file.
+   * Getting a seed encrypted within a .kdbx file.
    * _encodedFile must be parsed
    *
    * @param {Uint8Array} _encodedFile
    * @param {String} _password
    */
-  async importSeedVault(_encodedFile, _password) {
+  async getSeedVaultContent(_encodedFile, _password) {
     const credentials = new kdbxweb.Credentials(
       kdbxweb.ProtectedValue.fromString(_password),
       null

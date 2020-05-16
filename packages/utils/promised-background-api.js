@@ -235,9 +235,9 @@ const buildPromisedBackgroundApi = _backgroundConnection => {
         )
       ),
 
-    importSeedVault: (encodedFile, password) =>
+    getSeedVaultContent: (encodedFile, password) =>
       new Promise((resolve, reject) =>
-        _backgroundConnection.importSeedVault(
+        _backgroundConnection.getSeedVaultContent(
           encodedFile,
           password,
           (err, res) => {
