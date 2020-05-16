@@ -95,12 +95,12 @@ const KdbxImport = props => {
     )
 
     if (!isCreated) {
-      this.props.setNotification({
+      setLoading(false)
+      props.setNotification({
         type: 'danger',
         text: 'Error during creating the account! Try Again!',
         position: 'under-bar'
       })
-      setLoading(false)
       return
     }
     props.onTerminated()
