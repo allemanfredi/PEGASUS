@@ -3,6 +3,8 @@ import EventEmitter3 from 'eventemitter3'
 import { composeAPI } from '@iota/core'
 import { bundleToWalletTransaction } from './account-data'
 
+const RELOAD_TIME = 15000
+
 /**
  * Class used to rapresent an account within Pegasus
  */
@@ -76,7 +78,7 @@ class PegasusAccount extends EventEmitter3 {
       this.fetch(true).catch(() => {
         return
       })
-    }, 20000)
+    }, RELOAD_TIME)
   }
 
   /**
