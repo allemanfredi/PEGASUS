@@ -187,7 +187,7 @@ class PegasusAccount extends EventEmitter3 {
     this.transactions.push(bundleToWalletTransaction(_bundle, this.addresses))
 
     // NOTE: update address when a withdrawal is detected and confirmed
-    if (_bundle[0].persistence) await this._generateNewAddress()
+    if (_bundle[0].persistence && !_incoming) await this._generateNewAddress()
 
     if (_incoming) {
       if (_bundle[0].persistence) {
