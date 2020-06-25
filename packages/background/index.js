@@ -5,6 +5,18 @@ import ObjectMultiplex from 'obj-multiplex'
 import logger from '@pegasus/utils/logger'
 import pump from 'pump'
 
+// prettier-ignore
+console.log(
+  `
+  ██████╗ ███████╗ ██████╗  █████╗ ███████╗██╗   ██╗███████╗
+  ██╔══██╗██╔════╝██╔════╝ ██╔══██╗██╔════╝██║   ██║██╔════╝
+  ██████╔╝█████╗  ██║  ███╗███████║███████╗██║   ██║███████╗
+  ██╔═══╝ ██╔══╝  ██║   ██║██╔══██║╚════██║██║   ██║╚════██║
+  ██║     ███████╗╚██████╔╝██║  ██║███████║╚██████╔╝███████║
+  ╚═╝     ╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚══════╝                                               
+  `
+)
+
 const engine = new PegasusEngine()
 
 const handleConnection = port => {
